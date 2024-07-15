@@ -9,7 +9,7 @@
           <div class="col-sm-12">
             <h1 class="m-0">Personal Profile</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">Personal Profile</li>
             </ol>
           </div><!-- /.col -->
@@ -39,37 +39,7 @@
               </div>
               <div class="tab-pane fade" id="vert-tabs-changepassword" role="tabpanel" aria-labelledby="vert-tabs-changepassword-tab">
                 <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title">Change Password</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body2">
-                    <div class="row pad-5">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="oldpassword">Old Password</label>
-                          <input type="text" class="form-control" id="oldpassword" placeholder="Enter Old Password">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="newpassword">New Password</label>
-                          <input type="text" class="form-control" id="newpassword" placeholder="Enter New Password">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="confirmnewpassword">Confirm New Password</label>
-                          <input type="text" class="form-control" id="confirmnewpassword" placeholder="Enter Your Confirm Password">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row py-20 px-10">
-                      <div class="col-md-12 text-center">
-                        <a href="#"><button class="add_btn">Save Changes</button></a>
-                      </div>
-                    </div>
-                  </div>
+                  @include('profile.partials.update-password-form')
                 </div>
               </div>
             </div>

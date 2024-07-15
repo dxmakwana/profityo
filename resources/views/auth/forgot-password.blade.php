@@ -12,7 +12,7 @@
               <span class="fas fa-regular fa-user"></span>
             </div>
           </div>
-          <input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus placeholder="Enter Your Email">
+          <input id="email" class="form-control" type="email" name="email" :value="old('email')" autofocus placeholder="Enter Your Email">
           <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
         <button type="submit" class="btn login_btn mb-3">Send Password Reset Link</button>

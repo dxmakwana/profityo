@@ -5,7 +5,7 @@
 <form id="send-verification" method="post" action="{{ route('verification.send') }}">
     @csrf
 </form>
-<form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+<form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
 @csrf
 @method('patch')
 <div class="card-body2">
@@ -50,7 +50,11 @@
             <div class="form-group">
                 <label>Profile Image</label>
                 <div>
-                    <button class="add_btn fileinput-button"><i class="fas fa-upload mr-2"></i>Choose file here</button>
+                    <input type="file" name="image" accept="image/*">
+                    @if (Auth::user()->image)
+                        <a href="{{ url(env('IMAGE_URL').'storage/app/superadmin/profile_image/' . Auth::user()->image) }} " target="_blank"><div title="{{ Auth::user()->image }}" class="ptm pbm">{{ Auth::user()->image }}</div></a>
+                    @endif
+                    <!-- <button class="add_btn fileinput-button"><i class="fas fa-upload mr-2"></i>Choose file here</button> -->
                     <span>Please upload a valid image file. Size of image should not be more than 2MB.</span>
                 </div>
             </div>

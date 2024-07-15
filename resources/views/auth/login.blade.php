@@ -12,7 +12,7 @@
                     <span class="fas fa-regular fa-user"></span>
                 </div>
             </div>
-            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required
+            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" 
                 autofocus autocomplete="email" placeholder="Username" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -23,7 +23,7 @@
                     <span class="fas fa-regular fa-eye"></span>
                 </div>
             </div>
-            <x-text-input id="password" class="form-control" type="password" name="password" required
+            <x-text-input id="password" class="form-control" type="password" name="password" 
                 autocomplete="current-password" placeholder="Password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
