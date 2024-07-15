@@ -13,7 +13,7 @@
                 </div>
             </div>
             <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" 
-                autofocus autocomplete="email" placeholder="Username" />
+                autofocus autocomplete="email" placeholder="Email" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
      

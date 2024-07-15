@@ -17,7 +17,7 @@
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
         <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-          <img src="{{url('public/dist/img/user2-160x160.jpg')}}" class="elevation-2 user_img" alt="User Image">
+          <img src="{{ url(env('IMAGE_URL').'storage/app/superadmin/profile_image/' . Auth::user()->image) }} " target="_blank"><div title="{{ Auth::user()->image }}" class="elevation-2 user_img" alt="User Image">
           <span class="d-block dropdown-toggle" >{{ Auth::user()->name }}</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
