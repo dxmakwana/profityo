@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\superadmin\PlanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
+global $adminRoute;
 $adminRoute = config('global.superAdminURL');
 $busadminRoute = config('global.businessAdminURL');
 
@@ -28,9 +29,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Auth', 'prefix' => $adminRout
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::middleware('auth')->group(function () {
+        //profile
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+        //Subscription Plans
+        Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+        Route::post('/plans/store', [PlanController::class, 'store'])->name('plans.store');
     });
 });
 

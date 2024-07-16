@@ -1,5 +1,6 @@
 
   <!-- Preloader -->
+  @php($adminRoute = config('global.superAdminURL'))
   <div class="preloader flex-column justify-content-center align-items-center">
     <img class="animation__shake" src="{{url('public/dist/img/logo.png')}}" alt="ProfityoLogo">
   </div>
