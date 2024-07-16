@@ -40,7 +40,8 @@ Route::group(['prefix' => $adminRoute], function () {
         Route::get('/plans/edit/{plan}', [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{plan}', [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/destroy/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
-        Route::get('/plans/planrole', [PlanController::class, 'planrole'])->name('plans.planrole');
+        Route::get('/plans/planrole/{plan}', [PlanController::class, 'planrole'])->name('plans.planrole');
+        Route::put('/plans/updaterole/{plan}', [PlanController::class, 'updaterole'])->name('plans.updaterole');
 
         //  Route::resources([
         //     'plans' => PlanController::class,

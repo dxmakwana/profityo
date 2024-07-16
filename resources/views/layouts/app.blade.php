@@ -40,6 +40,9 @@
     </head>
     <body class="hold-transition sidebar-mini layout-fixed">
         <div class="wrapper">
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="{{url('public/dist/img/logo.png')}}" alt="ProfityoLogo">
+        </div>
             @include('layouts.navigation')
             @include('layouts.sidebar')
             @yield('content')

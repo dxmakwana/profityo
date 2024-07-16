@@ -59,7 +59,7 @@ class ProfileController extends Controller
 
 
         $request->user()->save();
-
+        \LogActivity::addToLog('Admin User Profile Updated.');
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

@@ -55,6 +55,7 @@ class PlanController extends Controller
 
         // Assuming you have a Plan model to handle database interactions
         Plan::create($validatedData);
+        \LogActivity::addToLog('Admin Plan Created.');
 
         return redirect()->route('plans.index')->with(['plan-add' =>__('messages.admin.plan.add_plan_success')]);
     }
@@ -102,6 +103,7 @@ class PlanController extends Controller
 
         // Update the plan attributes based on validated data
         $plan->where('sp_id', $sp_id)->update($validatedData);
+        \LogActivity::addToLog('Admin Plan Edited.');
 
         // Redirect back to the edit form with a success message
         return redirect()->route('plans.edit', ['plan' => $plan->sp_id])
@@ -118,13 +120,16 @@ class PlanController extends Controller
 
         // Delete the plan
         $plan->where('sp_id', $sp_id)->delete();
+
+        \LogActivity::addToLog('Admin Plan Deleted.');
          
         return redirect()->route('plans.index')
                         ->with('plan-delete', __('messages.admin.plan.delete_plan_success'));
 
     }
-    public function planrole(): View
+    public function planrole($sp_id): View
     {
+        $plan = Plan::where('sp_id', $sp_id)->firstOrFail();
         $permissions = AdminMenu::where('pmenu', 0)->where('is_deleted', 0)->get();
         $reports = AdminMenu::where('pmenu', 21)->where('is_deleted', 0)->get();
 
@@ -137,6 +142,7 @@ class PlanController extends Controller
         }
 
         foreach ($reports as $report) {
+            // dd($report);
             $report->is_access = $this->checkIsAccess($report->mname, request()->id);
             $report->is_access_add = $this->checkIsAccess('add_' . $report->mname, request()->id);
             $report->is_access_view = $this->checkIsAccess('view_' . $report->mname, request()->id);
@@ -144,15 +150,20 @@ class PlanController extends Controller
             $report->is_access_delete = $this->checkIsAccess('delete_' . $report->mname, request()->id);
         }
 
-        return view('superadmin.plans.plan_role_access', compact('permissions', 'reports'));
+        return view('superadmin.plans.plan_role_access', compact('permissions', 'reports','plan'));
     }
 
     private function checkIsAccess($permissionName, $roleId)
     {
         return UserAccess::where('sp_id', $roleId)
             ->where('mname', $permissionName)
-            ->where('is_access', 1)
             ->exists();
+    }
+
+    public function updaterole(Request $request, $sp_id): RedirectResponse
+    {
+        //
+        // dd($request);
     }
 
 }
