@@ -22,8 +22,7 @@ global $adminRoute;
 $adminRoute = config('global.superAdminURL');
 $busadminRoute = config('global.businessAdminURL');
 
-Route::group(['namespace' => 'App\Http\Controllers\Auth', 'prefix' => $adminRoute], function() {
-
+Route::group(['prefix' => $adminRoute], function () {
     Route::get('/dashboard', function () {
         return view('auth.dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
@@ -35,9 +34,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Auth', 'prefix' => $adminRout
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         //Subscription Plans
-        Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
-        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
-        Route::post('/plans/store', [PlanController::class, 'store'])->name('plans.store');
+        // Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+        // Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+        // Route::post('/plans/store', [PlanController::class, 'store'])->name('plans.store');
+        // Route::get('/plans/{id}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+         Route::resources([
+            'plans' => PlanController::class,
+        ]);
+
+        Route::get('/plans/planrole', [PlanController::class, 'planrole'])->name('plans.planrole');
+
+
+        
     });
 });
 

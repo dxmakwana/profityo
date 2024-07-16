@@ -52,6 +52,17 @@
               Session::forget('plan-add');
             @endphp
           @endif
+          @if(Session::has('plan-delete'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('plan-delete') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('plan-delete');
+            @endphp
+          @endif
 
           <!-- Main row -->
           <div class="card px-20">
@@ -78,12 +89,32 @@
                             <td>{{ $value->sp_month }}</td>
                             <td class="text-right">
                             <a href="subscription-plans-access.html"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
-                            <a href=""><i
+                            <a href="{{ route('plans.edit',$value->sp_id) }}"><i
                             class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                             <a data-toggle="modal" data-target="#deletesubscription-plans"><i
                             class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                             </td>
                           </tr>
+                          <div class="modal fade" id="deletesubscription-plans" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <form id="delete-plan-form" action="{{ route('plans.destroy', ['plan' => $value->sp_id]) }}" method="POST">
+                                  @csrf
+                                  @method('DELETE')
+                                  <div class="modal-body pad-1 text-center">
+                                    <i class="fas fa-solid fa-trash delete_icon"></i>
+                                    <p class="company_business_name px-10"><b>Delete Subscription Plans</b></p>
+                                    <p class="company_details_text px-10">Are You Sure You Want to Delete This plan?</p>
+                                    <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="delete_btn px-15">Delete</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
                         @endforeach
                       @else
                     <tr>
@@ -107,20 +138,7 @@
       <!-- Control sidebar content goes here -->
     </aside>
     <!-- /.control-sidebar -->
-    <div class="modal fade" id="deletesubscription-plans" tabindex="-1" role="dialog"
-      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-body pad-1 text-center">
-            <i class="fas fa-solid fa-trash delete_icon"></i>
-            <p class="company_business_name px-10"><b>Delete Subscription Plans</b></p>
-            <p class="company_details_text px-10">Are You Sure You Want to Delete This plan?</p>
-            <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="delete_btn px-15">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    
   </div>
   <!-- ./wrapper -->
 
