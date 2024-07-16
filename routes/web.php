@@ -34,15 +34,21 @@ Route::group(['prefix' => $adminRoute], function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         //Subscription Plans
-        // Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
-        // Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
-        // Route::post('/plans/store', [PlanController::class, 'store'])->name('plans.store');
-        // Route::get('/plans/{id}/edit', [PlanController::class, 'edit'])->name('plans.edit');
-         Route::resources([
-            'plans' => PlanController::class,
-        ]);
-
+        Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+        Route::post('/plans/store', [PlanController::class, 'store'])->name('plans.store');
+        Route::get('/plans/edit/{plan}', [PlanController::class, 'edit'])->name('plans.edit');
+        Route::put('/plans/update/{plan}', [PlanController::class, 'update'])->name('plans.update');
+        Route::delete('/plans/destroy/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
         Route::get('/plans/planrole', [PlanController::class, 'planrole'])->name('plans.planrole');
+
+        //  Route::resources([
+        //     'plans' => PlanController::class,
+        // ]);
+
+        // Route::get('/plans/planrole', [PlanController::class, 'planrole'])->name('plans.planrole');
+        // Route::get('admin/plans/role', [App\Http\Controllers\superadmin\PlanController::class, 'role'])->name('admin.plans.role');
+
 
 
         

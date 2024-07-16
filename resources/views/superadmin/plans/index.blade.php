@@ -88,7 +88,7 @@
                             <td>{{ $value->sp_amount }}</td>
                             <td>{{ $value->sp_month }}</td>
                             <td class="text-right">
-                            <a href="subscription-plans-access.html"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
+                            <a href="{{ route('plans.planrole') }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
                             <a href="{{ route('plans.edit',$value->sp_id) }}"><i
                             class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                             <a data-toggle="modal" data-target="#deletesubscription-plans"><i

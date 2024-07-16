@@ -123,10 +123,10 @@ class PlanController extends Controller
                         ->with('plan-delete', __('messages.admin.plan.delete_plan_success'));
 
     }
-
     public function planrole(): View
     {
         $permissions = AdminMenu::where('pmenu', 0)->where('is_deleted', 0)->get();
+        $reports = AdminMenu::where('pmenu', 21)->where('is_deleted', 0)->get();
 
         foreach ($permissions as $permission) {
             $permission->is_access = $this->checkIsAccess($permission->mname, request()->id);
@@ -136,8 +136,17 @@ class PlanController extends Controller
             $permission->is_access_delete = $this->checkIsAccess('delete_' . $permission->mname, request()->id);
         }
 
-        return view('superadmin.plans.plan_role_access', compact('permissions'));
+        foreach ($reports as $report) {
+            $report->is_access = $this->checkIsAccess($report->mname, request()->id);
+            $report->is_access_add = $this->checkIsAccess('add_' . $report->mname, request()->id);
+            $report->is_access_view = $this->checkIsAccess('view_' . $report->mname, request()->id);
+            $report->is_access_update = $this->checkIsAccess('update_' . $report->mname, request()->id);
+            $report->is_access_delete = $this->checkIsAccess('delete_' . $report->mname, request()->id);
+        }
+
+        return view('superadmin.plans.plan_role_access', compact('permissions', 'reports'));
     }
+
     private function checkIsAccess($permissionName, $roleId)
     {
         return UserAccess::where('sp_id', $roleId)
