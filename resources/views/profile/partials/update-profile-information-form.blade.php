@@ -50,7 +50,7 @@
             <div class="form-group">
                 <label>Profile Image</label>
                 <div>
-                    <input type="file" name="image" accept="image/*">
+                    <input type="file" name="image" accept="image/*" class="add_btn fileinput-button">
                     @if (Auth::user()->image)
                         <a href="{{ url(env('IMAGE_URL').'superadmin/profile_image/' . Auth::user()->image) }} " target="_blank"><div title="{{ Auth::user()->image }}" class="ptm pbm">{{ Auth::user()->image }}</div></a>
                     @endif

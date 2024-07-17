@@ -87,8 +87,8 @@
                                         <div class="form-group">
                                             <label for="planvalidity">User</label>
                                             <input type="number"
-                                                class="form-control @error('sp_user') is-invalid @enderror" id="user"
-                                                name="user" placeholder="Enter Users" value="{{ old('sp_user') }}">
+                                                class="form-control @error('sp_user') is-invalid @enderror" id="sp_user"
+                                                name="sp_user" placeholder="Enter Users" value="{{ old('sp_user') }}">
                                             @error('sp_user')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

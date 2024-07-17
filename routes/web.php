@@ -42,21 +42,14 @@ Route::group(['prefix' => $adminRoute], function () {
         Route::delete('/plans/destroy/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
         Route::get('/plans/planrole/{plan}', [PlanController::class, 'planrole'])->name('plans.planrole');
         Route::put('/plans/updaterole/{plan}', [PlanController::class, 'updaterole'])->name('plans.updaterole');
-
-        //  Route::resources([
-        //     'plans' => PlanController::class,
-        // ]);
-
-        // Route::get('/plans/planrole', [PlanController::class, 'planrole'])->name('plans.planrole');
-        // Route::get('admin/plans/role', [App\Http\Controllers\superadmin\PlanController::class, 'role'])->name('admin.plans.role');
-
-
-
+        
+        //logs
+        Route::get('/logActivity', [ProfileController::class, 'logActivity'])->name('adminlog.index');
         
     });
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\Auth', 'prefix' => $busadminRoute], function() {
+Route::group(['prefix' => $busadminRoute], function() {
     Route::get('/login', function () {
         return view('welcome');
     });

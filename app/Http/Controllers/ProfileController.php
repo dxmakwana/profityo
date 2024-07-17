@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -83,4 +84,24 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function logActivity()
+    {
+        $user = Auth::user();
+        if($user)
+        {
+            $admin_user = User::where('user_id','=',$user->id);
+            
+            $logs = \LogActivity::logActivityLists();
+            
+                return view('superadmin.logs.index')
+                                            ->with('admin_user',$admin_user)
+                                            ->with('logs',$logs);
+
+            return redirect()->action('Admin\AdminLoginController@index')->with('failure','You are not authorized to access.');
+        }else{
+            return redirect()->action('Admin\AdminLoginController@index')->with('failure','You need to login first.');
+        }
+    }
+
 }

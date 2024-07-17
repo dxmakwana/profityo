@@ -16,27 +16,28 @@
           <li class="nav-item {{ request()->is($adminRoute.'/dashboard*') || request()->is($adminRoute.'/profile*') ? 'side_shape' : '' }}">
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is($adminRoute.'/dashboard*') || request()->is($adminRoute.'/profile*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>
-                    Dashboard
-                </p>
+                <p>Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="business-list.html" class="nav-link">
               <i class="nav-icon fas fa-regular fa-building"></i>
-              <p>
-                Business
-              </p>
+              <p>Business</p>
             </a>
           </li>
           <li class="nav-item {{ request()->is($adminRoute.'/plans*') ? 'side_shape' : '' }}">
             <a href="{{ route('plans.index') }}" class="nav-link {{ request()->is($adminRoute.'/plans*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-solid fa-trophy"></i>
-                <p>
-                    Subscription Plans
-                </p>
+                <p>Subscription Plans </p>
             </a>
           </li>
+          <li class="nav-item {{ request()->is($adminRoute.'/logActivity*') ? 'side_shape' : '' }}">
+            <a href="{{ route('adminlog.index') }}" class="nav-link {{ request()->is($adminRoute.'/logActivity*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-solid fa-trophy"></i>
+                <p>Log Activity</p>
+            </a>
+          </li>
+        
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
