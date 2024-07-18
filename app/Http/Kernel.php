@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\PlanLogCleaner::class,
+        
     ];
 
     /**
@@ -64,6 +65,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        
+        'auth_master' => \App\Http\Middleware\AuthenticateMasterAdmin::class,
+        'masteradmin' => \App\Http\Middleware\RedirectIfAuthenticateMasterAdmin::class,
     ];
 }

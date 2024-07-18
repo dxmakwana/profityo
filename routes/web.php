@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\superadmin\PlanController;
+use App\Http\Controllers\Auth\MasterAdmin\RegisterController;
+use App\Http\Controllers\Auth\MasterAdmin\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +25,12 @@ $adminRoute = config('global.superAdminURL');
 $busadminRoute = config('global.businessAdminURL');
 
 Route::group(['prefix' => $adminRoute], function () {
-    Route::get('/dashboard', function () {
-        return view('auth.dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
-
+  
     Route::middleware('auth')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('auth.dashboard');
+        })->middleware(['auth', 'verified'])->name('dashboard');
+    
         //profile
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,9 +52,15 @@ Route::group(['prefix' => $adminRoute], function () {
     });
 });
 
-Route::group(['prefix' => $busadminRoute], function() {
-    Route::get('/login', function () {
-        return view('welcome');
+Route::group(['prefix' => $busadminRoute], function () {
+    
+    Route::middleware('masteradmin')->group(function () {
+
+    Route::get('login', [LoginController::class, 'create'])->name('business.login');
+    Route::get('register', [RegisterController::class, 'create'])->name('business.register');
+    Route::post('register', [RegisterController::class, 'store'])->name('business.register.store');
+    Route::post('login', [LoginController::class, 'store'])->name('business.login.store');
+    
     });
 });
 

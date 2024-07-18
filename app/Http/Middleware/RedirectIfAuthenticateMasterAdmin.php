@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectIfAuthenticated
+class RedirectIfAuthenticateMasterAdmin
 {
     /**
      * Handle an incoming request.
@@ -17,13 +17,14 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
-        $guards = empty($guards) ? [null] : $guards;
-
+        $guards = empty($guards) ? ['masteradmins'] : $guards;
+        
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if (Auth::guard('masteradmins')->check()) {
+                return redirect(RouteServiceProvider::MASTER_HOME);
             }
         }
+
         return $next($request);
     }
 }

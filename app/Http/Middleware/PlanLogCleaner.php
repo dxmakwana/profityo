@@ -5,18 +5,26 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Helpers\LogActivity;
+use App\Helpers\LogActivity; // Ensure correct import
 
 class PlanLogCleaner
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$guards): Response
     {
-        LogActivity::deleteOldLogs();
+        try {
+            LogActivity::deleteOldLogs();
+        } catch (\Throwable $th) {
+            // Log or handle the exception
+            \Log::error("Failed to delete old logs: " . $th->getMessage());
+        }
+
         return $next($request);
     }
 }

@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'masteradmins' => [
+            'driver' => 'session',
+            'provider' => 'masteradmin',
+        ],
     ],
 
     /*
@@ -63,6 +67,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'masteradmin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\MasterUser::class,
         ],
 
         // 'users' => [
@@ -93,6 +102,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            // 'throttle' => 60,
+        ],
+
+        'masteradmin' => [
+            'provider' => 'masteradmin',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             // 'throttle' => 60,
