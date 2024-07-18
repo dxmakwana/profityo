@@ -33,9 +33,9 @@ class MasterUser extends Authenticatable
         'user_password',
         'remember_token',
     ];
-
+    
     protected $casts = [
+        'email_verified_at' => 'datetime',
         'user_password' => 'hashed',
     ];
-
 }

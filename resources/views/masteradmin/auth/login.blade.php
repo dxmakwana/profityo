@@ -12,9 +12,9 @@
                     <span class="fas fa-regular fa-user"></span>
                 </div>
             </div>
-            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" 
+            <x-text-input id="user_email" class="form-control" type="email" name="user_email" :value="old('user_email')" 
                 autofocus autocomplete="email" placeholder="Email" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-error :messages="$errors->get('user_email')" class="mt-2" />
         </div>
      
         <div class="input-group mb-1">
@@ -23,14 +23,14 @@
                     <span class="fas fa-regular fa-eye"></span>
                 </div>
             </div>
-            <x-text-input id="password" class="form-control" type="password" name="password" 
+            <x-text-input id="user_password" class="form-control" type="password" name="user_password" 
                 autocomplete="current-password" placeholder="Password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-input-error :messages="$errors->get('user_password')" class="mt-2" />
         </div>
 
         <div class="block mt-2 d-flex justify-content-between">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox"
+            <label for="remember" class="inline-flex items-center">
+                <input id="remember" type="checkbox"
                     class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember" />
                     <span class="ms-2 font_18">{{ __('Remember me') }}</span>
             </label>

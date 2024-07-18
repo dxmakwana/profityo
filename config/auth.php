@@ -109,7 +109,7 @@ return [
 
         'masteradmin' => [
             'provider' => 'masteradmin',
-            'table' => 'password_reset_tokens',
+            'table' => 'master_password_reset_tokens',
             'expire' => 60,
             // 'throttle' => 60,
         ],

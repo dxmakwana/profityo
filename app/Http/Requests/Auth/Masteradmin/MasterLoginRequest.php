@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Auth\Masteradmin;
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\MasterUser;
+use Illuminate\Support\Facades\Hash;
 
 class MasterLoginRequest extends FormRequest
 {
@@ -27,8 +29,8 @@ class MasterLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'user_email' => ['required', 'string', 'email'], // corrected rule
+            'user_password' => ['required', 'string'],
         ];
     }
 
@@ -41,13 +43,17 @@ class MasterLoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::guard('masteradmins')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credentials = $this->only('user_email', 'user_password');
+        $user = MasterUser::where('user_email', $credentials['user_email'])->first();
+
+        if (! $user || ! Hash::check($credentials['user_password'], $user->user_password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'user_email' => trans('auth.failed'),
             ]);
         }
+        Auth::guard('masteradmins')->login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -68,7 +74,7 @@ class MasterLoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'user_email' => trans('auth.throttle', [ // changed to 'user_email'
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +86,6 @@ class MasterLoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('user_email')).'|'.$this->ip()); // changed to 'user_email'
     }
 }
