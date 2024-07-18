@@ -1,3 +1,4 @@
+<title>Forgot Password | Profityo</title>
 <x-guest-layout>
     <h5 class="login-box-msg">Forgot Password !</h5>
     <form method="POST" action="{{ route('password.store') }}">

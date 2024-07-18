@@ -1,3 +1,4 @@
+<title>Register | Profityo</title>
 <x-guest-layout>
     <h5 class="login-box-msg">Register !</h5>
     <form method="POST" action="{{ route('register') }}">
