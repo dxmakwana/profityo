@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<title>Dashboard | Profityo</title>
 @section('content')
   <!-- /.Main Sidebar Container -->
 

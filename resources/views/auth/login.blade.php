@@ -1,4 +1,6 @@
+<title>Login | Profityo</title>
 <x-guest-layout>
+    
     <h5 class="login-box-msg">Login !</h5>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
