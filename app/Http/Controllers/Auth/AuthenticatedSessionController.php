@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -17,7 +18,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        $rememberedEmail = Cookie::get('email', '');
+        $rememberedPassword = Cookie::get('password', '');
+        $rememberedRemeber = Cookie::get('remember', '');
+        // dd($rememberedEmail);
+        return view('auth.login',compact('rememberedEmail', 'rememberedPassword','rememberedRemeber'));
     }
 
     /**
@@ -25,6 +30,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // dd($request);
         $request->authenticate();
 
         $request->session()->regenerate();

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\MasterUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cookie;
 
 class MasterLoginRequest extends FormRequest
 {
@@ -53,7 +54,18 @@ class MasterLoginRequest extends FormRequest
                 'user_email' => trans('auth.failed'),
             ]);
         }
-        Auth::guard('masteradmins')->login($user, $this->boolean('remember'));
+        Auth::guard('masteradmins')->login($user, $this->boolean('user_remember'));
+
+        if ($this->boolean('user_remember')) {
+            Cookie::queue(Cookie::make('user_email', $this->input('user_email'), 60 * 24 * 30)); // 30 days
+            Cookie::queue(Cookie::make('user_password', $this->input('user_password'), 60 * 24 * 30)); // 30 days
+            Cookie::queue(Cookie::make('user_remember', $this->boolean('user_remember'), 60 * 24 * 30));
+        } else {
+            Cookie::queue(Cookie::forget('user_email'));
+            Cookie::queue(Cookie::forget('user_password'));
+            Cookie::queue(Cookie::forget('user_remember'));
+        }
+
 
         RateLimiter::clear($this->throttleKey());
     }

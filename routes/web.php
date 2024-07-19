@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\superadmin\PlanController;
 use App\Http\Controllers\Auth\MasterAdmin\RegisterController;
 use App\Http\Controllers\Auth\MasterAdmin\LoginController;
+use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordResetLinkController;
+use App\Http\Controllers\Auth\MasterAdmin\MasterNewPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,11 +58,26 @@ Route::group(['prefix' => $busadminRoute], function () {
     
     Route::middleware('masteradmin')->group(function () {
 
-    Route::get('login', [LoginController::class, 'create'])->name('business.login');
-    Route::get('register', [RegisterController::class, 'create'])->name('business.register');
-    Route::post('register', [RegisterController::class, 'store'])->name('business.register.store');
-    Route::post('login', [LoginController::class, 'store'])->name('business.login.store');
-    
+        Route::get('login', [LoginController::class, 'create'])->name('business.login');
+        Route::get('register', [RegisterController::class, 'create'])->name('business.register');
+        Route::post('register', [RegisterController::class, 'store'])->name('business.register.store');
+        Route::post('login', [LoginController::class, 'store'])->name('business.login.store');
+        Route::get('forgot-password', [MasterPasswordResetLinkController::class, 'create'])
+                        ->name('business.password.request');
+        Route::post('forgot-password', [MasterPasswordResetLinkController::class, 'store'])
+                        ->name('business.password.email');
+        Route::get('reset-password/{token}', [MasterNewPasswordController::class, 'create'])
+                        ->name('business.password.reset');
+        Route::post('reset-password', [MasterNewPasswordController::class, 'store'])
+                        ->name('business.password.store');
+
+        Route::middleware('auth_master')->group(function () {
+
+            Route::get('/dashboard', function () {
+                return view('auth_master.dashboard');
+            })->middleware(['auth_master', 'verified'])->name('dashboard');
+
+        });
     });
 });
 

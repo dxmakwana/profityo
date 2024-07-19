@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Http\Requests\Auth\Masteradmin\MasterLoginRequest;
-
+use Illuminate\Support\Facades\Cookie;
 
 class LoginController extends Controller
 {
@@ -19,7 +19,11 @@ class LoginController extends Controller
     public function create(): View
     {
         // dd('hiii');
-        return view('masteradmin.auth.login');
+        $rememberedEmails = Cookie::get('user_email', '');
+        $rememberedPasswords = Cookie::get('user_password', '');
+        $rememberedRemebers = Cookie::get('user_remember', '');
+        // dd($rememberedEmail);
+        return view('masteradmin.auth.login',compact('rememberedEmails', 'rememberedPasswords', 'rememberedRemebers'));
     }
 
     public function store(MasterLoginRequest $request): RedirectResponse

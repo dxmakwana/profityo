@@ -14,7 +14,7 @@
                     <span class="fas fa-regular fa-user"></span>
                 </div>
             </div>
-            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" 
+            <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email',$rememberedEmail)" 
                 autofocus autocomplete="email" placeholder="Email" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -26,14 +26,14 @@
                 </div>
             </div>
             <x-text-input id="password" class="form-control" type="password" name="password" 
-                autocomplete="current-password" placeholder="Password" />
+                autocomplete="current-password" placeholder="Password" :value="old('password',$rememberedPassword)" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div class="block mt-2 d-flex justify-content-between">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox"
-                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember" />
+                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember" {{ $rememberedRemeber == true ? 'checked' : '' }} />
                     <span class="ms-2 font_18">{{ __('Remember me') }}</span>
             </label>
             <p class="mb-0">
