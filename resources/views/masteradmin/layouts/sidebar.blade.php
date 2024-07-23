@@ -1,4 +1,5 @@
 <!-- Main Sidebar Container -->
+@php($busadminRoutes = config('global.businessAdminURL'))
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('business.home') }}" class="brand-link">
@@ -12,12 +13,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item side_shape">
-            <a href="./index.html" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
+          <li class="nav-item {{ request()->is($busadminRoutes.'/dashboard*') || request()->is($busadminRoutes.'/profile*') ? 'side_shape' : '' }}">
+            <a href="{{ route('business.home') }}" class="nav-link {{ request()->is($busadminRoutes.'/dashboard*') || request()->is($busadminRoutes.'/profile*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>Dashboard</p>
             </a>
           </li>
           <li class="nav-item">
@@ -289,12 +288,15 @@
               </li>
             </ul>
           </li>
+
           <li class="nav-item">
-            <a href="login.html" class="nav-link">
-              <i class="nav-icon fas fa-sign-out-alt"></i>
-              <p>
-                Log Out
-              </p>
+            <form id="logout-form" method="POST" action="{{ route('business.logout') }}" style="display: none;">
+                @csrf
+            </form>
+
+            <a href="{{ route('business.logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>Log Out</p>
             </a>
           </li>
         </ul>

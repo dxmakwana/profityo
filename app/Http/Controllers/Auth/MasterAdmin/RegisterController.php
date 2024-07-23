@@ -16,6 +16,7 @@ use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 use App\Models\Plan;
 
+
 class RegisterController extends Controller
 {
     //
@@ -64,30 +65,53 @@ class RegisterController extends Controller
             'user_image' => '',
             'user_business_name' => $request->user_business_name,
             'buss_unique_id' => $buss_unique_id,
-            'sp_id' => $request->sp_id,
+            'sp_id' => $plan->sp_id,
             'user_password' => Hash::make($request->user_password),
             'sp_expiry_date' => $expiryDate,
+            'country_id' => 0,
+            'state_id' => 0,
+            'user_city_name' => '',
+            'user_pincode' => '',
             'isActive' => 1,
             'user_status' => 1
         ]);
     
         Auth::guard('masteradmins')->login($admin);
+        
+        $this->createTable($admin->id);
     
         return redirect(RouteServiceProvider::MASTER_HOME);
     }
     
     private function generateUniqueId(string $user_business_name): string
     {
-        // Remove any whitespace from the user business name
-        $cleaned_name = preg_replace('/\s+/', '', $user_business_name);
+        // Convert to lowercase
+        $storeName = strtolower($user_business_name);
 
-        // Generate the prefix from the cleaned name
-        $prefix = strtolower(substr($cleaned_name, 0, 4));
+        // Remove non-alphabetic characters
+        $storeName = preg_replace('/[^a-zA-Z]/', '', $storeName);
 
-        // Calculate the next number for the unique ID
-        $number = MasterUser::where('buss_unique_id', 'LIKE', "{$prefix}%")->count() + 1;
+        // Handle cases where the name is shorter than 6 characters
+        if (strlen($storeName) < 6) {
+            $storeName = str_pad($storeName, 6, 'x'); // Pad with 'x' or another character
+        }
 
-        // Return the generated unique ID
-        return $prefix . sprintf("%02d", $number);
+        // Ensure the length is at least 6 characters
+        $storeName = substr($storeName, 0, 6);
+
+        // Generate a unique number (you can replace this with your unique number generation logic)
+        $uniqueNumber = rand(1, 99); // Example: replace with your unique number generation logic
+        $uniqueId = $storeName . sprintf('%02d', $uniqueNumber);
+
+        // Optional: Check for uniqueness
+        // You need to implement checkStoreId($uniqueId) to ensure the ID is unique
+        // while ($this->checkStoreId($uniqueId)) {
+        //     $uniqueNumber = rand(1, 99);
+        //     $uniqueId = $storeName . sprintf('%02d', $uniqueNumber);
+        // }
+
+        return $uniqueId;
+     
     }
+    
 }

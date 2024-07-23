@@ -81,9 +81,8 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.store');
         
     });
-    Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
     Route::middleware(['auth_master'])->group(function () {
-
+        
         //profile
         Route::get('/dashboard', [HomeController::class, 'create'])->name('business.home');
         Route::get('/profile', [ProfilesController::class, 'edit'])->name('business.profile.edit');
@@ -91,15 +90,12 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('/profile', [ProfilesController::class, 'destroy'])->name('business.profile.destroy');
         Route::get('states/{countryId}', [ProfilesController::class, 'getStates']);
         Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
+        Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
         
+        //
 
     });
     
-    
-    
-       
-
-   
 });
 
 require __DIR__.'/auth.php';
