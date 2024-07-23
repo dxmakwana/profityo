@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\MasterAdmin\MasterEmailVerificationNotificationCon
 use App\Http\Controllers\Masteradmin\HomeController;
 use App\Http\Controllers\Masteradmin\ProfilesController;
 use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordController;
+use App\Http\Controllers\Controller;
 
 
 
@@ -91,6 +92,8 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('states/{countryId}', [ProfilesController::class, 'getStates']);
         Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
         Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
+        //create alter database
+        Route::get('/create-table', [Controller::class, 'createTableRoute']);
         
         //
 

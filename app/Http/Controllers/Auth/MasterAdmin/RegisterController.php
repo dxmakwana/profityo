@@ -15,7 +15,7 @@ use App\Models\MasterUser;
 use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 use App\Models\Plan;
-
+use DB;
 
 class RegisterController extends Controller
 {
@@ -45,9 +45,6 @@ class RegisterController extends Controller
             'user_password.required' => 'The Password field is required.',
         ]);
     
-    
-        // Generate unique buss_unique_id
-        $buss_unique_id = $this->generateUniqueId(trim($request->user_business_name));
 
         $plan = Plan::where('sp_id', '12')->firstOrFail();
 
@@ -64,7 +61,7 @@ class RegisterController extends Controller
             'user_phone' => $request->user_phone,
             'user_image' => '',
             'user_business_name' => $request->user_business_name,
-            'buss_unique_id' => $buss_unique_id,
+            'buss_unique_id' => '',
             'sp_id' => $plan->sp_id,
             'user_password' => Hash::make($request->user_password),
             'sp_expiry_date' => $expiryDate,
@@ -75,7 +72,13 @@ class RegisterController extends Controller
             'isActive' => 1,
             'user_status' => 1
         ]);
-    
+        
+        // Generate the unique buss_unique_id
+        $buss_unique_id = $this->generateUniqueId(trim($request->user_business_name), $admin->id);
+
+        // Update the record with the final unique ID
+        $admin->update(['buss_unique_id' => $buss_unique_id]);
+
         Auth::guard('masteradmins')->login($admin);
         
         $this->createTable($admin->id);
@@ -83,35 +86,23 @@ class RegisterController extends Controller
         return redirect(RouteServiceProvider::MASTER_HOME);
     }
     
-    private function generateUniqueId(string $user_business_name): string
+    private function generateUniqueId(string $user_business_name, int $id): string
     {
-        // Convert to lowercase
-        $storeName = strtolower($user_business_name);
+        // Clean the business name by removing non-alphabetic characters and whitespace
+        $cleaned_name = preg_replace('/[^a-zA-Z]/', '', $user_business_name);
 
-        // Remove non-alphabetic characters
-        $storeName = preg_replace('/[^a-zA-Z]/', '', $storeName);
+        // Generate the prefix from the first 4 characters of the cleaned name
+        $prefix = strtolower(substr($cleaned_name, 0, 4));
 
-        // Handle cases where the name is shorter than 6 characters
-        if (strlen($storeName) < 6) {
-            $storeName = str_pad($storeName, 6, 'x'); // Pad with 'x' or another character
-        }
+        // Ensure the ID is zero-padded to a length of 2 digits
+        $formattedId = sprintf("%02d", $id);
 
-        // Ensure the length is at least 6 characters
-        $storeName = substr($storeName, 0, 6);
-
-        // Generate a unique number (you can replace this with your unique number generation logic)
-        $uniqueNumber = rand(1, 99); // Example: replace with your unique number generation logic
-        $uniqueId = $storeName . sprintf('%02d', $uniqueNumber);
-
-        // Optional: Check for uniqueness
-        // You need to implement checkStoreId($uniqueId) to ensure the ID is unique
-        // while ($this->checkStoreId($uniqueId)) {
-        //     $uniqueNumber = rand(1, 99);
-        //     $uniqueId = $storeName . sprintf('%02d', $uniqueNumber);
-        // }
+        // Combine the prefix and formatted ID
+        $uniqueId = $prefix . $formattedId;
 
         return $uniqueId;
-     
+
     }
+
     
 }

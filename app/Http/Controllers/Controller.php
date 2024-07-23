@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use App\Models\MasterUser;
+use Illuminate\Support\Facades\Auth;
+
 
 class Controller extends BaseController
 {
@@ -58,11 +60,54 @@ class Controller extends BaseController
             if (!Schema::hasTable($storeId.'_py_users_role')){  
                 Schema::create($storeId.'_py_users_role', function (Blueprint $table) {
                     $table->increments('role_id');
+                    $table->integer('id');
                     $table->string('role_name');
                     $table->tinyInteger('role_status')->default(0);
+                    $table->timestamps();
+                });
+
+            }else{
+                Schema::table($storeId.'_py_users_role', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_users_role', 'id')) {
+                        $table->integer('id');
+                    }
+                });
+            }
+
+            if (!Schema::hasTable($storeId.'_users_details')){   
+                Schema::create($storeId.'_users_details', function (Blueprint $table) {
+                    $table->increments('users_id');
+                    $table->string('users_name')->nullable();
+                    $table->string('users_email')->nullable()->unique();
+                    $table->string('users_phone')->nullable()->unique();
+                    $table->string('users_password')->nullable();
+                    $table->integer('role_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
+                    $table->tinyInteger('users_status')->default(0)->nullable();
                     $table->timestamps();
                 });
             }
         }
     }
+
+    public function createTableRoute(Request $request)
+    {
+        
+       $user = Auth::guard('masteradmins')->user();
+        //dd($user);
+        $id = $user->id;
+
+        if (!$id) {
+            return response()->json(['message' => 'ID is required'], 400);
+        }
+
+        try {
+            $this->CreateTable($id);
+            return response()->json(['message' => 'Table created or modified successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
 }
+    

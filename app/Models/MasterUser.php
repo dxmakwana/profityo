@@ -43,4 +43,10 @@ class MasterUser extends Authenticatable
         'email_verified_at' => 'datetime',
         'user_password' => 'hashed',
     ];
+
+    public function userAccess()
+    {
+        return $this->hasMany(UserAccess::class, 'sp_id', 'sp_id');
+    }
+
 }

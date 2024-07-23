@@ -23,4 +23,9 @@ class UserAccess extends Model
         return $this->hasMany(AdminMenu::class, 'pmenu');
     }
 
+    public function masterUser()
+    {
+        return $this->belongsTo(MasterUser::class, 'sp_id', 'sp_id');
+    }
+    
 }
