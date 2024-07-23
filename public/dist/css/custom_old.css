@@ -198,8 +198,7 @@ body{
   border-bottom: 0;
 }
 .user_img{
-  width: 30px;
-  height: 30px;
+  max-width: 30px;
   margin-right: 8px;
   border-radius: 3px
 }
@@ -457,9 +456,8 @@ label:not(.form-check-label):not(.custom-file-label){
 .tab_box{
   position: relative;
   background: #37B663;
-  padding: 5px 10px !important;
+  padding: 10px !important;
   border-radius: 5px;
-  justify-content: center;
 }
 .tab_panal .nav-pills .nav-link {
   color: #fff;
@@ -496,7 +494,7 @@ label:not(.form-check-label):not(.custom-file-label){
   border: 1px solid #37B663;
 }
 .tab_panal .nav-pills li{
-  margin: 5px;
+  margin: 0px 5px;
 }
 .dataTables_wrapper .table thead th{
   border-bottom: 0;
@@ -817,6 +815,7 @@ label {
   position: relative;
   width: 100%;
   text-align: center;
+  padding: 15px 15px;
 }
 .detaises_icon{
   position: relative;
@@ -955,7 +954,6 @@ label {
   background: #fff;
   padding: 8px;
   border-radius: 7px;
-  height: max-content;
 }
 .invoice_report_icon{
   position: relative;
@@ -1282,12 +1280,12 @@ a:hover {
   padding: .60rem .75rem;
   font-weight: bold;
 }
-.plan_access_table .form-check-input{
+.form-check-input{
   position: relative;
   margin-top: 0;
   margin-left: 0;
 }
-.plan_access_table .form-check{
+.form-check{
   padding-left: 0;
 }
 .report_row {
@@ -1295,14 +1293,6 @@ a:hover {
   padding: .60rem .75rem;
   vertical-align: middle;
   border-bottom: 1px solid #dee2e6;
-}
-.report_row .form-check-input{
-  position: relative;
-  margin-top: 0;
-  margin-left: 0;
-}
-.report_row .form-check{
-  padding-left: 0;
 }
 .profile .nav-tabs.flex-column .nav-item.show .nav-link, .nav-tabs.flex-column .nav-link.active{
   color: #fff;
@@ -1387,6 +1377,7 @@ display:none;
   width: 50%;
   color: #242424;
   padding: 10px 15px 10px 15px;
+  white-space: nowrap;
 }
 .payments-setup.bs-stepper .step-trigger{
   padding: 0;
@@ -1460,7 +1451,7 @@ display:none;
 .bank_check_box{
   position: relative;
   border-bottom: 1px solid #cfcfcf;
-  padding: 1rem 1rem 1rem 2rem;
+  padding: 1rem;
 }
 .card-header-bank{
   background: #EDF1F3;
@@ -1611,15 +1602,10 @@ display:none;
 }
 .detaisesarrow_icon{
   position: relative;
-}
-
-.bs-stepper-header{
-  overflow: auto;
   width: 100%;
 }
-.input-group{
-  flex-wrap: unset;
-}
+
+
 
 /*--------------------------------------------------------------
 # Responsive Css
@@ -1697,10 +1683,6 @@ display:none;
     font-size: 12px;
     padding: 5px 7px;
   }
-  .selectall_icon_btn{
-    font-size: 11px;
-    padding: 5px 7px;
-  }
   .tab_panal .nav-pills .nav-link{
     padding: 5px 10px;
     font-size: 14px;
@@ -1765,514 +1747,9 @@ display:none;
     padding: 10px 50px;
     font-size: 16px;
   }
-  /* .input-group{
-    width: 150px;
-  } */
 }
-@media only screen and (min-width: 992px) and (max-width: 1199px){
-  .main-sidebar, .main-sidebar::before{
-    width: 250px;
-  }
-  .layout-fixed .brand-link {
-    width: 250px;
-    text-align: center;
-  }
-  .sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before {
-    margin-left: -250px;
-  }
-  body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
-    transition: margin-left .3s ease-in-out;
-    margin-left: 250px;
-  }
-  .welcome_text{
-    font-size: 20px;
-  }
-  .small-box p{
-    font-size: 15px;
-  }
-  .small-box .total_text {
-    font-size: 16px;
-  }
-  .col-lg-2 .small-box .customer_total{
-    font-size: 36px;
-  }
-  .welcome_img {
-    top: auto;
-    bottom: 5px;
-    max-width: 105px;
-  }
-  .small-box{
-    height: 150px;
-    padding: 15px 10px;
-  }
-  .small_box_icon{
-    max-width: 44px;
-  }
-  .card-title{
-    font-size: 16px;
-  }
-  .dashboard_table thead th{
-    font-size: 15px;
-  }
-  .dashboard_table td{
-    font-size: 14px;
-  }
-  .dataTables_wrapper .table thead th{
-    font-size: 15px;
-  }
-  .dataTables_wrapper .table td{
-    font-size: 14px;
-  }
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination li{
-    font-size: 14px;
-  }
-  .action_btn{
-    font-size: 12px;
-    padding: 5px 7px;
-  }
-  .selectall_icon_btn{
-    font-size: 11px;
-    padding: 5px 7px;
-  }
-  .tab_panal .nav-pills .nav-link{
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  .add_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .add_btn_br{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .editcolum_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .additem_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .content-header h1 {
-    font-size: 22px;
-  }
-  .upload_text{
-    font-size: 14px;
-  }
-  .detaises_icon{
-    width: 35px;
-  }
-  .refersh_text{
-    font-size: 16px;
-  }
-  .reset_icon_img{
-    font-size: 14px;
-  }
-  .reset_icon{
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-  }
-  .invoice_count_box{
-    padding: 10px;
-  }
-  .col-invoice-box{
-    flex: 0 0 50%;
-    max-width: 50%;
-    margin: 15px 0px;
-  }
-  .company_business_name{
-    font-size: 18px;
-  }
-  .font_18{
-    font-size: 16px;
-  }
-  .bank_name_text{
-    font-size: 16px;
-  }
-  .bank_select_box {
-    padding: 20px 9px;
-  }
-  .business_type_box{
-    padding: 10px 50px;
-    font-size: 16px;
-  }
-  .upload_icon_img{
-    width: 30px;
-  }
-  .add_customer_text{
-    font-size: 14px;
-  }
-  .add_customer_box{
-    padding: 10px;
-  }
-  label:not(.form-check-label):not(.custom-file-label){
-    font-size: 15px;
-  }
-  .col-bank-box{
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-  .col-mdash-box{
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-  .col-1024{
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-  .col-2-1024{
-    flex: 0 0 16.666667%;
-    max-width: 16.666667%;
-  }
-  .col-3-1024{
-    flex: 0 0 25%;
-    max-width: 25%;
-  }
-  .col-4-1024{
-    flex: 0 0 33.333333%;
-    max-width: 33.333333%;
-  }
-  .col-5-1024{
-    flex: 0 0 41.666667%;
-    max-width: 41.666667%;
-  }
-  .compare_date{
-    font-size: 16px;
-  }
-  .update_report_btn{
-    padding: 8px;
-  }
-}
-@media only screen and (min-width: 768px) and (max-width: 991px){
-  .welcome_text{
-    font-size: 20px;
-  }
-  .small-box p{
-    font-size: 15px;
-  }
-  .small-box .total_text {
-    font-size: 16px;
-  }
-  .col-lg-2 .small-box .customer_total{
-    font-size: 36px;
-  }
-  .welcome_img {
-    top: auto;
-    bottom: 5px;
-    max-width: 105px;
-  }
-  .small-box{
-    height: 150px;
-    padding: 15px 10px;
-  }
-  .small_box_icon{
-    max-width: 44px;
-  }
-  .card-title{
-    font-size: 16px;
-  }
-  .dashboard_table thead th{
-    font-size: 15px;
-  }
-  .dashboard_table td{
-    font-size: 14px;
-  }
-  .dataTables_wrapper .table thead th{
-    font-size: 15px;
-  }
-  .dataTables_wrapper .table td{
-    font-size: 14px;
-  }
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination li{
-    font-size: 14px;
-  }
-  .action_btn{
-    font-size: 12px;
-    padding: 5px 7px;
-  }
-  .selectall_icon_btn{
-    font-size: 11px;
-    padding: 5px 7px;
-  }
-  .tab_panal .nav-pills .nav-link{
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  .add_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .add_btn_br{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .update_report_btn{
-    padding: 8px;
-  }
-  .editcolum_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .additem_btn{
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  .content-header h1 {
-    font-size: 22px;
-  }
-  .upload_text{
-    font-size: 14px;
-  }
-  .detaises_icon{
-    width: 35px;
-  }
-  .refersh_text{
-    font-size: 16px;
-  }
-  .reset_icon_img{
-    font-size: 14px;
-  }
-  .reset_icon{
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-  }
-  .invoice_count_box{
-    padding: 10px;
-  }
-  .col-invoice-box{
-    flex: 0 0 50%;
-    max-width: 50%;
-    margin: 15px 0px;
-  }
-  .company_business_name{
-    font-size: 18px;
-  }
-  .font_18{
-    font-size: 16px;
-  }
-  .bank_name_text{
-    font-size: 16px;
-  }
-  .bank_select_box {
-    padding: 20px 9px;
-  }
-  .business_type_box{
-    padding: 10px 50px;
-    font-size: 16px;
-  }
-  .upload_icon_img{
-    width: 30px;
-  }
-  .add_customer_text{
-    font-size: 14px;
-  }
-  .add_customer_box{
-    padding: 10px;
-  }
-  .viewdetails_btn{
-    padding: 7px 8px;
-  }
-  .payments-setup .bs-stepper-circle {
-    width: 36px;
-    height: 36px;
-    padding: 5px 5px;
-    font-size: 18px;
-  }
-  .payment_title{
-    font-size: 16px;
-  }
-  .compare_date{
-    font-size: 16px;
-  }
-}
-@media only screen and (max-width: 767px){
-  .welcome_img{
-    position: relative;
-  }
-  .small-box{
-    height: auto;
-  }
-  .welcome_text{
-    font-size: 20px;
-  }
-  .small-box p{
-    font-size: 15px;
-  }
-  .small-box .total_text {
-    font-size: 16px;
-  }
-  .col-lg-2 .small-box .customer_total{
-    font-size: 36px;
-  }
-  .welcome_img {
-    top: auto;
-    bottom: 5px;
-    max-width: 100%;
-    margin-top: 10px;
-  }
-  .small-box{
-    padding: 15px 10px;
-  }
-  .small_box_icon{
-    max-width: 44px;
-  }
-  .card-title{
-    font-size: 16px;
-  }
-  .dashboard_table thead th{
-    font-size: 15px;
-  }
-  .dashboard_table td{
-    font-size: 14px;
-  }
-  .dataTables_wrapper .table thead th{
-    font-size: 15px;
-  }
-  .dataTables_wrapper .table td{
-    font-size: 14px;
-  }
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination li{
-    font-size: 14px;
-  }
-  .action_btn{
-    font-size: 12px;
-    padding: 5px 7px;
-  }
-  .selectall_icon_btn{
-    font-size: 11px;
-    padding: 5px 7px;
-  }
-  .tab_panal .nav-pills .nav-link{
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  .add_btn{
-    padding: 8px;
-    font-size: 14px;
-  }
-  .add_btn_br{
-    padding: 8px;
-    font-size: 14px;
-    margin-right: 7px;
-  }
-  .editcolum_btn{
-    padding: 8px;
-    font-size: 14px;
-  }
-  .additem_btn{
-    padding: 8px;
-    font-size: 14px;
-  }
-  .content-header h1 {
-    font-size: 22px;
-  }
-  .upload_text{
-    font-size: 14px;
-  }
-  .detaises_icon{
-    width: 35px;
-  }
-  .refersh_text{
-    font-size: 16px;
-  }
-  .reset_icon_img{
-    font-size: 14px;
-  }
-  .reset_icon{
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-  }
-  .invoice_count_box{
-    padding: 10px;
-  }
-  .col-invoice-box{
-    margin: 15px 0px;
-  }
-  .company_business_name{
-    font-size: 18px;
-  }
-  .font_18{
-    font-size: 16px;
-  }
-  .bank_name_text{
-    font-size: 16px;
-  }
-  .bank_select_box {
-    padding: 20px 9px;
-  }
-  .business_type_box{
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-  .in_contact_title{
-    font-size: 16px;
-  }
-  .modal_sub_title{
-    font-size: 16px;
-  }
-  .payments-setup .bs-stepper-circle {
-    width: 36px;
-    height: 36px;
-    padding: 5px 5px;
-    font-size: 18px;
-  }
-  .payment_title{
-    font-size: 16px;
-  }
-  div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-    justify-content: center;
-  }
-  .dash_board_icon{
-    margin: auto;
-  }
-}
-@media screen and (max-width: 577px){
-  .profit-loss-report-amount .col-auto {
-    -ms-flex: 0 0 100%;
-    flex: 0 0 100%;
-    width: 100%;
-    max-width: 100%;
-  }
-  .minimize_icon{
-    margin: 10px auto;
-  }
-  .text_h4{
-    font-size: 18px;
-  }
-  .text_h5{
-    font-size: 16px;
-  }
-  .business_type_box{
-    padding: 10px;
-  }
-  .payments-setup.bs-stepper .step-trigger{
-    font-size: 16px;
-  }
-}
-@media screen and (max-width: 479px){
-  .selectall_icon_btn{
-    margin: 0px 4px;
-  }
-  .add_new_account_text {
-    font-size: 16px;
-  }
-  .modal-title{
-    font-size: 16px;
-  }
-  .outstabal-box{
-    text-align: center;
-  }
-  .outstandingbalancetotal_text{
-    padding-left: 0;
-  }
-}
-@media screen and (max-width: 375px){
-  .profile_details_box td {
-    font-size: 14px;
-    padding: 10px 10px 10px 10px;
-  } 
-}
+@media only screen and (min-width: 992px) and (max-width: 1199px){}
+@media only screen and (min-width: 768px) and (max-width: 991px){}
+@media only screen and (max-width: 767px){}
+@media screen and (max-width: 479px){}
+

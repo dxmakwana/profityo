@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Cookie;
 class LoginController extends Controller
 {
     //
+    
+
     public function create(): View
     {
         // dd('hiii');
@@ -34,6 +36,18 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::MASTER_HOME);
+    }
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        // dd('hiii');
+        Auth::guard('masteradmins')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/business/login/');
     }
 
 }

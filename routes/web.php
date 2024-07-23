@@ -7,6 +7,14 @@ use App\Http\Controllers\Auth\MasterAdmin\RegisterController;
 use App\Http\Controllers\Auth\MasterAdmin\LoginController;
 use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordResetLinkController;
 use App\Http\Controllers\Auth\MasterAdmin\MasterNewPasswordController;
+use App\Http\Controllers\Auth\MasterAdmin\MasterEmailVerificationPromptController;
+use App\Http\Controllers\Auth\MasterAdmin\MasterEmailVerificationNotificationController;
+use App\Http\Controllers\Masteradmin\HomeController;
+use App\Http\Controllers\Masteradmin\ProfilesController;
+use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +30,7 @@ use App\Http\Controllers\Auth\MasterAdmin\MasterNewPasswordController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
 global $adminRoute;
 $adminRoute = config('global.superAdminURL');
 $busadminRoute = config('global.businessAdminURL');
@@ -57,7 +66,7 @@ Route::group(['prefix' => $adminRoute], function () {
 Route::group(['prefix' => $busadminRoute], function () {
     
     Route::middleware('masteradmin')->group(function () {
-
+        //login and register
         Route::get('login', [LoginController::class, 'create'])->name('business.login');
         Route::get('register', [RegisterController::class, 'create'])->name('business.register');
         Route::post('register', [RegisterController::class, 'store'])->name('business.register.store');
@@ -70,15 +79,27 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.reset');
         Route::post('reset-password', [MasterNewPasswordController::class, 'store'])
                         ->name('business.password.store');
-
-        Route::middleware('auth_master')->group(function () {
-
-            Route::get('/dashboard', function () {
-                return view('auth_master.dashboard');
-            })->middleware(['auth_master', 'verified'])->name('dashboard');
-
-        });
+        
     });
+    Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
+    Route::middleware(['auth_master'])->group(function () {
+
+        //profile
+        Route::get('/dashboard', [HomeController::class, 'create'])->name('business.home');
+        Route::get('/profile', [ProfilesController::class, 'edit'])->name('business.profile.edit');
+        Route::patch('/profile', [ProfilesController::class, 'update'])->name('business.profile.update');
+        Route::delete('/profile', [ProfilesController::class, 'destroy'])->name('business.profile.destroy');
+        Route::get('states/{countryId}', [ProfilesController::class, 'getStates']);
+        Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
+        
+
+    });
+    
+    
+    
+       
+
+   
 });
 
 require __DIR__.'/auth.php';

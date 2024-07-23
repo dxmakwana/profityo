@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('user_image')->nullable();
             $table->string('user_business_name')->nullable();
             $table->string('buss_unique_id')->nullable();
+            $table->integer('country_id')->nullable();
+            $table->integer('state_id')->nullable();
+            $table->string('user_city_name')->nullable();
+            $table->string('user_pincode')->nullable();
             $table->rememberToken();
             $table->integer('sp_id')->nullable();
             $table->timestamps('sp_expiry_date')->nullable();

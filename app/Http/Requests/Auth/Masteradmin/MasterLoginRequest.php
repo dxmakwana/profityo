@@ -43,19 +43,24 @@ class MasterLoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-
+    
         $credentials = $this->only('user_email', 'user_password');
         $user = MasterUser::where('user_email', $credentials['user_email'])->first();
-
+    
         if (! $user || ! Hash::check($credentials['user_password'], $user->user_password)) {
             RateLimiter::hit($this->throttleKey());
-
+    
             throw ValidationException::withMessages([
                 'user_email' => trans('auth.failed'),
             ]);
         }
+    
+        // Log the user in with the 'masteradmins' guard
         Auth::guard('masteradmins')->login($user, $this->boolean('user_remember'));
-
+    
+        // Also log the user in with the second guard, for example 'secondguard'
+        Auth::guard('masteradmins')->setUser($user);
+    
         if ($this->boolean('user_remember')) {
             Cookie::queue(Cookie::make('user_email', $this->input('user_email'), 60 * 24 * 30)); // 30 days
             Cookie::queue(Cookie::make('user_password', $this->input('user_password'), 60 * 24 * 30)); // 30 days
@@ -65,10 +70,10 @@ class MasterLoginRequest extends FormRequest
             Cookie::queue(Cookie::forget('user_password'));
             Cookie::queue(Cookie::forget('user_remember'));
         }
-
-
+    
         RateLimiter::clear($this->throttleKey());
     }
+    
 
     /**
      * Ensure the login request is not rate limited.
