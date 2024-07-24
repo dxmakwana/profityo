@@ -74,8 +74,8 @@ class Controller extends BaseController
                 });
             }
 
-            if (!Schema::hasTable($storeId.'_users_details')){   
-                Schema::create($storeId.'_users_details', function (Blueprint $table) {
+            if (!Schema::hasTable($storeId.'_py_users_details')){   
+                Schema::create($storeId.'_py_users_details', function (Blueprint $table) {
                     $table->increments('users_id');
                     $table->string('users_name')->nullable();
                     $table->string('users_email')->nullable()->unique();
@@ -87,6 +87,23 @@ class Controller extends BaseController
                     $table->timestamps();
                 });
             }
+
+            if (!Schema::hasTable($storeId.'_py_business_details')){   
+                Schema::create($storeId.'_py_business_details', function (Blueprint $table) {
+                    $table->increments('bus_id');
+                    $table->integer('users_id')->nullable()->default(0);
+                    $table->string('bus_company_name')->nullable();
+                    $table->string('bus_image')->nullable()->unique();
+                    $table->integer('state_id')->nullable()->default(0);
+                    $table->integer('country_id')->nullable()->default(0);
+                    $table->string('city_name')->nullable()->unique();
+                    $table->string('zipcode')->nullable()->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->tinyInteger('users_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
         }
     }
 
@@ -100,7 +117,6 @@ class Controller extends BaseController
         if (!$id) {
             return response()->json(['message' => 'ID is required'], 400);
         }
-
         try {
             $this->CreateTable($id);
             return response()->json(['message' => 'Table created or modified successfully.']);

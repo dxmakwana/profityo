@@ -241,4 +241,29 @@
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<p>{{ session('showModal') }}</p>
+@if (session()->has('showModal'))
+ <!-- Bootstrap Modal -->
+    <div class="modal fade show" id="popupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="display: block;">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Notice</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <p>{{ session('showModal') }}</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <a href="#" class="btn btn-primary">Purchase Plan</a>
+              </div>
+          </div>
+      </div>
+    </div>
+@endif
+
  @endsection
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

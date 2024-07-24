@@ -31,7 +31,6 @@ use App\Http\Controllers\Controller;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
 global $adminRoute;
 $adminRoute = config('global.superAdminURL');
 $busadminRoute = config('global.businessAdminURL');
@@ -80,7 +79,7 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.reset');
         Route::post('reset-password', [MasterNewPasswordController::class, 'store'])
                         ->name('business.password.store');
-        
+                
     });
     Route::middleware(['auth_master'])->group(function () {
         
@@ -94,9 +93,13 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
         //create alter database
         Route::get('/create-table', [Controller::class, 'createTableRoute']);
-        
-        //
 
+        //Business Profile
+        Route::get('/business-profile', [ProfilesController::class, 'edit'])->name('business.business.edit');
+
+        // //exp plan or not plan purchase
+        // Route::get('/plan/purchase', [ProfilesController::class, 'purchase'])->name('business.plan.purchase');
+        
     });
     
 });

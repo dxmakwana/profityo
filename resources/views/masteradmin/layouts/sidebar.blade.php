@@ -20,9 +20,15 @@
                 <p>Dashboard</p>
             </a>
           </li>
-         
+          @if(
+            (isset($access['estimates']) && $access['estimates']) || 
+            (isset($access['invoices']) && $access['invoices']) || 
+            (isset($access['payments_setup']) && $access['payments_setup']) || 
+            (isset($access['recurring_invoices']) && $access['recurring_invoices']) || 
+            (isset($access['customer_statements']) && $access['customer_statements']) || 
+            (isset($access['customers']) && $access['customers']) || 
+            (isset($access['product_services_sales']) && $access['product_services_sales']) )
           <li class="nav-item">
-             @if(($access['estimates']) || ($access['invoices']) || ($access['payments_setup']) || ($access['recurring_invoices']) || ($access['customer_statements']) || ($access['customers']) || ($access['product_services_sales']))
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
               <p>
@@ -30,7 +36,6 @@
                 <i class="fas fa-angle-right right"></i>
               </p>
             </a>
-            @endif
             <ul class="nav nav-treeview">
               @if(isset($access['estimates']) && $access['estimates'])
               <li class="nav-item">
@@ -90,9 +95,10 @@
               @endif
             </ul>
           </li>
+          @endif
           
+          @if(isset($access['bills']) || isset($access['vendors']) || isset($access['product_services_purchases']) )
           <li class="nav-item">
-            @if(($access['bills']) || ($access['vendors']) || ($access['product_services_purchases']) )
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
               <p>
@@ -100,7 +106,7 @@
                 <i class="right fas fa-angle-right"></i>
               </p>
             </a>
-            @endif
+            
             <ul class="nav nav-treeview">
               @if(isset($access['bills']) && $access['bills'])
               <li class="nav-item">
@@ -128,8 +134,10 @@
               @endif
             </ul>
           </li>
+          @endif
+
+          @if(isset($access['transections']) || isset($access['reconciliation']) || isset($access['chart_of_accounts']) )
           <li class="nav-item">
-            @if(($access['transections']) || ($access['reconciliation']) || ($access['chart_of_accounts']) )
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-balance-scale"></i>
               <p>
@@ -137,7 +145,7 @@
                 <i class="fas fa-angle-right right"></i>
               </p>
             </a>
-            @endif
+            
             <ul class="nav nav-treeview">
               @if(isset($access['transections']) && $access['transections'])
               <li class="nav-item">
@@ -165,8 +173,11 @@
               @endif
             </ul>
           </li>
+          @endif
+
+          @if(isset($access['connected_accounts']) )
           <li class="nav-item">
-          @if(($access['connected_accounts']) )
+          
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-university"></i>
               <p>
@@ -174,7 +185,7 @@
                 <i class="fas fa-angle-right right"></i>
               </p>
             </a>
-            @endif
+            
             <ul class="nav nav-treeview">
               @if(isset($access['connected_accounts']) && $access['connected_accounts'])
               <li class="nav-item">
@@ -186,8 +197,11 @@
               @endif
             </ul>
           </li> 
+          @endif
+
+          @if(isset($access['employees']) || isset($access['timesheets']))
           <li class="nav-item">
-            @if(($access['employees']) || ($access['timesheets']))
+            
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-file-invoice-dollar"></i>
               <p>
@@ -195,7 +209,7 @@
                 <i class="fas fa-angle-right right"></i>
               </p>
             </a>
-            @endif
+            
             <ul class="nav nav-treeview">
               @if(isset($access['employees']) && $access['employees'])
               <li class="nav-item">
@@ -215,8 +229,11 @@
               @endif
             </ul>
           </li>
+          @endif
+          
+          @if(isset($access['profit_loss_report']) || isset($access['balance_sheet_report']) || isset($access['cash_flow_report']) || isset($access['sales_tax_report']) || isset($access['income_by_customer_report']) || isset($access['aged_receivables_report']) || isset($access['purchases_by_vendor_report']) || isset($access['aged_payables_report']) || isset($access['account_balances_report']) || isset($access['account_transactions_leader_report']) || isset($access['trial_balance_report'])  )
           <li class="nav-item">
-            @if(($access['profit_loss_report']) || ($access['balance_sheet_report']) || ($access['cash_flow_report']) || ($access['sales_tax_report']) || ($access['income_by_customer_report']) || ($access['aged_receivables_report']) || ($access['purchases_by_vendor_report']) || ($access['aged_payables_report']) || ($access['account_balances_report']) || ($access['account_transactions_leader_report']) || ($access['trial_balance_report'])  )
+            
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-chart-bar"></i>
               <p>
@@ -224,7 +241,7 @@
                 <i class="fas fa-angle-right right"></i>
               </p>
             </a>
-            @endif
+            
             <ul class="nav nav-treeview">
               @if(isset($access['profit_loss_report']) && $access['profit_loss_report'])
               <li class="nav-item">
@@ -316,6 +333,8 @@
               @endif
             </ul>
           </li>
+          @endif
+
           <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') ? ' menu-open  side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
@@ -335,7 +354,7 @@
               @endif
               @if(isset($access['business_profile']) && $access['business_profile'])
               <li class="nav-item">
-                <a href="business-profile.html" class="nav-link">
+                <a href="{{ route('business.business.edit') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Business Profile</p>
                 </a>
