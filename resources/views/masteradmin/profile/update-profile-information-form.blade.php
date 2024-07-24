@@ -88,17 +88,16 @@
     <div class="row py-20 px-10">
         <div class="col-md-12 text-center">
             <button type="submit" class="add_btn">{{ __('Save Changes') }}</button>
-
             @if (session('status') === 'profile-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600">{{ __('Profile Updated successfully.') }}</p>
             @endif
-
         </div>
     </div>
 </div>
 </form>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     
     $(document).ready(function() {

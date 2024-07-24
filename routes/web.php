@@ -95,7 +95,8 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/create-table', [Controller::class, 'createTableRoute']);
 
         //Business Profile
-        Route::get('/business-profile', [ProfilesController::class, 'edit'])->name('business.business.edit');
+        Route::get('/business-profile', [ProfilesController::class, 'businessProfile'])->name('business.business.edit');
+        Route::patch('/business-profile-update', [ProfilesController::class, 'businessProfileUpdate'])->name('business.business.update');
 
         // //exp plan or not plan purchase
         // Route::get('/plan/purchase', [ProfilesController::class, 'purchase'])->name('business.plan.purchase');

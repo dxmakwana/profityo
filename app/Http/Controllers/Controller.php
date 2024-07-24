@@ -91,15 +91,20 @@ class Controller extends BaseController
             if (!Schema::hasTable($storeId.'_py_business_details')){   
                 Schema::create($storeId.'_py_business_details', function (Blueprint $table) {
                     $table->increments('bus_id');
-                    $table->integer('users_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
                     $table->string('bus_company_name')->nullable();
-                    $table->string('bus_image')->nullable()->unique();
+                    $table->string('bus_image')->nullable();
                     $table->integer('state_id')->nullable()->default(0);
                     $table->integer('country_id')->nullable()->default(0);
-                    $table->string('city_name')->nullable()->unique();
-                    $table->string('zipcode')->nullable()->unique();
-                    $table->integer('id')->nullable()->default(0);
-                    $table->tinyInteger('users_status')->default(0)->nullable();
+                    $table->string('city_name')->nullable();
+                    $table->string('zipcode')->nullable();
+                    $table->string('bus_address1')->nullable();
+                    $table->string('bus_address2')->nullable();
+                    $table->string('bus_phone')->nullable();
+                    $table->string('bus_mobile')->nullable();
+                    $table->string('bus_website')->nullable();
+                    $table->integer('bus_currency')->nullable()->default(0);
+                    $table->tinyInteger('bus_status')->default(0)->nullable();
                     $table->timestamps();
                 });
             }

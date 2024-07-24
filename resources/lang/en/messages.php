@@ -16,6 +16,9 @@ return [
             'send_success' => 'Your password has been reset.',
             'send_error' => 'Invalid token!',
         ],
+        'business-profile' => [
+            'send_success' => 'Business Profile Updated successfully.',
+        ]
     ]
     
 ];
