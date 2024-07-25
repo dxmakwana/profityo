@@ -335,7 +335,7 @@
           </li>
           @endif
 
-          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') ? ' menu-open  side_shape' : '' }}">
+          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') || request()->is($busadminRoutes.'/business-profile*') ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
               <p>
@@ -354,7 +354,7 @@
               @endif
               @if(isset($access['business_profile']) && $access['business_profile'])
               <li class="nav-item">
-                <a href="{{ route('business.business.edit') }}" class="nav-link">
+                <a href="{{ route('business.business.edit') }}" class="nav-link {{ request()->is($busadminRoutes.'/business-profile*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Business Profile</p>
                 </a>
