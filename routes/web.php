@@ -13,8 +13,8 @@ use App\Http\Controllers\Masteradmin\HomeController;
 use App\Http\Controllers\Masteradmin\ProfilesController;
 use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordController;
 use App\Http\Controllers\Controller;
-
-
+use App\Http\Controllers\superadmin\HomesController;
+use App\Http\Controllers\Masteradmin\UserRoleController;
 
 
 /*
@@ -37,10 +37,9 @@ $busadminRoute = config('global.businessAdminURL');
 
 Route::group(['prefix' => $adminRoute], function () {
   
-    Route::middleware('auth')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('auth.dashboard');
-        })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::middleware(['auth'])->group(function () {
+     
+        Route::get('/dashboard', [HomesController::class, 'create'])->middleware(['auth', 'verified'])->name('dashboard');
     
         //profile
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -98,8 +97,15 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/business-profile', [ProfilesController::class, 'businessProfile'])->name('business.business.edit');
         Route::patch('/business-profile-update', [ProfilesController::class, 'businessProfileUpdate'])->name('business.business.update');
 
+        //Log Activity
+        Route::get('/logActivity', [ProfilesController::class, 'logActivity'])->name('business.masterlog.index');
+        
         // //exp plan or not plan purchase
         // Route::get('/plan/purchase', [ProfilesController::class, 'purchase'])->name('business.plan.purchase');
+        
+        //User Role
+        Route::get('/role', [UserRoleController::class, 'index'])->name('business.role.index');
+        Route::get('/add-role', [UserRoleController::class, 'create'])->name('business.role.create');
         
     });
     

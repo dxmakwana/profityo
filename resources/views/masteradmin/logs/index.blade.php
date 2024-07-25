@@ -1,42 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Profityo | View All Business</title>
-  @include('layouts.headerlink')
-</head>
-
-<body class="hold-transition sidebar-mini layout-fixed">
-  <div class="wrapper">
-
-    @include('layouts.navigation')
-    @include('layouts.sidebar')
-
-
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <div class="content-header">
+@extends('masteradmin.layouts.app')
+<title>Log Activity | Profityo</title>
+@section('content')
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2 align-items-center">
+          <div class="col-sm-12">
+            <h1 class="m-0">{{ __("User Role") }}Log Activity</h1>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
+              <li class="breadcrumb-item active">Log Activity</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content px-10">
         <div class="container-fluid">
-          <div class="row mb-2 align-items-center">
-            <div class="col-sm-6">
-              <h1 class="m-0">Log Activity</h1>
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Log Activity</li>
-              </ol>
-            </div><!-- /.col -->
-            
-          </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-      </div>
-      <!-- /.content-header -->
-      <!-- Main content -->
-      <section class="content px-10">
-        <div class="container-fluid">
-         
+          
           <!-- Main row -->
           <div class="card px-20">
             <div class="card-body1">
@@ -77,21 +62,17 @@
           <!-- /.row (main row) -->
         </div><!-- /.container-fluid -->
       </section>
-      <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
-
-    <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark">
-      <!-- Control sidebar content goes here -->
-    </aside>
-    <!-- /.control-sidebar -->
-    
+    <!-- /.content --> 
   </div>
-  <!-- ./wrapper -->
+  <!-- /.content-wrapper -->
 
-  @include('layouts.footerlink')
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here --> 
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
 
-</body>
 
-</html>
+@endsection

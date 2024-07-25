@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 $adminRoute = config('global.superAdminURL');
 // dd($adminRoute);
 
-Route::group(['namespace' => 'App\Http\Controllers\Auth', 'prefix' => $adminRoute], function() {
+Route::group(['prefix' => $adminRoute], function () {
    
     Route::middleware('guest')->group(function () {
 

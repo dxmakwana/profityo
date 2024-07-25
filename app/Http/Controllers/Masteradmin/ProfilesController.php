@@ -14,6 +14,7 @@ use App\Http\Requests\MasterProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\BusinessDetails;
+
 class ProfilesController extends Controller
 {
     //
@@ -54,7 +55,7 @@ class ProfilesController extends Controller
         $user->user_image = $this->handleImageUpload($request, $user->user_image, 'masteradmin/profile_image');
 
         $user->save();
-
+        \LogActivity::addToLog('Master Admin Profile is Edited.');
         return Redirect::route('business.profile.edit')->with('status', 'profile-updated');
     }
 
@@ -129,10 +130,24 @@ class ProfilesController extends Controller
             $validatedData['bus_currency'] = $currency_id->id;
             BusinessDetails::create($validatedData);
         }
+        \LogActivity::addToLog('Master Admin Business Profile is Edited.');
 
         return redirect()->route('business.business.edit')->with('business-update', __('messages.masteradmin.business-profile.send_success'));
     }
 
-    
+    public function logActivity()
+    {
+        $user = Auth::guard('masteradmins')->user();
+        if($user)
+        {
+            $admin_user = MasterUser::where('user_id','=',$user->id);
+            
+            $logs = \LogActivity::logActivityLists();
+            
+                return view('masteradmin.logs.index')
+                                            ->with('admin_user',$admin_user)
+                                            ->with('logs',$logs);
+        }
+    }
 
 }

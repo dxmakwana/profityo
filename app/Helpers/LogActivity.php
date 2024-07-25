@@ -11,7 +11,16 @@ class LogActivity
 {
     public static function addToLog($subject)
     {	
-		$user = Auth::user();
+        if (Auth::guard('masteradmins')->check()) {
+            $user = Auth::guard('masteradmins')->user();
+        } elseif (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+        } else {
+            // Handle case where no user is authenticated
+            return;
+        }
+
+		
     	$log = [];
     	$log['subject'] = $subject;
     	$log['url'] = Request::fullUrl();

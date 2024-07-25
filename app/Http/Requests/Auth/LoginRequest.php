@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class LoginRequest extends FormRequest
 {
@@ -41,14 +43,23 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-
+    
+        $credentials = $this->only('email', 'password');
+        $user = User::where('email', $credentials['email'])->first();
+    
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             RateLimiter::hit($this->throttleKey());
-
+    
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
+    
+        // Log the user in with the 'masteradmins' guard
+        Auth::guard('web')->login($user, $this->boolean('remember'));
+    
+        // Also log the user in with the second guard, for example 'secondguard'
+        Auth::guard('web')->setUser($user);
 
         if ($this->boolean('remember')) {
             Cookie::queue(Cookie::make('email', $this->input('email'), 60 * 24 * 30)); // 30 days

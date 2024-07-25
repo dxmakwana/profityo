@@ -36,7 +36,7 @@ class MasterPasswordController extends Controller
     // Hash and update the new password
     $user->user_password = Hash::make($request->user_password);
     $user->save();
-
+    \LogActivity::addToLog('Master Admin Password changed is Updated.');
     // Redirect back with status message
     return back()->with('status', 'password-updated');
     }

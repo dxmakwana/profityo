@@ -335,7 +335,7 @@
           </li>
           @endif
 
-          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') || request()->is($busadminRoutes.'/business-profile*') ? 'menu-open side_shape' : '' }}">
+          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') || request()->is($busadminRoutes.'/business-profile*') || request()->is($busadminRoutes.'/logActivity*') || request()->is($busadminRoutes.'/user-role-details*') ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
               <p>
@@ -370,7 +370,7 @@
               @endif
               @if(isset($access['roles']) && $access['roles'])
               <li class="nav-item">
-                <a href="user-role.html" class="nav-link">
+                <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
@@ -384,6 +384,14 @@
                 </a>
               </li>
               @endif
+
+              <li class="nav-item">
+                <a href="{{ route('business.masterlog.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/logActivity*') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Log Activity</p>
+                </a>
+              </li>
+              
             </ul>
           </li>
 
