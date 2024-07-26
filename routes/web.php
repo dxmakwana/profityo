@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\MasterAdmin\MasterPasswordController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\superadmin\HomesController;
 use App\Http\Controllers\Masteradmin\UserRoleController;
+use App\Http\Controllers\Masteradmin\SalesTaxController;
 
 
 /*
@@ -105,11 +106,20 @@ Route::group(['prefix' => $busadminRoute], function () {
         
         //User Role
         Route::get('user-role-details', [UserRoleController::class, 'index'])->name('business.role.index');
-        Route::get('add', [UserRoleController::class, 'create'])->name('business.role.create');
-        Route::post('add', [UserRoleController::class, 'store'])->name('business.role.store');
-        Route::get('edit/{role}', [UserRoleController::class, 'edit'])->name('business.role.edit');
-        Route::patch('update/{role}', [UserRoleController::class, 'update'])->name('business.role.update');
-        Route::delete('destroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
+        Route::get('rolecreate', [UserRoleController::class, 'create'])->name('business.role.create');
+        Route::post('roleadd', [UserRoleController::class, 'store'])->name('business.role.store');
+        Route::get('roleedit/{role}', [UserRoleController::class, 'edit'])->name('business.role.edit');
+        Route::patch('roleupdate/{role}', [UserRoleController::class, 'update'])->name('business.role.update');
+        Route::delete('roledestroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
+
+        // add by dx....
+        Route::get('/salestax', [SalesTaxController::class, 'index'])->name('business.salestax.index');
+        Route::get('/taxcreate', [SalesTaxController::class, 'create'])->name('business.salestax.create');
+        Route::post('/store', [SalesTaxController::class, 'store'])->name('business.salestax.store');
+        Route::get('/taxedit/{SalesTax}', [SalesTaxController::class, 'edit'])->name('business.salestax.edit');
+        Route::patch('/taxupdate/{SalesTax}', [SalesTaxController::class, 'update'])->name('business.salestax.update');
+        Route::delete('/taxdestroy/{salestax}', [SalesTaxController::class, 'destroy'])->name('business.salestax.destroy');
+        // end by dx.....
         
     });
     

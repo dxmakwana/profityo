@@ -382,7 +382,7 @@
               @endif
               @if(isset($access['roles']) && $access['roles'])
               <li class="nav-item">
-                <a href="sales-taxes.html" class="nav-link">
+                <a href="{{ route('business.salestax.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Sales Taxes</p>
                 </a>

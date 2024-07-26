@@ -109,6 +109,25 @@ class Controller extends BaseController
                 });
             }
 
+            // add by dx.......
+            if (!Schema::hasTable($storeId.'_py_sales_tax')){   
+                Schema::create($storeId.'_py_sales_tax', function (Blueprint $table) {
+                    $table->increments('tax_id');
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('tax_name')->nullable();
+                    $table->string('tax_abbreviation')->nullable();
+                    $table->integer('tax_number')->nullable();
+                    $table->string('tax_desc')->nullable();
+                    $table->string('tax_number_invoices')->nullable();
+                    $table->string('tax_recoverable')->nullable();
+                    $table->string('tax_compound')->nullable();
+                    $table->integer('tax_rate')->nullable()->default(0);
+                    $table->tinyInteger('tax_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+            // end by dx....
+
         }
     }
 
