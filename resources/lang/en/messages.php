@@ -3,10 +3,10 @@
 return [
     'admin' => [
         'plan' => [
-            'add_plan_success' => 'Plan created successfully',
-            'edit_plan_success' => 'Plan updated successfully',
-            'delete_plan_success' => 'Plan deleted successfully',
-            'roll_plan_access_success' => 'Plan access updated successfully'
+            'add_plan_success' => 'Plan created successfully.',
+            'edit_plan_success' => 'Plan updated successfully.',
+            'delete_plan_success' => 'Plan deleted successfully.',
+            'roll_plan_access_success' => 'Plan access updated successfully.'
         ],
     ],
     'masteradmin' => [
@@ -18,6 +18,11 @@ return [
         ],
         'business-profile' => [
             'send_success' => 'Business Profile Updated successfully.',
+        ],
+        'user-role' => [
+            'add_role_success' => 'User role created successfully.',
+            'delete_role_success' => 'User role deleted successfully.',
+            'edit_role_success' => 'User role updated successfully.',
         ]
     ]
     

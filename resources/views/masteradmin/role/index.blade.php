@@ -26,7 +26,29 @@
     <!-- Main content -->
     <section class="content px-10">
         <div class="container-fluid">
-          
+          @if(Session::has('role-add'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('role-add') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('role-add');
+            @endphp
+          @endif
+          @if(Session::has('role-delete'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('role-delete') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('role-delete');
+            @endphp
+          @endif
+
           <!-- Main row -->
           <div class="card px-20">
             <div class="card-body1">
@@ -42,15 +64,33 @@
                         @if (count($roles) > 0)
                             @foreach ($roles as $role)
                                 <tr>
-                                    <td>{{ $role->role_name }}</td>
-                                    <td class="text-right">
-                                        <a href="{{ route('plans.planrole',$role->role_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
-                                        <a href="{{ route('plans.edit',$role->role_name) }}"><i
-                                        class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
-                                        <a data-toggle="modal" data-target="#deletesubscription-plans"><i
-                                        class="fas fa-solid fa-trash delete_icon_grid"></i></a>
-                                        </td>
+                                  <td>{{ $role->role_name }}</td>
+                                  <td class="text-right">
+                                    <a href="{{ route('business.role.edit',$role->role_id) }}"><i
+                                    class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                    <a data-toggle="modal" data-target="#delete-role-modal-{{ $role->role_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                                  </td>
                                 </tr>
+                                
+                                <div class="modal fade" id="delete-role-modal-{{ $role->role_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                                  <div class="modal-content">
+                                    <form id="delete-plan-form" action="{{ route('business.role.destroy', ['role' => $role->role_id]) }}" method="POST">
+                                      @csrf
+                                      @method('DELETE')
+                                      <div class="modal-body pad-1 text-center">
+                                        <i class="fas fa-solid fa-trash delete_icon"></i>
+                                        <p class="company_business_name px-10"><b>Delete Subscription Plans</b></p>
+                                        <p class="company_details_text px-10">Are You Sure You Want to Delete This plan?</p>
+                                        <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="delete_btn px-15">Delete</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
                             @endforeach    
                         @else
                             <tr class="odd"><td valign="top" colspan="7" class="dataTables_empty">No records found</td></tr>

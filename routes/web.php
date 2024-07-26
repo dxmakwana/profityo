@@ -104,8 +104,12 @@ Route::group(['prefix' => $busadminRoute], function () {
         // Route::get('/plan/purchase', [ProfilesController::class, 'purchase'])->name('business.plan.purchase');
         
         //User Role
-        Route::get('/role', [UserRoleController::class, 'index'])->name('business.role.index');
-        Route::get('/add-role', [UserRoleController::class, 'create'])->name('business.role.create');
+        Route::get('user-role-details', [UserRoleController::class, 'index'])->name('business.role.index');
+        Route::get('add', [UserRoleController::class, 'create'])->name('business.role.create');
+        Route::post('add', [UserRoleController::class, 'store'])->name('business.role.store');
+        Route::get('edit/{role}', [UserRoleController::class, 'edit'])->name('business.role.edit');
+        Route::patch('update/{role}', [UserRoleController::class, 'update'])->name('business.role.update');
+        Route::delete('destroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
         
     });
     

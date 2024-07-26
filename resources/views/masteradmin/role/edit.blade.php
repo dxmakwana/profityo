@@ -1,5 +1,5 @@
 @extends('masteradmin.layouts.app')
-<title>New User Role | Profityo</title>
+<title>Edit User Role | Profityo</title>
 @section('content')
 
 <!-- Content Wrapper. Contains page content -->
@@ -9,10 +9,10 @@
       <div class="container-fluid">
         <div class="row mb-2 align-items-center justify-content-between">
           <div class="col-auto">
-            <h1 class="m-0">{{ __("New User Role") }}</h1>
+            <h1 class="m-0">{{ __("Edit User Role") }}</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-              <li class="breadcrumb-item active">{{ __("New User Role") }}</li>
+              <li class="breadcrumb-item active">{{ __("Edit User Role") }}</li>
             </ol>
           </div><!-- /.col -->
           <div class="col-auto">
@@ -28,14 +28,27 @@
     <!-- Main content -->
     <section class="content px-10">
       <div class="container-fluid">
+        @if(Session::has('role-edit'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ Session::get('role-edit') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            @php
+            Session::forget('role-edit');
+            @endphp
+        @endif
+
         <!-- card -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">New User Role</h3>
+            <h3 class="card-title">Edit User Role</h3>
           </div>
           <!-- /.card-header -->
-          <form method="POST" action="{{ route('business.role.store') }}">
+          <form method="POST" action="{{ route('business.role.update', ['role' => $role->role_id]) }}">
           @csrf
+          @method('patch')
           <div class="card-body2">
             <div class="row pad-5">
               <div class="col-md-12">
@@ -43,7 +56,7 @@
                   <label for="role_name">Role Name</label>
                   <input type="text" class="form-control @error('role_name') is-invalid @enderror"
                         id="role_name" name="role_name" placeholder="Enter Role Name"
-                        value="{{ old('role_name') }}" />
+                        value="{{ old('role_name', $role->role_name) }}" />
                     @error('role_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

@@ -370,7 +370,11 @@
               @endif
               @if(isset($access['roles']) && $access['roles'])
               <li class="nav-item">
-                <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') ? 'active' : '' }}">
+                <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') || 
+                             request()->is($busadminRoutes.'/add*') || 
+                             request()->is($busadminRoutes.'/edit/*') || 
+                             request()->is($busadminRoutes.'/update/*') || 
+                             request()->is($busadminRoutes.'/destroy/*') ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
