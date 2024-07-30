@@ -24,10 +24,10 @@ class UserController extends Controller
         return view('masteradmin.userdetails.index')->with('userdetail', $userdetail);
     }
     public function create(): View
-{
-    $roles = UserRole::all(); // Fetch all roles from the user_role table
-    return view('masteradmin.userdetails.add', compact('roles'));
-}
+    {
+        $roles = UserRole::all(); // Fetch all roles from the user_role table
+        return view('masteradmin.userdetails.add', compact('roles'));
+    }
     
     public function store(Request $request)
     {

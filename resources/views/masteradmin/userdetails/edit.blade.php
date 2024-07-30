@@ -80,9 +80,9 @@
                                 <div class="form-group">
                                     <label>User Role</label>
                                     <select class="form-control from-select" name="role_id" style="width: 100%;">
-                                        <option default>Select User Role</option>
+                                        <option>Select User Role</option>
                                         @foreach($roles as $role)
-                                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                            <option value="{{ $role->role_id }}">{{ $role->role_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

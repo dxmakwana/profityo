@@ -371,7 +371,7 @@
               @endif
               @if(isset($access['users']) && $access['users'])
               <li class="nav-item">
-                <a href="user-list.html" class="nav-link">
+                <a href="{{ route('business.userdetail.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Users</p>
                 </a>

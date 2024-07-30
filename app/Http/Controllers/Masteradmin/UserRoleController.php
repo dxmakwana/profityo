@@ -8,6 +8,8 @@ use App\Models\UserRole;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AdminMenu;
+use App\Models\MasterUserAccess;
 
 class UserRoleController extends Controller
 {
@@ -91,6 +93,119 @@ class UserRoleController extends Controller
 
 
     
+    // add by dxx.............
+    public function Userrole($role_id): View
+    {
+        $user = Auth::guard('masteradmins')->user();
+        $userrole = UserRole::where(['role_id' => $role_id, 'id' => $user->id])->firstOrFail();
+        $permissions = AdminMenu::where('pmenu', 0)
+            ->where('is_deleted', 0)
+            ->whereIn('mid', range(1, 20))
+            ->get();
+        $reports = AdminMenu::where('pmenu', 21)
+            ->where('is_deleted', 0)
+            ->get();
+
+        foreach ($permissions as $permission) {
+            $this->setPermissionAccess($permission, $role_id);
+        }
+
+        foreach ($reports as $report) {
+            $this->setPermissionAccess($report, $role_id);
+        }
+
+        // Check if the parent Reports checkbox should be checked
+        $reports_parent_checked = $this->getIsAccess('reports_parent', $role_id);
+
+        return view('masteradmin.role.user_role_access', compact('permissions', 'reports', 'userrole', 'reports_parent_checked'));
+    }
+
+    private function setPermissionAccess(&$item, $role_id)
+    {
+        $item->is_access = $this->getIsAccess($item->mname, $role_id);
+        $item->is_access_add = $this->getIsAccess('add_' . $item->mname, $role_id);
+        $item->is_access_view = $this->getIsAccess('view_' . $item->mname, $role_id);
+        $item->is_access_update = $this->getIsAccess('update_' . $item->mname, $role_id);
+        $item->is_access_delete = $this->getIsAccess('delete_' . $item->mname, $role_id);
+    }
+
+    private function getIsAccess($permissionName, $roleId)
+    {
+        $access = MasterUserAccess::where('role_id', $roleId)
+            ->where('mname', $permissionName)
+            ->first();
+
+        return $access ? $access->is_access : 0;
+        // dd($access);
+    }
+
+    public function updaterole(Request $request, $role_id): RedirectResponse
+    {
+        // dd($request->all()); 
+        $user = Auth::guard('masteradmins')->user();
+        MasterUserAccess::where(['role_id' => $role_id, 'u_id' => $user->id])->delete();
+
+        // Fetch all admin menu items
+        $menus = AdminMenu::where('is_deleted', 0)->get();
+
+        // Fetch the reports data
+        $reports = AdminMenu::where('pmenu', 21)
+            ->where('is_deleted', 0)
+            ->get();
+
+        // Process permissions checkboxes
+        foreach ($menus as $menu) {
+            $mname = $menu->mname;
+            $mtitle = $menu->mtitle;
+            $mid = $menu->mid;
+            $is_access = $request->has($mname) ? 1 : 0;
+
+            // Insert or update user access
+            MasterUserAccess::create([
+                'role_id' => $role_id,
+                'u_id' => $user->id,
+                'mid' => $mid,
+                'mtitle' => $mtitle,
+                'mname' => $mname,
+                'is_access' => $is_access,
+            ]);
+        }
+
+        // Process reports parent checkbox
+        $reports_parent_checked = $request->has('reports_parent') ? 1 : 0;
+
+        // Insert or update user access for reports parent
+        MasterUserAccess::create([
+            'role_id' => $role_id,
+            'u_id' => $user->id,
+            'mid' => 21,
+            'mtitle' => 'Reports',
+            'mname' => 'reports_parent', // Adjust as per your naming convention
+            'is_access' => $reports_parent_checked,
+        ]);
+
+        // Process individual report checkboxes
+        foreach ($reports as $report) {
+            $report_name = $report->mname;
+            $report_checked = $request->has($report_name) ? 1 : 0;
+
+            // Insert or update user access for each report
+            MasterUserAccess::create([
+                'role_id' => $role_id,
+                'u_id' => $user->id,
+                'mid' => $report->mid,
+                'mtitle' => $report->mtitle,
+                'mname' => $report_name,
+                'is_access' => $report_checked,
+            ]);
+        }
+
+        return redirect()->route('business.role.userrole', ['userrole' => $role_id])
+        ->with('user-role', __('messages.masteradmin.user-role.roll_user_access_success'));
+    }
+
+
+    // end by dxx...
 
     
 }

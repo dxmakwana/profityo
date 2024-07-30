@@ -23,11 +23,17 @@ return [
             'add_role_success' => 'User role created successfully.',
             'delete_role_success' => 'User role deleted successfully.',
             'edit_role_success' => 'User role updated successfully.',
+            'roll_user_access_success' => 'User access updated successfully.'
         ],
         'sales-tax' => [
             'send_success' => 'SalesTax created successfully.',
             'edit_sales_success' => 'sales updated successfully',
             'delete_sales_success' => 'sales deleted successfully',
+        ],
+        'user' => [
+            'send_success' => 'user created successfully.',
+            'edit_user_success' => 'user updated successfully',
+            'delete_user_success' => 'user deleted successfully',
         ],
     ]
     

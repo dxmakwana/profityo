@@ -66,6 +66,7 @@
                                 <tr>
                                   <td>{{ $role->role_name }}</td>
                                   <td class="text-right">
+                                    <a href="{{ route('business.role.userrole',$role->role_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
                                     <a href="{{ route('business.role.edit',$role->role_id) }}"><i
                                     class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                     <a data-toggle="modal" data-target="#delete-role-modal-{{ $role->role_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>

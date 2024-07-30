@@ -16,7 +16,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\superadmin\HomesController;
 use App\Http\Controllers\Masteradmin\UserRoleController;
 use App\Http\Controllers\Masteradmin\SalesTaxController;
-
+use App\Http\Controllers\Masteradmin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,14 +111,25 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('roleedit/{role}', [UserRoleController::class, 'edit'])->name('business.role.edit');
         Route::patch('roleupdate/{role}', [UserRoleController::class, 'update'])->name('business.role.update');
         Route::delete('roledestroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
+        Route::get('userrole/{userrole}', [UserRoleController::class, 'userrole'])->name('business.role.userrole');
+        Route::put('updaterole/{userrole}', [UserRoleController::class, 'updaterole'])->name('business.role.updaterole');
 
-        // add by dx....
+        //saletax
         Route::get('/salestax', [SalesTaxController::class, 'index'])->name('business.salestax.index');
         Route::get('/taxcreate', [SalesTaxController::class, 'create'])->name('business.salestax.create');
         Route::post('/store', [SalesTaxController::class, 'store'])->name('business.salestax.store');
         Route::get('/taxedit/{SalesTax}', [SalesTaxController::class, 'edit'])->name('business.salestax.edit');
         Route::patch('/taxupdate/{SalesTax}', [SalesTaxController::class, 'update'])->name('business.salestax.update');
         Route::delete('/taxdestroy/{salestax}', [SalesTaxController::class, 'destroy'])->name('business.salestax.destroy');
+
+        // add by dx....master user details
+        Route::get('/userdetails', [UserController::class, 'index'])->name('business.userdetail.index');
+        Route::get('/usercreate', [UserController::class, 'create'])->name('business.userdetail.create');
+        Route::post('/userstore', [UserController::class, 'store'])->name('business.userdetail.store');
+        Route::get('/useredit/{userdetaile}', [UserController::class, 'edit'])->name('business.userdetail.edit');
+
+        Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
+        Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
         // end by dx.....
         
     });

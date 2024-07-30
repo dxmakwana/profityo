@@ -109,7 +109,6 @@ class Controller extends BaseController
                 });
             }
 
-            // add by dx.......
             if (!Schema::hasTable($storeId.'_py_sales_tax')){   
                 Schema::create($storeId.'_py_sales_tax', function (Blueprint $table) {
                     $table->increments('tax_id');
@@ -123,6 +122,20 @@ class Controller extends BaseController
                     $table->string('tax_compound')->nullable();
                     $table->integer('tax_rate')->nullable()->default(0);
                     $table->tinyInteger('tax_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // master user access
+            if (!Schema::hasTable($storeId.'_py_master_user_access')){   
+                Schema::create($storeId.'_py_master_user_access', function (Blueprint $table) {
+                    $table->increments('id');
+                    $table->integer('u_id')->nullable()->default(0);
+                    $table->integer('role_id')->nullable()->default(0);
+                    $table->string('mname')->nullable();
+                    $table->string('mtitle')->nullable();
+                    $table->integer('mid')->nullable();
+                    $table->string('is_access')->nullable();
                     $table->timestamps();
                 });
             }
