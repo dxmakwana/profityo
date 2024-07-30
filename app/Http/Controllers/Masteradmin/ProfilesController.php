@@ -142,7 +142,7 @@ class ProfilesController extends Controller
         {
             $admin_user = MasterUser::where('user_id','=',$user->id);
             
-            $logs = \LogActivity::logActivityLists();
+            $logs = \MasterLogActivity::logActivityLists();
             
                 return view('masteradmin.logs.index')
                                             ->with('admin_user',$admin_user)

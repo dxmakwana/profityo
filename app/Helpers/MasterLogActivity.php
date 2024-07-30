@@ -5,14 +5,14 @@ use Request;
 use Session;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\LogActivities as LogActivityModel;
+use App\Models\MasterAdminLogActivities as MasterLogActivityModel;
 
-class LogActivity
+class MasterLogActivity
 {
     public static function addToLog($subject)
     {	
 
-        $user = Auth::user();
+        $user = Auth::guard('masteradmins')->user();
 		
     	$log = [];
     	$log['subject'] = $subject;
@@ -21,12 +21,12 @@ class LogActivity
     	$log['ip'] = Request::ip();
     	$log['agent'] = Request::header('user-agent');
     	$log['user_id'] = $user->id;
-    	LogActivityModel::create($log);
+    	MasterLogActivityModel::create($log);
     }
 
     public static function logActivityLists()
     {
-    	return LogActivityModel::latest()->get();
+    	return MasterLogActivityModel::latest()->get();
     }
 
 	public static function deleteOldLogs()
@@ -35,6 +35,6 @@ class LogActivity
         $thresholdDate = Carbon::now()->subDay()->toDateTimeString();
 
         // Delete log entries older than the threshold date
-        $deleted = LogActivityModel::where('created_at', '<', $thresholdDate)->delete();
+        $deleted = MasterLogActivityModel::where('created_at', '<', $thresholdDate)->delete();
     }
 }

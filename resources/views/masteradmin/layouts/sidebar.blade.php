@@ -335,7 +335,16 @@
           </li>
           @endif
 
-          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') || request()->is($busadminRoutes.'/business-profile*') || request()->is($busadminRoutes.'/logActivity*') || request()->is($busadminRoutes.'/user-role-details*') ? 'menu-open side_shape' : '' }}">
+          <li class="nav-item {{ request()->is($busadminRoutes.'/profile*') ||
+           request()->is($busadminRoutes.'/business-profile*') || 
+           request()->is($busadminRoutes.'/logActivity*') || 
+           request()->is($busadminRoutes.'/user-role-details*') || 
+           request()->is($busadminRoutes.'/rolecreate*') || 
+           request()->is($busadminRoutes.'/roleedit/*') ||
+           request()->is($busadminRoutes.'/salestax*') || 
+           request()->is($busadminRoutes.'/taxcreate*') || 
+           request()->is($busadminRoutes.'/taxedit/*')  
+                    ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
               <p>
@@ -371,10 +380,9 @@
               @if(isset($access['roles']) && $access['roles'])
               <li class="nav-item">
                 <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') || 
-                             request()->is($busadminRoutes.'/add*') || 
-                             request()->is($busadminRoutes.'/edit/*') || 
-                             request()->is($busadminRoutes.'/update/*') || 
-                             request()->is($busadminRoutes.'/destroy/*') ? 'active' : '' }} ">
+                             request()->is($busadminRoutes.'/rolecreate*') || 
+                             request()->is($busadminRoutes.'/roleedit/*')  
+                              ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
@@ -382,7 +390,11 @@
               @endif
               @if(isset($access['roles']) && $access['roles'])
               <li class="nav-item">
-                <a href="{{ route('business.salestax.index') }}" class="nav-link">
+                <a href="{{ route('business.salestax.index') }}" class="nav-link {{
+                 request()->is($busadminRoutes.'/salestax*') || 
+                  request()->is($busadminRoutes.'/taxcreate*') || 
+                  request()->is($busadminRoutes.'/taxedit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Sales Taxes</p>
                 </a>

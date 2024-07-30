@@ -45,22 +45,15 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
     
         $credentials = $this->only('email', 'password');
-        $user = User::where('email', $credentials['email'])->first();
-    
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+
             RateLimiter::hit($this->throttleKey());
-    
+
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
     
-        // Log the user in with the 'masteradmins' guard
-        Auth::guard('web')->login($user, $this->boolean('remember'));
-    
-        // Also log the user in with the second guard, for example 'secondguard'
-        Auth::guard('web')->setUser($user);
-
         if ($this->boolean('remember')) {
             Cookie::queue(Cookie::make('email', $this->input('email'), 60 * 24 * 30)); // 30 days
             Cookie::queue(Cookie::make('password', $this->input('password'), 60 * 24 * 30)); // 30 days

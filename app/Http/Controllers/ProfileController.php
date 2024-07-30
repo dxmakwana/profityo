@@ -56,9 +56,7 @@ class ProfileController extends Controller
             // Save the unique filename to the database
             $user->image = $uniqueFilename;
         }
-
-
-
+        
         $request->user()->save();
         \LogActivity::addToLog('Admin User Profile Updated.');
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
@@ -87,12 +85,16 @@ class ProfileController extends Controller
 
     public function logActivity()
     {
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
+        // dd($user);
         if($user)
         {
             $admin_user = User::where('user_id','=',$user->id);
+            // \DB::enableQueryLog();
             
             $logs = \LogActivity::logActivityLists();
+
+            // dd(\DB::getQueryLog()); 
             
                 return view('superadmin.logs.index')
                                             ->with('admin_user',$admin_user)
