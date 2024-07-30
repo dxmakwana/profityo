@@ -67,12 +67,15 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>User Role</label>
-                                    <select class="form-control from-select" name="role_id" style="width: 100%;">
+                                    <select class="form-control from-select select2 {{ $errors->has('role_id') ? 'is-invalid' : '' }}" name="role_id" style="width: 100%;">
                                         <option>Select User Role</option>
                                         @foreach($roles as $role)
                                             <option value="{{ $role->role_id }}">{{ $role->role_name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('role_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-4">

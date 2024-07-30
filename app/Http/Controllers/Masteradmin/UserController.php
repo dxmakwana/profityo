@@ -37,20 +37,18 @@ class UserController extends Controller
             'users_name' => 'required|string|max:255',
             'users_email' => 'required|string|max:255',
             'users_phone' => 'required|string',
-            'users_password' => 'nullable|string',
-            'role_id' => 'required|string',
+            'users_password' => 'required|string',
+            'role_id' => 'required|integer',
         ], [
             'users_name.required' => 'The name field is required.',
             'users_email.required' => 'The email field is required.',
             'users_phone.required' => 'The phone field is required.',
             'users_password.required' => 'The password field is required.',
+            'role_id.required' => 'The role field is required.',
+            'role_id.integer' => 'The role field is required.',
         ]);
         
-        // Fetch the role from the user_role table using the role_id
-        $role = UserRole::find($validatedData['role_id']);
-        if (!$role) {
-            return redirect()->back()->withErrors(['role_id' => 'Invalid role ID.']);
-        }
+        
         if (!empty($validatedData['users_password'])) {
             $validatedData['users_password'] = Hash::make($validatedData['users_password']);
         }
@@ -67,9 +65,9 @@ class UserController extends Controller
     public function edit($users_id, Request $request): View
     {
         $userdetaile = MasterUserDetails::where('users_id', $users_id)->firstOrFail();
-        $roles = UserRole::all(); // Fetch roles here
+        $roles = UserRole::all(); // Fetch all roles
 
-        return view('masteradmin.userdetails.edit', compact('userdetaile','roles'));
+        return view('masteradmin.userdetails.edit', compact('userdetaile', 'roles'));
     }
 
     /**
@@ -81,27 +79,22 @@ class UserController extends Controller
 
         $userdetailu = MasterUserDetails::where(['users_id' => $users_id,'id' => $user->id])->firstOrFail();
 
-        // Log request data
-        Log::info('Update request data:', $request->all());
-
         $validatedData = $request->validate([
             'users_name' => 'required|string|max:255',
             'users_email' => 'required|string|max:255',
             'users_phone' => 'required|string',
             'users_password' => 'nullable|string',
-            'role_id' => 'required|string',
+            'role_id' => 'required|integer',
         ], [
             'users_name.required' => 'The name field is required.',
             'users_email.required' => 'The email field is required.',
             'users_phone.required' => 'The phone field is required.',
             'users_password.required' => 'The password field is required.',
+            'role_id.required' => 'The role field is required.',
+            'role_id.integer' => 'The role field is required.',
         ]);
 
-        $role = UserRole::find($validatedData['role_id']);
-        if (!$role) {
-            return redirect()->back()->withErrors(['role_id' => 'Invalid role ID.']);
-        }
-
+       
         if (!empty($validatedData['users_password'])) {
             $validatedData['users_password'] = Hash::make($validatedData['users_password']);
         }

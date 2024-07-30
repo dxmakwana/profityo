@@ -52,6 +52,7 @@ class Controller extends BaseController
                     $table->string('url')->nullable();
                     $table->string('method')->nullable();
                     $table->string('ip')->nullable();
+                    $table->string('agent')->nullable();
                     $table->integer('user_id')->nullable()->default(0);
                     $table->timestamps();
                 });
