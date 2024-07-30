@@ -20,4 +20,8 @@ class MasterUserDetails extends Model
         $uniq_id = $user->buss_unique_id;
         $this->setTable($uniq_id . '_py_users_details');
     }
+    public function userRole()
+    {
+        return $this->belongsTo(UserRole::class, 'role_id', 'role_id');
+    }
 }

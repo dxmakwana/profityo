@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         //
         // dd('hii');
-        $userdetail = MasterUserDetails::all();
+        $userdetail = MasterUserDetails::with('userRole')->get();
         // dd($userdetail);
         return view('masteradmin.userdetails.index')->with('userdetail', $userdetail);
     }
