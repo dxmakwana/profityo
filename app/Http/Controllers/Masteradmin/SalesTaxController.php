@@ -49,7 +49,7 @@ class SalesTaxController extends Controller
         $validatedData['tax_status'] = 1;
 
         SalesTax::create($validatedData);
-
+        \MasterLogActivity::addToLog('SalesTax is Created.');
         return redirect()->route('business.salestax.index')->with(['salestax-add' => __('messages.masteradmin.sales-tax.send_success')]);
     }
 
@@ -98,7 +98,7 @@ class SalesTaxController extends Controller
         // $SalesTaxu->update($validatedData);
         $SalesTaxu->where('tax_id', $tax_id)->update($validatedData);
         // \LogActivity::addToLog('Admin SalesTax Edited.');
-
+        \MasterLogActivity::addToLog('SalesTax is Edited.');
         // Redirect back to the edit form with a success message
         return redirect()->route('business.salestax.edit', ['SalesTax' => $SalesTaxu->tax_id])
             ->with('salestax-edit', __('messages.masteradmin.sales-tax.edit_sales_success'));
@@ -118,7 +118,7 @@ class SalesTaxController extends Controller
         // Delete the SalesTax
         $SalesTax->where('tax_id', $tax_id)->delete();
 
-        // \LogActivity::addToLog('Admin SalesTax Deleted.');
+        \MasterLogActivity::addToLog('Admin SalesTax Deleted.');
 
         return redirect()->route('business.salestax.index')->with('salestax-delete', __('messages.masteradmin.sales-tax.delete_sales_success'));
 

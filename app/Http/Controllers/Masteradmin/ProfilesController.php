@@ -55,7 +55,7 @@ class ProfilesController extends Controller
         $user->user_image = $this->handleImageUpload($request, $user->user_image, 'masteradmin/profile_image');
 
         $user->save();
-        \LogActivity::addToLog('Master Admin Profile is Edited.');
+        \MasterLogActivity::addToLog('Master Admin Profile is Edited.');
         return Redirect::route('business.profile.edit')->with('status', 'profile-updated');
     }
 
@@ -130,7 +130,7 @@ class ProfilesController extends Controller
             $validatedData['bus_currency'] = $currency_id->id;
             BusinessDetails::create($validatedData);
         }
-        \LogActivity::addToLog('Master Admin Business Profile is Edited.');
+        \MasterLogActivity::addToLog('Master Admin Business Profile is Edited.');
 
         return redirect()->route('business.business.edit')->with('business-update', __('messages.masteradmin.business-profile.send_success'));
     }

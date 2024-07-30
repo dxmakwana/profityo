@@ -341,9 +341,13 @@
            request()->is($busadminRoutes.'/user-role-details*') || 
            request()->is($busadminRoutes.'/rolecreate*') || 
            request()->is($busadminRoutes.'/roleedit/*') ||
+           request()->is($busadminRoutes.'/userrole/*') ||
            request()->is($busadminRoutes.'/salestax*') || 
            request()->is($busadminRoutes.'/taxcreate*') || 
-           request()->is($busadminRoutes.'/taxedit/*')  
+           request()->is($busadminRoutes.'/taxedit/*') ||
+           request()->is($busadminRoutes.'/userdetails*') || 
+           request()->is($busadminRoutes.'/usercreate*') || 
+           request()->is($busadminRoutes.'/useredit/*') 
                     ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
@@ -371,7 +375,10 @@
               @endif
               @if(isset($access['users']) && $access['users'])
               <li class="nav-item">
-                <a href="{{ route('business.userdetail.index') }}" class="nav-link">
+                <a href="{{ route('business.userdetail.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/userdetails*') || 
+                             request()->is($busadminRoutes.'/usercreate*') || 
+                             request()->is($busadminRoutes.'/useredit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Users</p>
                 </a>
@@ -381,7 +388,8 @@
               <li class="nav-item">
                 <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') || 
                              request()->is($busadminRoutes.'/rolecreate*') || 
-                             request()->is($busadminRoutes.'/roleedit/*')  
+                             request()->is($busadminRoutes.'/roleedit/*')  ||
+                             request()->is($busadminRoutes.'/userrole/*') 
                               ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>

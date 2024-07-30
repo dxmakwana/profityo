@@ -38,7 +38,7 @@ class UserRoleController extends Controller
         $validatedData['id'] = $user->id;
         $validatedData['role_status'] = 1;
         UserRole::create($validatedData);
-        \LogActivity::addToLog('Master Admin Users Role Created.');
+        \MasterLogActivity::addToLog('Master Admin Users Role Created.');
 
         return redirect()->route('business.role.index')->with(['role-add' =>__('messages.masteradmin.user-role.add_role_success')]);
     }
@@ -66,7 +66,7 @@ class UserRoleController extends Controller
 
         // Update the plan attributes based on validated data
         $roles->where('role_id', $role_id)->update($validatedData);
-        \LogActivity::addToLog('Master Admin User Role is Edited.');
+        \MasterLogActivity::addToLog('Master Admin User Role is Edited.');
 
         // Redirect back to the edit form with a success message
         return redirect()->route('business.role.edit', ['role' => $roles->role_id])
@@ -84,7 +84,7 @@ class UserRoleController extends Controller
         // Delete the plan
         $roles->where('role_id', $role_id)->delete();
 
-        \LogActivity::addToLog('Master Admin User role is Deleted.');
+        \MasterLogActivity::addToLog('Master Admin User role is Deleted.');
          
         return redirect()->route('business.role.index')
                         ->with('role-delete', __('messages.masteradmin.user-role.delete_role_success'));
@@ -199,7 +199,7 @@ class UserRoleController extends Controller
                 'is_access' => $report_checked,
             ]);
         }
-
+        \MasterLogActivity::addToLog('Master Admin User role Assigned.');
         return redirect()->route('business.role.userrole', ['userrole' => $role_id])
         ->with('user-role', __('messages.masteradmin.user-role.roll_user_access_success'));
     }
