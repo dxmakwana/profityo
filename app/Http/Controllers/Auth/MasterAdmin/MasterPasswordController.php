@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MasterUser;
+use App\Models\MasterUserDetails;
 
 class MasterPasswordController extends Controller
 {
@@ -17,27 +18,38 @@ class MasterPasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-       // Validate the request
-    $validated = $request->validateWithBag('updatePassword', [
-        'current_password' => ['required', 'string', 'max:255'],
-        'user_password' => ['required', 'string', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
-    ],[
-        'user_password.required' => 'The Password field is required.',
-    ]);
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'string', 'max:255'],
+            'user_password' => ['required', 'string', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
+        ], [
+            'user_password.required' => 'The Password field is required.',
+        ]);
 
-    // Get the authenticated user
-    $user = Auth::guard('masteradmins')->user();
+        $user = Auth::guard('masteradmins')->user();
+        
+        $userDetails = new MasterUserDetails();
+        $userDetails->setTableForUniqueId($user->user_id);
 
-    // Verify the current password
-    if (!Hash::check($request->current_password, $user->user_password)) {
-        return back()->withErrors(['current_password' => 'The current password is incorrect.']);
+        $existingUser = $userDetails->where('users_id', $user->users_id)->first();
+
+        // dd($existingUser);
+        if (!$existingUser) {
+            return back()->withErrors(['user' => 'User not found.']);
+        }
+
+        if (!Hash::check($request->current_password, $existingUser->users_password)) {
+            return back()->withErrors(['current_password' => 'The current password is incorrect.']);
+        }
+
+        $updateData = [
+            'users_password' => Hash::make($request->user_password),
+        ];
+
+        $userDetails->where('users_id', $existingUser->users_id)->update($updateData);
+
+        \MasterLogActivity::addToLog('Master Admin Password has been updated.');
+
+        return back()->with('status', 'password-updated');
     }
 
-    // Hash and update the new password
-    $user->user_password = Hash::make($request->user_password);
-    $user->save();
-    \LogActivity::addToLog('Master Admin Password changed is Updated.');
-    // Redirect back with status message
-    return back()->with('status', 'password-updated');
-    }
 }
