@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use App\Notifications\ResetPasswordMail;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Models\MasterUserDetails;
 use App\Models\MasterUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -62,7 +63,12 @@ class MasterPasswordResetLinkController extends Controller
         }
     
         // Fetch the user associated with the email
-        $user = MasterUser::where('user_email', $email)->first();
+        $users = MasterUser::where('user_email', $email)->first();
+
+        $userDetails = new MasterUserDetails();
+        $userDetails->setTableForUniqueId($users->buss_unique_id);
+        $user = $userDetails->where('users_email', $email)->first();
+    
     
        // Send the email
         try {

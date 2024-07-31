@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\MasterUser;
+use App\Models\MasterUserDetails;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
 
@@ -44,28 +45,72 @@ class MasterLoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
     
-        $credentials = $this->only('user_email', 'user_password');
-        $user = MasterUser::where('user_email', $credentials['user_email'])->first();
+        $credentials = $this->only('user_email', 'user_password','user_id');
+
+        $validator = \Validator::make($credentials, [
+            'user_email' => ['required', 'email'],
+            'user_password' => ['required', 'string'],
+            'user_id' => ['required', 'string'], // Adjust rules as needed
+        ], [
+            'user_email.required' => 'The email field is required.',
+            'user_email.email' => 'The email must be a valid email address.',
+            'user_password.required' => 'The password field is required.',
+            'user_id.required' => 'The user ID field is required.',
+        ]);
     
-        if (! $user || ! Hash::check($credentials['user_password'], $user->user_password)) {
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->errors()->toArray());
+        }
+
+        $user = MasterUser::where('buss_unique_id', $credentials['user_id'])
+        ->first();
+
+        if (!$user) {
+            // No user found, send an error message
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'user_id' => 'User not found or credentials are incorrect.',
+                
+            ]);
+
+        }
+
+        $userDetails = new MasterUserDetails();
+        $userDetails->setTableForUniqueId($user->buss_unique_id);
+
+        // Find the user in the dynamically set table based on email and user_id
+        $users = $userDetails->where('users_email', $credentials['user_email'])
+                    ->where('user_id', $credentials['user_id'])
+                    ->first();
+       
+    
+        if (! $users || ! Hash::check($credentials['user_password'], $users->users_password)) {
             RateLimiter::hit($this->throttleKey());
     
             throw ValidationException::withMessages([
                 'user_email' => trans('auth.failed'),
+                'user_id' => trans('auth.failed'),
+                
             ]);
+
         }
-    
+
         // Log the user in with the 'masteradmins' guard
-        Auth::guard('masteradmins')->login($user, $this->boolean('user_remember'));
-    
+        Auth::guard('masteradmins')->login($users, $this->boolean('user_remember'));
+
         // Also log the user in with the second guard, for example 'secondguard'
-        Auth::guard('masteradmins')->setUser($user);
+        Auth::guard('masteradmins')->setUser($users);
+
+        dd(Auth::guard('masteradmins')->user());
     
         if ($this->boolean('user_remember')) {
+            
+            Cookie::queue(Cookie::make('user_id', $this->input('user_id'), 60 * 24 * 30)); // 30 days
             Cookie::queue(Cookie::make('user_email', $this->input('user_email'), 60 * 24 * 30)); // 30 days
             Cookie::queue(Cookie::make('user_password', $this->input('user_password'), 60 * 24 * 30)); // 30 days
             Cookie::queue(Cookie::make('user_remember', $this->boolean('user_remember'), 60 * 24 * 30));
         } else {
+            Cookie::queue(Cookie::forget('user_id'));
             Cookie::queue(Cookie::forget('user_email'));
             Cookie::queue(Cookie::forget('user_password'));
             Cookie::queue(Cookie::forget('user_remember'));

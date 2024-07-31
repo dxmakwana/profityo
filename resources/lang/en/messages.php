@@ -35,6 +35,11 @@ return [
             'edit_user_success' => 'user updated successfully',
             'delete_user_success' => 'user deleted successfully',
         ],
+        'register' => [
+            'link_send_success' => 'Success! A registration email has been sent to you.',
+            'link_send_error' => 'Failed to send email.',
+        ],
+
     ]
     
 ];

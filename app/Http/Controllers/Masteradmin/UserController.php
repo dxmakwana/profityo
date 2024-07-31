@@ -55,6 +55,7 @@ class UserController extends Controller
         $validatedData['id'] = $user->id;
         $validatedData['users_status'] = 1;
         MasterUserDetails::create($validatedData);
+        \MasterLogActivity::addToLog('Admin userdetail Created.');
     
         return redirect()->route('business.userdetail.index')->with(['user-add' => __('messages.masteradmin.user.send_success')]);
     }
@@ -101,7 +102,7 @@ class UserController extends Controller
 
         
         $userdetailu->where('users_id', $users_id)->update($validatedData);
-        
+        \MasterLogActivity::addToLog('Admin userdetail Edited.');
         // Redirect back to the edit form with a success message
         return redirect()->route('business.userdetail.edit', ['userdetaile' => $userdetailu->users_id])->with('user-edit', __('messages.masteradmin.user.edit_user_success'));
     }
@@ -120,7 +121,7 @@ class UserController extends Controller
 
         // Delete the userdetail
         $userdetail->where('users_id', $users_id)->delete();
-
+        \MasterLogActivity::addToLog('Admin userdetail Deleted.');
         // \LogActivity::addToLog('Admin userdetail Deleted.');
 
         return redirect()->route('business.userdetail.index')->with('user-delete', __('messages.masteradmin.user.delete_user_success'));

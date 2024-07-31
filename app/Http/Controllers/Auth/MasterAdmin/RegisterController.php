@@ -16,6 +16,9 @@ use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 use App\Models\Plan;
 use DB;
+use App\Models\MasterUserDetails;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\UserRegistered;
 
 class RegisterController extends Controller
 {
@@ -44,12 +47,10 @@ class RegisterController extends Controller
             'user_email.unique' => 'The Email has already been taken.',
             'user_password.required' => 'The Password field is required.',
         ]);
-    
 
         $plan = Plan::where('sp_id', '12')->firstOrFail();
 
         $startDate = Carbon::now();
-
         $months = $plan->sp_month;
         $expirationDate = $startDate->addMonths($months);
         $expiryDate = $expirationDate->toDateString();
@@ -70,21 +71,46 @@ class RegisterController extends Controller
             'user_city_name' => '',
             'user_pincode' => '',
             'isActive' => 1,
-            'user_status' => 1
+            'user_status' => 0
         ]);
-        
+
         // Generate the unique buss_unique_id
         $buss_unique_id = $this->generateUniqueId(trim($request->user_business_name), $admin->id);
 
         // Update the record with the final unique ID
-        $admin->update(['buss_unique_id' => $buss_unique_id]);
+        $admin->buss_unique_id = $buss_unique_id;
+        $admin->save();
 
-        Auth::guard('masteradmins')->login($admin);
+        // Uncomment this line if you want to log in the user after registration
         
         $this->createTable($admin->id);
-    
-        return redirect(RouteServiceProvider::MASTER_HOME);
+
+       // Create MasterUserDetails and set table name
+        $userDetails = new MasterUserDetails();
+        $userDetails->setTableForUniqueId($buss_unique_id);
+        $userDetails->create([
+            'users_name' => $request->user_first_name . ' ' . $request->user_last_name,
+            'users_email' => $request->user_email,
+            'users_phone' => $request->user_phone,
+            'users_password' => Hash::make($request->user_password),
+            'id' => $admin->id,
+            'role_id' => 0,
+            'user_id' => $buss_unique_id,
+            'users_status' => '1'
+        ]);
+
+        // login URL
+        $loginUrl = route('business.login');
+
+        try {
+            Mail::to($request->user_email)->send(new UserRegistered($buss_unique_id, $loginUrl, $request->user_email));
+
+            return back()->with(['link-success' => __('messages.masteradmin.register.link_send_success')]);
+        } catch (\Exception $e) {
+            return back()->with(['link-error' => __('messages.masteradmin.register.link_send_error')]);
+        }
     }
+
     
     private function generateUniqueId(string $user_business_name, int $id): string
     {

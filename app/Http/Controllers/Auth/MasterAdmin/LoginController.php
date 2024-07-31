@@ -21,11 +21,12 @@ class LoginController extends Controller
     public function create(): View
     {
         // dd('hiii');
+        $rememberedId = Cookie::get('user_id', '');
         $rememberedEmails = Cookie::get('user_email', '');
         $rememberedPasswords = Cookie::get('user_password', '');
         $rememberedRemebers = Cookie::get('user_remember', '');
         // dd($rememberedEmail);
-        return view('masteradmin.auth.login',compact('rememberedEmails', 'rememberedPasswords', 'rememberedRemebers'));
+        return view('masteradmin.auth.login',compact('rememberedEmails', 'rememberedPasswords', 'rememberedRemebers','rememberedId'));
     }
 
     public function store(MasterLoginRequest $request): RedirectResponse

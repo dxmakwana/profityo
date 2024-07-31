@@ -14,26 +14,39 @@ use App\Http\Requests\MasterProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\BusinessDetails;
+use App\Models\MasterUserDetails;
+use App\Services\UserService;
 
 class ProfilesController extends Controller
 {
     //
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         $this->middleware('auth_master');
+        $this->userService = $userService;
     }
+    
     
     public function edit(Request $request): View
     {
-        $countries = Countries::all();
+        // Retrieve the authenticated user
         $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        // Retrieve and set the user details using the service method
+        $userDetails = $this->userService->getUserDetailsAndSet($user);
+
+        // Display the retrieved user details for debugging
+        // dd($userDetails);
+        $countries = Countries::all();
+       
         $states = States::where('country_id', $user->country_id)->get();
         // dd($user);
         return view('masteradmin.profile.edit', [
             'user' => $user,
             'countries' => $countries,
             'states' => $states,
-            'selectedStateId' => $user->state_id 
+            'selectedStateId' => $user->state_id,
+            'userDetails' => $userDetails
         ]);
     }
 

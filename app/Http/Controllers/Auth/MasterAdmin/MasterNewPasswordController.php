@@ -13,6 +13,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use DB;
 use App\Models\MasterUser;
+use App\Models\MasterUserDetails;
+
 
 class MasterNewPasswordController extends Controller
 {
@@ -64,8 +66,16 @@ class MasterNewPasswordController extends Controller
             if(!$updatePassword){
                 return back()->with(['forgotpassword-error' =>__('messages.masteradmin.forgot-password.send_error')]);
             }
-            $user = MasterUser::where('user_email', $request->user_email)
-            ->update(['user_password' => Hash::make($request->user_password)]);
+            $users = MasterUser::where('user_email', $request->user_email)->first();
+            // $user = MasterUser::where('user_email', $request->user_email)
+            // ->update(['user_password' => Hash::make($request->user_password)]);
+            $userDetails = new MasterUserDetails();
+            $userDetails->setTableForUniqueId($users->buss_unique_id);
+
+            $user = $userDetails->where('users_email', $request->user_email)
+            ->where('user_id', $users->buss_unique_id )
+            ->update(['users_password' => Hash::make($request->user_password)]);
+            
 
             DB::table('master_password_reset_tokens')->where(['email'=> $request->user_email])->delete();
            

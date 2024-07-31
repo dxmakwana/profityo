@@ -1,5 +1,11 @@
 <x-guest-layout>
     <h5 class="login-box-msg">Register !</h5>
+    @if(Session::has('link-success'))
+      <p class="text-success" > {{ Session::get('link-success') }}</p>
+    @endif
+    @if(Session::has('link-error'))
+      <p class="text-danger" > {{ Session::get('link-error') }}</p>
+    @endif
     <form method="POST" action="{{ route('business.register.store') }}">
         @csrf
         <div class="input-group mb-3">

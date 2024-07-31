@@ -17,6 +17,17 @@
                     <span class="fas fa-regular fa-user"></span>
                 </div>
             </div>
+            <x-text-input id="user_id" class="form-control" type="text" name="user_id" :value="old('user_id',$rememberedId)" 
+                autofocus autocomplete="user_id" placeholder="User id" />
+            <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
+        </div>
+
+        <div class="input-group mb-2">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-regular fa-user"></span>
+                </div>
+            </div>
             <x-text-input id="user_email" class="form-control" type="email" name="user_email" :value="old('user_email',$rememberedEmails)" 
                 autofocus autocomplete="email" placeholder="Email" />
             <x-input-error :messages="$errors->get('user_email')" class="mt-2" />
