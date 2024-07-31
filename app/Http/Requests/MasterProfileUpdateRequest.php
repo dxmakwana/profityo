@@ -16,12 +16,11 @@ class MasterProfileUpdateRequest extends FormRequest
      public function rules(): array
     {
         $user = Auth::guard('masteradmins')->user();
-
+        // dd($user );
         return [
-            'user_first_name' => ['required', 'string', 'max:255'],
-            'user_last_name' => ['required', 'string', 'max:255'],
-            'user_city_name' => ['required', 'string', 'max:255'],
-            'user_pincode' => ['required', 'string', 'max:255'],
+            'users_name' => ['required', 'string', 'max:255'],
+            'users_city_name' => ['required', 'string', 'max:255'],
+            'users_pincode' => ['required', 'string', 'max:255'],
             'country_id' => ['required', 'integer'],
             'state_id' => ['required', 'integer'],
         ];

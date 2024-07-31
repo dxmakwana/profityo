@@ -41,12 +41,13 @@ class LoginController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        // dd('hiii');
+        // dd($request->session());
         Auth::guard('masteradmins')->logout();
 
-        $request->session()->invalidate();
+        // $request->session()->invalidate();
 
-        $request->session()->regenerateToken();
+        // $request->session()->regenerateToken();
+        
 
         return redirect('/business/login/');
     }

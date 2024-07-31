@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 class MasterUserDetails extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $fillable = ['id','users_name', 'users_email', 'users_phone', 'users_password', 'role_id','user_id','users_status'];
+    protected $fillable = ['id','users_name', 'users_email', 'users_phone', 'users_password', 'role_id','user_id','users_status', 'users_image', 'country_id', 'state_id', 'users_city_name', 'users_pincode'];
 
     // public function __construct(array $attributes = [])
     // {
@@ -39,9 +39,15 @@ class MasterUserDetails extends Authenticatable
         'remember_token',
     ];
 
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'users_password' => 'hashed',
     ];
+
+    public function masterUser()
+    {
+        return $this->belongsTo(MasterUser::class, 'id', 'id');
+    }
 
 }

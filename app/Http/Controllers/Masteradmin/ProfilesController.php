@@ -18,9 +18,11 @@ use App\Models\MasterUserDetails;
 
 class ProfilesController extends Controller
 {
+    
     //
     public function __construct()
     {
+        
         $this->middleware('auth_master');
     }
     
@@ -52,15 +54,31 @@ class ProfilesController extends Controller
 
     public function update(MasterProfileUpdateRequest $request): RedirectResponse
     {
-        // dd('giiii');
-        // exit;
+        // dd($request);
         $user = Auth::guard('masteradmins')->user();
-        $user->fill($request->validated());
-        
-        // Handle the image upload
-        $user->user_image = $this->handleImageUpload($request, $user->user_image, 'masteradmin/profile_image');
+       
+        $userDetails = new MasterUserDetails();
+        $userDetails->setTableForUniqueId($user->user_id);
+    
+        $existingUser = $userDetails->find($user->id);
+        // dd($existingUser);
+        if (!$existingUser) {
+            return Redirect::route('business.profile.edit')->withErrors('User not found');
+        }
+    
+        $data = $request->validated();
+    
+        if ($request->hasFile('image')) {
+            $data['users_image'] = $this->handleImageUpload($request, $request->file('image'), 'masteradmin/profile_image');
+        }
+    
+        // Update the record
+        $existingUser->where('users_id',$existingUser->users_id)->update($data);
 
-        $user->save();
+        $updatedUser = $userDetails->find($user->id);
+
+        session(['user_details' => $updatedUser]);
+
         \MasterLogActivity::addToLog('Master Admin Profile is Edited.');
         return Redirect::route('business.profile.edit')->with('status', 'profile-updated');
     }

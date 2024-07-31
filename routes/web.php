@@ -82,7 +82,8 @@ Route::group(['prefix' => $busadminRoute], function () {
                 
     });
 
-    Route::middleware(['auth_master', 'set.user.details'])->group(function () {
+
+    Route::middleware(['auth_master','set.user.details'])->group(function () {
         
         //profile
         Route::get('/dashboard', [HomeController::class, 'create'])->name('business.home');
