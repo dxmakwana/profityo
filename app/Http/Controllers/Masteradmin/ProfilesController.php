@@ -15,15 +15,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\BusinessDetails;
 use App\Models\MasterUserDetails;
-use App\Services\UserService;
 
 class ProfilesController extends Controller
 {
     //
-    public function __construct(UserService $userService)
+    public function __construct()
     {
         $this->middleware('auth_master');
-        $this->userService = $userService;
     }
     
     
@@ -32,11 +30,7 @@ class ProfilesController extends Controller
         // Retrieve the authenticated user
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
-        // Retrieve and set the user details using the service method
-        $userDetails = $this->userService->getUserDetailsAndSet($user);
 
-        // Display the retrieved user details for debugging
-        // dd($userDetails);
         $countries = Countries::all();
        
         $states = States::where('country_id', $user->country_id)->get();
@@ -46,7 +40,6 @@ class ProfilesController extends Controller
             'countries' => $countries,
             'states' => $states,
             'selectedStateId' => $user->state_id,
-            'userDetails' => $userDetails
         ]);
     }
 

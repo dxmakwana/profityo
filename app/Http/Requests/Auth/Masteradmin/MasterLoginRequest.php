@@ -97,12 +97,7 @@ class MasterLoginRequest extends FormRequest
 
         // Log the user in with the 'masteradmins' guard
         Auth::guard('masteradmins')->login($users, $this->boolean('user_remember'));
-
-        // Also log the user in with the second guard, for example 'secondguard'
-        Auth::guard('masteradmins')->setUser($users);
-
-        dd(Auth::guard('masteradmins')->user());
-    
+        session(['user_details' => $users]);
         if ($this->boolean('user_remember')) {
             
             Cookie::queue(Cookie::make('user_id', $this->input('user_id'), 60 * 24 * 30)); // 30 days
