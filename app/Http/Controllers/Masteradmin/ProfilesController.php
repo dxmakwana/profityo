@@ -166,11 +166,13 @@ class ProfilesController extends Controller
     public function logActivity()
     {
         $user = Auth::guard('masteradmins')->user();
+
         if($user)
         {
-            $admin_user = MasterUser::where('user_id','=',$user->id);
+            $admin_user = MasterUser::where('user_id','=',$user->user_id);
             
             $logs = \MasterLogActivity::logActivityLists();
+            // dd($logs);
             
                 return view('masteradmin.logs.index')
                                             ->with('admin_user',$admin_user)

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 @extends('layouts.app')
 <title>Dashboard | Profityo</title>
 @section('content')

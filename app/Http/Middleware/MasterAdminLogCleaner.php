@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\MasterLogActivity;
+use Illuminate\Support\Facades\Auth;
 
 class MasterAdminLogCleaner
 {

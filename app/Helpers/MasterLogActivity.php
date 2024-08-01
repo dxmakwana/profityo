@@ -43,24 +43,23 @@ class MasterLogActivity
 
         $logActivityModel = new MasterLogActivityModel();
         $logActivityModel->setTableForUniqueId($user->user_id);
-
+        // dd($logActivityModel->get());
         return $logActivityModel->latest()->get();
     }
 
-    public static function deleteOldLogs()
+    public static function deleteOldLogs(int $days = 1)
     {
+        
         $user = Auth::guard('masteradmins')->user();
-        if (!$user) {
-            return; // Handle cases where the user is not authenticated
-        }
+        // dd($user);
+        $thresholdDate = Carbon::now()->subDays($days)->toDateTimeString();
+        // \DB::enableQueryLog();
 
-        $thresholdDate = Carbon::now()->subDay()->toDateTimeString();
-
-        // Set up the log activity model
         $logActivityModel = new MasterLogActivityModel();
-        $logActivityModel->setTableForUniqueId($user->user_id);
+        $logActivityModel->setTableForUniqueId($user->buss_unique_id);
 
-        // Delete log entries older than the threshold date
         $deleted = $logActivityModel->where('created_at', '<', $thresholdDate)->delete();
+        // dd(\DB::getQueryLog()); 
+        // dd($deleted);
     }
 }
