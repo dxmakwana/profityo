@@ -17,7 +17,7 @@ class BusinessDetails extends Model
 
         // Dynamically set the table name
         $user = Auth::guard('masteradmins')->user();
-        $uniq_id = $user->buss_unique_id;
+        $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_business_details');
     }
 }

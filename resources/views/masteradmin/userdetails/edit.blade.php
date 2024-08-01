@@ -94,7 +94,7 @@
                                 <div class="form-group">
                                     <label for="users_password">Password <span class="text-danger">*</span></label>
                                     <input type="Password" name="users_password" class="form-control @error('users_password') is-invalid @enderror"
-                                           id="textrate" placeholder="Password" value="{{ $userdetaile->users_password }}">
+                                           id="textrate" placeholder="Password" value="">
                                      @error('users_password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

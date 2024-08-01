@@ -58,7 +58,7 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <x-input-label for="bus_company_name" :value="__('Business Name')" />
-                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $user->user_business_name)" />
+                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name)" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
                           </div>
                         </div>
@@ -140,7 +140,13 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label for="currency">Business Currency </label>
-                            <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+                            <h4 for="currency">
+                            @if ($currency)
+                              <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+                            @else
+                              <h4 for="currency">No currency information available</h4>
+                            @endif
+                            </h4>
                           </div>
                         </div>
                         <div class="col-md-12">

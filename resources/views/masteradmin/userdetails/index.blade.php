@@ -70,7 +70,7 @@
                         <td>{{ $value->users_name }}</td>
                         <td>{{ $value->users_email  }}</td>
                         <td>{{ $value->users_phone  }}</td>
-                        <td>{{ $value->userRole->role_name }}</td>
+                        <td>{{ $value->userRole->role_name ?? '' }}</td>
                         <td class="text-right">
                           <a href="{{ route('business.userdetail.edit',$value->users_id ) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                           <a data-toggle="modal" data-target="#delete-role-modal-{{ $value->users_id  }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>

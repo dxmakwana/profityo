@@ -86,11 +86,15 @@ class ProfilesController extends Controller
     public function businessProfile(Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
+        // dd($user);
         $BusinessDetails = BusinessDetails::where('id', $user->id)->where('bus_status', 1)->first();
         // dd($BusinessDetails);
         $countries = Countries::all();
         $states = collect();
-        $currency = Countries::where('id', $BusinessDetails->bus_currency)->first();
+        $currency = null;
+        if (isset($BusinessDetails->bus_currency)) {
+            $currency = Countries::where('id', $BusinessDetails->bus_currency)->first();
+        }
 
         if ($BusinessDetails && $BusinessDetails->country_id) {
             $states = States::where('country_id', $BusinessDetails->country_id)->get();

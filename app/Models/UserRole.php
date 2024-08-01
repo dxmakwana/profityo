@@ -14,9 +14,14 @@ class UserRole extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        // Dynamically set the table name
+
         $user = Auth::guard('masteradmins')->user();
-        $uniq_id = $user->buss_unique_id;
+        $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_users_role');
+    }
+
+    public function masterUserDetails()
+    {
+        return $this->hasMany(MasterUserDetails::class, 'role_id', 'role_id');
     }
 }
