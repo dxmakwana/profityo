@@ -14,16 +14,6 @@ class MasterUserDetails extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $fillable = ['id','users_name', 'users_email', 'users_phone', 'users_password', 'role_id','user_id','users_status', 'users_image', 'country_id', 'state_id', 'users_city_name', 'users_pincode'];
-
-    // public function __construct(array $attributes = [])
-    // {
-    //     parent::__construct($attributes);
-
-    //     // Dynamically set the table name
-    //     $user = Auth::guard('masteradmins')->user();
-    //     $uniq_id = $user->buss_unique_id;
-    //     $this->setTable($uniq_id . '_py_users_details');
-    // }
     
     public function setTableForUniqueId($uniqueId)
     {
