@@ -34,6 +34,11 @@ return [
             'send_success' => 'user created successfully.',
             'edit_user_success' => 'user updated successfully',
             'delete_user_success' => 'user deleted successfully',
+            'link_send_success' => 'Success! A user information details has been sent to user.',
+            'link_send_error' => 'Failed to update.',
+            'not_authenticated' => 'This user is not authenticated.',
+            
+            
         ],
         'register' => [
             'link_send_success' => 'Success! A registration email has been sent to you.',

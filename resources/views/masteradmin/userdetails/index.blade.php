@@ -27,6 +27,13 @@
     <section class="content px-10">
       <div class="container-fluid">
         <!-- Handle messages -->
+        @if(Session::has('link-success'))
+          <p class="text-success" > {{ Session::get('link-success') }}</p>
+        @endif
+        @if(Session::has('link-error'))
+          <p class="text-danger" > {{ Session::get('link-error') }}</p>
+        @endif
+              
         @if(Session::has('user-add'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
               {{ Session::get('user-add') }}

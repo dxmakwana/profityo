@@ -18,6 +18,7 @@ use App\Http\Controllers\Masteradmin\UserRoleController;
 use App\Http\Controllers\Masteradmin\SalesTaxController;
 use App\Http\Controllers\Masteradmin\UserController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -115,7 +116,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('roledestroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
         Route::get('userrole/{userrole}', [UserRoleController::class, 'userrole'])->name('business.role.userrole');
         Route::put('updaterole/{userrole}', [UserRoleController::class, 'updaterole'])->name('business.role.updaterole');
-
+                        
         //saletax
         Route::get('/salestax', [SalesTaxController::class, 'index'])->name('business.salestax.index');
         Route::get('/taxcreate', [SalesTaxController::class, 'create'])->name('business.salestax.create');
@@ -132,7 +133,13 @@ Route::group(['prefix' => $busadminRoute], function () {
 
         Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
         Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
+        Route::get('/users/change-password', [UserController::class, 'changePassword'])
+                        ->name('business.userdetail.changePassword');
+        Route::post('/users/change-password', [UserController::class, 'storePassword'])
+                        ->name('business.userdetail.storePassword');
+        
         // end by dx.....
+        
         
     });
     

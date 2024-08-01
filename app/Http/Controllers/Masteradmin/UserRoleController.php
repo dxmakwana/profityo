@@ -97,6 +97,7 @@ class UserRoleController extends Controller
     public function Userrole($role_id): View
     {
         $user = Auth::guard('masteradmins')->user();
+        
         $userrole = UserRole::where(['role_id' => $role_id, 'id' => $user->id])->firstOrFail();
         $permissions = AdminMenu::where('pmenu', 0)
             ->where('is_deleted', 0)
@@ -206,6 +207,7 @@ class UserRoleController extends Controller
 
 
     // end by dxx...
+    
 
     
 }
