@@ -41,8 +41,9 @@ class LoginController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        // dd($request->session());
         Auth::guard('masteradmins')->logout();
+
+        $request->session()->flush();
 
         // $request->session()->invalidate();
 
