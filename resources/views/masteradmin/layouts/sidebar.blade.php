@@ -69,11 +69,11 @@
                 </a>
               </li>
               @endif
-              @if(isset($access['customer_statements']) && $access['customer_statements'])
+              @if(isset($access['customers']) && $access['customers'])
               <li class="nav-item">
-                <a href="customerstatements.html" class="nav-link">
+                <a href="{{ route('business.salescustomers.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Customer Statements</p>
+                  <p>Customers</p>
                 </a>
               </li>
               @endif

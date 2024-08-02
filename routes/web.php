@@ -17,6 +17,7 @@ use App\Http\Controllers\superadmin\HomesController;
 use App\Http\Controllers\Masteradmin\UserRoleController;
 use App\Http\Controllers\Masteradmin\SalesTaxController;
 use App\Http\Controllers\Masteradmin\UserController;
+use App\Http\Controllers\Masteradmin\SalesCustomersController;
 
 
 /*
@@ -139,6 +140,14 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.userdetail.storePassword');
         
         // end by dx.....
+        //salesCustomer...
+        Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');
+        Route::get('/customercreate', [SalesCustomersController::class, 'create'])->name('business.salescustomers.create');
+        Route::post('/store', [SalesCustomersController::class, 'store'])->name('business.salescustomers.store');
+        Route::get('/customeredit/{SalesCustomerse}', [SalesCustomersController::class, 'edit'])->name('business.salescustomers.edit');
+        Route::patch('/customerupdate/{SalesCustomers}', [SalesCustomersController::class, 'update'])->name('business.salescustomers.update');
+        Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
+       //  end
         
         
     });

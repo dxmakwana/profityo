@@ -173,6 +173,46 @@ class Controller extends BaseController
             }
             // end by dx....
 
+            // SalesCustomer...
+            if (!Schema::hasTable($storeId . '_py_sale_customers')) {
+                Schema::create($storeId . '_py_sale_customers', function (Blueprint $table) {
+                    $table->increments('sale_cus_id');
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('users_id')->nullable()->default(0);
+                    $table->string('sale_cus_business_name')->nullable();
+                    $table->string('sale_cus_first_name')->nullable();
+                    $table->string('sale_cus_last_name')->nullable();
+                    $table->string('sale_cus_email')->nullable();
+                    $table->string('sale_cus_phone')->nullable();
+                    $table->string('sale_cus_fax')->nullable();
+                    $table->string('sale_cus_mobile')->nullable();
+                    $table->string('sale_cus_toll_free')->nullable();
+                    $table->string('sale_cus_account_number')->nullable();
+                    $table->string('sale_cus_website')->nullable();
+                    $table->string('sale_cus_notes')->nullable();
+                    $table->integer('sale_bill_currency_id')->nullable()->default(0);
+                    $table->string('sale_bill_address1')->nullable();
+                    $table->string('sale_bill_address2')->nullable();
+                    $table->integer('sale_bill_country_id')->nullable()->default(0);
+                    $table->string('sale_bill_city_name')->nullable();
+                    $table->string('sale_bill_zipcode')->nullable();
+                    $table->integer('sale_bill_state_id')->nullable()->default(0);
+                    $table->string('sale_ship_shipto')->nullable();
+                    $table->integer('sale_ship_currency_id')->nullable()->default(0);
+                    $table->string('sale_ship_address1')->nullable();
+                    $table->string('sale_ship_address2')->nullable();
+                    $table->integer('sale_ship_country_id')->nullable()->default(0);
+                    $table->string('sale_ship_city_name')->nullable();
+                    $table->string('sale_ship_zipcode')->nullable();
+                    $table->integer('sale_ship_state_id')->nullable()->default(0);
+                    $table->string('sale_ship_phone')->nullable();
+                    $table->string('sale_ship_delivery_desc')->nullable();
+                    $table->string('sale_same_address')->nullable();
+                    $table->tinyInteger('sale_cus_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
         }
     }
 

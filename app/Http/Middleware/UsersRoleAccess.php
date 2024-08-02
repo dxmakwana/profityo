@@ -30,10 +30,10 @@ class UsersRoleAccess
            
             if ($existingUser) {
                 $masterUser = $existingUser->masterUser;
-                
+                // dd($masterUser);
                 if ($masterUser) {
                     $access = $masterUser->userAccess->pluck('is_access', 'mname')->toArray();
-                    dd($access);
+                    // dd($access);
                     View::share('user_access', $access);
                 } else {
                     View::share('user_access', []);
