@@ -137,12 +137,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                 <label>Country</label>
-                    <select class="form-control from-select select2 @error('sale_bill_country_id') is-invalid @enderror" name="sale_bill_country_id" id="bill_country" style="width: 100%;">
-                    <option value="">Select Country</option>
-                        @foreach($Country as $con)
-                            <option value="{{ $con->sale_bill_country_id }}">{{ $con->name }}</option>
-                        @endforeach
-                    </select>
+                <select class="form-control from-select select2 @error('sale_bill_country_id') is-invalid @enderror" name="sale_bill_country_id" id="bill_country" style="width: 100%;">
+                  <option value="">Select Country</option>
+                  @foreach($Country as $con)
+                      <option value="{{ $con->id }}">{{ $con->name }}</option>
+                  @endforeach
+              </select>
+
                 </div>
               </div>
               <div class="col-md-4">
@@ -161,11 +162,12 @@
                 <div class="form-group">
                 <label>Province/State</label>
                   <select class="form-control from-select select2 @error('sale_bill_state_id') is-invalid @enderror" name="sale_bill_state_id" id="bill_state" style="width: 100%;">
-                  <option value="">Select State</option>
-                        @foreach($State as $states)
-                            <option value="{{ $states->sale_bill_state_id }}">{{ $states->name }}</option>
-                        @endforeach
-                    </select>
+                    <option value="">Select State</option>
+                    @foreach($State as $states)
+                        <option value="{{ $states->id }}">{{ $states->name }}</option>
+                    @endforeach
+                 </select>
+
                 </div>
               </div>
             </div>
@@ -201,7 +203,7 @@
                   <select class="form-control from-select select2 @error('sale_ship_country_id') is-invalid @enderror" name="sale_ship_country_id" id="ship_country" style="width: 100%;">
                   <option value="">Select Country</option>
                         @foreach($Country as $con)
-                            <option value="{{ $con->sale_ship_country_id }}">{{ $con->name }}</option>
+                            <option value="{{ $con->id }}">{{ $con->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -224,7 +226,7 @@
                   <select class="form-control from-select select2 @error('sale_ship_state_id') is-invalid @enderror" name="sale_ship_state_id" id="ship_state" style="width: 100%;">
                   <option value="">Select State</option>
                         @foreach($State as $states)
-                            <option value="{{ $states->sale_ship_state_id }}">{{ $states->name }}</option>
+                            <option value="{{ $states->id }}">{{ $states->name }}</option>
                         @endforeach
                     </select>
                 </div>

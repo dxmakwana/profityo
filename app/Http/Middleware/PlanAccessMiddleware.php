@@ -27,14 +27,15 @@ class PlanAccessMiddleware
             $userDetails = new MasterUserDetails();
             $userDetails->setTableForUniqueId($user->buss_unique_id);
 
-            $existingUser = $userDetails->where('user_id', $user->user_id)->first();
+            $existingUser = $userDetails->where('id', $user->id)->first();
             
             if ($existingUser) {
-                $userRole = $existingUser->userRole;
+                $masterUser = $existingUser->masterUser;
 
-                if ($userRole) {
-                    // Fetch access rights for the role
-                    $access = $userRole->masterUserAccess->pluck('is_access', 'mname')->toArray();
+                // Ensure masterUser is loaded
+                if ($masterUser) {
+                    // Load user access rights
+                    $access = $masterUser->userAccess->pluck('is_access', 'mname')->toArray();
                     View::share('access', $access);
                 } else {
                     View::share('access', []);

@@ -77,14 +77,7 @@
                 </a>
               </li>
               @endif
-              @if(isset($access['customers']) && $access['customers'])
-              <li class="nav-item">
-                <a href="customers-list.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Customers</p>
-                </a>
-              </li>
-              @endif
+            
               @if(isset($access['product_services_sales']) && $access['product_services_sales'])
               <li class="nav-item">
                 <a href="products-services-sales-list.html" class="nav-link">

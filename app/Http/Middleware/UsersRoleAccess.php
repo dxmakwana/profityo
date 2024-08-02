@@ -22,7 +22,7 @@ class UsersRoleAccess
 
         if (Auth::guard($guard)->check()) {
             $user = Auth::guard($guard)->user();
-            // dd($user);
+            dd($user);
             $userDetails = new MasterUserDetails();
             $userDetails->setTableForUniqueId($user->buss_unique_id);
 

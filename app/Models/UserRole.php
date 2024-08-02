@@ -16,6 +16,7 @@ class UserRole extends Model
         parent::__construct($attributes);
 
         $user = Auth::guard('masteradmins')->user();
+        // dd($user);
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_users_role');
     }
@@ -27,7 +28,8 @@ class UserRole extends Model
 
     public function masterUserAccess()
     {
-        return $this->hasMany(MasterUserAccess::class, 'role_id', 'role_id');
+        return $this->hasMany(UserAccess::class, 'role_id', 'id');
     }
+
 
 }
