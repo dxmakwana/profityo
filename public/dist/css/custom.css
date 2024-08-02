@@ -1620,6 +1620,29 @@ display:none;
 .input-group{
   flex-wrap: unset;
 }
+.login_ul{
+  list-style: none;
+}
+.login_ul li {
+  list-style: none;
+}
+
+.invalid-feedback{
+  display: block !important;
+}
+form {
+  margin-bottom: 0;
+}
+.welcome_box{
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+}
+.welcome_page_text{
+  position: relative;
+  color: #053A51;
+}
 
 /*--------------------------------------------------------------
 # Responsive Css
@@ -2251,6 +2274,13 @@ display:none;
   }
   .payments-setup.bs-stepper .step-trigger{
     font-size: 16px;
+  }
+  .welcome_box{
+    width: 90%;
+    padding: 20px;
+  }
+  .welcome_page_text{
+    font-size: 28px;
   }
 }
 @media screen and (max-width: 479px){

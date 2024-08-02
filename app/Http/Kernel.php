@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\PlanAccessMiddleware::class,
             \App\Http\Middleware\MasterAdminLogCleaner::class,
+            \App\Http\Middleware\UsersRoleAccess::class,
             
         ],
 

@@ -19,8 +19,9 @@
             </div>
             <x-text-input id="user_id" class="form-control" type="text" name="user_id" :value="old('user_id',$rememberedId)" 
                 autofocus autocomplete="user_id" placeholder="User id" />
-            <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
+            
         </div>
+        <x-input-error :messages="$errors->get('user_id')" class="mt-1 mb-1" />
 
         <div class="input-group mb-2">
             <div class="input-group-append">
@@ -30,9 +31,10 @@
             </div>
             <x-text-input id="user_email" class="form-control" type="email" name="user_email" :value="old('user_email',$rememberedEmails)" 
                 autofocus autocomplete="email" placeholder="Email" />
-            <x-input-error :messages="$errors->get('user_email')" class="mt-2" />
+            
         </div>
-     
+        <x-input-error :messages="$errors->get('user_email')" class="mb-1 mt-1" />
+
         <div class="input-group mb-1">
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -41,9 +43,10 @@
             </div>
             <x-text-input id="user_password" class="form-control" type="password" name="user_password" :value="old('user_password',$rememberedPasswords)" 
                 autocomplete="current-password" placeholder="Password" />
-            <x-input-error :messages="$errors->get('user_password')" class="mt-2" />
+            
         </div>
-
+        <x-input-error :messages="$errors->get('user_password')" class="mb-1 mt-1" />
+        
         <div class="block mt-2 d-flex justify-content-between">
             <label for="user_remember" class="inline-flex items-center">
                 <input id="user_remember" type="checkbox"
@@ -61,7 +64,7 @@
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}
             </x-primary-button>
-            <p class="text-center font_18">Don't have an account? <a href="{{ route('business.register') }}" class="back_text">Register</a></p>
+            <p class="text-center font_18 mb-0">Don't have an account? <a href="{{ route('business.register') }}" class="back_text">Register</a></p>
         </div>
     </form>
 </x-guest-layout>

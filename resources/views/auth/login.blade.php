@@ -1,3 +1,8 @@
+<?php
+ini_set('display_errors', 1); 
+ini_set('display_startup_errors', 1); 
+error_reporting(E_ALL);
+?>
 <title>Login | Profityo</title>
 <x-guest-layout>
     
@@ -5,7 +10,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" class="mb-0" action="{{ route('login') }}">
         @csrf
 
         <div class="input-group mb-2">
@@ -16,8 +21,8 @@
             </div>
             <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email',$rememberedEmail)" 
                 autofocus autocomplete="email" placeholder="Email" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
+        <x-input-error :messages="$errors->get('email')" class="mt-1 mb-1" />
      
         <div class="input-group mb-1">
             <div class="input-group-append">
@@ -27,8 +32,8 @@
             </div>
             <x-text-input id="password" class="form-control" type="password" name="password" 
                 autocomplete="current-password" placeholder="Password" :value="old('password',$rememberedPassword)" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
+        <x-input-error :messages="$errors->get('password')" class="mt-1 mb-1" />
 
         <div class="block mt-2 d-flex justify-content-between">
             <label for="remember_me" class="inline-flex items-center">

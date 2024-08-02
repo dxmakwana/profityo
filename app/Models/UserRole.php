@@ -24,4 +24,10 @@ class UserRole extends Model
     {
         return $this->hasMany(MasterUserDetails::class, 'role_id', 'role_id');
     }
+
+    public function masterUserAccess()
+    {
+        return $this->hasMany(MasterUserAccess::class, 'role_id', 'role_id');
+    }
+
 }

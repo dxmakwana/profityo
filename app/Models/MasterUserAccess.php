@@ -35,8 +35,9 @@ class MasterUserAccess extends Model
         return $this->hasMany(AdminMenu::class, 'pmenu');
     }
 
-    public function masterUser()
+    public function userRole()
     {
-        return $this->belongsTo(UserRole::class, 'role_id ', 'role_id ');
+        return $this->belongsTo(UserRole::class, 'role_id', 'role_id');
     }
+    
 }
