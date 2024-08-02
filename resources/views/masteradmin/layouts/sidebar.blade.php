@@ -47,6 +47,8 @@
                   <p>Estimates</p>
                 </a>
               </li>
+              @else
+
               @endif
               @if((isset($access['invoices']) && $access['invoices']) && (isset($user_access['invoices']) && $user_access['invoices']))
               <li class="nav-item">
@@ -389,7 +391,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              @if((isset($access['personal_profile']) && $access['personal_profile']) || (isset($user_access['personal_profile']) && $user_access['personal_profile']))
+              @if((isset($access['personal_profile']) && $access['personal_profile']) && (isset($user_access['personal_profile']) && $user_access['personal_profile']))
               <li class="nav-item">
                 <a href="{{ route('business.profile.edit') }}" class="nav-link {{ request()->is($busadminRoutes.'/profile*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
@@ -397,7 +399,7 @@
                 </a>
               </li>
               @endif
-              @if((isset($access['business_profile']) && $access['business_profile']) || (isset($user_access['business_profile']) && $user_access['business_profile']))
+              @if((isset($access['business_profile']) && $access['business_profile']) && (isset($user_access['business_profile']) && $user_access['business_profile']))
               <li class="nav-item">
                 <a href="{{ route('business.business.edit') }}" class="nav-link {{ request()->is($busadminRoutes.'/business-profile*') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
@@ -405,7 +407,7 @@
                 </a>
               </li>
               @endif
-              @if((isset($access['users']) && $access['users']) || (isset($user_access['users']) && $user_access['users']))
+              @if((isset($access['users']) && $access['users']) && (isset($user_access['users']) && $user_access['users']))
               <li class="nav-item">
                 <a href="{{ route('business.userdetail.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/userdetails*') || 
                              request()->is($busadminRoutes.'/usercreate*') || 
@@ -416,7 +418,7 @@
                 </a>
               </li>
               @endif
-              @if((isset($access['roles']) && $access['roles'])  || (isset($user_access['roles']) && $user_access['roles']))
+              @if((isset($access['roles']) && $access['roles'])  && (isset($user_access['roles']) && $user_access['roles']))
               <li class="nav-item">
                 <a href="{{ route('business.role.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/user-role-details*') || 
                              request()->is($busadminRoutes.'/rolecreate*') || 
@@ -428,7 +430,7 @@
                 </a>
               </li>
               @endif
-              @if((isset($access['roles']) && $access['roles']) || (isset($user_access['roles']) && $user_access['roles']))
+              @if((isset($access['roles']) && $access['roles']) && (isset($user_access['roles']) && $user_access['roles']))
               <li class="nav-item">
                 <a href="{{ route('business.salestax.index') }}" class="nav-link {{
                  request()->is($busadminRoutes.'/salestax*') || 

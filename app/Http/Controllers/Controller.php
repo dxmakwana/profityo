@@ -85,7 +85,7 @@ class Controller extends BaseController
                     $table->string('users_password')->nullable();
                     $table->integer('role_id')->nullable()->default(0);
                     $table->integer('id')->nullable()->default(0);
-                    $table->integer('user_id')->nullable();
+                    $table->string('user_id')->nullable();
                     $table->string('remember_token')->nullable();
                     $table->tinyInteger('users_status')->default(0)->nullable();
                     $table->string('users_image')->nullable();

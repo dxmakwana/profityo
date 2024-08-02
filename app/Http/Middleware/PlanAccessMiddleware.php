@@ -36,6 +36,7 @@ class PlanAccessMiddleware
                 if ($masterUser) {
                     // Load user access rights
                     $access = $masterUser->userAccess->pluck('is_access', 'mname')->toArray();
+                    // dd($access);
                     View::share('access', $access);
                 } else {
                     View::share('access', []);

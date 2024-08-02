@@ -181,6 +181,7 @@ class UserController extends Controller
 
     public function storePassword(Request $request): RedirectResponse
     {
+        // dd($request);
         $validatedData = $request->validate([
             'user_email' => ['required', 'email'],
             'user_password' => [
@@ -199,7 +200,7 @@ class UserController extends Controller
         ]);
 
         $user = Auth::guard('masteradmins')->user();
-
+        // dd($user);
         if (!$user) {
             return redirect()->route('business.login')->with(['forgotpassword-error' => __('messages.masteradmin.user.not_authenticated')]);
         }
@@ -216,8 +217,10 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('business.login')->with(['forgotpassword-error' => __('messages.masteradmin.user.link_send_error')]);
         }
+        // \DB::enableQueryLog();
 
         $userdetailu->where('users_email', $request->user_email)->update(['users_password' => Hash::make($request->user_password)]);
+        // dd(\DB::getQueryLog()); 
 
         return redirect()->route('business.login')->with(['forgotpassword-success' => __('messages.masteradmin.user.link_send_success')]);
     }

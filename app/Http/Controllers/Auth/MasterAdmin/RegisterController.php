@@ -32,14 +32,12 @@ class RegisterController extends Controller
     {
         $request->validate([
             'user_first_name' => ['required', 'string', 'max:255'],
-            'user_last_name' => ['required', 'string', 'max:255'],
             'user_phone' => ['required', 'string', 'max:255'],
             'user_business_name' => ['required', 'string', 'max:255'],
             'user_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.MasterUser::class],
             'user_password' => ['required', 'string', '', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
         ],[
             'user_first_name.required' => 'The First Name field is required.',
-            'user_last_name.required' => 'The Last Name field is required.',
             'user_phone.required' => 'The Phone field is required.',
             'user_business_name.required' => 'The Business Name field is required.',
             'user_email.required' => 'The Email field is required.',
@@ -48,7 +46,7 @@ class RegisterController extends Controller
             'user_password.required' => 'The Password field is required.',
         ]);
 
-        $plan = Plan::where('sp_id', '12')->firstOrFail();
+        $plan = Plan::where('sp_id', '15')->firstOrFail();
 
         $startDate = Carbon::now();
         $months = $plan->sp_month;
@@ -57,7 +55,6 @@ class RegisterController extends Controller
 
         $admin = MasterUser::create([
             'user_first_name' => $request->user_first_name,
-            'user_last_name' => $request->user_last_name,
             'user_email' => $request->user_email,
             'user_phone' => $request->user_phone,
             'user_image' => '',
@@ -89,7 +86,7 @@ class RegisterController extends Controller
         $userDetails = new MasterUserDetails();
         $userDetails->setTableForUniqueId($buss_unique_id);
         $userDetails->create([
-            'users_name' => $request->user_first_name . ' ' . $request->user_last_name,
+            'users_name' => $request->user_first_name,
             'users_email' => $request->user_email,
             'users_phone' => $request->user_phone,
             'users_password' => Hash::make($request->user_password),

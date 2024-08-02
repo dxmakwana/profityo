@@ -28,6 +28,28 @@
     <section class="content px-10">
       <div class="container-fluid">
         <!-- Main row -->
+        @if(Session::has('sales-customers-add'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('sales-customers-add') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('sales-customers-add');
+            @endphp
+          @endif
+          @if(Session::has('sales-customers-delete'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('sales-customers-delete') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('sales-customers-delete');
+            @endphp
+          @endif
         <div class="card px-20">
           <div class="card-body1">
             <div class="col-md-12 table-responsive pad_table">

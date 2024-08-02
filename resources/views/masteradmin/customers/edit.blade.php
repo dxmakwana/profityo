@@ -25,13 +25,23 @@
     <section class="content px-10">
       <div class="container-fluid">
         <!-- card -->
+        @if(Session::has('sales-customers-edit'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('sales-customers-edit') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('sales-customers-edit');
+      @endphp
+    @endif
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Basic Information</h3>
           </div>
           <!-- /.card-header -->
           <form method="POST" action="{{ route('business.salescustomers.update', ['SalesCustomers' => $SalesCustomerse->sale_cus_id]) }}">
-       <!-- <form method="POST" action="{{ route('business.salescustomers.store') }}"> -->
           @csrf
           @method('Patch')
           <div class="card-body2">
@@ -114,11 +124,13 @@
             <div class="row pad-5">
               <div class="col-md-12">
                 <div class="form-group">
-                <label>Currency</label>
+               <label>Currency</label>
                     <select class="form-control from-select select2 @error('sale_bill_currency_id') is-invalid @enderror" name="sale_bill_currency_id" style="width: 100%;">
                       <option value="">Select a Currency</option>
                       @foreach($Country as $cur)
-                          <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                          <option value="{{ $cur->id }}" @if($cur->id == $SalesCustomerse->sale_bill_currency_id) selected @endif>
+                              {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
+                          </option>
                       @endforeach
                     </select>
                   <label>Invoices for this customer will default to this currency.</label>
@@ -142,7 +154,9 @@
                     <select class="form-control from-select select2 @error('sale_bill_country_id') is-invalid @enderror" name="sale_bill_country_id" id="bill_country" style="width: 100%;">
                     <option value="">Select Country</option>
                         @foreach($Country as $con)
-                            <option value="{{ $con->sale_bill_country_id }}">{{ $con->name }}</option>
+                            <option value="{{ $con->id }}" @if($con->id == $SalesCustomerse->sale_bill_country_id) selected @endif>
+                                {{ $con->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -164,8 +178,13 @@
                 <label>Province/State</label>
                   <select class="form-control from-select select2 @error('sale_bill_state_id') is-invalid @enderror" name="sale_bill_state_id" id="bill_state" style="width: 100%;">
                   <option value="">Select State</option>
+                        <!-- @foreach($State as $states)
+                            <option value="{{ $states->id }}">{{ $states->name }}</option>
+                        @endforeach -->
                         @foreach($State as $states)
-                            <option value="{{ $states->sale_bill_state_id }}">{{ $states->name }}</option>
+                            <option value="{{ $states->id }}" @if($states->id == $SalesCustomerse->sale_bill_state_id) selected @endif>
+                                {{ $states->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -203,8 +222,13 @@
                   <label>Country</label>
                   <select class="form-control from-select select2 @error('sale_ship_country_id') is-invalid @enderror" name="sale_ship_country_id" id="ship_country" style="width: 100%;">
                   <option value="">Select Country</option>
-                        @foreach($Country as $con)
-                            <option value="{{ $con->sale_ship_country_id }}">{{ $con->name }}</option>
+                        <!-- @foreach($Country as $cont)
+                            <option value="{{ $cont->sale_ship_country_id }}">{{ $cont->name }}</option>
+                        @endforeach -->
+                        @foreach($Country as $cont)
+                            <option value="{{ $cont->id }}" @if($cont->id == $SalesCustomerse->sale_ship_country_id) selected @endif>
+                                {{ $cont->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -226,8 +250,13 @@
                 <label>Province/State</label>
                   <select class="form-control from-select select2 @error('sale_ship_state_id') is-invalid @enderror" name="sale_ship_state_id" id="ship_state" style="width: 100%;">
                   <option value="">Select State</option>
-                        @foreach($State as $states)
+                        <!-- @foreach($State as $states)
                             <option value="{{ $states->sale_ship_state_id }}">{{ $states->name }}</option>
+                        @endforeach -->
+                        @foreach($State as $statest)
+                            <option value="{{ $statest->id }}" @if($statest->id == $SalesCustomerse->sale_ship_state_id) selected @endif>
+                                {{ $statest->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -258,7 +287,52 @@
       </div><!-- /.container-fluid -->
     </section>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#bill_country').change(function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                    url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#bill_state').empty();
+                        $('#bill_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#bill_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#bill_state').empty();
+                $('#bill_state').append('<option value="">Select State</option>');
+            }
+        });
 
+        $('#ship_country').change(function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                  url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ship_state').empty();
+                        $('#ship_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#ship_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#ship_state').empty();
+                $('#ship_state').append('<option value="">Select State</option>');
+            }
+        });
+    });
+</script>
 <script>
  document.getElementById('add_contact_btn').addEventListener('click', function() {
     // Clone the first contact field group

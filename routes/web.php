@@ -18,6 +18,7 @@ use App\Http\Controllers\Masteradmin\UserRoleController;
 use App\Http\Controllers\Masteradmin\SalesTaxController;
 use App\Http\Controllers\Masteradmin\UserController;
 use App\Http\Controllers\Masteradmin\SalesCustomersController;
+use App\Http\Controllers\superadmin\BusinessDetailController;
 
 
 /*
@@ -59,6 +60,10 @@ Route::group(['prefix' => $adminRoute], function () {
         Route::get('/plans/planrole/{plan}', [PlanController::class, 'planrole'])->name('plans.planrole');
         Route::put('/plans/updaterole/{plan}', [PlanController::class, 'updaterole'])->name('plans.updaterole');
         
+        // business details...........
+         Route::get('/businessdetails', [BusinessDetailController::class, 'index'])->name('businessdetails.index');
+         // end............
+
         //logs
         Route::get('/logActivity', [ProfileController::class, 'logActivity'])->name('adminlog.index');
         
@@ -81,6 +86,10 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.reset');
         Route::post('reset-password', [MasterNewPasswordController::class, 'store'])
                         ->name('business.password.store');
+        Route::get('/users/change-password', [UserController::class, 'changePassword'])
+                        ->name('business.userdetail.changePassword');
+        
+       
                 
     });
 
@@ -131,23 +140,21 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/usercreate', [UserController::class, 'create'])->name('business.userdetail.create');
         Route::post('/userstore', [UserController::class, 'store'])->name('business.userdetail.store');
         Route::get('/useredit/{userdetaile}', [UserController::class, 'edit'])->name('business.userdetail.edit');
-
+        
         Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
         Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
-        Route::get('/users/change-password', [UserController::class, 'changePassword'])
-                        ->name('business.userdetail.changePassword');
-        Route::post('/users/change-password', [UserController::class, 'storePassword'])
-                        ->name('business.userdetail.storePassword');
         
-        // end by dx.....
+        Route::post('/users/change-password', [UserController::class, 'storePassword'])
+        ->name('business.userdetail.storePassword');
+        
         //salesCustomer...
         Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');
         Route::get('/customercreate', [SalesCustomersController::class, 'create'])->name('business.salescustomers.create');
         Route::post('/store', [SalesCustomersController::class, 'store'])->name('business.salescustomers.store');
-        Route::get('/customeredit/{SalesCustomerse}', [SalesCustomersController::class, 'edit'])->name('business.salescustomers.edit');
+        Route::get('/customeredit/{SalesCustomers}', [SalesCustomersController::class, 'edit'])->name('business.salescustomers.edit');
         Route::patch('/customerupdate/{SalesCustomers}', [SalesCustomersController::class, 'update'])->name('business.salescustomers.update');
         Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
-       //  end
+        Route::get('getstates/{country_id}', [SalesCustomersController::class, 'customerStates'])->name('get.states');
         
         
     });

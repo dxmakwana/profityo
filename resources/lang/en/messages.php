@@ -44,6 +44,11 @@ return [
             'link_send_success' => 'Success! A registration email has been sent to you.',
             'link_send_error' => 'Failed to send email.',
         ],
+        'sales-customers' => [
+            'send_success' => 'Customer created successfully.',
+            'edit_salescustomers_success' => 'Customer updated successfully',
+            'delete_salescustomers_success' => 'Customer deleted successfully',
+        ]
 
     ]
     

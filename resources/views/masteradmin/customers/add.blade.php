@@ -87,7 +87,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-              <button type="button" id="add_contact_btn" class="btn btn-primary"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
+              <button type="button" id="add_contact_btn" class="add_contactbtn"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
@@ -137,10 +137,10 @@
               <div class="col-md-4">
                 <div class="form-group">
                 <label>Country</label>
-                <select class="form-control from-select select2 @error('sale_bill_country_id') is-invalid @enderror" name="sale_bill_country_id" id="bill_country" style="width: 100%;">
+                <select class="form-control" name="sale_bill_country_id" id="bill_country">
                   <option value="">Select Country</option>
-                  @foreach($Country as $con)
-                      <option value="{{ $con->id }}">{{ $con->name }}</option>
+                  @foreach($Country as $country)
+                      <option value="{{ $country->id }}">{{ $country->name }}</option>
                   @endforeach
               </select>
 
@@ -160,13 +160,11 @@
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                <label>Province/State</label>
-                  <select class="form-control from-select select2 @error('sale_bill_state_id') is-invalid @enderror" name="sale_bill_state_id" id="bill_state" style="width: 100%;">
-                    <option value="">Select State</option>
-                    @foreach($State as $states)
-                        <option value="{{ $states->id }}">{{ $states->name }}</option>
-                    @endforeach
-                 </select>
+                <label for="bill_state">Province/State</label>
+                  <select class="form-control" name="sale_bill_state_id" id="bill_state">
+                      <option value="">Select State</option>
+                      <!-- States will be populated here dynamically -->
+                  </select>
 
                 </div>
               </div>
@@ -257,32 +255,54 @@
       </div><!-- /.container-fluid -->
     </section>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
- document.getElementById('add_contact_btn').addEventListener('click', function() {
-    // Clone the first contact field group
-    var container = document.getElementById('contact_fields_container');
-    var firstGroup = container.querySelector('.contact-field-group');
-    var newGroup = firstGroup.cloneNode(true);
-    
-    // Clear the values in the new group
-    var inputs = newGroup.querySelectorAll('input');
-    inputs.forEach(function(input) {
-      input.value = '';
+    $(document).ready(function() {
+        $('#bill_country').change(function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                    url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#bill_state').empty();
+                        $('#bill_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#bill_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#bill_state').empty();
+                $('#bill_state').append('<option value="">Select State</option>');
+            }
+        });
+
+        $('#ship_country').change(function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                  url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ship_state').empty();
+                        $('#ship_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#ship_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#ship_state').empty();
+                $('#ship_state').append('<option value="">Select State</option>');
+            }
+        });
     });
-    
-    // Append the new group to the container
-    container.appendChild(newGroup);
-  });
-
-  // Handle remove contact button click
-  document.getElementById('contact_fields_container').addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('remove-contact')) {
-      e.target.closest('.contact-field-group').remove();
-    }
-  });
-
-
+</script>
+<script>
+ 
   document.getElementById('same_address_checkbox').addEventListener('change', function() {
     if (this.checked) {
       // Copy text fields

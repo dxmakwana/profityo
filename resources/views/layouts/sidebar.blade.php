@@ -20,7 +20,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="business-list.html" class="nav-link">
+            <a href="{{ route('businessdetails.index') }}" class="nav-link">
               <i class="nav-icon fas fa-regular fa-building"></i>
               <p>Business</p>
             </a>

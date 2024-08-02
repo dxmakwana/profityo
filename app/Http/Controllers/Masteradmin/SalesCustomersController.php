@@ -21,6 +21,13 @@ class SalesCustomersController extends Controller
         $SalesCustomers = SalesCustomers::all();
         return view('masteradmin.customers.index')->with('SalesCustomers', $SalesCustomers);
     }
+    public function customerStates($country_id)
+    {
+
+        // dd($country_id);
+        $states = States::where('country_id', $country_id)->get();
+        return response()->json($states);
+    }
     public function create(): View
     {
         $Country = Countries::all(); // Fetch all countries
@@ -103,7 +110,7 @@ class SalesCustomersController extends Controller
         'sale_cus_status' => $validatedData['sale_cus_status'],
     ]);
 
-    return redirect()->route('business.salescustomers.index')->with('success', 'Sales customer created successfully.');
+    return redirect()->route('business.salescustomers.index')->with(['sales-customers-add' => __('messages.masteradmin.sales-customers.send_success')]);
 }
 
 
@@ -165,17 +172,17 @@ class SalesCustomersController extends Controller
         ]);
 
         // Handle checkboxes: if not checked, they won't be present in the request
-        $validatedData = $request->all();
-    //  dd($validatedData);
+    //     $validatedData = $request->all();
+    // //  dd($validatedData);
         $validatedData['sale_same_address'] = $request->has('sale_same_address') ? 'on' : 'off';
-        $validatedData['id'] = $user->id; // Use the correct field name for user ID
-        $validatedData['sale_cus_status'] = 1;
+    //     $validatedData['id'] = $user->id; // Use the correct field name for user ID
+    //     $validatedData['sale_cus_status'] = 1;
      
         $SalesCustomersu->where('sale_cus_id', $sale_cus_id)->update($validatedData);
         
      
         return redirect()->route('business.salescustomers.edit', ['SalesCustomers' => $SalesCustomersu->sale_cus_id])
-        ->with('success', 'Sales customer created successfully.');
+        ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));
     }
 
 
@@ -194,7 +201,7 @@ class SalesCustomersController extends Controller
 
         // \MasterLogActivity::addToLog('Admin SalesCustomers Deleted.');
 
-        return redirect()->route('business.salescustomers.index')->with('SalesCustomers-delete', __('messages.masteradmin.sales-tax.delete_sales_success'));
+        return redirect()->route('business.salescustomers.index')->with('sales-customers-delete', __('messages.masteradmin.sales-customers.delete_salescustomers_success'));
 
     }
 }
