@@ -77,12 +77,13 @@
                         <td>{{ $value->users_name }}</td>
                         <td>{{ $value->users_email  }}</td>
                         <td>{{ $value->users_phone  }}</td>
-                        <td>{{ $value->userRole->role_name ?? '' }}</td>
+                        <td>{{ $value->userRole->role_name ?? config('global.default_user_role') }}</td>
                         <td class="text-right">
                           <a href="{{ route('business.userdetail.edit',$value->users_id ) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                           <a data-toggle="modal" data-target="#delete-role-modal-{{ $value->users_id  }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                         </td>
                       </tr>
+                     
                       <div class="modal fade" id="delete-role-modal-{{ $value->users_id  }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                           <div class="modal-content">
@@ -92,9 +93,16 @@
                               <div class="modal-body pad-1 text-center">
                                 <i class="fas fa-solid fa-trash delete_icon"></i>
                                 <p class="company_business_name px-10"><b>Delete User</b></p>
-                                <p class="company_details_text px-10">Are You Sure You Want to Delete This User?</p>
+                                
+                                  @if($value->userRole->role_name ?? '')
+                                    <p class="company_details_text px-10"> Are You Sure You Want to Delete This User? </p>
+                                  @else 
+                                      {{ config('global.default_user_role_alert_msg') }}
+                                  @endif
+                                  @if($value->userRole->role_name ?? '')
                                 <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
                                 <button type="submit" class="delete_btn px-15">Delete</button>
+                                @endif 
                               </div>
                             </form>
                           </div>
