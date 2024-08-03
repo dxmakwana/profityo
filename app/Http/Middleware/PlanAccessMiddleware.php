@@ -23,22 +23,26 @@ class PlanAccessMiddleware
         $guard = 'masteradmins';
     
         $userDetailsFromSession = session('user_details');
-    
+        // dd($userDetailsFromSession);
         if ($userDetailsFromSession) {
-            $this->handleUserDetailsFromSession($guard, $userDetailsFromSession);
-        } else {
-            if (Auth::guard($guard)->check()) {
-                $user = Auth::guard($guard)->user();
-                
-                if ($user->id) {
-                    $this->setUserAccessById($user);
+            if(empty($userDetailsFromSession->role_id)){
+                if (Auth::guard($guard)->check()) {
+                    $user = Auth::guard($guard)->user();
+                    
+                    if ($user->id) {
+                        $this->setUserAccessById($user);
+                    } else {
+                        View::share('access', []);
+                    }
                 } else {
                     View::share('access', []);
                 }
-            } else {
-                View::share('access', []);
+            }else{
+                $this->handleUserDetailsFromSession($guard, $userDetailsFromSession);
             }
-        }
+            
+        } 
+          
     
         return $next($request);
     }

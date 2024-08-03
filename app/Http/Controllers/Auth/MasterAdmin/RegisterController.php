@@ -67,8 +67,7 @@ class RegisterController extends Controller
             'state_id' => 0,
             'user_city_name' => '',
             'user_pincode' => '',
-            'isActive' => 1,
-            'user_status' => 0
+            'isActive' => 1
         ]);
 
         // Generate the unique buss_unique_id
