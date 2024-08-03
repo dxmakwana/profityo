@@ -29,7 +29,7 @@ class UsersRoleAccess
             $userDetailsModel = new MasterUserDetails();
             
             $userDetailsModel->setTableForUniqueId($userDetailsFromSession['user_id']);
-    
+            // dd($userDetailsModel);
             $user = $userDetailsModel->where('users_id', $userDetailsFromSession['users_id'])->first();
             // dd($user);
             if ($user) {
