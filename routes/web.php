@@ -88,7 +88,8 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.store');
         Route::get('/users/change-password', [UserController::class, 'changePassword'])
                         ->name('business.userdetail.changePassword');
-        
+        Route::post('/users/store-password/{user_id}', [UserController::class, 'storePassword'])
+                        ->name('business.userdetail.storePassword');
        
                 
     });
@@ -144,8 +145,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
         Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
         
-        Route::post('/users/change-password', [UserController::class, 'storePassword'])
-        ->name('business.userdetail.storePassword');
+        
         
         //salesCustomer...
         Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');

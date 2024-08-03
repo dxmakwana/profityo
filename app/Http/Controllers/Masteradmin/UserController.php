@@ -15,6 +15,10 @@ use App\Notifications\UsersDetails;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use DB;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+
 
 
 class UserController extends Controller
@@ -53,6 +57,7 @@ class UserController extends Controller
             'users_name' => 'required|string|max:255',
             'users_email' => 'required|string|max:255',
             'users_phone' => 'required|string',
+            'users_password' => 'nullable|string',
             'role_id' => 'required|integer',
         ], [
             'users_name.required' => 'The name field is required.',
@@ -82,7 +87,7 @@ class UserController extends Controller
 
         \MasterLogActivity::addToLog('Admin userdetail Created.');
 
-        $loginUrl = route('business.userdetail.changePassword', ['email' => $request->users_email]);
+        $loginUrl = route('business.userdetail.changePassword', ['email' => $request->users_email, 'user_id' => $user->user_id]);
         try {
             Mail::to($request->users_email)->send(new UsersDetails($user->user_id, $loginUrl, $request->users_email));
             session()->flash('link-success', __('messages.masteradmin.user.link_send_success'));
@@ -124,6 +129,7 @@ class UserController extends Controller
             'users_name' => 'required|string|max:255',
             'users_email' => 'required|string|max:255',
             'users_phone' => 'required|string',
+            'users_password' => 'nullable|string',
             'role_id' => 'required|integer',
         ], [
             'users_name.required' => 'The name field is required.',
@@ -176,55 +182,72 @@ class UserController extends Controller
     public function changePassword(Request $request): View
     {
         $email = $request->query('email');
-        return view('masteradmin.userdetails.change-password', ['email' => $email]);
+        $user_id = $request->query('user_id');
+        return view('masteradmin.userdetails.change-password', ['email' => $email ,'user_id' => $user_id ]);
     }
 
-    public function storePassword(Request $request): RedirectResponse
+    public function storePassword(Request $request, $user_id): RedirectResponse
     {
-        // dd($request);
-        $validatedData = $request->validate([
+        $userId = $user_id;
+        // dd($user_id);
+        $credentials = $request->only('user_email', 'user_password');
+    
+        $validator = \Validator::make($credentials, [
             'user_email' => ['required', 'email'],
-            'user_password' => [
-                'required',
-                'string',
-                Password::min(8)
-                    ->mixedCase()
-                    ->letters()
-                    ->numbers()
-                    ->symbols()
-            ],
+            'user_password' => ['required', 'string', Password::min(8)
+                ->mixedCase()
+                ->letters()
+                ->numbers()
+                ->symbols()],
         ], [
-            'user_email.required' => 'The Email field is required.',
-            'user_email.email' => 'The Email must be a valid email address.',
-            'user_password.required' => 'The Password field is required.',
+            'user_email.required' => 'The email field is required.',
+            'user_email.email' => 'The email must be a valid email address.',
+            'user_password.required' => 'The password field is required.',
         ]);
 
-        $user = Auth::guard('masteradmins')->user();
-        // dd($user);
-        if (!$user) {
-            return redirect()->route('business.login')->with(['forgotpassword-error' => __('messages.masteradmin.user.not_authenticated')]);
-        }
-
-        $masteruser = new MasterUserDetails();
-        $masteruser->setTableForUniqueId($user->user_id);
-
-        $tableName = $masteruser->getTable();
         
-
-        try {
-            $userdetailu = $masteruser->where(['users_email' => $request->user_email, 'user_id' => $user->user_id])->firstOrFail();
-            
-        } catch (\Exception $e) {
-            return redirect()->route('business.login')->with(['forgotpassword-error' => __('messages.masteradmin.user.link_send_error')]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
-        // \DB::enableQueryLog();
+    
+        $masteruser = new MasterUserDetails();
+        $masteruser->setTableForUniqueId($userId);
+        // dd($masteruser);
+        try {
+            // \DB::enableQueryLog();
 
-        $userdetailu->where('users_email', $request->user_email)->update(['users_password' => Hash::make($request->user_password)]);
-        // dd(\DB::getQueryLog()); 
+            $userdetailu = $masteruser->where([
+                'users_email' => $credentials['user_email'],
+                'user_id' => $userId
+            ])->first();
+    
+            if (!$userdetailu) {
+                RateLimiter::hit($this->throttleKey());
+                return redirect()->back()->withErrors([
+                    'user_email' => 'The email ID provided is incorrect or user does not exist.',
+                ])->withInput();
+            }
+    
+            $userdetailu->where('users_email', $credentials['user_email'])->update(['users_password' => Hash::make($credentials['user_password'])]);
+            // dd(\DB::getQueryLog()); 
+            return redirect()->route('business.login')->with([
+                'forgotpassword-success' => __('messages.masteradmin.user.link_send_success')
+            ]);
+    
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'user_email' => 'The email ID provided is incorrect or user does not exist.',
+            ])->withInput();
+        }
 
-        return redirect()->route('business.login')->with(['forgotpassword-success' => __('messages.masteradmin.user.link_send_success')]);
+        
     }
-
+    
+    public function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->string('user_email')).'|'.$this->ip()); // changed to 'user_email'
+    }
 
 
     
