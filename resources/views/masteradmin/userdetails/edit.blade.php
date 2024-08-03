@@ -76,6 +76,7 @@
                                     @enderror
                                 </div>
                             </div>
+                            @if($userdetaile->role_id)
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>User Role</label>
@@ -90,6 +91,9 @@
                                     @enderror
                                 </div>
                             </div>
+                            @else
+                    
+                            @endif
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="users_password">Password <span class="text-danger">*</span></label>

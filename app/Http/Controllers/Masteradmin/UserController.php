@@ -139,13 +139,11 @@ class UserController extends Controller
             'role_id.integer' => 'The role field is required.',
         ]);
 
-       
         if (!empty($validatedData['users_password'])) {
             $validatedData['users_password'] = Hash::make($validatedData['users_password']);
         }else{
-            $validatedData['users_password'] = Hash::make($userdetailu->users_password);
+            $validatedData['users_password'] = $userdetailu->users_password;
         }
-
     
         $userdetailu->where('users_id', $users_id)->update($validatedData);
         
