@@ -87,9 +87,16 @@
                             <td>{{ $value->user_first_name }}</td>
                             <td>{{ $value->user_email }}</td>
                             <td>{{ $value->user_phone }}</td>
-                            <td>{{ $value->sp_id }}</td>
-                            <td>{{ $value->user_status }}</td>
-                            <td>{{ $value->user_status }}</td>
+                            <td>{{ $value->plan ? $value->plan->sp_name : 'No Plan' }}</td>
+                            <td>{{ $value->totalUserCount  }}</td>
+                            <td>  
+                              @if ($value->user_status == 1)
+                              <span class="status_btn converted_status"> Active </span>
+                              @else
+                              <span class="status_btn overdue_status">Inactive</span>
+                               @endif
+                           </td>
+                      <!-- <td>{{ $value->user_status }}</td> -->
                             <td>{{ $value->created_at }}</td>
                             <td>{{ $value->updated_at }}</td>
                             <td>
@@ -99,19 +106,19 @@
                                     <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                   </a>
                                   <div class="dropdown-menu dropdown-menu-right">
-                                    <a href="view-business.html" class="dropdown-item">
+                                    <a href="{{ route('businessdetails.show', $value->id) }}" class="dropdown-item">
                                       <i class="fas fa-regular fa-eye mr-2"></i> View
                                     </a>
-                                    <a href="edit-business.html" class="dropdown-item">
+                                    <!-- <a href="edit-business.html" class="dropdown-item">
                                       <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                    </a>
+                                    </a> -->
                                     <!-- <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebusiness">
                                       <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                     </a> -->
                                   </div>
                                 </li>
                               </ul>
-                      </td>
+                           </td>
                           </tr>
                    
                         @endforeach

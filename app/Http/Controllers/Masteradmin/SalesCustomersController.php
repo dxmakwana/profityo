@@ -36,82 +36,82 @@ class SalesCustomersController extends Controller
     }
     
     public function store(Request $request)
-{
-    // dd($request->all());
-    // Get the authenticated user
-    $user = Auth::guard('masteradmins')->user();
+    {
+        // dd($request->all());
+        // Get the authenticated user
+        $user = Auth::guard('masteradmins')->user();
 
-    $request->validate([
-        'sale_cus_business_name' => 'required|string|max:255',
-        'sale_cus_first_name' => 'nullable|string|max:255',
-        'sale_cus_last_name' => 'nullable|string|max:255',
-        'sale_cus_email' => 'nullable|email|max:255',
-        'sale_cus_phone' => 'nullable|numeric',
-        'sale_cus_account_number' => 'nullable|numeric',
-        'sale_cus_website' => 'nullable|string|max:255',
-        'sale_cus_notes' => 'nullable|string|max:255',
-        'sale_bill_address1' => 'nullable|string|max:255',
-        'sale_bill_address2' => 'nullable|string|max:255',
-        // 'sale_bill_country_id' => 'nullable|exists:Countries,id',
-        'sale_bill_city_name' => 'nullable|string|max:255',
-        'sale_bill_zipcode' => 'nullable|numeric',
-        // 'sale_bill_state_id' => 'nullable|exists:states,id',
-        // 'sale_ship_country_id' => 'nullable|exists:Countries,id',
-        'sale_ship_shipto' => 'nullable|string|max:255',
-        'sale_ship_address1' => 'nullable|string|max:255',
-        'sale_ship_address2' => 'nullable|string|max:255',
-        'sale_ship_city_name' => 'nullable|string|max:255',
-        'sale_ship_zipcode' => 'nullable|numeric',
-        // 'sale_ship_state_id' => 'nullable|exists:states,id',
-        'sale_ship_phone' => 'nullable|numeric',
-        'sale_ship_delivery_desc' => 'nullable|string|max:255',
-        'sale_same_address' => 'nullable|boolean',
-    ],[
-        'sale_cus_business_name.required' => 'The name field is required.',
-        'sale_cus_first_name.required' => 'The First name field is required.',
-        'sale_cus_last_name.required' => 'The Last name field is required.',
-        'sale_cus_phone.required' => 'The Phone number field is required.',
-    ]);
+        $request->validate([
+            'sale_cus_business_name' => 'required|string|max:255',
+            'sale_cus_first_name' => 'nullable|string|max:255',
+            'sale_cus_last_name' => 'nullable|string|max:255',
+            'sale_cus_email' => 'nullable|email|max:255',
+            'sale_cus_phone' => 'nullable|numeric',
+            'sale_cus_account_number' => 'nullable|numeric',
+            'sale_cus_website' => 'nullable|string|max:255',
+            'sale_cus_notes' => 'nullable|string|max:255',
+            'sale_bill_address1' => 'nullable|string|max:255',
+            'sale_bill_address2' => 'nullable|string|max:255',
+            // 'sale_bill_country_id' => 'nullable|exists:Countries,id',
+            'sale_bill_city_name' => 'nullable|string|max:255',
+            'sale_bill_zipcode' => 'nullable|numeric',
+            // 'sale_bill_state_id' => 'nullable|exists:states,id',
+            // 'sale_ship_country_id' => 'nullable|exists:Countries,id',
+            'sale_ship_shipto' => 'nullable|string|max:255',
+            'sale_ship_address1' => 'nullable|string|max:255',
+            'sale_ship_address2' => 'nullable|string|max:255',
+            'sale_ship_city_name' => 'nullable|string|max:255',
+            'sale_ship_zipcode' => 'nullable|numeric',
+            // 'sale_ship_state_id' => 'nullable|exists:states,id',
+            'sale_ship_phone' => 'nullable|numeric',
+            'sale_ship_delivery_desc' => 'nullable|string|max:255',
+            'sale_same_address' => 'nullable|boolean',
+        ],[
+            'sale_cus_business_name.required' => 'The name field is required.',
+            'sale_cus_first_name.required' => 'The First name field is required.',
+            'sale_cus_last_name.required' => 'The Last name field is required.',
+            'sale_cus_phone.required' => 'The Phone number field is required.',
+        ]);
 
-    // Prepare the data for insertion
-    $validatedData = $request->all();
-    $validatedData['sale_same_address'] = $request->has('sale_same_address') ? 'on' : 'off';
-    $validatedData['id'] = $user->id; // Use the correct field name for user ID
-    $validatedData['sale_cus_status'] = 1;
+        // Prepare the data for insertion
+        $validatedData = $request->all();
+        $validatedData['sale_same_address'] = $request->has('sale_same_address') ? 'on' : 'off';
+        $validatedData['id'] = $user->id; // Use the correct field name for user ID
+        $validatedData['sale_cus_status'] = 1;
 
-    // Insert the data into the database
-    SalesCustomers::create([
-        'sale_cus_business_name' => $validatedData['sale_cus_business_name'],
-        'sale_cus_first_name' => $validatedData['sale_cus_first_name'],
-        'sale_cus_last_name' => $validatedData['sale_cus_last_name'],
-        'sale_cus_email' => $validatedData['sale_cus_email'],
-        'sale_cus_phone' => $validatedData['sale_cus_phone'],
-        'sale_cus_account_number' => $validatedData['sale_cus_account_number'],
-        'sale_cus_website' => $validatedData['sale_cus_website'],
-        'sale_cus_notes' => $validatedData['sale_cus_notes'],
-        'sale_bill_currency_id' => $validatedData['sale_bill_currency_id'],
-        'sale_bill_address1' => $validatedData['sale_bill_address1'],
-        'sale_bill_address2' => $validatedData['sale_bill_address2'],
-        'sale_bill_country_id' => $validatedData['sale_bill_country_id'],
-        'sale_bill_city_name' => $validatedData['sale_bill_city_name'],
-        'sale_bill_zipcode' => $validatedData['sale_bill_zipcode'],
-        'sale_bill_state_id' => $validatedData['sale_bill_state_id'],
-        'sale_ship_country_id' => $validatedData['sale_ship_country_id'],
-        'sale_ship_shipto' => $validatedData['sale_ship_shipto'],
-        'sale_ship_address1' => $validatedData['sale_ship_address1'],
-        'sale_ship_address2' => $validatedData['sale_ship_address2'],
-        'sale_ship_city_name' => $validatedData['sale_ship_city_name'],
-        'sale_ship_zipcode' => $validatedData['sale_ship_zipcode'],
-        'sale_ship_state_id' => $validatedData['sale_ship_state_id'],
-        'sale_ship_phone' => $validatedData['sale_ship_phone'],
-        'sale_ship_delivery_desc' => $validatedData['sale_ship_delivery_desc'],
-        'sale_same_address' => $validatedData['sale_same_address'],
-        'id' => $validatedData['id'], // Use the correct field name for user ID
-        'sale_cus_status' => $validatedData['sale_cus_status'],
-    ]);
+        // Insert the data into the database
+        SalesCustomers::create([
+            'sale_cus_business_name' => $validatedData['sale_cus_business_name'],
+            'sale_cus_first_name' => $validatedData['sale_cus_first_name'],
+            'sale_cus_last_name' => $validatedData['sale_cus_last_name'],
+            'sale_cus_email' => $validatedData['sale_cus_email'],
+            'sale_cus_phone' => $validatedData['sale_cus_phone'],
+            'sale_cus_account_number' => $validatedData['sale_cus_account_number'],
+            'sale_cus_website' => $validatedData['sale_cus_website'],
+            'sale_cus_notes' => $validatedData['sale_cus_notes'],
+            'sale_bill_currency_id' => $validatedData['sale_bill_currency_id'],
+            'sale_bill_address1' => $validatedData['sale_bill_address1'],
+            'sale_bill_address2' => $validatedData['sale_bill_address2'],
+            'sale_bill_country_id' => $validatedData['sale_bill_country_id'],
+            'sale_bill_city_name' => $validatedData['sale_bill_city_name'],
+            'sale_bill_zipcode' => $validatedData['sale_bill_zipcode'],
+            'sale_bill_state_id' => $validatedData['sale_bill_state_id'],
+            'sale_ship_country_id' => $validatedData['sale_ship_country_id'],
+            'sale_ship_shipto' => $validatedData['sale_ship_shipto'],
+            'sale_ship_address1' => $validatedData['sale_ship_address1'],
+            'sale_ship_address2' => $validatedData['sale_ship_address2'],
+            'sale_ship_city_name' => $validatedData['sale_ship_city_name'],
+            'sale_ship_zipcode' => $validatedData['sale_ship_zipcode'],
+            'sale_ship_state_id' => $validatedData['sale_ship_state_id'],
+            'sale_ship_phone' => $validatedData['sale_ship_phone'],
+            'sale_ship_delivery_desc' => $validatedData['sale_ship_delivery_desc'],
+            'sale_same_address' => $validatedData['sale_same_address'],
+            'id' => $validatedData['id'], // Use the correct field name for user ID
+            'sale_cus_status' => $validatedData['sale_cus_status'],
+        ]);
 
-    return redirect()->route('business.salescustomers.index')->with(['sales-customers-add' => __('messages.masteradmin.sales-customers.send_success')]);
-}
+        return redirect()->route('business.salescustomers.index')->with(['sales-customers-add' => __('messages.masteradmin.sales-customers.send_success')]);
+    }
 
 
 

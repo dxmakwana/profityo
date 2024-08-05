@@ -41,7 +41,7 @@
             <ul class="nav nav-treeview">
               @if((isset($access['estimates']) && $access['estimates']))
               <li class="nav-item">
-                <a href="estimates-list.html" class="nav-link">
+                <a href="{{ route('business.estimates.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Estimates</p>
                 </a>

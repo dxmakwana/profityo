@@ -20,4 +20,15 @@ class BusinessDetails extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_business_details');
     }
+
+    public function state()
+    {
+        return $this->belongsTo(States::class, 'state_id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Countries::class, 'country_id');
+    }
+
 }

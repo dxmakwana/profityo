@@ -19,7 +19,7 @@ use App\Http\Controllers\Masteradmin\SalesTaxController;
 use App\Http\Controllers\Masteradmin\UserController;
 use App\Http\Controllers\Masteradmin\SalesCustomersController;
 use App\Http\Controllers\superadmin\BusinessDetailController;
-
+use App\Http\Controllers\MasterAdmin\EstimatesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,6 +86,8 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.password.reset');
         Route::post('reset-password', [MasterNewPasswordController::class, 'store'])
                         ->name('business.password.store');
+
+        //user change password
         Route::get('/users/change-password', [UserController::class, 'changePassword'])
                         ->name('business.userdetail.changePassword');
         Route::post('/users/store-password/{user_id}', [UserController::class, 'storePassword'])
@@ -93,7 +95,6 @@ Route::group(['prefix' => $busadminRoute], function () {
        
                 
     });
-
 
     Route::middleware(['auth_master','set.user.details'])->group(function () {
         
@@ -111,6 +112,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         //Business Profile
         Route::get('/business-profile', [ProfilesController::class, 'businessProfile'])->name('business.business.edit');
         Route::patch('/business-profile-update', [ProfilesController::class, 'businessProfileUpdate'])->name('business.business.update');
+        Route::patch('/business-profile-edit', [ProfilesController::class, 'updateBusinessDetails'])->name('business.business.edits');
 
         //Log Activity
         Route::get('/logActivity', [ProfilesController::class, 'logActivity'])->name('business.masterlog.index');
@@ -145,8 +147,6 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
         Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
         
-        
-        
         //salesCustomer...
         Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');
         Route::get('/customercreate', [SalesCustomersController::class, 'create'])->name('business.salescustomers.create');
@@ -155,6 +155,10 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/customerupdate/{SalesCustomers}', [SalesCustomersController::class, 'update'])->name('business.salescustomers.update');
         Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
         Route::get('getstates/{country_id}', [SalesCustomersController::class, 'customerStates'])->name('get.states');
+
+        //estimates
+        Route::get('/estimates-list', [EstimatesController::class, 'index'])->name('business.estimates.index');
+        Route::get('/create-estimates', [EstimatesController::class, 'create'])->name('business.estimates.create');
         
         
     });

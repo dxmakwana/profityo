@@ -99,7 +99,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-              <button type="button" id="add_contact_btn" class="btn btn-primary"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
+              <button type="button" id="add_contact_btn" class="add_contactbtn"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
