@@ -60,9 +60,8 @@ Route::group(['prefix' => $adminRoute], function () {
         Route::get('/plans/planrole/{plan}', [PlanController::class, 'planrole'])->name('plans.planrole');
         Route::put('/plans/updaterole/{plan}', [PlanController::class, 'updaterole'])->name('plans.updaterole');
         
-        // business details...........
-         Route::get('/businessdetails', [BusinessDetailController::class, 'index'])->name('businessdetails.index');
-         // end............
+        Route::get('/businessdetails', [BusinessDetailController::class, 'index'])->name('businessdetails.index');
+        Route::get('/businessdetails/{id}', [BusinessDetailController::class, 'show'])->name('businessdetails.show');
 
         //logs
         Route::get('/logActivity', [ProfileController::class, 'logActivity'])->name('adminlog.index');
