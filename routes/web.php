@@ -19,7 +19,8 @@ use App\Http\Controllers\Masteradmin\SalesTaxController;
 use App\Http\Controllers\Masteradmin\UserController;
 use App\Http\Controllers\Masteradmin\SalesCustomersController;
 use App\Http\Controllers\superadmin\BusinessDetailController;
-use App\Http\Controllers\MasterAdmin\EstimatesController;
+use App\Http\Controllers\Masteradmin\EstimatesController;
+use App\Http\Controllers\Masteradmin\SalesProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,7 +133,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         //saletax
         Route::get('/salestax', [SalesTaxController::class, 'index'])->name('business.salestax.index');
         Route::get('/taxcreate', [SalesTaxController::class, 'create'])->name('business.salestax.create');
-        Route::post('/store', [SalesTaxController::class, 'store'])->name('business.salestax.store');
+        Route::post('/taxstore', [SalesTaxController::class, 'store'])->name('business.salestax.store');
         Route::get('/taxedit/{SalesTax}', [SalesTaxController::class, 'edit'])->name('business.salestax.edit');
         Route::patch('/taxupdate/{SalesTax}', [SalesTaxController::class, 'update'])->name('business.salestax.update');
         Route::delete('/taxdestroy/{salestax}', [SalesTaxController::class, 'destroy'])->name('business.salestax.destroy');
@@ -149,16 +150,26 @@ Route::group(['prefix' => $busadminRoute], function () {
         //salesCustomer...
         Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');
         Route::get('/customercreate', [SalesCustomersController::class, 'create'])->name('business.salescustomers.create');
-        Route::post('/store', [SalesCustomersController::class, 'store'])->name('business.salescustomers.store');
+        Route::post('/customerstore', [SalesCustomersController::class, 'store'])->name('business.salescustomers.store');
         Route::get('/customeredit/{SalesCustomers}', [SalesCustomersController::class, 'edit'])->name('business.salescustomers.edit');
         Route::patch('/customerupdate/{SalesCustomers}', [SalesCustomersController::class, 'update'])->name('business.salescustomers.update');
         Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
         Route::get('getstates/{country_id}', [SalesCustomersController::class, 'customerStates'])->name('get.states');
+        Route::get('/get-customer-info', [SalesCustomersController::class, 'getCustomerInfo'])->name('business.salescustomers.getCustomerInfo');
 
         //estimates
         Route::get('/estimates-list', [EstimatesController::class, 'index'])->name('business.estimates.index');
         Route::get('/create-estimates', [EstimatesController::class, 'create'])->name('business.estimates.create');
         
+        //sales product
+        Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');
+        Route::get('/productcreate', [SalesProductController::class, 'create'])->name('business.salesproduct.create');
+        Route::post('/salesproductstore', [SalesProductController::class, 'store'])->name('business.salesproduct.store');
+        Route::get('/productedit/{SalesProduct}', [SalesProductController::class, 'edit'])->name('business.salesproduct.edit');
+        Route::patch('/productupdate/{SalesProduct}', [SalesProductController::class, 'update'])->name('business.salesproduct.update');
+        Route::delete('/productdestroy/{salesproduct}', [SalesProductController::class, 'destroy'])->name('business.salesproduct.destroy');
+        Route::get('getstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
+
         
     });
     

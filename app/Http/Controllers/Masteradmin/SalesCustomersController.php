@@ -204,4 +204,21 @@ class SalesCustomersController extends Controller
         return redirect()->route('business.salescustomers.index')->with('sales-customers-delete', __('messages.masteradmin.sales-customers.delete_salescustomers_success'));
 
     }
+
+    public function getCustomerInfo(Request $request)
+    {
+        $sale_cus_id = $request->query('sale_cus_id');
+        // dd($sale_cus_id);
+        $customer = SalesCustomers::where('sale_cus_id', $sale_cus_id)->first()->load('state', 'country');
+
+        if (!$customer) {
+            return response()->json(['error' => 'Customer not found'], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Data saved successfully',
+            'data' => $customer
+        ]);
+    }
 }

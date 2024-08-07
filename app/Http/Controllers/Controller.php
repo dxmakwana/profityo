@@ -213,6 +213,102 @@ class Controller extends BaseController
                 });
             }
 
+              // Sales & payments....product module..
+            if (!Schema::hasTable($storeId . '_py_sale_product')) {
+                Schema::create($storeId . '_py_sale_product', function (Blueprint $table) {
+                    $table->increments('sale_product_id');
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('sale_product_name')->nullable();
+                    $table->string('sale_product_price')->nullable();
+                    $table->string('sale_product_tax')->nullable();
+                    $table->string('sale_product_sell')->nullable();
+                    $table->string('sale_product_buy')->nullable();
+                    $table->integer('sale_product_income_account')->nullable();
+                    $table->integer('sale_product_expense_account')->nullable();
+                    $table->string('sale_product_desc')->nullable();
+                    $table->integer('sale_product_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('sale_product_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_estimates_details')) {
+                Schema::create($storeId . '_py_estimates_details', function (Blueprint $table) {
+                    $table->increments('sale_estim_id')->primary()->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('sale_estim_title')->nullable();
+                    $table->text('sale_estim_summary')->nullable();
+                    $table->integer('sale_cus_id')->nullable();
+                    $table->string('sale_estim_number')->nullable();
+                    $table->string('sale_estim_customer_ref')->nullable();
+                    $table->string('sale_estim_date')->nullable();
+                    $table->string('sale_estim_valid_date')->nullable();
+                    $table->string('sale_estim_sub_total')->nullable()->default(0);
+                    $table->string('sale_estim_tax_amount')->nullable()->default(0);
+                    $table->string('sale_estim_final_amount')->nullable()->default(0);
+                    $table->string('sale_estim_notes')->nullable();
+                    $table->string('sale_estim_footer_note')->nullable();
+                    $table->string('sale_estim_image')->nullable();
+                    $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('sale_estim_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_estimates_items')) {
+                Schema::create($storeId . '_py_estimates_items', function (Blueprint $table) {
+                    $table->increments('sale_estim_item_id')->primary()->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_estim_id')->nullable()->default(0);
+                    $table->integer('sale_product_id')->nullable()->default(0);
+                    $table->integer('sale_estim_item_qty')->nullable()->default(0);
+                    $table->string('sale_estim_item_price')->nullable()->default(0);
+                    $table->string('sale_estim_item_discount')->nullable()->default(0);
+                    $table->string('sale_estim_item_tax')->nullable()->default(0);
+                    $table->text('sale_estim_item_desc')->nullable();
+                    $table->string('sale_estim_item_amout')->nullable()->default(0);
+                    $table->tinyInteger('sale_estim_item_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // Sales & payments....product module..
+            if (!Schema::hasTable($storeId . '_py_sale_product')) {
+                Schema::create($storeId . '_py_sale_product', function (Blueprint $table) {
+                    $table->increments('sale_product_id');
+                    $table->integer('id')->nullable()->default(0);
+                    // $table->integer('users_id')->nullable()->default(0);
+                    $table->string('sale_product_name')->nullable();
+                    $table->string('sale_product_price')->nullable();
+                    $table->string('sale_product_tax')->nullable();
+                    $table->string('sale_product_sell')->nullable();
+                    $table->string('sale_product_buy')->nullable();
+                    $table->integer('sale_product_income_account')->nullable();
+                    $table->integer('sale_product_expense_account')->nullable();
+                    $table->string('sale_product_desc')->nullable();
+                    $table->integer('sale_product_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('sale_product_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            // Sales & payments....chart _of_account..
+            if (!Schema::hasTable($storeId . '_py_chart_account')) {
+                Schema::create($storeId . '_py_chart_account', function (Blueprint $table) {
+                    $table->increments('chart_acc_id');
+                    $table->integer('id')->nullable()->default(0);
+                    // $table->integer('users_id')->nullable()->default(0);
+                    $table->integer('type_id')->nullable()->default(0);
+                    $table->integer('acc_type_id')->nullable()->default(0);
+                    $table->string('chart_acc_name')->nullable();
+                    $table->integer('currency_id')->nullable()->default(0);
+                    $table->integer('chart_account_id')->nullable()->default(0);
+                    $table->string('sale_acc_desc')->nullable();
+                    $table->tinyInteger('sale_product_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
         }
     }
 

@@ -48,6 +48,11 @@ return [
             'send_success' => 'Customer created successfully.',
             'edit_salescustomers_success' => 'Customer updated successfully',
             'delete_salescustomers_success' => 'Customer deleted successfully',
+        ],
+        'sales-product' => [
+            'send_success' => 'Product created successfully.',
+            'edit_salesproduct_success' => 'Product updated successfully',
+            'delete_salesproduct_success' => 'Product deleted successfully',
         ]
 
     ]

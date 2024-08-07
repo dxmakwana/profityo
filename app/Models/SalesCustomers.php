@@ -53,4 +53,14 @@ class SalesCustomers extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_sale_customers');
     }
+
+    public function state()
+    {
+        return $this->belongsTo(States::class, 'sale_bill_state_id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Countries::class, 'sale_ship_country_id');
+    }
 }

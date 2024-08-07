@@ -84,7 +84,7 @@
             
               @if((isset($access['product_services_sales']) && $access['product_services_sales']) )
               <li class="nav-item">
-                <a href="products-services-sales-list.html" class="nav-link">
+                <a href="{{ route('business.salesproduct.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Products & Services</p>
                 </a>

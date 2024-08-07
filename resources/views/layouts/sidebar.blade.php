@@ -19,8 +19,8 @@
                 <p>Dashboard</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{ route('businessdetails.index') }}" class="nav-link">
+          <li class="nav-item {{ request()->is($adminRoute.'/businessdetails*') ? 'side_shape' : '' }}">
+            <a href="{{ route('businessdetails.index') }}" class="nav-link {{ request()->is($adminRoute.'/businessdetails*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-regular fa-building"></i>
               <p>Business</p>
             </a>

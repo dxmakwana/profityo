@@ -48,7 +48,6 @@ class MasterUser extends Authenticatable
     {
         return $this->hasMany(UserAccess::class, 'sp_id', 'sp_id');
     }
-
     public function plan()
     {
         return $this->belongsTo(Plan::class, 'sp_id', 'sp_id');
