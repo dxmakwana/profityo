@@ -1,5 +1,5 @@
 @extends('masteradmin.layouts.app')
-<title>Profityo | View All Estimates</title>
+<title>Profityo | Edit Estimates</title>
 @section('content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -8,10 +8,11 @@
     <div class="container-fluid">
       <div class="row mb-2 align-items-center justify-content-between">
         <div class="col-auto">
-          <h1 class="m-0">{{ __('New Estimate') }}</h1>
+          <h1 class="m-0">{{ __('Edit Estimate') }}</h1>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">{{ __('New Estimate') }}</li>
+            <li class="breadcrumb-item">{{ __('Edit Estimate') }}</li>
+            <li class="breadcrumb-item active">#{{ $estimates->sale_estim_number }}</li>
           </ol>
         </div><!-- /.col -->
         <div class="col-auto">
@@ -37,43 +38,45 @@
             </button>
           </div>
         </div>
-        <form id="items-form" action="{{ route('business.estimates.store') }}" method="POST">
+        <form id="items-form" action="{{ route('business.estimates.update', ['estimates_id' => $estimates->sale_estim_id]) }}"
+        method="POST">
           @csrf
+          @method('Patch')
           <!-- /.card-header -->
           <div class="card-body">
             <div class="row justify-content-between">
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-            <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-            class="elevation-2" target="_blank">
-            <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
+                  <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  class="elevation-2" target="_blank">
+                  <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
-            <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-              <div class="modal-content">
-              <div class="modal-body pad-1 text-center">
-                <i class="fas fa-solid fa-trash delete_icon"></i>
-                <p class="company_details_text">Removing your logo will remove it from all existing and future
-                invoices and estimates. Are you sure you want to remove your business logo?</p>
-                <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
-                <a type="submit" class="delete_btn px-15">Delete</a>
-              </div>
-              </div>
-            </div>
-            </div>
-          @else
-        <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
-        @csrf
-        @method('patch')
+                  <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
+                  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                    <div class="modal-body pad-1 text-center">
+                      <i class="fas fa-solid fa-trash delete_icon"></i>
+                      <p class="company_details_text">Removing your logo will remove it from all existing and future
+                      invoices and estimates. Are you sure you want to remove your business logo?</p>
+                      <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
+                      <a type="submit" class="delete_btn px-15">Delete</a>
+                    </div>
+                    </div>
+                  </div>
+                  </div>
+                @else
+              <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
+              @csrf
+              @method('patch')
 
-        <!-- <input type="file" name="image" id="image" class="form-control" >  -->
-        <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
-        <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
-          Recommended Size: 300 x 200 Pixels.</p>
-        </form>
-      @endif
+              <!-- <input type="file" name="image" id="image" class="form-control" >  -->
+              <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
+              <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
+                Recommended Size: 300 x 200 Pixels.</p>
+              </form>
+            @endif
 
                 </div>
               </div>
@@ -82,13 +85,13 @@
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right">
                     <input type="text" class="form-control text-right" name="sale_estim_title" id="estimatetitle"
-                      placeholder="Estimate Title">
+                      placeholder="Estimate Title" value="{{ $estimates->sale_estim_title }}">
                   </div>
                 </div>
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right px-10">
                     <input type="text" class="form-control text-right" name="sale_estim_summary" id="estimatesummary"
-                      placeholder="Summary (e.g. project name, description of estimate)">
+                      placeholder="Summary (e.g. project name, description of estimate)" value="{{ $estimates->sale_estim_summary }}">
                   </div>
                 </div>
                 <div class="px-10">
@@ -116,204 +119,207 @@
 
       <!-- card -->
       <div class="card card-default">
-        <!-- /.card-header -->
-        <div class="card-body2">
-          <div class="row justify-content-between pad-3">
-            <div class="col-md-3">
-              <div class="add_customer_box">
-                <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
-                <span class="add_customer_text">Add Customer</span>
+          <!-- /.card-header -->
+          <div class="card-body2">
+            <div class="row justify-content-between pad-3">
+              <div class="col-md-3" id="customerInfo">
+                <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
+                <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
+                <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
+                <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
+                <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
+                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Lamar Mitchel
+                </div>
               </div>
+              <div class="edit_es_text customer_list">
+                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+              </div>
+
               <div class="add_customer_list" style="display: none;">
                 <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-                  <option>Select Items</option>
-                  @foreach($salecustomer as $customer)
-            <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-            {{ $customer->sale_cus_business_name }}
-            </option>
-          @endforeach
+                    <option>Select Items</option>
+                    @foreach($salecustomer as $customer)
+                    <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                        {{ $customer->sale_cus_business_name }}
+                    </option>
+                    @endforeach
                 </select>
+              </div>
 
-                <div id="customerInfo">
-
+              
+              <!-- /.col -->
+              <div class="col-md-9">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="estimatenumber">Estimate Number</label>
+                      <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $estimates->sale_estim_number }}">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="estimatecustomerref">Customer Ref</label>
+                      <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"  placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Date</label>
+                      <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                        data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
+                        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label>Valid Until</label>
+                      <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" placeholder=""
+                        data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
+                        <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        </div>
+                      </div>
+                      <p class="within_day">Within 7 days</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <!-- /.col -->
             </div>
+            <div class="row px-10">
+              <div class="col-md-12 text-right">
+                <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
+                <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
+              </div>
+              <div class="col-md-12 table-responsive ">
+                <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
+                  <thead>
+                  <tr>
+                    <th style="width: 400px;">Items</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Tax</th>
+                    <th class="text-right">Amount</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  @foreach($estimatesItems as $item)
+                    <tr class="item-row">
+                        <td>
+                            <div>
+                                <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
+                                    <option>Select Items</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == $item->sale_product_id ? 'selected' : '' }}>
+                                            {{ $product->sale_product_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
+                                    placeholder="Enter item description" value="{{ $item->sale_estim_item_desc }}">
+                            </div>
+                        </td>
+                        <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}"></td>
+                        <td>
+                            <div class="d-flex">
+                                <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext"
+                                    aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}">
+                                <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
+                                    @foreach($currencys as $curr)
+                                        <option value="{{ $curr->id }}" {{ $curr->id == $item->sale_currency_id ? 'selected' : '' }}>
+                                            {{ $curr->currency_symbol }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                                @foreach($salestax as $salesTax)
+                                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                                        {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
+                                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td class="text-right item-price">${{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
+                        <td><i class="fa fa-trash delete-item"></i></td>
+                    </tr>
+                  @endforeach
 
-          </div>
-          <!-- /.col -->
-          <div class="col-md-9">
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.col -->
+            </div>
+            <hr />
+            <input type="hidden" name="sale_estim_sub_total" value="0">
+            <input type="hidden" name="sale_estim_discount_total" value="0">
+            <input type="hidden" name="sale_estim_tax_amount" value="0">
+            <input type="hidden" name="sale_estim_final_amount" value="0">
             <div class="row">
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="estimatenumber">Estimate Number</label>
-                  <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="estimatecustomerref">Customer Ref</label>
-                  <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
-                    placeholder="">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Date</label>
-                  <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-                      data-target="#estimatedate" />
-                    <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Valid Until</label>
-                  <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" placeholder=""
-                      data-target="#estimatevaliddate" name="sale_estim_valid_date" />
-                    <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                    </div>
-                  </div>
-                  <p class="within_day">Within 7 days</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /.col -->
-        </div>
-        <div class="row px-10">
-          <div class="col-md-12 text-right">
-            <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
-                class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
-            <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
-          </div>
-          <div class="col-md-12 table-responsive">
-            <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
-              <thead>
-                <tr>
-                  <th style="width: 30%;">Items</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Tax</th>
-                  <th class="text-right">Amount</th>
-                  <th>Actions</th> <!-- New column for actions -->
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="item-row" id="item-row-template">
-                  <td>
-                    <div>
-                      <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-                        <option>Select Items</option>
-                        @foreach($products as $product)
-              <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
-                {{ $product->sale_product_name }}
-              </option>
-            @endforeach
-                      </select>
-                      <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
-                        placeholder="Enter item description">
-                    </div>
-                  </td>
-                  <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]"></td>
-                  <td>
+                <div class="col-md-4">
                     <div class="d-flex">
-                      <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext"
-                        aria-describedby="inputGroupPrepend">
-                      <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
-                        @foreach($currencys as $curr)
-              <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
-            @endforeach
-                      </select>
+                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}">
                     </div>
-                  </td>
-
-                  <td>
-                    <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                      @foreach($salestax as $salesTax)
-              <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-              {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-            @endforeach
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex">
+                    <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
+                        aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}">
+                    <select class="form-select form-selectcurrency" name="sale_estim_discount_type">
+                        <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }}>$</option>
+                        <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
                     </select>
-                  </td>
-                  <td class="text-right item-price">$0.00</td>
-                  <td><i class="fa fa-trash delete-item"></i></td>
-                </tr>
-
-              </tbody>
-            </table>
-          </div>
-          <!-- /.col -->
-        </div>
-        <hr />
-        <input type="hidden" name="sale_estim_sub_total" value="0">
-        <input type="hidden" name="sale_estim_discount_total" value="0">
-        <input type="hidden" name="sale_estim_tax_amount" value="0">
-        <input type="hidden" name="sale_estim_final_amount" value="0">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="d-flex">
-              <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
-                aria-describedby="inputGroupPrepend">
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="d-flex">
-              <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
-                aria-describedby="inputGroupPrepend">
-              <select class="form-select form-selectcurrency" name="sale_estim_discount_type">
-                <option value="1">$</option>
-                <option value="2">%</option>
-              </select>
+            <div class="row justify-content-end">
+                <div class="col-md-4 subtotal_box">
+                    <div class="table-responsive">
+                    <table class="table total_table">
+                        <tr>
+                        <td style="width:50%">Sub Total :</td>
+                        <td id="sub-total">${{ $estimates->sale_estim_sub_total }}</td>
+                        </tr>
+                        <tr>
+                        <td>Discount :</td>
+                        <td id="discount">${{ $estimates->sale_estim_discount_total }}</td>
+                        </tr>
+                        <tr>
+                        <td>Tax :</td>
+                        <td id="tax">${{ $estimates->sale_estim_tax_amount }}</td>
+                        </tr>
+                        <tr>
+                        <td>Total:</td>
+                        <td id="total">${{ $estimates->sale_estim_final_amount }}</td>
+                        </tr>
+                    </table>
+
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-
-        <div class="row justify-content-end">
-          <div class="col-md-4 subtotal_box">
-            <div class="table-responsive">
-              <table class="table total_table">
-                <tr>
-                  <td style="width:50%">Sub Total :</td>
-                  <td id="sub-total">$0.00</td>
-                </tr>
-                <tr>
-                  <td>Discount :</td>
-                  <td id="discount">$0.00</td>
-                </tr>
-                <tr>
-                  <td>Tax :</td>
-                  <td id="tax">$0.00</td>
-                </tr>
-                <tr>
-                  <td>Total:</td>
-                  <td id="total">$0.00</td>
-                </tr>
-              </table>
-
+            <div class="dropdown-divider"></div>
+            <div class="row pad-2">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="inputDescription">Notes / Terms</label>
+                  <textarea id="inputDescription" class="form-control" name="sale_estim_notes" rows="3" placeholder="Enter notes or terms of service that are visible to your customer">{{ $estimates->sale_estim_notes }}</textarea>
+                </div>
+              </div>
             </div>
+            <!-- /.row -->
           </div>
         </div>
-        <div class="dropdown-divider"></div>
-        <div class="row pad-2">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label for="inputDescription">Notes / Terms</label>
-              <textarea id="inputDescription" name="sale_estim_notes" class="form-control" rows="3"
-                placeholder="Enter notes or terms of service that are visible to your customer"></textarea>
-            </div>
-          </div>
-        </div>
-        <!-- /.row -->
-      </div>
-
-
+        <!-- /.card -->
     </div>
     <!-- /.card -->
 
@@ -332,7 +338,7 @@
         <div class="row justify-content-between">
           <div class="col-md-12">
             <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-              placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)"></textarea>
+              placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
           </div>
         </div>
         <!-- /.row -->
@@ -720,9 +726,258 @@
   </div>
 </div>
 
+<div class="modal fade" id="editcustor_modal_{{ $estimates->customer->sale_cus_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Edit Customer</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editCustomerForm">
+            @csrf
+            @method('PUT')
+          <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
+            <ul class="nav nav-pills p-2 tab_box">
+              <li class="nav-item"><a class="nav-link active" href="#editcontact" data-toggle="tab">Contact</a></li>
+              <li class="nav-item"><a class="nav-link" href="#editbilling" data-toggle="tab">Billing</a></li>
+              <li class="nav-item"><a class="nav-link" href="#editshipping" data-toggle="tab">Shipping</a></li>
+              <li class="nav-item"><a class="nav-link" href="#editmore" data-toggle="tab">More</a></li>
+            </ul>
+          </div><!-- /.card-header -->
+
+          <div class="tab-content">
+            <div class="tab-pane active" id="editcontact">
+           
+            <input type="hidden" name="sale_cus_id" value="{{ $estimates->sale_cus_id }}">
+                <div class="row pxy-15 px-10">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="customer">Customer <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="{{ $estimates->customer->sale_cus_business_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer_email">Email</label>
+                      <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="{{ $estimates->customer->sale_cus_email }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer_phonenumber">Phone</label>
+                      <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="{{ $estimates->customer->sale_cus_phone }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer_firstname">First Name</label>
+                      <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="{{ $estimates->customer->sale_cus_first_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer_lastname">Last Name</label>
+                      <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="{{ $estimates->customer->sale_cus_last_name }}">
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="editbilling">
+             
+                <div class="row pxy-15 px-10">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Currency <span class="text-danger">*</span></label>
+                      <select name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
+                        <option default>Select a Currency...</option>
+                          @foreach($currencys as $cur)
+                            <option value="{{ $cur->id }}" @if($cur->id == $estimates->customer->sale_bill_currency_id) selected @endif>
+                                {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
+                            </option>
+                          @endforeach
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal_sub_title">Billing Address</div>
+                <div class="row pxy-15 px-10">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businessaddress1">Address Line 1</label>
+                      <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="{{ $estimates->customer->sale_bill_address1 }}" placeholder="Enter a Location">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businessaddress2">Address Line 2</label>
+                      <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="{{ $estimates->customer->sale_bill_address2 }}" placeholder="Enter a Location">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businesscity">City</label>
+                      <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="{{ $estimates->customer->sale_bill_city_name }}" placeholder="Enter A City">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businesszipcode">Postal/ZIP Code</label>
+                      <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="{{ $estimates->customer->sale_bill_zipcode }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Country</label>
+                      <select class="form-control select2" name="sale_bill_country_id" style="width: 100%;">
+                        <option default>Select a Country...</option>
+                          @foreach($countries as $con)
+                            <option value="{{ $con->id }}" @if($con->id == $estimates->customer->sale_bill_country_id) selected @endif>
+                                {{ $con->name }}
+                            </option>
+                          @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Province/State</label>
+                      <select class="form-control select2" name="sale_bill_state_id" style="width: 100%;">
+                        @foreach($customer_states as $state)
+                            <option value="{{ $state->id }}" @if($state->id == $estimates->customer->sale_bill_state_id) selected @endif>
+                                {{ $state->name }}
+                            </option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="editshipping">
+           
+                <div class="modal_sub_title px-15">Shipping Address</div>
+                <div class="row pxy-15 px-10">
+                  <div class="col-md-12">
+                    <div class="icheck-primary">
+                      <input type="radio" id="shippingaddress" name="shipping" name="sale_same_address" value="on" @if($estimates->customer->sale_same_address == 'on') checked @endif>
+                      <label for="shippingaddress">Same As Billing Address</label>
+              
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="{{ $estimates->customer->sale_ship_shipto }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customer_phonenumber">Phone</label>
+                      <input type="Number" class="form-control" name="sale_ship_phone" id="customer_phonenumber" placeholder="Enter Phone Number" value="{{ $estimates->customer->sale_ship_phone }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businessaddress1">Address Line 1</label>
+                      <input type="text" class="form-control" name="sale_ship_address1" id="company-businessaddress1" placeholder="Enter a Location" value="{{ $estimates->customer->sale_ship_address1 }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businessaddress2">Address Line 2</label>
+                      <input type="text" class="form-control" id="company-businessaddress2" placeholder="Enter a Location" name="sale_ship_address2" value="{{ $estimates->customer->sale_ship_address2 }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businesscity">City</label>
+                      <input type="text" class="form-control" name="sale_ship_city_name" id="company-businesscity"  placeholder="Enter A City" value="{{ $estimates->customer->sale_ship_city_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="company-businesszipcode">Postal/ZIP Code</label>
+                      <input type="text" class="form-control" id="company-businesszipcode" placeholder="Enter a Zip Code" name="sale_ship_zipcode" value="{{ $estimates->customer->sale_ship_zipcode }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Country</label>
+                      <select class="form-control select2" name="sale_ship_country_id" style="width: 100%;">
+                        <option default>Select a Country...</option>
+                        @foreach($currencys as $cont)
+                            <option value="{{ $cont->id }}" @if($cont->id == $estimates->customer->sale_ship_country_id) selected @endif>
+                                {{ $cont->name }}
+                            </option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Province/State</label>
+                      <select class="form-control select2" name="sale_ship_state_id" style="width: 100%;">
+                        <option default>Select a State...</option>
+                        @foreach($customer_states as $statest)
+                            <option value="{{ $statest->id }}" @if($statest->id == $estimates->customer->sale_ship_state_id) selected @endif>
+                                {{ $statest->name }}
+                            </option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="deliveryinstructions">Delivery instructions</label>
+                      <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="{{ $estimates->customer->sale_ship_delivery_desc }}">
+                    </div>
+                  </div>
+                </div>
+           
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="editmore">
+           
+                <div class="row pxy-15 px-10">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customeraccountnumber">Account Number</label>
+                      <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="{{ $estimates->customer->sale_cus_account_number }}">
+                    </div>
+                  </div>
+                                    
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="customerwebsite">Website</label>
+                      <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="{{ $estimates->customer->sale_cus_website }}">
+                    </div>
+                  </div>
+                  
+                </div>
+              
+            </div>
+            <!-- /.tab-pane -->
+          </div>
+
+          <!-- /.tab-content -->
+        </div>
+        <div class="modal-footer">
+          <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
+          <button type="submit" class="add_btn">Save</button>
+        </div>
+        </form>
+      </div>
+    </div>
+</div>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -855,8 +1110,8 @@
     //   });
 
     //show customer list droupdown list
-    $('.add_customer_box').on('click', function () {
-      var $customerList = $(this).siblings('.add_customer_list');
+    $('.customer_list').on('click', function () {
+      var $customerList = $(this).next('.add_customer_list');
       var $addCustomerBox = $(this);
 
       if ($customerList.is(':visible')) {
@@ -866,7 +1121,7 @@
       } else {
 
         $('.add_customer_list').hide();
-        $('.add_customer_box').show();
+        $('.customer_list').show();
         $customerList.show();
         $addCustomerBox.hide();
       }
@@ -881,38 +1136,61 @@
           type: 'GET',
           data: { sale_cus_id: customerId },
           success: function (response) {
-            if (response.success) {
-              var customer = response.data;
-              var customerInfoHtml = `
-                          <h4>Bill to</h4>
-                          <p><strong>${customer.sale_cus_business_name}</strong></p>
-                          <p>${customer.sale_cus_first_name}</p>
-                          <p>${customer.sale_cus_last_name}</p>
-                          <p>${customer.sale_cus_account_number}</p>
-                          <p>${customer.sale_cus_website}</p>
-                          <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
-                          <p>${customer.state.name}</p>
-                          <p>${customer.country.name}</p>
+              if (response.success) {
+                
+                  var customer = response.data;
+                  console.log(customer);
+                  var customerInfoHtml = `
+                      <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                      <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
+                      <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+                      <p class="company_details_text">${customer.sale_cus_account_number}</p>
+                      <p class="company_details_text">${customer.sale_cus_website}</p>
+                      <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+                      <p class="company_details_text">${customer.state.name}</p>
+                      <p class="company_details_text">${customer.country.name}</p>
 
-                          <h4>Ship to</h4>
-                          <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-                          <p>${customer.sale_ship_phone}</p>
+                      <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                      <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+                      <p class="company_details_text">${customer.sale_ship_phone}</p>
 
-                          <p>${customer.sale_cus_email}</p>
-                          <p>${customer.sale_cus_phone}</p>
-                          <a href="#" id="chooseDifferentCustomer">Choose a different customer</a>
-                      `;
-              $('#customerInfo').html(customerInfoHtml).show();
+                      <p class="company_details_text">${customer.sale_cus_email}</p>
+                      <p class="company_details_text">${customer.sale_cus_phone}</p>
+                      <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+                      </div>
+                      <div class="edit_es_text customer_list">
+                          <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                      </div>
+                  `;
+                  $('#customerInfo').html(customerInfoHtml).show();
+                  $('.add_customer_list').hide();
 
-              $('#chooseDifferentCustomer').click(function (e) {
-                e.preventDefault();
-                $('#customerInfo').hide();
-                $('#customerSelect').focus();
-              });
-            } else {
-              alert(response.message);
-            }
+                   // Dynamically create or update modal ID
+                   var modalId = '#editcustor_modal_' + customer.sale_cus_id;
+                    if ($(modalId).length === 0) {
+                        $('.customer').append(`
+                            <div class="modal fade" id="editcustor_modal_${customer.sale_cus_id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <!-- Modal content goes here -->
+                            </div>
+                        `);
+                    }
+
+                    // Show the new modal
+                    $(modalId).modal('show');
+                  
+                  // Event delegation for dynamically added content
+                  $('#customerInfo').on('click', '.customer_list', function (e) {
+                      e.preventDefault();
+                      $('#customerInfo').hide(); // Hide the customer info
+                      $('.add_customer_list').show(); // Show the dropdown list
+                      $('#customerSelect').focus(); // Set focus to the select element
+                  });
+              } else {
+                  alert(response.message);
+              }
           },
+
           error: function () {
             alert('Error retrieving customer information');
           }
@@ -921,6 +1199,8 @@
         $('#customerInfo').hide();
       }
     });
+
+
 
 
     // Function to calculate my items amount
@@ -936,23 +1216,24 @@
         const price = parseFloat($(this).find('input[name="items[][sale_estim_item_price]"]').val()) || 0;
         const itemDiscount = parseFloat($(this).find('input[name="sale_estim_item_discount"]').val()) || 0;
         const itemTotal = qty * price;
-        const discountAmount = itemDiscount; // Assuming item discount is a fixed amount
+        const discountAmount = itemDiscount; 
         const taxableAmount = itemTotal - discountAmount;
 
         subTotal += itemTotal;
         totalDiscount += discountAmount;
 
-        // Tax rate from the 
+        // Tax rate 
         const itemTaxRate = parseFloat($(this).find('select[name="items[][sale_estim_item_tax]"] option:selected').data('tax-rate')) || 0;
         const itemTax = taxableAmount * (itemTaxRate / 100);
         totalTax += itemTax;
 
-         // Update the price for the current item
-         const itemTotalPrice = itemTotal;
+        // Update the price for the current item
+        const itemTotalPrice = itemTotal;
         $(this).find('.item-price').text(`$${itemTotalPrice.toFixed(2)}`);
+
       });
 
-      // apply discount
+      //apply discount
       const globalDiscountValue = parseFloat($('input[name="sale_estim_item_discount"]').val()) || 0;
       const discountType = $('select[name="sale_estim_discount_type"]').val(); // 1 for $, 2 for %
       // alert(discountType);
@@ -978,7 +1259,7 @@
 
     }
 
-    // Handle changes in product select
+    // changes in product select
     $(document).on('change', 'select[name="items[][sale_product_id]"]', function () {
       var selectedProductId = $(this).val();
       var $row = $(this).closest('.item-row');
@@ -1003,22 +1284,21 @@
       }
     });
 
-    //changes in quantity, price, discount, and tax inputs
+    // Handle changes in quantity, price, discount, and tax inputs
     $(document).on('input', 'input[name="items[][sale_estim_item_qty]"], input[name="items[][sale_estim_item_price]"], input[name="sale_estim_item_discount"], select[name="items[][sale_estim_item_tax]"], select[name="sale_estim_discount_type"]', function () {
       calculateTotals(); 
     });
 
-    //item removal
+    // item removal
     $(document).on('click', '.delete-item', function () {
       $(this).closest('.item-row').remove();
-      calculateTotals();
+      calculateTotals(); 
     });
 
-    //discount input change
+    // global discount input change
     $(document).on('input', 'input[name="sale_estim_item_discount"]', function () {
       calculateTotals();
     });
-
 
   });
 
@@ -1119,15 +1399,13 @@
       formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
       formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
       formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
-      
-      formData['sale_estim_status'] = 1;
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = 0;
 
 
       $.ajax({
-        url: "{{ route('business.estimates.store') }}",
-        method: 'POST',
+        url: "{{ route('business.estimates.update', ['estimates_id' => $estimates->sale_estim_id]) }}",
+        method: 'PATCH',
         data: formData,
         success: function (response) {
           window.location.href = response.redirect_url;
@@ -1142,7 +1420,65 @@
         }
       });
     });
+
   });
+
+  $(document).ready(function() {
+    $('#editCustomerForm').on('submit', function(e) {
+      // alert('hii');
+    e.preventDefault();
+
+    var saleCusId = $(this).find('input[name="sale_cus_id"]').val();
+    // alert(saleCusId);
+
+    $.ajax({
+        url: "{{ route('salescustomers.update', ['sale_cus_id' => $estimates->sale_cus_id]) }}",
+        type: 'PUT',
+        data: $(this).serialize(), 
+        success: function(response) {
+            // Assuming 'response' contains the updated customer data
+            console.log(response.customer)
+            var customer = response.customer;
+            // console.log(customer);
+
+            var customerInfoHtml = `
+                <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
+                <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+                <p class="company_details_text">${customer.sale_cus_account_number}</p>
+                <p class="company_details_text">${customer.sale_cus_website}</p>
+                <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+                <p class="company_details_text">${customer.state.name}</p>
+                <p class="company_details_text">${customer.country.name}</p>
+
+                <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
+                <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+                <p class="company_details_text">${customer.sale_ship_phone}</p>
+
+                <p class="company_details_text">${customer.sale_cus_email}</p>
+                <p class="company_details_text">${customer.sale_cus_phone}</p>
+
+                <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+
+                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+                </div>
+               
+            `;
+
+            // Update the customer info section with the new data
+            $('#customerInfo').html(customerInfoHtml).show();
+
+            // Hide the modal
+            $('#editcustor_modal_' + saleCusId).modal('hide');
+        },
+        error: function(xhr) {
+            console.log('An error occurred: ' + xhr.statusText);
+        }
+    });
+});
+});
+
+
 
 </script>
 

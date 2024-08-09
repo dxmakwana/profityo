@@ -53,6 +53,14 @@ return [
             'send_success' => 'Product created successfully.',
             'edit_salesproduct_success' => 'Product updated successfully',
             'delete_salesproduct_success' => 'Product deleted successfully',
+        ],
+        'estimate' => [
+            'send_success'  => 'Estimate created successfully!',
+        ],
+        'purchases-product' => [
+            'send_success' => 'Product created successfully.',
+            'edit_purchasesproduct_success' => 'Product updated successfully',
+            'delete_purchasesproduct_success' => 'Product deleted successfully',
         ]
 
     ]

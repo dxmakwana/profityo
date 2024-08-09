@@ -64,7 +64,7 @@
                     @if (count($SalesTax) > 0)
                         @foreach ($SalesTax as $value)
                           <tr>
-                            <td>{{ $value->tax_name }}</td>
+                          <td><strong>{{ $value->tax_abbreviation }} ({{ $value->tax_rate }}%)</strong> - {{ $value->tax_name }}</td>
                             <!-- <td>{{ $value->sp_desc }}</td>
                             <td>{{ $value->sp_amount }}</td>
                             <td>{{ $value->sp_month }}</td> -->

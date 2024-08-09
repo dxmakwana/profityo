@@ -21,6 +21,8 @@ use App\Http\Controllers\Masteradmin\SalesCustomersController;
 use App\Http\Controllers\superadmin\BusinessDetailController;
 use App\Http\Controllers\Masteradmin\EstimatesController;
 use App\Http\Controllers\Masteradmin\SalesProductController;
+use App\Http\Controllers\Masteradmin\PurchasProductController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -160,7 +162,15 @@ Route::group(['prefix' => $busadminRoute], function () {
         //estimates
         Route::get('/estimates-list', [EstimatesController::class, 'index'])->name('business.estimates.index');
         Route::get('/create-estimates', [EstimatesController::class, 'create'])->name('business.estimates.create');
+        Route::get('/get-product-details/{id}', [EstimatesController::class, 'getProductDetails'])->name('business.estimates.getProductDetails');
+        Route::post('/estimates-store', [EstimatesController::class, 'store'])->name('business.estimates.store');
+        Route::get('/edit-estimates/{id}', [EstimatesController::class, 'edit'])->name('business.estimates.edit');
+        Route::patch('/update-estimates/{estimates_id}', [EstimatesController::class, 'update'])->name('business.estimates.update');
         
+        Route::put('salescustomers/{sale_cus_id}', [EstimatesController::class, 'updateCustomer'])->name('salescustomers.update');
+
+    
+
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');
         Route::get('/productcreate', [SalesProductController::class, 'create'])->name('business.salesproduct.create');
@@ -170,7 +180,14 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('/productdestroy/{salesproduct}', [SalesProductController::class, 'destroy'])->name('business.salesproduct.destroy');
         Route::get('getstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
 
-        
+        //  purchase product
+        Route::get('/purchasesproduct', [PurchasProductController::class, 'index'])->name('business.purchasproduct.index');
+        Route::get('/purchasesproductcreate', [PurchasProductController::class, 'create'])->name('business.purchasproduct.create');
+        Route::post('/purchasesproductstore', [PurchasProductController::class, 'store'])->name('business.purchasproduct.store');
+        Route::get('/purchasesproductedit/{PurchasesProduct}', [PurchasProductController::class, 'edit'])->name('business.purchasproduct.edit');
+        Route::patch('/purchasesproductupdate/{PurchasesProduct}', [PurchasProductController::class, 'update'])->name('business.purchasproduct.update');
+        Route::delete('/purchasesproductdestroy/{PurchasesProduct}', [PurchasProductController::class, 'destroy'])->name('business.purchasproduct.destroy');
+      //   Route::get('getstates/{country_id}', [PurchasProductController::class, 'productStates'])->name('get.states');
     });
     
 });

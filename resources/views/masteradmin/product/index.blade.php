@@ -70,7 +70,7 @@
               <td>{{ $value->sale_product_name }}</td>
               <td>{{ $value->sale_product_desc }}</td>
               <td>{{ $value->sale_product_price }}</td>
-              <td>{{$value->tax->tax_name ?? 'N/A'  }}</td>
+              <td><strong>{{ $value->tax->tax_abbreviation }} ({{ $value->tax->tax_rate }}%)</strong> - {{ $value->tax->tax_name }}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->

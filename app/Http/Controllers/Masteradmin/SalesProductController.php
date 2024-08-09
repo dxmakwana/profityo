@@ -134,4 +134,5 @@ class SalesProductController extends Controller
         return redirect()->route('business.salesproduct.index')->with('sales-product-delete', __('messages.masteradmin.sales-product.delete_salesproduct_success'));
 
     }
+    
 }
