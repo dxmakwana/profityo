@@ -168,6 +168,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/update-estimates/{estimates_id}', [EstimatesController::class, 'update'])->name('business.estimates.update');
         
         Route::put('salescustomers/{sale_cus_id}', [EstimatesController::class, 'updateCustomer'])->name('salescustomers.update');
+        Route::get('salescustomers/list', [EstimatesController::class, 'listCustomers'])->name('salescustomers.list');
 
     
 

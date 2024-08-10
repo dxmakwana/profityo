@@ -179,7 +179,7 @@
                       <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                     </div>
                   </div>
-                  <p class="within_day">Within 7 days</p>
+                  <!-- <p class="within_day">Within 7 days</p> -->
                 </div>
               </div>
             </div>
@@ -223,13 +223,9 @@
                   <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]"></td>
                   <td>
                     <div class="d-flex">
-                      <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext"
+                      <input type="text" name="items[][sale_estim_item_price]" class="form-control"
                         aria-describedby="inputGroupPrepend">
-                      <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
-                        @foreach($currencys as $curr)
-              <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
-            @endforeach
-                      </select>
+                      
                     </div>
                   </td>
 
@@ -241,7 +237,7 @@
             @endforeach
                     </select>
                   </td>
-                  <td class="text-right item-price">$0.00</td>
+                  <td class="text-right item-price">0.00</td>
                   <td><i class="fa fa-trash delete-item"></i></td>
                 </tr>
 
@@ -266,10 +262,10 @@
             <div class="d-flex">
               <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
                 aria-describedby="inputGroupPrepend">
-              <select class="form-select form-selectcurrency" name="sale_estim_discount_type">
-                <option value="1">$</option>
-                <option value="2">%</option>
-              </select>
+                <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
+                        <option value="1">$</option>
+                        <option value="2">%</option>
+                </select>
             </div>
           </div>
         </div>
@@ -292,6 +288,15 @@
                   <td id="tax">$0.00</td>
                 </tr>
                 <tr>
+                  <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency" required>
+                    @foreach($currencys as $curr)
+                      <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                      <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}">
+                        {{ $curr->currency_symbol }}
+                    </option>
+                    @endforeach
+                  </select>
+
                   <td>Total:</td>
                   <td id="total">$0.00</td>
                 </tr>
@@ -925,6 +930,7 @@
 
     // Function to calculate my items amount
     function calculateTotals() {
+      const currencySymbol = $('#sale_currency_id option:selected').data('symbol') || '$'; // 
       let subTotal = 0;
       let totalDiscount = 0;
       let totalTax = 0;
@@ -949,7 +955,7 @@
 
          // Update the price for the current item
          const itemTotalPrice = itemTotal;
-        $(this).find('.item-price').text(`$${itemTotalPrice.toFixed(2)}`);
+        $(this).find('.item-price').text(`${itemTotalPrice.toFixed(2)}`);
       });
 
       // apply discount
@@ -960,15 +966,16 @@
         totalDiscount = (subTotal * globalDiscountValue) / 100;
       } else { 
         totalDiscount = globalDiscountValue;
+        $('#sale_estim_discount_type option[value="1"]').text(currencySymbol);
       }
 
       total = subTotal - totalDiscount + totalTax;
 
       // Update calculated values
-      $('#sub-total').text(`$${subTotal.toFixed(2)}`);
-      $('#discount').text(`$${totalDiscount.toFixed(2)}`);
-      $('#tax').text(`$${totalTax.toFixed(2)}`);
-      $('#total').text(`$${total.toFixed(2)}`);
+      $('#sub-total').text(`${currencySymbol}${subTotal.toFixed(2)}`);
+      $('#discount').text(`${currencySymbol}${totalDiscount.toFixed(2)}`);
+      $('#tax').text(`${currencySymbol}${totalTax.toFixed(2)}`);
+      $('#total').text(`${currencySymbol}${total.toFixed(2)}`);
 
       $('input[name="sale_estim_sub_total"]').val(subTotal.toFixed(2));
       $('input[name="sale_estim_discount_total"]').val(totalDiscount.toFixed(2));
@@ -992,7 +999,7 @@
             $row.find('input[name="items[][sale_estim_item_desc]"]').val(response.sale_product_desc);
             $row.find('input[name="sale_estim_item_discount').val(0); // Default discount value
             $row.find('input[name="items[][sale_estim_item_qty]"]').val(1);
-            $row.find('select[name="items[][sale_currency_id]"]').val(response.sale_product_currency_id).trigger('change');
+            // $row.find('select[name="items[][sale_currency_id]"]').val(response.sale_product_currency_id).trigger('change');
             $row.find('select[name="items[][sale_estim_item_tax]"]').val(response.sale_product_tax).trigger('change');
 
             $row.find('.item-price').text('$' + parseFloat(response.sale_product_price).toFixed(2));
@@ -1019,7 +1026,9 @@
       calculateTotals();
     });
 
-
+    $('#sale_currency_id').on('change', function () {
+        calculateTotals(); // Recalculate totals when currency changes
+    });
   });
 
 
@@ -1047,12 +1056,7 @@
                 <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" min="1"></td>
                 <td>
                     <div class="d-flex">
-                        <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext" aria-describedby="inputGroupPrepend">
-                        <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
-                            @foreach($currencys as $curr)
-                <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
-              @endforeach
-                        </select>
+                        <input type="text" name="items[][sale_estim_item_price]" class="form-control" aria-describedby="inputGroupPrepend">
                     </div>
                 </td>
                 <td>
@@ -1062,7 +1066,7 @@
             @endforeach
                     </select>
                 </td>
-                <td class="text-right item-price">$0.00</td>
+                <td class="text-right item-price">0.00</td>
                 <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
             </tr>
         `);
@@ -1098,7 +1102,7 @@
         formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
-        formData[`items[${rowIndex}][sale_currency_id]`] = $(this).find('select[name="items[][sale_currency_id]"]').val();
+        // formData[`items[${rowIndex}][sale_currency_id]`] = $(this).find('select[name="items[][sale_currency_id]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
       });
@@ -1122,7 +1126,7 @@
       
       formData['sale_estim_status'] = 1;
       formData['sale_status'] = 0;
-      formData['sale_currency_id'] = 0;
+      formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
 
 
       $.ajax({

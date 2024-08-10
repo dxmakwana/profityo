@@ -71,7 +71,7 @@ class EstimatesController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request->sale_currency_id);
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
@@ -82,7 +82,7 @@ class EstimatesController extends Controller
             'sale_estim_valid_date' => 'required|date',
             'sale_estim_discount_desc' => 'nullable|string',
             'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
-            'sale_currency_id' => 'nullable|integer',
+            'sale_currency_id' => 'nullable|numeric',
             'sale_estim_sub_total' => 'required|numeric',
             'sale_estim_discount_total' => 'required|numeric',
             'sale_estim_tax_amount' => 'required|numeric',
@@ -97,22 +97,21 @@ class EstimatesController extends Controller
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
-            'items.*.sale_currency_id' => 'required|integer',
             'items.*.sale_estim_item_tax' => 'required|integer',
-            'items.*.sale_estim_item_discount' => 'nullable|numeric|min:0',
         ]);
 
         $estimate = new Estimates();
         $estimate->fill($request->only([
             'sale_estim_title', 'sale_estim_summary', 'sale_cus_id', 'sale_estim_number',
-            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id',
-            'sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
+            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
             'sale_estim_final_amount', 'sale_estim_notes', 'sale_estim_footer_note',
             'sale_estim_image', 'sale_status', 'sale_estim_status'
         ]));
         $user = Auth::guard('masteradmins')->user();
         $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
+        $estimate->sale_currency_id = $request->sale_currency_id;
         $estimate->id = $user->id;
+        // dd($estimate);
         $estimate->save();
 
         foreach ($request->input('items') as $item) {
@@ -178,7 +177,7 @@ class EstimatesController extends Controller
 
     public function update(Request $request, $estimates_id)
     {
-        // dd($estimates_id);
+        // dd($request);
         // \DB::enableQueryLog();
 
         $user = Auth::guard('masteradmins')->user();
@@ -198,7 +197,7 @@ class EstimatesController extends Controller
             'sale_estim_valid_date' => 'required|date',
             'sale_estim_discount_desc' => 'nullable|string',
             'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
-            'sale_currency_id' => 'nullable|integer',
+            'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
             'sale_estim_discount_total' => 'required|numeric',
             'sale_estim_tax_amount' => 'required|numeric',
@@ -210,7 +209,11 @@ class EstimatesController extends Controller
             'sale_estim_item_discount' => 'required|integer',
         
         ]);
+
+        // if()
+
         $estimate->sale_estim_item_discount = $validatedData['sale_estim_item_discount'];
+        $estimate->sale_currency_id = $validatedData['sale_currency_id'];
         $estimate->where('sale_estim_id', $estimates_id)->update($validatedData);
 
         // dd(\DB::getQueryLog()); 
@@ -283,6 +286,14 @@ class EstimatesController extends Controller
         } else {
             return response()->json(['error' => 'customer not found'], 404);
         }
+    }
+
+    public function listCustomers()
+    {
+        $customers = SalesCustomers::get(['sale_cus_id', 'sale_cus_business_name']);
+        
+        // dd($customers);
+        return response()->json($customers);
     }
 
 

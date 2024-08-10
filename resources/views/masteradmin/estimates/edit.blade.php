@@ -138,7 +138,7 @@
 
               <div class="add_customer_list" style="display: none;">
                 <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-                    <option>Select Items</option>
+                    <!-- <option>Select Items</option> -->
                     @foreach($salecustomer as $customer)
                     <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
                         {{ $customer->sale_cus_business_name }}
@@ -185,7 +185,7 @@
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                         </div>
                       </div>
-                      <p class="within_day">Within 7 days</p>
+                      <!-- <p class="within_day">Within 7 days</p> -->
                     </div>
                   </div>
                 </div>
@@ -204,9 +204,10 @@
                     <th style="width: 400px;">Items</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Discount</th>
+                    <!-- <th>Discount</th> -->
                     <th>Tax</th>
                     <th class="text-right">Amount</th>
+                    <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -229,15 +230,9 @@
                         <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}"></td>
                         <td>
                             <div class="d-flex">
-                                <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext"
+                                <input type="text" name="items[][sale_estim_item_price]" class="form-control"
                                     aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}">
-                                <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
-                                    @foreach($currencys as $curr)
-                                        <option value="{{ $curr->id }}" {{ $curr->id == $item->sale_currency_id ? 'selected' : '' }}>
-                                            {{ $curr->currency_symbol }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                
                             </div>
                         </td>
                         <td>
@@ -250,7 +245,7 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td class="text-right item-price">${{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
+                        <td class="text-right item-price">{{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
                         <td><i class="fa fa-trash delete-item"></i></td>
                     </tr>
                   @endforeach
@@ -261,10 +256,10 @@
               <!-- /.col -->
             </div>
             <hr />
-            <input type="hidden" name="sale_estim_sub_total" value="0">
-            <input type="hidden" name="sale_estim_discount_total" value="0">
-            <input type="hidden" name="sale_estim_tax_amount" value="0">
-            <input type="hidden" name="sale_estim_final_amount" value="0">
+            <input type="hidden" name="sale_estim_sub_total" value="{{ $estimates->sale_estim_sub_total }}">
+            <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
+            <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
+            <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
             <div class="row">
                 <div class="col-md-4">
                     <div class="d-flex">
@@ -275,8 +270,8 @@
                     <div class="d-flex">
                     <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
                         aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}">
-                    <select class="form-select form-selectcurrency" name="sale_estim_discount_type">
-                        <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }}>$</option>
+                    <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
+                        <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
                         <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
                     </select>
                     </div>
@@ -287,20 +282,28 @@
                     <div class="table-responsive">
                     <table class="table total_table">
                         <tr>
+                        <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency" required>
+                          @foreach($currencys as $curr)
+                            <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                            <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
+                              {{ $curr->currency_symbol }}
+                          </option>
+                          @endforeach
+                        </select>
                         <td style="width:50%">Sub Total :</td>
-                        <td id="sub-total">${{ $estimates->sale_estim_sub_total }}</td>
+                        <td id="sub-total">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}</td>
                         </tr>
                         <tr>
                         <td>Discount :</td>
-                        <td id="discount">${{ $estimates->sale_estim_discount_total }}</td>
+                        <td id="discount">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_discount_total }}</td>
                         </tr>
                         <tr>
                         <td>Tax :</td>
-                        <td id="tax">${{ $estimates->sale_estim_tax_amount }}</td>
+                        <td id="tax">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_tax_amount }}</td>
                         </tr>
                         <tr>
                         <td>Total:</td>
-                        <td id="total">${{ $estimates->sale_estim_final_amount }}</td>
+                        <td id="total">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</td>
                         </tr>
                     </table>
 
@@ -349,7 +352,7 @@
     <div class="row py-20">
       <div class="col-md-12 text-center">
         <a href="#"><button class="add_btn_br">Preview</button></a>
-        <a href="#"><button class="add_btn">Save & Continue</button></a>
+        <button class="add_btn">Save & Continue</button>
       </div>
     </div><!-- /.col -->
     </form>
@@ -977,6 +980,7 @@
 </div>
 
 
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -1140,6 +1144,8 @@
                 
                   var customer = response.data;
                   console.log(customer);
+                
+
                   var customerInfoHtml = `
                       <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
                       <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
@@ -1166,18 +1172,309 @@
                   $('#customerInfo').html(customerInfoHtml).show();
                   $('.add_customer_list').hide();
 
-                   // Dynamically create or update modal ID
-                   var modalId = '#editcustor_modal_' + customer.sale_cus_id;
-                    if ($(modalId).length === 0) {
-                        $('.customer').append(`
-                            <div class="modal fade" id="editcustor_modal_${customer.sale_cus_id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                <!-- Modal content goes here -->
+                  $('#sale_bill_currency_id').val(customer.sale_bill_currency_id).trigger('change');
+
+                    // If using Select2 or similar, trigger the change event to update the UI
+                    $('#sale_bill_currency_id').trigger('change.select2');
+
+                  var customer_id = customer.sale_cus_id;
+                  var formActionUrl = "{{ route('salescustomers.update', ['sale_cus_id' => '__customer_id__']) }}".replace('__customer_id__', customer_id);
+
+                  // Set the form action URL
+                  var form = $(`#editCustomerForm_${customer_id}`);
+                  form.attr('action', formActionUrl);
+
+                  if ($(`#editcustor_modal_${customer.sale_cus_id}`).length === 0) {
+                        var modalHtml = `
+                            <div class="modal fade" id="editcustor_modal_${customer.sale_cus_id }" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Edit Customer</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form id="editCustomerForm_${customer.sale_cus_id}" class="ajax-form" method="POST" data-customer-id="${customer.sale_cus_id}">
+                                  @csrf
+                                  @method('PUT')
+                                    <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id}">
+                                  <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
+                                    <ul class="nav nav-pills p-2 tab_box">
+                                      <li class="nav-item"><a class="nav-link active" href="#editcontactajax" data-toggle="tab">Contact</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editbillinajax" data-toggle="tab">Billing</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editshippingajax" data-toggle="tab">Shipping</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editmoreajax" data-toggle="tab">More</a></li>
+                                    </ul>
+                                  </div><!-- /.card-header -->
+
+                                  <div class="tab-content">
+                                    <div class="tab-pane active" id="editcontactajax">
+                                  
+                                    <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id }">
+                                        <div class="row pxy-15 px-10">
+                                          <div class="col-md-12">
+                                            <div class="form-group">
+                                              <label for="customer">Customer <span class="text-danger">*</span></label>
+                                              <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="${customer.sale_cus_business_name }">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer_email">Email</label>
+                                              <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="${customer.sale_cus_email }">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer_phonenumber">Phone</label>
+                                              <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_cus_phone }">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer_firstname">First Name</label>
+                                              <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="${customer.sale_cus_first_name }">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer_lastname">Last Name</label>
+                                              <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="${customer.sale_cus_last_name }">
+                                            </div>
+                                          </div>
+                                        </div>
+                                      
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane" id="editbillinajax">
+                                    
+                                        <div class="row pxy-15 px-10">
+                                          <div class="col-md-12">
+                                            <div class="form-group">
+                                              <label for="sale_bill_currency_id_${customer.sale_cus_id}">Currency</label>
+                                                <select id="sale_bill_currency_id_${customer.sale_cus_id}" name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
+                                                    <option value="" default>Select a Currency...</option>
+                                                    @foreach($currencys as $cur)
+                                                        <option value="{{ $cur->id }}">
+                                                            {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="modal_sub_title">Billing Address</div>
+                                        <div class="row pxy-15 px-10">
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businessaddress1">Address Line 1</label>
+                                              <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="${customer.sale_bill_address1 }" placeholder="Enter a Location">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businessaddress2">Address Line 2</label>
+                                              <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="${customer.sale_bill_address2 }" placeholder="Enter a Location">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businesscity">City</label>
+                                              <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="${customer.sale_bill_city_name }" placeholder="Enter A City">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businesszipcode">Postal/ZIP Code</label>
+                                              <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="${customer.sale_bill_zipcode }">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="sale_bill_country_id_${customer.sale_cus_id}">Country</label>
+                                                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2" style="width: 100%;" required>
+                                                    <option value="" default>Select a Currency...</option>
+                                                    @foreach($countries as $con)
+                                                        <option value="{{ $con->id }}" >
+                                                       {{ $con->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="sale_bill_state_id_${customer.sale_cus_id}">Country</label>
+                                                <select id="sale_bill_state_id_${customer.sale_cus_id}" name="sale_bill_state_id" class="form-control select2" style="width: 100%;" required>
+                                                    <option value="" default>Select a State...</option>
+                                                    @foreach($customer_states as $state)
+                                                        <option value="{{ $state->id }}" >
+                                                       {{ $state->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane" id="editshippingajax">
+                                  
+                                        <div class="modal_sub_title px-15">Shipping Address</div>
+                                        <div class="row pxy-15 px-10">
+                                          <div class="col-md-12">
+                                            <div class="icheck-primary">
+                                              <input type="radio" id="shippingaddress" name="shipping" name="sale_same_address" value="on" ${customer.sale_same_address === 'on' ? 'checked' : ''}>
+                                              <label for="shippingaddress">Same As Billing Address</label>
+                                      
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
+                                              <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="${customer.sale_ship_shipto}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customer_phonenumber">Phone</label>
+                                              <input type="Number" class="form-control" name="sale_ship_phone" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_ship_phone}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businessaddress1">Address Line 1</label>
+                                              <input type="text" class="form-control" name="sale_ship_address1" id="company-businessaddress1" placeholder="Enter a Location" value="${customer.sale_ship_address1}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businessaddress2">Address Line 2</label>
+                                              <input type="text" class="form-control" id="company-businessaddress2" placeholder="Enter a Location" name="sale_ship_address2" value="${customer.sale_ship_address2}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businesscity">City</label>
+                                              <input type="text" class="form-control" name="sale_ship_city_name" id="company-businesscity"  placeholder="Enter A City" value="${customer.sale_ship_city_name}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="company-businesszipcode">Postal/ZIP Code</label>
+                                              <input type="text" class="form-control" id="company-businesszipcode" placeholder="Enter a Zip Code" name="sale_ship_zipcode" value="${customer.sale_ship_zipcode}">
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="sale_ship_country_id_${customer.sale_cus_id}">Country</label>
+                                                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2" style="width: 100%;" required>
+                                                    <option value="" default>Select a Currency...</option>
+                                                    @foreach($currencys as $cont)
+                                                        <option value="{{ $cont->id }}" >
+                                                       {{ $cont->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+
+                                            </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="sale_ship_state_id_${customer.sale_cus_id}">State</label>
+                                                <select id="sale_ship_state_id_${customer.sale_cus_id}" name="sale_ship_state_id" class="form-control select2" style="width: 100%;" required>
+                                                    <option value="" default>Select a State...</option>
+                                                    @foreach($customer_states as $statest)
+                                                        <option value="{{ $statest->id }}" >
+                                                       {{ $statest->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+
+                                            </div>
+                                          </div>
+                                          <div class="col-md-12">
+                                            <div class="form-group">
+                                              <label for="deliveryinstructions">Delivery instructions</label>
+                                              <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="${customer.sale_ship_delivery_desc}">
+                                            </div>
+                                          </div>
+                                        </div>
+                                  
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                    <div class="tab-pane" id="editmoreajax">
+                                  
+                                        <div class="row pxy-15 px-10">
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customeraccountnumber">Account Number</label>
+                                              <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="${customer.sale_cus_account_number}">
+                                            </div>
+                                          </div>
+                                                            
+                                          <div class="col-md-6">
+                                            <div class="form-group">
+                                              <label for="customerwebsite">Website</label>
+                                              <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="${customer.sale_cus_website}">
+                                            </div>
+                                          </div>
+                                          
+                                        </div>
+                                      
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                  </div>
+
+                                  <!-- /.tab-content -->
+                                </div>
+                                <div class="modal-footer">
+                                  <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
+                                  <button type="submit" form="editCustomerForm_${customer.sale_cus_id}" class="btn btn-primary">Save</button>
+                                </div>
+                                </form>
+                              </div>
                             </div>
-                        `);
+                            </div>
+                        `;
+                        $('body').append(modalHtml);
+
+                         // Set the selected value in the dropdown
+                         var selectcurrency = $(`#sale_bill_currency_id_${customer.sale_cus_id}`);
+                         selectcurrency.val(customer.sale_bill_currency_id).trigger('change');
+
+                        var selectcountry = $(`#sale_bill_country_id_${customer.sale_cus_id}`);
+                        selectcountry.val(customer.sale_bill_country_id).trigger('change');
+
+                        var selectstate = $(`#sale_bill_state_id_${customer.sale_cus_id}`);
+                        selectstate.val(customer.sale_bill_state_id).trigger('change');
+
+                        var shipselectstate = $(`#sale_ship_state_id_${customer.sale_cus_id}`);
+                        shipselectstate.val(customer.sale_ship_state_id).trigger('change');
+
+                        var shipselectcountry = $(`#sale_ship_country_id_${customer.sale_cus_id}`);
+                        shipselectcountry.val(customer.sale_ship_country_id).trigger('change');
+
+                        
+                        selectcurrency.select2();
+                        selectcountry.select2();
+                        selectstate.select2();
+                        shipselectcountry.select2();
+                        shipselectstate.select2();
                     }
 
+                    // Event delegation for dynamically added content
+                    $('#customerInfo').on('click', '.customer', function (e) {
+                        e.preventDefault();
+                        var customerId = $(this).data('id');
+                        $(`#editcustor_modal_${customerId}`).modal('show');
+                    });
+
+
                     // Show the new modal
-                    $(modalId).modal('show');
                   
                   // Event delegation for dynamically added content
                   $('#customerInfo').on('click', '.customer_list', function (e) {
@@ -1186,6 +1483,11 @@
                       $('.add_customer_list').show(); // Show the dropdown list
                       $('#customerSelect').focus(); // Set focus to the select element
                   });
+
+
+                    // Show the modal
+                    // $(`#editcustor_modal_${customer.sale_cus_id}`).modal('show');
+                  
               } else {
                   alert(response.message);
               }
@@ -1205,6 +1507,8 @@
 
     // Function to calculate my items amount
     function calculateTotals() {
+      const currencySymbol = $('#sale_currency_id option:selected').data('symbol') || '$'; // Retrieve currency symbol
+
       let subTotal = 0;
       let totalDiscount = 0;
       let totalTax = 0;
@@ -1229,7 +1533,7 @@
 
         // Update the price for the current item
         const itemTotalPrice = itemTotal;
-        $(this).find('.item-price').text(`$${itemTotalPrice.toFixed(2)}`);
+        $(this).find('.item-price').text(`${itemTotalPrice.toFixed(2)}`);
 
       });
 
@@ -1241,15 +1545,16 @@
         totalDiscount = (subTotal * globalDiscountValue) / 100;
       } else { 
         totalDiscount = globalDiscountValue;
+        $('#sale_estim_discount_type option[value="1"]').text(currencySymbol);
       }
 
       total = subTotal - totalDiscount + totalTax;
 
       // Update calculated values
-      $('#sub-total').text(`$${subTotal.toFixed(2)}`);
-      $('#discount').text(`$${totalDiscount.toFixed(2)}`);
-      $('#tax').text(`$${totalTax.toFixed(2)}`);
-      $('#total').text(`$${total.toFixed(2)}`);
+      $('#sub-total').text(`${currencySymbol}${subTotal.toFixed(2)}`);
+      $('#discount').text(`${currencySymbol}${totalDiscount.toFixed(2)}`);
+      $('#tax').text(`${currencySymbol}${totalTax.toFixed(2)}`);
+      $('#total').text(`${currencySymbol}${total.toFixed(2)}`);
 
       $('input[name="sale_estim_sub_total"]').val(subTotal.toFixed(2));
       $('input[name="sale_estim_discount_total"]').val(totalDiscount.toFixed(2));
@@ -1273,7 +1578,7 @@
             $row.find('input[name="items[][sale_estim_item_desc]"]').val(response.sale_product_desc);
             $row.find('input[name="sale_estim_item_discount').val(0); // Default discount value
             $row.find('input[name="items[][sale_estim_item_qty]"]').val(1);
-            $row.find('select[name="items[][sale_currency_id]"]').val(response.sale_product_currency_id).trigger('change');
+            // $row.find('select[name="items[][sale_currency_id]"]').val(response.sale_product_currency_id).trigger('change');
             $row.find('select[name="items[][sale_estim_item_tax]"]').val(response.sale_product_tax).trigger('change');
 
             $row.find('.item-price').text('$' + parseFloat(response.sale_product_price).toFixed(2));
@@ -1298,6 +1603,10 @@
     // global discount input change
     $(document).on('input', 'input[name="sale_estim_item_discount"]', function () {
       calculateTotals();
+    });
+
+    $('#sale_currency_id').on('change', function () {
+        calculateTotals(); // Recalculate totals when currency changes
     });
 
   });
@@ -1327,12 +1636,8 @@
                 <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" min="1"></td>
                 <td>
                     <div class="d-flex">
-                        <input type="text" name="items[][sale_estim_item_price]" class="form-control form-controltext" aria-describedby="inputGroupPrepend">
-                        <select name="items[][sale_currency_id]" class="form-select form-selectcurrency">
-                            @foreach($currencys as $curr)
-                <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
-              @endforeach
-                        </select>
+                        <input type="text" name="items[][sale_estim_item_price]" class="form-control" aria-describedby="inputGroupPrepend">
+                       
                     </div>
                 </td>
                 <td>
@@ -1342,7 +1647,7 @@
             @endforeach
                     </select>
                 </td>
-                <td class="text-right item-price">$0.00</td>
+                <td class="text-right item-price">0.00</td>
                 <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
             </tr>
         `);
@@ -1359,8 +1664,8 @@
 
 
   });
-  //insert estimate data
-  $(document).ready(function () {
+  //update estimate data
+    $(document).ready(function () {
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1378,9 +1683,7 @@
         formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
-        formData[`items[${rowIndex}][sale_currency_id]`] = $(this).find('select[name="items[][sale_currency_id]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-        formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
       });
 
       formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
@@ -1400,7 +1703,7 @@
       formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
       formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
       formData['sale_status'] = 0;
-      formData['sale_currency_id'] = 0;
+      formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
 
 
       $.ajax({
@@ -1422,6 +1725,7 @@
     });
 
   });
+
 
   $(document).ready(function() {
     $('#editCustomerForm').on('submit', function(e) {
@@ -1462,6 +1766,10 @@
 
                     <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
                 </div>
+
+                <div class="edit_es_text customer_list">
+                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                </div>
                
             `;
 
@@ -1470,19 +1778,117 @@
 
             // Hide the modal
             $('#editcustor_modal_' + saleCusId).modal('hide');
+
+            updateCustomerDropdown();
         },
         error: function(xhr) {
             console.log('An error occurred: ' + xhr.statusText);
         }
     });
 });
+function updateCustomerDropdown() {
+        $.ajax({
+            url: "{{ route('salescustomers.list') }}", // A route to fetch the updated customer list
+            type: 'GET',
+            success: function(customers) {
+                var customerSelect = $('#customerSelect');
+                customerSelect.empty(); // Clear the existing options
+                
+                customers.forEach(function(customer) {
+                    var optionHtml = `<option value="${customer.sale_cus_id}">${customer.sale_cus_business_name}</option>`;
+                    customerSelect.append(optionHtml);
+                });
+
+                // Optionally, you can select the updated customer or reset the selection
+                // customerSelect.val(customerId).trigger('change'); // Select the updated customer
+            },
+            error: function(xhr) {
+                console.log('Failed to update customer dropdown: ' + xhr.statusText);
+            }
+        });
+    }
+    
 });
 
+$(document).ready(function() {
+    $(document).on('submit', 'form.ajax-form', function(e) {
+      // alert('hii');
+        e.preventDefault();
+        
+        var form = $(this);
+        var customerId = form.data('customer-id');  // Get customer ID from data attribute
+        var formData = form.serialize();
+        var formAction = "{{ route('salescustomers.update', ['sale_cus_id' => '__customer_id__']) }}".replace('__customer_id__', customerId);
+
+        $.ajax({
+            url: formAction,
+            type: 'PUT',
+            data: formData,
+            success: function(response) {
+                var customer = response.customer;
+
+                var customerInfoHtml = `
+                    <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                    <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
+                    <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+                    <p class="company_details_text">${customer.sale_cus_account_number}</p>
+                    <p class="company_details_text">${customer.sale_cus_website}</p>
+                    <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+                    <p class="company_details_text">${customer.state.name}</p>
+                    <p class="company_details_text">${customer.country.name}</p>
+
+                    <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
+                    <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+                    <p class="company_details_text">${customer.sale_ship_phone}</p>
+
+                    <p class="company_details_text">${customer.sale_cus_email}</p>
+                    <p class="company_details_text">${customer.sale_cus_phone}</p>
+
+                    <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                        <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+                    </div>
+                    <div class="edit_es_text customer_list">
+                        <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                    </div>
+                `;
+
+                $('#customerInfo').html(customerInfoHtml).show();
+
+                $('#editcustor_modal_' + customer.sale_cus_id).modal('hide');
+
+                updateCustomerDropdown();
+            },
+            error: function(xhr) {
+                console.log('An error occurred: ' + xhr.statusText);
+            }
+        });
+    });
+
+    function updateCustomerDropdown() {
+        $.ajax({
+            url: "{{ route('salescustomers.list') }}", // A route to fetch the updated customer list
+            type: 'GET',
+            success: function(customers) {
+                var customerSelect = $('#customerSelect');
+                customerSelect.empty(); // Clear the existing options
+                
+                customers.forEach(function(customer) {
+                    var optionHtml = `<option value="${customer.sale_cus_id}">${customer.sale_cus_business_name}</option>`;
+                    customerSelect.append(optionHtml);
+                });
+
+                // Optionally, you can select the updated customer or reset the selection
+                // customerSelect.val(customerId).trigger('change'); // Select the updated customer
+            },
+            error: function(xhr) {
+                console.log('Failed to update customer dropdown: ' + xhr.statusText);
+            }
+        });
+    }
+
+   
+}); 
 
 
 </script>
-
-
-<!-- ./wrapper -->
-
 @endsection

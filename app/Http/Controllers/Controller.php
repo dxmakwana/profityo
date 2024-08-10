@@ -268,11 +268,11 @@ class Controller extends BaseController
                     $table->integer('sale_product_id')->nullable()->default(0);
                     $table->integer('sale_estim_item_qty')->nullable()->default(0);
                     $table->string('sale_estim_item_price')->nullable()->default(0);
-                    $table->string('sale_estim_item_discount')->nullable()->default(0);
+                    // $table->string('sale_estim_item_discount')->nullable()->default(0);
                     $table->string('sale_estim_item_tax')->nullable()->default(0);
                     $table->text('sale_estim_item_desc')->nullable();
                     $table->string('sale_estim_item_amount')->nullable()->default(0);
-                    $table->integer('sale_currency_id')->nullable()->default(0);
+                    // $table->integer('sale_currency_id')->nullable()->default(0);
                     $table->tinyInteger('sale_estim_item_status')->default(0)->nullable();
                     $table->timestamps();
                 });
