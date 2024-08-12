@@ -262,7 +262,7 @@
             var country_id = $(this).val();
             if (country_id) {
                 $.ajax({
-                    url: '{{ url('business/getstates') }}/' + country_id,
+                    url: '{{ url('business/productgetstates') }}/' + country_id,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {

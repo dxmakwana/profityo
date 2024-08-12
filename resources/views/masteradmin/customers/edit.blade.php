@@ -253,7 +253,7 @@
                         <!-- @foreach($State as $states)
                             <option value="{{ $states->sale_ship_state_id }}">{{ $states->name }}</option>
                         @endforeach -->
-                        @foreach($State as $statest)
+                        @foreach($ship_state as $statest)
                             <option value="{{ $statest->id }}" @if($statest->id == $SalesCustomerse->sale_ship_state_id) selected @endif>
                                 {{ $statest->name }}
                             </option>

@@ -11,7 +11,8 @@ use App\Models\SalesProduct;
 use App\Models\Countries;
 use App\Models\SalesTax;
 use App\Models\ChartAccount;
-
+use Illuminate\Http\JsonResponse;
+use App\Models\States;
 
 
 
@@ -134,5 +135,14 @@ class SalesProductController extends Controller
         return redirect()->route('business.salesproduct.index')->with('sales-product-delete', __('messages.masteradmin.sales-product.delete_salesproduct_success'));
 
     }
+
+    public function productStates($countryId): JsonResponse
+    {
+        $states = States::where('country_id', $countryId)->get();
+
+        return response()->json($states);
+    }
+
+    
     
 }

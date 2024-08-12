@@ -847,7 +847,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Country</label>
-                      <select class="form-control select2" name="sale_bill_country_id" style="width: 100%;">
+                      <select class="form-control select2" id="bill_country" name="sale_bill_country_id" style="width: 100%;">
                         <option default>Select a Country...</option>
                           @foreach($countries as $con)
                             <option value="{{ $con->id }}" @if($con->id == $estimates->customer->sale_bill_country_id) selected @endif>
@@ -860,7 +860,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Province/State</label>
-                      <select class="form-control select2" name="sale_bill_state_id" style="width: 100%;">
+                      <select class="form-control select2" id="bill_state" name="sale_bill_state_id" style="width: 100%;">
                         @foreach($customer_states as $state)
                             <option value="{{ $state->id }}" @if($state->id == $estimates->customer->sale_bill_state_id) selected @endif>
                                 {{ $state->name }}
@@ -923,7 +923,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Country</label>
-                      <select class="form-control select2" name="sale_ship_country_id" style="width: 100%;">
+                      <select class="form-control select2" id="ship_country" name="sale_ship_country_id" style="width: 100%;">
                         <option default>Select a Country...</option>
                         @foreach($currencys as $cont)
                             <option value="{{ $cont->id }}" @if($cont->id == $estimates->customer->sale_ship_country_id) selected @endif>
@@ -936,9 +936,9 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Province/State</label>
-                      <select class="form-control select2" name="sale_ship_state_id" style="width: 100%;">
+                      <select class="form-control select2" id="ship_state" name="sale_ship_state_id" style="width: 100%;">
                         <option default>Select a State...</option>
-                        @foreach($customer_states as $statest)
+                        @foreach($ship_state as $statest)
                             <option value="{{ $statest->id }}" @if($statest->id == $estimates->customer->sale_ship_state_id) selected @endif>
                                 {{ $statest->name }}
                             </option>
@@ -1154,7 +1154,7 @@
               if (response.success) {
                 
                   var customer = response.data;
-                  console.log(customer);
+                  // console.log(customer);
                 
 
                   var customerInfoHtml = `
@@ -1267,8 +1267,9 @@
                                               <label for="sale_bill_currency_id_${customer.sale_cus_id}">Currency</label>
                                                 <select id="sale_bill_currency_id_${customer.sale_cus_id}" name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
                                                     <option value="" default>Select a Currency...</option>
+                                                    
                                                     @foreach($currencys as $cur)
-                                                        <option value="{{ $cur->id }}">
+                                                        <option value="{{ $cur->id }}" ${customer.sale_bill_currency_id === "{{ $cur->id }}" ? 'selected' : ''}>
                                                             {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
                                                         </option>
                                                     @endforeach
@@ -1305,10 +1306,10 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_bill_country_id_${customer.sale_cus_id}">Country</label>
-                                                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2" style="width: 100%;" required>
-                                                    <option value="" default>Select a Currency...</option>
+                                                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2 bill_country" style="width: 100%;" data-target="#sale_bill_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}" required>
+                                                    <option value="" default>Select a Country...</option>
                                                     @foreach($countries as $con)
-                                                        <option value="{{ $con->id }}" >
+                                                        <option value="{{ $con->id }}" ${customer.sale_bill_country_id === "{{ $cur->id }}" ? 'selected' : ''}>
                                                        {{ $con->name }}
                                                         </option>
                                                     @endforeach
@@ -1317,11 +1318,11 @@
                                           </div>
                                           <div class="col-md-6">
                                             <div class="form-group">
-                                              <label for="sale_bill_state_id_${customer.sale_cus_id}">Country</label>
+                                              <label for="sale_bill_state_id_${customer.sale_cus_id}">State</label>
                                                 <select id="sale_bill_state_id_${customer.sale_cus_id}" name="sale_bill_state_id" class="form-control select2" style="width: 100%;" required>
                                                     <option value="" default>Select a State...</option>
                                                     @foreach($customer_states as $state)
-                                                        <option value="{{ $state->id }}" >
+                                                        <option value="{{ $state->id }}" ${customer.sale_bill_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
                                                        {{ $state->name }}
                                                         </option>
                                                     @endforeach
@@ -1382,8 +1383,8 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_ship_country_id_${customer.sale_cus_id}">Country</label>
-                                                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2" style="width: 100%;" required>
-                                                    <option value="" default>Select a Currency...</option>
+                                                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_ship_country_id" class="form-control select2 ship_country" style="width: 100%;" required data-target="#sale_ship_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}">
+                                                    <option value="" default>Select a Country...</option>
                                                     @foreach($currencys as $cont)
                                                         <option value="{{ $cont->id }}" >
                                                        {{ $cont->name }}
@@ -1398,8 +1399,8 @@
                                               <label for="sale_ship_state_id_${customer.sale_cus_id}">State</label>
                                                 <select id="sale_ship_state_id_${customer.sale_cus_id}" name="sale_ship_state_id" class="form-control select2" style="width: 100%;" required>
                                                     <option value="" default>Select a State...</option>
-                                                    @foreach($customer_states as $statest)
-                                                        <option value="{{ $statest->id }}" >
+                                                    @foreach($ship_state as $statest)
+                                                        <option value="{{ $statest->id }}" ${customer.sale_ship_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
                                                        {{ $statest->name }}
                                                         </option>
                                                     @endforeach
@@ -1475,8 +1476,92 @@
                         selectstate.select2();
                         shipselectcountry.select2();
                         shipselectstate.select2();
-                    }
 
+                        function loadStates($countryDropdown, selectedStateId) {
+                          var countryId = $countryDropdown.val();
+                          var targetSelector = $countryDropdown.data('target');
+                          var url = $countryDropdown.data('url');
+                          var $stateDropdown = $(targetSelector);
+
+                          if (countryId) {
+                              $.ajax({
+                                  url: url + '/' + countryId,
+                                  type: 'GET',
+                                  dataType: 'json',
+                                  success: function(response) {
+                                      if (response) {
+                                          $stateDropdown.empty();
+                                          $stateDropdown.append('<option value="">Select State...</option>');
+                                          $.each(response, function(key, state) {
+                                              $stateDropdown.append('<option value="'+ state.id +'">'+ state.name +'</option>');
+                                          });
+                                          if (selectedStateId) {
+                                              $stateDropdown.val(selectedStateId).trigger('change');
+                                          }
+                                          $stateDropdown.select2();
+                                      }
+                                  },
+                                  error: function(xhr, status, error) {
+                                      console.error('AJAX Error: ', status, error);
+                                  }
+                              });
+                          } else {
+                              $stateDropdown.empty();
+                              $stateDropdown.append('<option value="">Select State...</option>');
+                          }
+                      }
+                      
+                      function loadShipStates($countryDropdown, selectedStateId) {
+                        var countryId = $countryDropdown.val();
+                        var targetSelector = $countryDropdown.data('target');
+                        var url = $countryDropdown.data('url');
+                        var $stateDropdown = $(targetSelector);
+
+                        if (countryId) {
+                            $.ajax({
+                                url: url + '/' + countryId,
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response) {
+                                        $stateDropdown.empty();
+                                        $stateDropdown.append('<option value="">Select State...</option>');
+                                        $.each(response, function(key, state) {
+                                            $stateDropdown.append('<option value="'+ state.id +'">'+ state.name +'</option>');
+                                        });
+                                        if (selectedStateId) {
+                                            $stateDropdown.val(selectedStateId).trigger('change');
+                                        }
+                                        $stateDropdown.select2();
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('AJAX Error: ', status, error);
+                                }
+                            });
+                        } else {
+                            $stateDropdown.empty();
+                            $stateDropdown.append('<option value="">Select State...</option>');
+                        }
+                      }  
+                      // Bind change event for bill_country
+                      $(document).on('change', '.bill_country', function() {
+                          loadStates($(this));
+                      });
+
+                      $(document).on('change', '.ship_country', function() {
+                          loadShipStates($(this));
+                      });
+
+                      // Pre-select the state for an existing customer
+                      loadStates($(`#sale_bill_country_id_${customer.sale_cus_id}`), customer.sale_bill_state_id);
+
+                      loadShipStates($(`#sale_ship_country_id_${customer.sale_cus_id}`), customer.sale_ship_state_id);
+
+    
+                      
+                    }
+                    $('.select2').select2();
                     // Event delegation for dynamically added content
                     $('#customerInfo').on('click', '.customer', function (e) {
                         e.preventDefault();
@@ -1752,7 +1837,7 @@
         data: $(this).serialize(), 
         success: function(response) {
             // Assuming 'response' contains the updated customer data
-            console.log(response.customer)
+            // console.log(response.customer)
             var customer = response.customer;
             // console.log(customer);
 
@@ -1783,7 +1868,7 @@
                 </div>
                
             `;
-
+            
             // Update the customer info section with the new data
             $('#customerInfo').html(customerInfoHtml).show();
 
@@ -1898,5 +1983,58 @@ $(document).ready(function() {
 }); 
 
 
+</script>
+<script>
+    $(document).ready(function() {
+        $('#bill_country').change(function() {
+         
+            var country_id = $(this).val();
+            alert(country_id);
+            if (country_id) {
+                $.ajax({
+                    url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#bill_state').empty();
+                        $('#bill_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#bill_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#bill_state').empty();
+                $('#bill_state').append('<option value="">Select State</option>');
+            }
+        });
+
+        $('#ship_country').change(function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                  url: '{{ url('business/getstates') }}/' + country_id,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#ship_state').empty();
+                        $('#ship_state').append('<option value="">Select State</option>');
+                        $.each(data, function(key, value) {
+                            $('#ship_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#ship_state').empty();
+                $('#ship_state').append('<option value="">Select State</option>');
+            }
+        });
+    });
+</script>
+<script>
+$(document).ready(function() {
+    // Function to load states and select the appropriate one
+   
+});
 </script>
 @endsection

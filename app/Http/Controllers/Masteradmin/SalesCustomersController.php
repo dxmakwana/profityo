@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\SalesCustomers;
 use App\Models\Countries;
 use App\Models\States;
-
+use Illuminate\Http\JsonResponse;
 
 class SalesCustomersController extends Controller
 {
@@ -120,10 +120,22 @@ class SalesCustomersController extends Controller
         // \DB::enableQueryLog(); // Enable query log
 
         $SalesCustomerse = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
-        $Country = Countries::all(); // Fetch all country from the contries table
-        $State = States::all(); // Fetch all country from the contries table
+        // dd($SalesCustomerse->sale_bill_currency_id);
+        $Country = Countries::all(); 
+        $State = collect();
+        if ($SalesCustomerse && $SalesCustomerse->sale_bill_country_id) {
+            $State = States::where('country_id', $SalesCustomerse->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($SalesCustomerse && $SalesCustomerse->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $SalesCustomerse->sale_ship_country_id)->get();
+        }
+
+        // dd($State);
+        // $State = States::all();
         // dd(\DB::getQueryLog()); // Show results of log
-        return view('masteradmin.customers.edit', compact('SalesCustomerse','Country','State'));
+        return view('masteradmin.customers.edit', compact('SalesCustomerse','Country','State','ship_state'));
     }
 
     /**
@@ -133,43 +145,39 @@ class SalesCustomersController extends Controller
     {
         // \DB::enableQueryLog(); // Enable query log
 
-        // Find the SalesCustomers by sale_cus_id
         // dd($request);
         $user = Auth::guard('masteradmins')->user();
 
         $SalesCustomersu = SalesCustomers::where(['sale_cus_id' => $sale_cus_id])->firstOrFail();
         // dd($SalesCustomersu);
-        // Validate incoming request data
         $validatedData = $request->validate([
             'sale_cus_business_name' => 'required|string|max:255',
             'sale_cus_first_name' => 'nullable|string|max:255',
             'sale_cus_last_name' => 'nullable|string|max:255',
             'sale_cus_email' => 'nullable|email|max:255',
             'sale_cus_phone' => 'nullable|numeric',
-            // 'sale_cus_fax' => 'nullable|numeric',
-            // 'sale_cus_mobile' => 'nullable|numeric',
-            // 'sale_cus_toll_free' => 'nullable|numeric',
             'sale_cus_account_number' => 'nullable|numeric',
             'sale_cus_website' => 'nullable|string|max:255',
             'sale_cus_notes' => 'nullable|string|max:255',
-            // 'sale_bill_currency_id' => 'nullable|exists:countries,id',
+            'sale_bill_currency_id' => 'nullable|exists:countries,id',
             'sale_bill_address1' => 'nullable|string|max:255',
             'sale_bill_address2' => 'nullable|string|max:255',
-            // 'sale_bill_country_id' => 'nullable|exists:countries,id',
+            'sale_bill_country_id' => 'nullable|numeric',
             'sale_bill_city_name' => 'nullable|string|max:255',
             'sale_bill_zipcode' => 'nullable|numeric',
-            // 'sale_bill_state_id' => 'nullable|exists:states,id',
-            // 'sale_ship_country_id' => 'nullable|exists:countries,id',
+            'sale_bill_state_id' => 'nullable|numeric',
+            'sale_ship_country_id' => 'nullable|numeric',
             'sale_ship_shipto' => 'nullable|string|max:255',
             'sale_ship_address1' => 'nullable|string|max:255',
             'sale_ship_address2' => 'nullable|string|max:255',
             'sale_ship_city_name' => 'nullable|string|max:255',
             'sale_ship_zipcode' => 'nullable|numeric',
-            // 'sale_ship_state_id' => 'nullable|exists:states,id',
+            'sale_ship_state_id' => 'nullable|numeric',
             'sale_ship_phone' => 'nullable|numeric',
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
             'sale_same_address' => 'nullable|boolean',
         ]);
+        
 
         // Handle checkboxes: if not checked, they won't be present in the request
     //     $validatedData = $request->all();
@@ -220,5 +228,12 @@ class SalesCustomersController extends Controller
             'message' => 'Data saved successfully',
             'data' => $customer
         ]);
+    }
+
+    public function getStates($countryId): JsonResponse
+    {
+        $states = States::where('country_id', $countryId)->get();
+
+        return response()->json($states);
     }
 }

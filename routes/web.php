@@ -156,7 +156,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/customeredit/{SalesCustomers}', [SalesCustomersController::class, 'edit'])->name('business.salescustomers.edit');
         Route::patch('/customerupdate/{SalesCustomers}', [SalesCustomersController::class, 'update'])->name('business.salescustomers.update');
         Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
-        Route::get('getstates/{country_id}', [SalesCustomersController::class, 'customerStates'])->name('get.states');
+        Route::get('getstates/{country_id}', [SalesCustomersController::class, 'getstates'])->name('get.states');
         Route::get('/get-customer-info', [SalesCustomersController::class, 'getCustomerInfo'])->name('business.salescustomers.getCustomerInfo');
 
         //estimates
@@ -181,7 +181,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/productedit/{SalesProduct}', [SalesProductController::class, 'edit'])->name('business.salesproduct.edit');
         Route::patch('/productupdate/{SalesProduct}', [SalesProductController::class, 'update'])->name('business.salesproduct.update');
         Route::delete('/productdestroy/{salesproduct}', [SalesProductController::class, 'destroy'])->name('business.salesproduct.destroy');
-        Route::get('getstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
+        Route::get('productgetstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
 
         //  purchase product
         Route::get('/purchasesproduct', [PurchasProductController::class, 'index'])->name('business.purchasproduct.index');

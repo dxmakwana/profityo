@@ -157,6 +157,9 @@ class EstimatesController extends Controller
 
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
+        $customers = SalesCustomers::where('id', $user->id)->first();
+        // dd($salecustomer['sale_cus_id']);
+
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
         // dd($currencys);
@@ -168,10 +171,20 @@ class EstimatesController extends Controller
 
         $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->get();
 
-         $customer_states = States::get();
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        // $states = States::get();
 
         // dd($estimates);
-        return view('masteradmin.estimates.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states'));
+        return view('masteradmin.estimates.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state'));
 
     }
 
@@ -242,6 +255,7 @@ class EstimatesController extends Controller
 
     public function updateCustomer(Request $request, $sale_cus_id)
     {
+        // dd($request);
         // Find the SalesCustomers by sale_cus_id
         $SalesCustomersu = SalesCustomers::where(['sale_cus_id' => $sale_cus_id])->firstOrFail();
 
@@ -255,15 +269,20 @@ class EstimatesController extends Controller
             'sale_cus_account_number' => 'nullable|numeric',
             'sale_cus_website' => 'nullable|string|max:255',
             'sale_cus_notes' => 'nullable|string|max:255',
+            'sale_bill_currency_id' => 'nullable|numeric',
             'sale_bill_address1' => 'nullable|string|max:255',
             'sale_bill_address2' => 'nullable|string|max:255',
+            'sale_bill_country_id' => 'nullable|numeric',
             'sale_bill_city_name' => 'nullable|string|max:255',
             'sale_bill_zipcode' => 'nullable|numeric',
+            'sale_bill_state_id' => 'nullable|numeric',
+            'sale_ship_country_id' => 'nullable|numeric',
             'sale_ship_shipto' => 'nullable|string|max:255',
             'sale_ship_address1' => 'nullable|string|max:255',
             'sale_ship_address2' => 'nullable|string|max:255',
             'sale_ship_city_name' => 'nullable|string|max:255',
             'sale_ship_zipcode' => 'nullable|numeric',
+            'sale_ship_state_id' => 'nullable|numeric',
             'sale_ship_phone' => 'nullable|numeric',
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
             'sale_same_address' => 'nullable|boolean',
