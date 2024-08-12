@@ -105,8 +105,8 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/profile', [ProfilesController::class, 'edit'])->name('business.profile.edit');
         Route::patch('/profile', [ProfilesController::class, 'update'])->name('business.profile.update');
         Route::delete('/profile', [ProfilesController::class, 'destroy'])->name('business.profile.destroy');
-        Route::get('states/{countryId}', [ProfilesController::class, 'getStates']);
-        Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
+        Route::get('states/{countryId}', [ProfilesController::class, 'getStates'])->name('business.profile.destroy');
+        Route::put('password', [MasterPasswordController::class, 'update'])->name('states.get');
         Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
         //create alter database
         Route::get('/create-table', [Controller::class, 'createTableRoute']);
@@ -166,7 +166,9 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::post('/estimates-store', [EstimatesController::class, 'store'])->name('business.estimates.store');
         Route::get('/edit-estimates/{id}', [EstimatesController::class, 'edit'])->name('business.estimates.edit');
         Route::patch('/update-estimates/{estimates_id}', [EstimatesController::class, 'update'])->name('business.estimates.update');
-        
+        Route::delete('/estimatesdestroy/{id}', [EstimatesController::class, 'destroy'])->name('business.estimates.destroy');
+
+
         Route::put('salescustomers/{sale_cus_id}', [EstimatesController::class, 'updateCustomer'])->name('salescustomers.update');
         Route::get('salescustomers/list', [EstimatesController::class, 'listCustomers'])->name('salescustomers.list');
 

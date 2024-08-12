@@ -56,6 +56,9 @@ return [
         ],
         'estimate' => [
             'send_success'  => 'Estimate created successfully!',
+            'edit_success' => 'Estimate updated successfully.',
+            'delete_success' => 'Estimate deleted successfully.',
+            
         ],
         'purchases-product' => [
             'send_success' => 'Product created successfully.',

@@ -263,7 +263,7 @@
               <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
                 aria-describedby="inputGroupPrepend">
                 <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
-                        <option value="1">$</option>
+                        <option value="1">{{ $currency->currency_symbol }}</option>
                         <option value="2">%</option>
                 </select>
             </div>
@@ -277,21 +277,21 @@
               <table class="table total_table">
                 <tr>
                   <td style="width:50%">Sub Total :</td>
-                  <td id="sub-total">$0.00</td>
+                  <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
                 </tr>
                 <tr>
                   <td>Discount :</td>
-                  <td id="discount">$0.00</td>
+                  <td id="discount">{{ $currency->currency_symbol }}0.00</td>
                 </tr>
                 <tr>
                   <td>Tax :</td>
-                  <td id="tax">$0.00</td>
+                  <td id="tax">{{ $currency->currency_symbol }}0.00</td>
                 </tr>
                 <tr>
                   <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency" required>
                     @foreach($currencys as $curr)
                       <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-                      <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}">
+                      <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
                         {{ $curr->currency_symbol }}
                     </option>
                     @endforeach

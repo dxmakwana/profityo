@@ -36,8 +36,23 @@
         </div>
         @php
         Session::forget('estimate-add');
-    @endphp
-    @endif
+      @endphp
+      @endif
+
+      @if(Session::has('estimate-delete'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('estimate-delete') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('estimate-delete');
+      @endphp
+      @endif
+
+    
+
       <!-- Small boxes (Stat box) -->
       <div class="col-lg-12 fillter_box">
         <div class="row align-items-center justify-content-between">
@@ -100,9 +115,9 @@
       <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
         <ul class="nav nav-pills p-2 tab_box">
           <li class="nav-item"><a class="nav-link active" href="#activeestimate" data-toggle="tab">Active <span
-                class="badge badge-toes">20</span></a></li>
+                class="badge badge-toes">{{ count($activeEstimates) }}</span></a></li>
           <li class="nav-item"><a class="nav-link" href="#draftestimate" data-toggle="tab">Draft <span
-                class="badge badge-toes">12</span></a></li>
+                class="badge badge-toes">{{ count($draftEstimates) }}</span></a></li>
           <li class="nav-item"><a class="nav-link" href="#allestimate" data-toggle="tab">All</a></li>
         </ul>
       </div><!-- /.card-header -->
@@ -143,7 +158,7 @@
                                   <a href="view-estimate.html" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  <a href="edit-estimate.html" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
                                   <a href="#" class="dropdown-item">
@@ -161,7 +176,7 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimate">
+                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimateapprove-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
                                 </div>
@@ -170,6 +185,26 @@
                           </td>
                        
                         </tr>
+                        
+                        <div class="modal fade" id="deleteestimateapprove-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                            @csrf
+                            @method('DELETE')
+                        <div class="modal-body pad-1 text-center">
+                          <i class="fas fa-solid fa-trash delete_icon"></i>
+                          <p class="company_business_name px-10"><b>Delete Customer</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                         
+                            <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
+                          <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="delete_btn px-15">Delete</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
                       @endforeach
                     @else
                       <tr>
@@ -215,7 +250,7 @@
                                   <a href="view-estimate.html" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  <a href="edit-estimate.html" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
                                   <a href="#" class="dropdown-item">
@@ -233,7 +268,7 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimate">
+                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatedraft-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
                                 </div>
@@ -241,6 +276,27 @@
                             </ul>
                           </td>
                         </tr>
+
+                        <div class="modal fade" id="deleteestimatedraft-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                        <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                              @csrf
+                              @method('DELETE')
+                          <div class="modal-body pad-1 text-center">
+                            <i class="fas fa-solid fa-trash delete_icon"></i>
+                            <p class="company_business_name px-10"><b>Delete Customer</b></p>
+                            <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                          
+                              <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
+                            <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="delete_btn px-15">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+
+
                       @endforeach
                     @else
                     <tr>
@@ -303,7 +359,7 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimate">
+                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatall-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
                                 </div>
@@ -311,6 +367,26 @@
                             </ul>
                           </td>
                         </tr>
+
+                        <div class="modal fade" id="deleteestimatall-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                            @csrf
+                            @method('DELETE')
+                        <div class="modal-body pad-1 text-center">
+                          <i class="fas fa-solid fa-trash delete_icon"></i>
+                          <p class="company_business_name px-10"><b>Delete Customer</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                         
+                            <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
+                          <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="delete_btn px-15">Delete</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
                       @endforeach
                           @else
                       <tr>
@@ -340,21 +416,7 @@
   <!-- Control sidebar content goes here -->
 </aside>
 <!-- /.control-sidebar -->
-<div class="modal fade" id="deleteestimate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-body pad-1 text-center">
-        <i class="fas fa-solid fa-trash delete_icon"></i>
-        <p class="company_business_name px-10"><b>Delete Estimate</b></p>
-        <p class="company_details_text px-10">Delete Estimate #3</p>
-        <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
-        <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="delete_btn px-15">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 </div>
 <!-- ./wrapper -->
 

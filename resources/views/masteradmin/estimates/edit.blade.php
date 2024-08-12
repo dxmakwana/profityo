@@ -29,6 +29,17 @@
   <section class="content px-10">
     <div class="container-fluid">
       <!-- card -->
+      @if(Session::has('estimate-edit'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ Session::get('estimate-edit') }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          @php
+          Session::forget('estimate-edit');
+      @endphp
+      @endif
       <div class="card card-default">
         <div class="card-header">
           <h3 class="card-title">Business Address and Contact Details, Title, Summary, and Logo</h3>
@@ -1788,19 +1799,18 @@
 });
 function updateCustomerDropdown() {
         $.ajax({
-            url: "{{ route('salescustomers.list') }}", // A route to fetch the updated customer list
+            url: "{{ route('salescustomers.list') }}", 
             type: 'GET',
             success: function(customers) {
                 var customerSelect = $('#customerSelect');
-                customerSelect.empty(); // Clear the existing options
+                customerSelect.empty(); 
                 
                 customers.forEach(function(customer) {
                     var optionHtml = `<option value="${customer.sale_cus_id}">${customer.sale_cus_business_name}</option>`;
                     customerSelect.append(optionHtml);
                 });
 
-                // Optionally, you can select the updated customer or reset the selection
-                // customerSelect.val(customerId).trigger('change'); // Select the updated customer
+                
             },
             error: function(xhr) {
                 console.log('Failed to update customer dropdown: ' + xhr.statusText);
@@ -1816,7 +1826,7 @@ $(document).ready(function() {
         e.preventDefault();
         
         var form = $(this);
-        var customerId = form.data('customer-id');  // Get customer ID from data attribute
+        var customerId = form.data('customer-id');  
         var formData = form.serialize();
         var formAction = "{{ route('salescustomers.update', ['sale_cus_id' => '__customer_id__']) }}".replace('__customer_id__', customerId);
 
@@ -1866,19 +1876,17 @@ $(document).ready(function() {
 
     function updateCustomerDropdown() {
         $.ajax({
-            url: "{{ route('salescustomers.list') }}", // A route to fetch the updated customer list
+            url: "{{ route('salescustomers.list') }}", 
             type: 'GET',
             success: function(customers) {
                 var customerSelect = $('#customerSelect');
-                customerSelect.empty(); // Clear the existing options
+                customerSelect.empty(); 
                 
                 customers.forEach(function(customer) {
                     var optionHtml = `<option value="${customer.sale_cus_id}">${customer.sale_cus_business_name}</option>`;
                     customerSelect.append(optionHtml);
                 });
 
-                // Optionally, you can select the updated customer or reset the selection
-                // customerSelect.val(customerId).trigger('change'); // Select the updated customer
             },
             error: function(xhr) {
                 console.log('Failed to update customer dropdown: ' + xhr.statusText);

@@ -231,12 +231,13 @@ class EstimatesController extends Controller
         }
 
         \MasterLogActivity::addToLog('Estimate is Edited.');
-        session()->flash('estimate-add', __('messages.masteradmin.estimate.send_success'));
+        session()->flash('estimate-edit', __('messages.masteradmin.estimate.edit_success'));
 
         return response()->json([
-            'redirect_url' => route('business.estimates.index'),
+            'redirect_url' => route('business.estimates.edit', ['id' => $estimate->sale_estim_id]),
             'message' => __('messages.masteradmin.estimate.send_success')
         ]);
+
     }
 
     public function updateCustomer(Request $request, $sale_cus_id)
@@ -296,5 +297,22 @@ class EstimatesController extends Controller
         return response()->json($customers);
     }
 
+    //remove
+    public function destroy($id): RedirectResponse
+    {
+        //
+        $user = Auth::guard('masteradmins')->user();
 
+        $estimates = Estimates::where(['sale_estim_id' => $id, 'id' => $user->id])->firstOrFail();
+
+        // Delete the estimate details
+        $estimates->where('sale_estim_id', $id)->delete();
+
+        EstimatesItems::where('sale_estim_id', $id)->delete();
+
+        \MasterLogActivity::addToLog('Estimates details Deleted.');
+
+        return redirect()->route('business.estimates.index')->with('estimate-delete', __('messages.masteradmin.estimate.delete_success'));
+
+    }
 }
