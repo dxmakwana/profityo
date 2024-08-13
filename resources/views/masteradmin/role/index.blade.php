@@ -1,3 +1,4 @@
+@if(isset($access['view_roles']) && $access['view_roles']) 
 @extends('masteradmin.layouts.app')
 <title>User Role | Profityo</title>
 @section('content')
@@ -67,9 +68,13 @@
                                   <td>{{ $role->role_name }}</td>
                                   <td class="text-right">
                                     <a href="{{ route('business.role.userrole',$role->role_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
+                                    @if(isset($access['update_roles']) && $access['update_roles']) 
                                     <a href="{{ route('business.role.edit',$role->role_id) }}"><i
                                     class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                    @endif
+                                    @if(isset($access['delete_roles']) && $access['delete_roles']) 
                                     <a data-toggle="modal" data-target="#delete-role-modal-{{ $role->role_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                                    @endif
                                   </td>
                                 </tr>
                                 
@@ -118,3 +123,4 @@
 
 
 @endsection
+@endif

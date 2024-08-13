@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class LoginRequest extends FormRequest
 {
@@ -46,6 +47,8 @@ class LoginRequest extends FormRequest
     
         $credentials = $this->only('email', 'password');
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+
+            Cache::put('web_user_' . Auth::guard('web')->id(), Auth::guard('web')->user(), now()->addMinutes(30));
 
             RateLimiter::hit($this->throttleKey());
 

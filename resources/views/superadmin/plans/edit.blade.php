@@ -20,10 +20,10 @@
                 <div class="container-fluid">
                     <div class="row mb-2 align-items-center">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Add Subscription Plans</h1>
+                            <h1 class="m-0">Edit Subscription Plans</h1>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                                <li class="breadcrumb-item active">Add Subscription Plans</li>
+                                <li class="breadcrumb-item active">Edit Subscription Plans</li>
                             </ol>
                         </div><!-- /.col -->
                         <div class="col-sm-6">
@@ -64,7 +64,7 @@
                                 <div class="row pad-5">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planname">Name</label>
+                                            <label for="planname">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('sp_name') is-invalid @enderror"
                                                 id="planname" name="sp_name" placeholder="Enter Name"
                                                 value="{{ $plan->sp_name }}" >
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planamount">Amount</label>
+                                            <label for="planamount">Amount <span class="text-danger">*</span></label>
                                             <input type="text"
                                                 class="form-control @error('sp_amount') is-invalid @enderror"
                                                 id="planamount" name="sp_amount" placeholder="Enter Amount"
@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planvalidity">Validity</label>
+                                            <label for="planvalidity">Validity <span class="text-danger">*</span></label>
                                             <input type="number"
                                                 class="form-control @error('sp_month') is-invalid @enderror"
                                                 id="planvalidity" name="sp_month" placeholder="Enter Validity"

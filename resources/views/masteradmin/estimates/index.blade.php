@@ -1,3 +1,4 @@
+@if(isset($access['view_estimates']) && $access['view_estimates']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View All Estimates</title>
 @section('content')
@@ -10,7 +11,7 @@
         <div class="col-auto">
           <h1 class="m-0">{{ __('Estimates') }}</h1>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
             <li class="breadcrumb-item active">{{ __('Estimates') }}</li>
           </ol>
         </div><!-- /.col -->
@@ -158,9 +159,11 @@
                                   <a href="view-estimate.html" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
+                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
+                                  @endif
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
@@ -176,9 +179,11 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimateapprove-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
+                                  @endif
                                 </div>
                               </li>
                             </ul>
@@ -250,9 +255,11 @@
                                   <a href="view-estimate.html" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
+                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
+                                  @endif
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
@@ -268,9 +275,11 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatedraft-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
+                                  @endif
                                 </div>
                               </li>
                             </ul>
@@ -341,9 +350,11 @@
                                   <a href="view-estimate.html" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
+                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
+                                  @endif
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
@@ -359,9 +370,11 @@
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatall-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
+                                  @endif
                                 </div>
                               </li>
                             </ul>
@@ -421,3 +434,4 @@
 <!-- ./wrapper -->
 
 @endsection
+@endif

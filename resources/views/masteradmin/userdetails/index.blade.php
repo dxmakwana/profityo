@@ -1,3 +1,4 @@
+@if(isset($access['view_users']) && $access['view_users']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Users</title>
 @section('content')
@@ -66,7 +67,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>UserRole</th>
+                    <th>User Role</th>
                     <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                   </tr>
                 </thead>
@@ -79,8 +80,12 @@
                         <td>{{ $value->users_phone  }}</td>
                         <td>{{ $value->userRole->role_name ?? config('global.default_user_role') }}</td>
                         <td class="text-right">
+                          @if(isset($access['update_users']) && $access['update_users']) 
                           <a href="{{ route('business.userdetail.edit',$value->users_id ) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                          @endif
+                          @if(isset($access['delete_users']) && $access['delete_users']) 
                           <a data-toggle="modal" data-target="#delete-role-modal-{{ $value->users_id  }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                          @endif
                         </td>
                       </tr>
                      
@@ -125,3 +130,4 @@
   </div>
   <!-- /.content-wrapper -->
 @endsection
+@endif

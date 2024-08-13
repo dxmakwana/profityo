@@ -1,3 +1,4 @@
+@if(isset($access['view_customers']) && $access['view_customers']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Sales Customers</title>
 @section('content')
@@ -10,7 +11,7 @@
           <div class="col-auto">
             <h1 class="m-0">Customers</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">Customers</li>
             </ol>
           </div><!-- /.col -->
@@ -83,18 +84,22 @@
                             <a href="view-customer.html" class="dropdown-item">
                               <i class="fas fa-regular fa-eye mr-2"></i> View
                             </a>
+                            @if(isset($access['update_customers']) && $access['update_customers']) 
                             <a href="{{ route('business.salescustomers.edit',$value->sale_cus_id) }}" class="dropdown-item">
                               <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                             </a>
+                            @endif
                             <a href="new-invoice.html" class="dropdown-item">
                               <i class="fas fa-solid fa-file-invoice mr-2"></i> Create Invoice
                             </a>
                             <a href="#" class="dropdown-item">
                               <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Statement
                             </a>
+                            @if(isset($access['delete_customers']) && $access['delete_customers']) 
                             <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletecustomer-{{ $value->sale_cus_id }}">
                               <i class="fas fa-solid fa-trash mr-2"></i> Delete
                             </a>
+                            @endif
                           </div>
                         </li>
                       </ul>
@@ -168,3 +173,4 @@
 
 
 @endsection
+@endif

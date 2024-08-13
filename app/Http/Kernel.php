@@ -73,5 +73,7 @@ class Kernel extends HttpKernel
         'auth_master' => \App\Http\Middleware\AuthenticateMasterAdmin::class,
         'masteradmin' => \App\Http\Middleware\RedirectIfAuthenticateMasterAdmin::class,
         'set.user.details' => \App\Http\Middleware\SetUserDetails::class,
+        'guard.session' => \App\Http\Middleware\ManageGuardSession::class,
+        'prevent.back.history' => \App\Http\Middleware\PreventBackHistory::class,
     ];
 }

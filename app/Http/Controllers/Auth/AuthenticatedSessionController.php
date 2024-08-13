@@ -10,12 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
+
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
      */
+    
     public function create(): View
     {
         $rememberedEmail = Cookie::get('email', '');
@@ -44,6 +47,10 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+      
+        // Clear web-specific cache if needed
+        Cache::forget('web_user_' . Auth::guard('web')->id());
+
 
         // $request->session()->invalidate();
 

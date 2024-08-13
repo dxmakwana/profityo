@@ -1,3 +1,4 @@
+@if((isset($access['view_product_services_sales']) && $access['view_product_services_sales']) )
 @extends('masteradmin.layouts.app')
 <title>Profityo | Products & Services (Sales)</title>
 @section('content')
@@ -10,7 +11,7 @@
         <div class="col-auto">
           <h1 class="m-0">Products & Services (Sales)</h1>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
             <li class="breadcrumb-item active">Products & Services (Sales)</li>
           </ol>
         </div><!-- /.col -->
@@ -74,10 +75,14 @@
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->
+              @if((isset($access['update_product_services_sales']) && $access['update_product_services_sales']) )
               <a href="{{ route('business.salesproduct.edit',$value->sale_product_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+              @endif
               <!-- <a data-toggle="modal" data-target="#delete-role-modal"><i
                 class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
+                @if((isset($access['delete_product_services_sales']) && $access['delete_product_services_sales']) )
                 <a data-toggle="modal" data-target="#delete-product-modal-{{ $value->sale_product_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                @endif
               </td>
               </tr>
 
@@ -130,3 +135,4 @@
 
 
 @endsection
+@endif

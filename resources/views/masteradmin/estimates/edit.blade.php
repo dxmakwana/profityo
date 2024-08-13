@@ -1,3 +1,4 @@
+@if(isset($access['update_estimates']) && $access['update_estimates']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Estimates</title>
 @section('content')
@@ -17,7 +18,7 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a href="#"><button class="add_btn_br">Preview</button></a>
+            <a class="add_btn_br">Preview</a>
             <a href="#"><button class="add_btn">Save & Continue</button></a>
           </ol>
         </div><!-- /.col -->
@@ -362,7 +363,7 @@
 
     <div class="row py-20">
       <div class="col-md-12 text-center">
-        <a href="#"><button class="add_btn_br">Preview</button></a>
+        <a class="add_btn_br">Preview</a>
         <button class="add_btn">Save & Continue</button>
       </div>
     </div><!-- /.col -->
@@ -2031,10 +2032,7 @@ $(document).ready(function() {
         });
     });
 </script>
-<script>
-$(document).ready(function() {
-    // Function to load states and select the appropriate one
-   
-});
-</script>
+
+
 @endsection
+@endif

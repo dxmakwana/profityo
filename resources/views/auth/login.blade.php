@@ -55,3 +55,13 @@ error_reporting(E_ALL);
         </div>
     </form>
 </x-guest-layout>
+@if(auth()->check())
+<script type="text/javascript">
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    window.onpopstate = function(event) {
+        window.location.href = '{{ route('home') }}';
+    };
+</script>
+@endif

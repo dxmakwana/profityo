@@ -1,3 +1,4 @@
+@if(isset($access['add_customers']) && $access['add_customers']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | New Sales Customers</title>
 @section('content')
@@ -9,7 +10,7 @@
                 <div class="col-auto">
                     <h1 class="m-0">New Sales Customers</h1>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">New Sales Customers</li>
                     </ol>
                 </div>
@@ -340,3 +341,4 @@
 
 
 @endsection
+@endif

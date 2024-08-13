@@ -30,7 +30,10 @@
             (isset($access['customers']) && $access['customers'])   || 
             (isset($access['product_services_sales']) && $access['product_services_sales'])
             )
-          <li class="nav-item">
+          <li class="nav-item {{ request()->is($busadminRoutes.'/estimates-list*') ||
+           request()->is($busadminRoutes.'/create-estimates*') || 
+           request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') 
+                    ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
               <p>
@@ -41,7 +44,10 @@
             <ul class="nav nav-treeview">
               @if((isset($access['estimates']) && $access['estimates']))
               <li class="nav-item">
-                <a href="{{ route('business.estimates.index') }}" class="nav-link">
+                <a href="{{ route('business.estimates.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/estimates-list*') || 
+                             request()->is($busadminRoutes.'/create-estimates*') || 
+                             request()->is($busadminRoutes.'/edit-estimates/*')  
+                              ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Estimates</p>
                 </a>
@@ -75,7 +81,10 @@
               @endif
               @if((isset($access['customers']) && $access['customers']) )
               <li class="nav-item">
-                <a href="{{ route('business.salescustomers.index') }}" class="nav-link">
+                <a href="{{ route('business.salescustomers.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/salescustomers*') || 
+                             request()->is($busadminRoutes.'/customercreate*') || 
+                             request()->is($busadminRoutes.'/customeredit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Customers</p>
                 </a>
@@ -84,7 +93,10 @@
             
               @if((isset($access['product_services_sales']) && $access['product_services_sales']) )
               <li class="nav-item">
-                <a href="{{ route('business.salesproduct.index') }}" class="nav-link">
+                <a href="{{ route('business.salesproduct.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/salesproduct*') || 
+                             request()->is($busadminRoutes.'/productcreate*') || 
+                             request()->is($busadminRoutes.'/productedit/*')  
+                              ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Products & Services</p>
                 </a>
@@ -99,7 +111,10 @@
             (isset($access['vendors']) && $access['vendors'] ) || 
             (isset($access['product_services_purchases']) && $access['product_services_purchases']  )
              )
-          <li class="nav-item">
+          <li class="nav-item {{  request()->is($busadminRoutes.'/purchasesproduct*') || 
+                             request()->is($busadminRoutes.'/purchasesproductcreate*') || 
+                             request()->is($busadminRoutes.'/purchasesproductedit/*') 
+                    ? 'menu-open side_shape' : '' }} ">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
               <p>
@@ -127,7 +142,10 @@
               @endif
               @if(isset($access['product_services_purchases']) && $access['product_services_purchases']) 
               <li class="nav-item">
-                <a href="{{ route('business.purchasproduct.index') }}" class="nav-link">
+                <a href="{{ route('business.purchasproduct.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/purchasesproduct*') || 
+                             request()->is($busadminRoutes.'/purchasesproductcreate*') || 
+                             request()->is($busadminRoutes.'/purchasesproductedit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Products & Services</p>
                 </a>

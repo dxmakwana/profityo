@@ -16,7 +16,7 @@ $adminRoute = config('global.superAdminURL');
 
 Route::group(['prefix' => $adminRoute], function () {
    
-    Route::middleware('guest')->group(function () {
+    Route::middleware(['guest'])->group(function () {
 
         Route::get('/', [AuthenticatedSessionController::class, 'create'])
                     ->name('login');
@@ -44,7 +44,7 @@ Route::group(['prefix' => $adminRoute], function () {
                     ->name('password.store');
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'guard.session:web', 'prevent.back.history'])->group(function () {
         Route::get('verify-email', EmailVerificationPromptController::class)
                     ->name('verification.notice');
 

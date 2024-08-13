@@ -44,7 +44,7 @@ $busadminRoute = config('global.businessAdminURL');
 
 Route::group(['prefix' => $adminRoute], function () {
   
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'guard.session:web', 'prevent.back.history'])->group(function () {
      
         Route::get('/dashboard', [HomesController::class, 'create'])->middleware(['auth', 'verified'])->name('dashboard');
     
@@ -74,7 +74,7 @@ Route::group(['prefix' => $adminRoute], function () {
 
 Route::group(['prefix' => $busadminRoute], function () {
     
-    Route::middleware('masteradmin')->group(function () {
+    Route::middleware(['masteradmin'])->group(function () {
         //login and register
         Route::get('login', [LoginController::class, 'create'])->name('business.login');
         Route::get('register', [RegisterController::class, 'create'])->name('business.register');
@@ -98,7 +98,7 @@ Route::group(['prefix' => $busadminRoute], function () {
                 
     });
 
-    Route::middleware(['auth_master','set.user.details'])->group(function () {
+    Route::middleware(['auth_master','set.user.details', 'guard.session:masteradmins', 'prevent.back.history'])->group(function () {
         
         //profile
         Route::get('/dashboard', [HomeController::class, 'create'])->name('business.home');
@@ -106,7 +106,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/profile', [ProfilesController::class, 'update'])->name('business.profile.update');
         Route::delete('/profile', [ProfilesController::class, 'destroy'])->name('business.profile.destroy');
         Route::get('states/{countryId}', [ProfilesController::class, 'getStates'])->name('business.profile.destroy');
-        Route::put('password', [MasterPasswordController::class, 'update'])->name('states.get');
+        Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
         Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
         //create alter database
         Route::get('/create-table', [Controller::class, 'createTableRoute']);

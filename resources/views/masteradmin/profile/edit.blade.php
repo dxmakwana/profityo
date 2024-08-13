@@ -1,3 +1,4 @@
+@if(isset($access['personal_profile']) && $access['personal_profile'])
 @extends('masteradmin.layouts.app')
 <title>Personal Profile | Profityo</title>
 @section('content')
@@ -63,3 +64,4 @@
 
 
 @endsection
+@endif

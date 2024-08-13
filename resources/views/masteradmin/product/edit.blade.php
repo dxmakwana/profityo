@@ -1,3 +1,4 @@
+@if((isset($access['update_product_services_sales']) && $access['update_product_services_sales']) )
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Product Or Service</title>
 @section('content')
@@ -200,3 +201,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @endsection
+@endif

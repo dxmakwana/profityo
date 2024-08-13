@@ -31,9 +31,9 @@ return [
             'delete_sales_success' => 'sales deleted successfully',
         ],
         'user' => [
-            'send_success' => 'user created successfully.',
-            'edit_user_success' => 'user updated successfully',
-            'delete_user_success' => 'user deleted successfully',
+            'send_success' => 'User created successfully.',
+            'edit_user_success' => 'User updated successfully',
+            'delete_user_success' => 'User deleted successfully',
             'link_send_success' => 'Success! A user information details has been sent to user.',
             'link_send_error' => 'Failed to update.',
             'not_authenticated' => 'This user is not authenticated.',

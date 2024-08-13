@@ -1,3 +1,4 @@
+@if(isset($access['add_estimates']) && $access['add_estimates']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View All Estimates</title>
 @section('content')
@@ -1154,3 +1155,4 @@
 <!-- ./wrapper -->
 
 @endsection
+@endif

@@ -12,11 +12,11 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Http\Requests\Auth\Masteradmin\MasterLoginRequest;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
 
 class LoginController extends Controller
 {
     //
-    
 
     public function create(): View
     {
@@ -42,8 +42,9 @@ class LoginController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('masteradmins')->logout();
-
-        $request->session()->flush();
+    
+        // Clear masteradmins-specific cache if needed
+        Cache::forget('masteradmins_user_' . Auth::guard('masteradmins')->id());
 
         // $request->session()->invalidate();
 

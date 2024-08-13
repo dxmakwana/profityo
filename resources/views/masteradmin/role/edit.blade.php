@@ -1,3 +1,4 @@
+@if(isset($access['update_roles']) && $access['update_roles']) 
 @extends('masteradmin.layouts.app')
 <title>Edit User Role | Profityo</title>
 @section('content')
@@ -88,3 +89,4 @@
 <!-- ./wrapper -->
 
 @endsection
+@endif

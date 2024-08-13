@@ -1,3 +1,4 @@
+@if(isset($access['add_roles']) && $access['add_roles']) 
 @extends('masteradmin.layouts.app')
 <title>New User Role | Profityo</title>
 @section('content')
@@ -75,3 +76,4 @@
 <!-- ./wrapper -->
 
 @endsection
+@endif

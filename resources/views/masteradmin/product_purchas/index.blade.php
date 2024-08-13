@@ -1,3 +1,4 @@
+@if(isset($access['view_products_services_purchases']) && $access['view_products_services_purchases']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Products & Services (Purchases)</title>
 @section('content')
@@ -10,7 +11,7 @@
         <div class="col-auto">
           <h1 class="m-0">Products & Services (Purchases)</h1>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
             <li class="breadcrumb-item active">Products & Services (Purchases)</li>
           </ol>
         </div><!-- /.col -->
@@ -73,11 +74,15 @@
               <td><strong>{{ $value->tax->tax_abbreviation }} ({{ $value->tax->tax_rate }}%)</strong> - {{ $value->tax->tax_name }}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
+              @if(isset($access['update_products_services_purchases']) && $access['update_products_services_purchases']) 
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->
               <a href="{{ route('business.purchasproduct.edit',$value->purchases_product_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+              @endif
               <!-- <a data-toggle="modal" data-target="#delete-role-modal"><i
                 class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
+                @if(isset($access['delete_products_services_purchases']) && $access['delete_products_services_purchases']) 
                 <a data-toggle="modal" data-target="#delete-product-modal-{{ $value->purchases_product_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                @endif
               </td>
               </tr>
 
@@ -130,3 +135,4 @@
 
 
 @endsection
+@endif

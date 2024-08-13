@@ -1,3 +1,4 @@
+@if(isset($access['business_profile']) && $access['business_profile']) 
 @extends('masteradmin.layouts.app')
 <title>Business Profile | Profityo</title>
 @section('content')
@@ -58,7 +59,7 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <x-input-label for="bus_company_name" :value="__('Business Name')" />
-                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name)" />
+                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
                           </div>
                         </div>
@@ -222,3 +223,4 @@
       });
   });
 </script>
+@endif

@@ -124,7 +124,7 @@
                                             <td>{{ $detail->users_name }}</td>
                                             <td>{{ $detail->users_email  }}</td>
                                             <td>{{ $detail->users_phone  }}</td>
-                                            <td>{{ $detail->role_id}}</td>
+                                            <td>{{ $detail->role_name}}</td>
                                             <td>{{ $detail->updated_at }}</td>
                                             <td> @if ($detail->user_status == 0)
                                                   <span class="status_btn converted_status"> Active </span>

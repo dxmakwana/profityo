@@ -1,3 +1,4 @@
+@if(isset($access['add_users']) && $access['add_users']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | New User</title>
 @section('content')
@@ -57,7 +58,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="users_phone">Phone</label>
-                                    <input type="tel" class="form-control @error('users_phone') is-invalid @enderror" id="taxnumber"
+                                    <input type="number" class="form-control @error('users_phone') is-invalid @enderror" id="taxnumber"
                                            name="users_phone" placeholder="Phone" value="{{ old('users_phone') }}">
                                     @error('users_phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -103,3 +104,4 @@
 </div>
 
 @endsection
+@endif

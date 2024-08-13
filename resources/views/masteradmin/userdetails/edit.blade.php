@@ -1,5 +1,6 @@
+@if(isset($access['update_users']) && $access['update_users']) 
 @extends('masteradmin.layouts.app')
-<title>Profityo | New User</title>
+<title>Profityo | Edit User</title>
 @section('content')
 
 <div class="content-wrapper">
@@ -7,10 +8,10 @@
         <div class="container-fluid">
             <div class="row mb-2 align-items-center justify-content-between">
                 <div class="col-auto">
-                    <h1 class="m-0">New User</h1>
+                    <h1 class="m-0">Edit User</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">New User</li>
+                        <li class="breadcrumb-item active">Edit User</li>
                     </ol>
                 </div>
                 <div class="col-auto">
@@ -38,7 +39,7 @@
     @endif
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Update User</h3>
+                    <h3 class="card-title">Edit User</h3>
                 </div>
                 <form method="POST" action="{{ route('business.userdetail.update', ['userdetail' => $userdetaile->users_id]) }}">
                     @csrf
@@ -119,3 +120,4 @@
 </div>
 
 @endsection
+@endif

@@ -50,7 +50,7 @@
                                 <div class="row pad-5">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planname">Name</label>
+                                            <label for="planname">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('sp_name') is-invalid @enderror"
                                                 id="planname" name="sp_name" placeholder="Enter Name"
                                                 value="{{ old('sp_name') }}">
@@ -61,7 +61,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planamount">Amount</label>
+                                            <label for="planamount">Amount <span class="text-danger">*</span></label>
                                             <input type="text"
                                                 class="form-control @error('sp_amount') is-invalid @enderror"
                                                 id="planamount" name="sp_amount" placeholder="Enter Amount"
@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="planvalidity">Validity</label>
+                                            <label for="planvalidity">Validity <span class="text-danger">*</span></label>
                                             <input type="number"
                                                 class="form-control @error('sp_month') is-invalid @enderror"
                                                 id="planvalidity" name="sp_month" placeholder="Enter Validity"

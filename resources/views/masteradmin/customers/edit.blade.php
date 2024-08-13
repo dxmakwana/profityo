@@ -1,3 +1,4 @@
+@if(isset($access['update_customers']) && $access['update_customers']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | New Sales Customers</title>
 @section('content')
@@ -395,3 +396,4 @@
 
 
 @endsection
+@endif

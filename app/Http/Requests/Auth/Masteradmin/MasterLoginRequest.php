@@ -12,6 +12,8 @@ use App\Models\MasterUser;
 use App\Models\MasterUserDetails;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
+
 
 class MasterLoginRequest extends FormRequest
 {
@@ -97,6 +99,9 @@ class MasterLoginRequest extends FormRequest
 
         // Log the user in with the 'masteradmins' guard
         Auth::guard('masteradmins')->login($users, $this->boolean('user_remember'));
+
+        Cache::put('masteradmins_user_' . Auth::guard('masteradmins')->id(), Auth::guard('masteradmins')->user(), now()->addMinutes(30));
+
         session(['user_details' => $users]);
         
         if ($this->boolean('user_remember')) {

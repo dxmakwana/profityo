@@ -18,6 +18,7 @@ use DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 
 
@@ -53,19 +54,49 @@ class UserController extends Controller
     {
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
-        $validatedData = $request->validate([
-            'users_name' => 'required|string|max:255',
-            'users_email' => 'required|string|max:255',
-            'users_phone' => 'required|string',
-            'users_password' => 'nullable|string',
-            'role_id' => 'required|integer',
-        ], [
-            'users_name.required' => 'The name field is required.',
-            'users_email.required' => 'The email field is required.',
-            'users_phone.required' => 'The phone field is required.',
-            'role_id.required' => 'The role field is required.',
-            'role_id.integer' => 'The role field is required.',
-        ]);
+    //    $validatedData = $request->validate([
+    //         'users_name' => 'required|string|max:255',
+    //         'users_email' => 'required|string|email|max:255', 
+    //         'users_phone' => 'required|digits_between:10,15', 
+    //         'users_password' => 'nullable|string|min:8', 
+    //         'role_id' => 'required|integer',
+    //     ], [
+    //         'users_name.required' => 'The name field is required.',
+    //         'users_email.required' => 'The email field is required.',
+    //         'users_email.email' => 'The email must be a valid email address.', 
+    //         'users_phone.required' => 'The phone field is required.',
+    //         'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.', 
+    //         'role_id.required' => 'The role field is required.',
+    //         'role_id.integer' => 'The role must be an integer.', 
+    //     ]);
+
+    $tableName = $user->user_id . '_py_users_details'; // Dynamically set table name
+
+
+    $validatedData = $request->validate([
+        'users_name' => 'required|string|max:255',
+        'users_email' => [
+            'required',
+            'string',
+            'email',
+            'max:255',
+            // Ensure the email is unique in the 'users' table, except for the current user's email if updating
+            Rule::unique($tableName, 'users_email')->ignore($user->user_id) // Ensure unique constraint
+        ],
+        'users_phone' => 'required|digits_between:10,15',
+        'users_password' => 'nullable|string|min:8',
+        'role_id' => 'required|integer',
+    ], [
+        'users_name.required' => 'The name field is required.',
+        'users_email.required' => 'The email field is required.',
+        'users_email.email' => 'The email must be a valid email address.',
+        'users_email.unique' => 'The email has already been taken.',
+        'users_phone.required' => 'The phone field is required.',
+        'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
+        'role_id.required' => 'The role field is required.',
+        'role_id.integer' => 'The role must be an integer.',
+    ]);
+
         
         
         if (!empty($validatedData['users_password'])) {
@@ -127,17 +158,28 @@ class UserController extends Controller
 
         $validatedData = $request->validate([
             'users_name' => 'required|string|max:255',
-            'users_email' => 'required|string|max:255',
-            'users_phone' => 'required|string',
-            'users_password' => 'nullable|string',
+            'users_email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                // Ensure the email is unique in the 'users' table, except for the current user's email if updating
+                Rule::unique('users', 'users_email')->ignore($request->route('user_id'))
+            ],
+            'users_phone' => 'required|digits_between:10,15',
+            'users_password' => 'nullable|string|min:8',
             'role_id' => 'required|integer',
         ], [
             'users_name.required' => 'The name field is required.',
             'users_email.required' => 'The email field is required.',
+            'users_email.email' => 'The email must be a valid email address.',
+            'users_email.unique' => 'The email has already been taken.', // Custom message for unique constraint
             'users_phone.required' => 'The phone field is required.',
+            'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
             'role_id.required' => 'The role field is required.',
-            'role_id.integer' => 'The role field is required.',
+            'role_id.integer' => 'The role must be an integer.',
         ]);
+        
 
         if (!empty($validatedData['users_password'])) {
             $validatedData['users_password'] = Hash::make($validatedData['users_password']);
