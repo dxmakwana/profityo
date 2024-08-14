@@ -64,6 +64,11 @@ return [
             'send_success' => 'Product created successfully.',
             'edit_purchasesproduct_success' => 'Product updated successfully',
             'delete_purchasesproduct_success' => 'Product deleted successfully',
+        ],
+        'purchases-vendor' => [
+            'send_success' => 'Vendor created successfully.',
+            'edit_purchasesvendor_success' => 'Vendor updated successfully',
+            'delete_purchasesvendor_success' => 'Vendor deleted successfully',
         ]
 
     ]

@@ -113,7 +113,9 @@
              )
           <li class="nav-item {{  request()->is($busadminRoutes.'/purchasesproduct*') || 
                              request()->is($busadminRoutes.'/purchasesproductcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesproductedit/*') 
+                             request()->is($busadminRoutes.'/purchasesproductedit/*') || request()->is($busadminRoutes.'/purchasesvendor*') || 
+                             request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
+                             request()->is($busadminRoutes.'/purchasesvendoredit/*') 
                     ? 'menu-open side_shape' : '' }} ">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
@@ -134,7 +136,10 @@
               @endif
               @if(isset($access['vendors']) && $access['vendors']) 
               <li class="nav-item">
-                <a href="vendors-list.html" class="nav-link">
+                <a href="{{ route('business.purchasvendor.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/purchasesproduct*') || 
+                             request()->is($busadminRoutes.'/purchasesproductcreate*') || 
+                             request()->is($busadminRoutes.'/purchasesproductedit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vendors</p>
                 </a>
@@ -142,9 +147,9 @@
               @endif
               @if(isset($access['product_services_purchases']) && $access['product_services_purchases']) 
               <li class="nav-item">
-                <a href="{{ route('business.purchasproduct.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/purchasesproduct*') || 
-                             request()->is($busadminRoutes.'/purchasesproductcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesproductedit/*')  
+                <a href="{{ route('business.purchasproduct.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/purchasesvendor*') || 
+                             request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
+                             request()->is($busadminRoutes.'/purchasesvendoredit/*')  
                               ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Products & Services</p>

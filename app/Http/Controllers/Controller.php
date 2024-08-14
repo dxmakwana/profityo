@@ -334,6 +334,36 @@ class Controller extends BaseController
                 });
             }
 
+            if (!Schema::hasTable($storeId . '_py_purchases_vendor')) {
+                Schema::create($storeId . '_py_purchases_vendor', function (Blueprint $table) {
+                    $table->increments('purchases_vendor_id');
+                    $table->integer('id')->nullable()->default(0);
+                    // $table->integer('users_id')->nullable()->default(0);
+                    $table->string('purchases_vendor_name')->nullable();
+                    $table->string('purchases_vendor_type')->nullable();
+                    $table->string('purchases_vendor_contractor_type')->nullable();
+                    $table->string('purchases_vendor_security_number')->nullable();
+                    $table->string('purchases_vendor_first_name')->nullable();
+                    $table->string('purchases_vendor_last_name')->nullable();
+                    $table->string('purchases_vendor_email')->nullable();
+                    $table->string('purchases_vendor_country_id')->nullable()->default(0);
+                    $table->string('purchases_vendor_state_id')->nullable()->default(0);
+                    $table->string('purchases_vendor_address1')->nullable();
+                    $table->string('purchases_vendor_address2')->nullable();
+                    $table->string('purchases_vendor_city_name')->nullable();
+                    $table->string('purchases_vendor_zipcode')->nullable();
+                    $table->string('purchases_vendor_account_number')->nullable();
+                    $table->string('purchases_vendor_phone')->nullable();
+                    $table->string('purchases_vendor_fax')->nullable();
+                    $table->string('purchases_vendor_mobile')->nullable();
+                    $table->string('purchases_vendor_toll_free')->nullable();
+                    $table->string('purchases_vendor_website')->nullable();
+                    $table->integer('purchases_vendor_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('purchases_vendor_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
         }
     }
 

@@ -22,6 +22,7 @@ use App\Http\Controllers\superadmin\BusinessDetailController;
 use App\Http\Controllers\Masteradmin\EstimatesController;
 use App\Http\Controllers\Masteradmin\SalesProductController;
 use App\Http\Controllers\Masteradmin\PurchasProductController;
+use App\Http\Controllers\Masteradmin\PurchasVendorController;
 
 
 /*
@@ -191,6 +192,14 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/purchasesproductupdate/{PurchasesProduct}', [PurchasProductController::class, 'update'])->name('business.purchasproduct.update');
         Route::delete('/purchasesproductdestroy/{PurchasesProduct}', [PurchasProductController::class, 'destroy'])->name('business.purchasproduct.destroy');
       //   Route::get('getstates/{country_id}', [PurchasProductController::class, 'productStates'])->name('get.states');
+
+        //  purchase vendor
+        Route::get('/purchasesvendor', [PurchasVendorController::class, 'index'])->name('business.purchasvendor.index');
+        Route::get('/purchasesvendorcreate', [PurchasVendorController::class, 'create'])->name('business.purchasvendor.create');
+        Route::post('/purchasesvendorstore', [PurchasVendorController::class, 'store'])->name('business.purchasvendor.store');
+        Route::get('/purchasesvendoredit/{PurchasesVendor}', [PurchasVendorController::class, 'edit'])->name('business.purchasvendor.edit');
+        Route::patch('/purchasesvendorupdate/{PurchasesVendor}', [PurchasVendorController::class, 'update'])->name('business.purchasvendor.update');
+        Route::delete('/purchasesvendordestroy/{PurchasesVendor}', [PurchasVendorController::class, 'destroy'])->name('business.purchasvendor.destroy');
     });
     
 });
