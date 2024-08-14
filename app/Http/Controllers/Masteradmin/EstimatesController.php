@@ -16,6 +16,8 @@ use App\Models\SalesProduct;
 use App\Models\SalesTax;
 use App\Models\EstimatesItems;
 use Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 class EstimatesController extends Controller
 {
     //
@@ -72,7 +74,7 @@ class EstimatesController extends Controller
     public function store(Request $request)
     {
         // dd($request->sale_currency_id);
-        $request->validate([
+      $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'required|integer',
@@ -91,14 +93,38 @@ class EstimatesController extends Controller
             'sale_estim_footer_note' => 'nullable|string',
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
-            'sale_estim_item_discount' => 'required|integer',
+            'sale_estim_item_discount' => 'nullable|integer',
             'sale_estim_status' => 'required|integer',
             'items.*.sale_product_id' => 'required|integer',
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
             'items.*.sale_estim_item_tax' => 'required|integer',
+        ], [
+            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+            'sale_cus_id.required' => 'Please select a customer.',
+            'sale_cus_id.integer' => 'Please select a customer.',
+            'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_estim_date.required' => 'Please select the estimate date.',
+            'sale_estim_valid_date.required' => 'Please select the valid until date.',
+            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+            'sale_estim_final_amount.required' => 'Please enter the final amount.',
+            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+            'sale_status.required' => 'Please set the status of the estimate.',
+            'sale_estim_status.required' => 'Please set the estimate status.',
+            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
+            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
         ]);
+
 
         $estimate = new Estimates();
         $estimate->fill($request->only([
@@ -219,7 +245,7 @@ class EstimatesController extends Controller
             'sale_estim_footer_note' => 'nullable|string',
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
-            'sale_estim_item_discount' => 'required|integer',
+            'sale_estim_item_discount' => 'nullable|integer',
         
         ]);
 
@@ -260,7 +286,7 @@ class EstimatesController extends Controller
         $SalesCustomersu = SalesCustomers::where(['sale_cus_id' => $sale_cus_id])->firstOrFail();
 
         // Validate incoming request data
-        $validatedData = $request->validate([
+        $rules = [
             'sale_cus_business_name' => 'required|string|max:255',
             'sale_cus_first_name' => 'nullable|string|max:255',
             'sale_cus_last_name' => 'nullable|string|max:255',
@@ -286,8 +312,40 @@ class EstimatesController extends Controller
             'sale_ship_phone' => 'nullable|numeric',
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
             'sale_same_address' => 'nullable|boolean',
-        ]);
+        ];
 
+        $messages = [
+           'sale_cus_business_name.required' => 'The business name is required.',
+        'sale_cus_business_name.string' => 'The business name must be a valid string.',
+        'sale_cus_first_name.string' => 'The first name must be a valid string.',
+        'sale_cus_last_name.string' => 'The last name must be a valid string.',
+        'sale_cus_email.email' => 'Please enter a valid email address.',
+        'sale_cus_phone.numeric' => 'The phone number must be a valid numeric value.',
+        'sale_cus_account_number.numeric' => 'The account number must be a valid numeric value.',
+        'sale_cus_website.string' => 'The website must be a valid string.',
+        'sale_cus_notes.string' => 'The notes must be a valid string.',
+        'sale_bill_currency_id.numeric' => 'Please select a valid currency.',
+        'sale_bill_address1.string' => 'The billing address line 1 must be a valid string.',
+        'sale_bill_address2.string' => 'The billing address line 2 must be a valid string.',
+        'sale_bill_country_id.numeric' => 'Please select a valid country.',
+        'sale_bill_city_name.string' => 'The billing city name must be a valid string.',
+        'sale_bill_zipcode.numeric' => 'The billing zip code must be a valid numeric value.',
+        'sale_bill_state_id.numeric' => 'Please select a valid state.',
+        'sale_ship_country_id.numeric' => 'Please select a valid shipping country.',
+        'sale_ship_shipto.string' => 'The shipping recipient must be a valid string.',
+        'sale_ship_address1.string' => 'The shipping address line 1 must be a valid string.',
+        'sale_ship_address2.string' => 'The shipping address line 2 must be a valid string.',
+        'sale_ship_city_name.string' => 'The shipping city name must be a valid string.',
+        'sale_ship_zipcode.numeric' => 'The shipping zip code must be a valid numeric value.',
+        'sale_ship_state_id.numeric' => 'Please select a valid shipping state.',
+        'sale_ship_phone.numeric' => 'The shipping phone number must be a valid numeric value.',
+        'sale_ship_delivery_desc.string' => 'The delivery description must be a valid string.',
+        'sale_same_address.boolean' => 'The "Same Address" field must be true or false.',
+        ];
+
+        $validatedData = $request->validate($rules, $messages);
+
+    
         // Handle checkboxes
         $validatedData['sale_same_address'] = $request->has('sale_same_address') ? 'on' : 'off';
 

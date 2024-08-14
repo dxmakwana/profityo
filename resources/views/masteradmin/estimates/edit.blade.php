@@ -141,10 +141,10 @@
                 <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
                 <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
                 <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
-                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Lamar Mitchel
+                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}
                 </div>
               </div>
-              <div class="edit_es_text customer_list">
+              <div class="edit_es_text customer_list list2">
                   <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
               </div>
 
@@ -157,6 +157,7 @@
                     </option>
                     @endforeach
                 </select>
+                <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
               </div>
 
               
@@ -167,12 +168,14 @@
                     <div class="form-group">
                       <label for="estimatenumber">Estimate Number</label>
                       <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $estimates->sale_estim_number }}">
+                      <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="estimatecustomerref">Customer Ref</label>
                       <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"  placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
+                      <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -184,6 +187,7 @@
                         <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                         </div>
+                        <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                       </div>
                     </div>
                   </div>
@@ -197,6 +201,7 @@
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                         </div>
                       </div>
+                      <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
                       <!-- <p class="within_day">Within 7 days</p> -->
                     </div>
                   </div>
@@ -235,17 +240,21 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
                                 <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
                                     placeholder="Enter item description" value="{{ $item->sale_estim_item_desc }}">
+                                <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
                             </div>
                         </td>
-                        <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}"></td>
+                        <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}" placeholder="Enter item Quantity">
+                        <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
+                        </td>
                         <td>
                             <div class="d-flex">
-                                <input type="text" name="items[][sale_estim_item_price]" class="form-control"
-                                    aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}">
-                                
+                              <input type="text" name="items[][sale_estim_item_price]" class="form-control"
+                                    aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}" placeholder="Enter item Price">
                             </div>
+                            <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
                         </td>
                         <td>
                             <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
@@ -275,14 +284,14 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="d-flex">
-                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}">
+                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}" placeholder="Description (optional)">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex">
                     <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
-                        aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}">
-                    <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
+                        aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}" placeholder="Enter a discount value">
+                    <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
                         <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
                         <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
                     </select>
@@ -294,11 +303,11 @@
                     <div class="table-responsive">
                     <table class="table total_table">
                         <tr>
-                        <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency" required>
+                        <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" required>
                           @foreach($currencys as $curr)
                             <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
                             <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
-                              {{ $curr->currency_symbol }}
+                            {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
                           </option>
                           @endforeach
                         </select>
@@ -772,30 +781,35 @@
                     <div class="form-group">
                       <label for="customer">Customer <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="{{ $estimates->customer->sale_cus_business_name }}">
+                      <span class="error-message" id="error_sale_cus_business_name" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer_email">Email</label>
                       <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="{{ $estimates->customer->sale_cus_email }}">
+                      <span class="error-message" id="error_sale_cus_email" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer_phonenumber">Phone</label>
                       <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="{{ $estimates->customer->sale_cus_phone }}">
+                      <span class="error-message" id="error_sale_cus_phone" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer_firstname">First Name</label>
                       <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="{{ $estimates->customer->sale_cus_first_name }}">
+                      <span class="error-message" id="error_sale_cus_first_name" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer_lastname">Last Name</label>
                       <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="{{ $estimates->customer->sale_cus_last_name }}">
+                      <span class="error-message" id="error_sale_cus_last_name" style="color: red;"></span>
                     </div>
                   </div>
                 </div>
@@ -816,6 +830,7 @@
                             </option>
                           @endforeach
                       </select>
+                      <span class="error-message" id="error_sale_bill_currency_id" style="color: red;"></span>
                     </div>
                   </div>
                 </div>
@@ -825,24 +840,30 @@
                     <div class="form-group">
                       <label for="company-businessaddress1">Address Line 1</label>
                       <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="{{ $estimates->customer->sale_bill_address1 }}" placeholder="Enter a Location">
+                      <span class="error-message" id="error_sale_bill_address1" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businessaddress2">Address Line 2</label>
                       <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="{{ $estimates->customer->sale_bill_address2 }}" placeholder="Enter a Location">
+                      <span class="error-message" id="error_sale_bill_address2" style="color: red;"></span>
+
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businesscity">City</label>
-                      <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="{{ $estimates->customer->sale_bill_city_name }}" placeholder="Enter A City">
+                      <input type="text" class="form-control" id="bill_city"  id="company-businesscity" name="sale_bill_city_name" value="{{ $estimates->customer->sale_bill_city_name }}" placeholder="Enter A City">
+                      <span class="error-message" id="error_sale_bill_city_name" style="color: red;"></span>
+
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businesszipcode">Postal/ZIP Code</label>
                       <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="{{ $estimates->customer->sale_bill_zipcode }}">
+                      <span class="error-message" id="error_sale_bill_zipcode" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -856,6 +877,7 @@
                             </option>
                           @endforeach
                       </select>
+                      <span class="error-message" id="error_sale_bill_country_id" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -868,6 +890,7 @@
                             </option>
                         @endforeach
                       </select>
+                      <span class="error-message" id="error_sale_bill_state_id" style="color: red;"></span>
                     </div>
                   </div>
                 </div>
@@ -878,47 +901,55 @@
            
                 <div class="modal_sub_title px-15">Shipping Address</div>
                 <div class="row pxy-15 px-10">
+                <!-- <div id="errorMessages" style="display:none; color: red;"></div> -->
+
                   <div class="col-md-12">
                     <div class="icheck-primary">
                       <input type="radio" id="shippingaddress" name="shipping" name="sale_same_address" value="on" @if($estimates->customer->sale_same_address == 'on') checked @endif>
                       <label for="shippingaddress">Same As Billing Address</label>
-              
+                      <span class="error-message" id="error_sale_same_address" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="{{ $estimates->customer->sale_ship_shipto }}">
+                      <span class="error-message" id="error_sale_ship_shipto" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer_phonenumber">Phone</label>
                       <input type="Number" class="form-control" name="sale_ship_phone" id="customer_phonenumber" placeholder="Enter Phone Number" value="{{ $estimates->customer->sale_ship_phone }}">
+                      <span class="error-message" id="error_sale_ship_phone" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businessaddress1">Address Line 1</label>
                       <input type="text" class="form-control" name="sale_ship_address1" id="company-businessaddress1" placeholder="Enter a Location" value="{{ $estimates->customer->sale_ship_address1 }}">
+                      <span class="error-message" id="error_sale_ship_address1" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businessaddress2">Address Line 2</label>
                       <input type="text" class="form-control" id="company-businessaddress2" placeholder="Enter a Location" name="sale_ship_address2" value="{{ $estimates->customer->sale_ship_address2 }}">
+                      <span class="error-message" id="error_sale_ship_address2" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businesscity">City</label>
                       <input type="text" class="form-control" name="sale_ship_city_name" id="company-businesscity"  placeholder="Enter A City" value="{{ $estimates->customer->sale_ship_city_name }}">
+                      <span class="error-message" id="error_sale_ship_city_name" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="company-businesszipcode">Postal/ZIP Code</label>
                       <input type="text" class="form-control" id="company-businesszipcode" placeholder="Enter a Zip Code" name="sale_ship_zipcode" value="{{ $estimates->customer->sale_ship_zipcode }}">
+                      <span class="error-message" id="error_sale_ship_zipcode" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -932,12 +963,14 @@
                             </option>
                         @endforeach
                       </select>
+                      <span class="error-message" id="error_sale_ship_country_id" style="color: red;"></span>
                     </div>
                   </div>
+                  
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Province/State</label>
-                      <select class="form-control select2" id="ship_state" name="sale_ship_state_id" style="width: 100%;">
+                      <select class="form-control select2 @error('sale_ship_state_id') is-invalid @enderror" id="ship_state" name="sale_ship_state_id" style="width: 100%;">
                         <option default>Select a State...</option>
                         @foreach($ship_state as $statest)
                             <option value="{{ $statest->id }}" @if($statest->id == $estimates->customer->sale_ship_state_id) selected @endif>
@@ -945,12 +978,14 @@
                             </option>
                         @endforeach
                       </select>
+                     <span class="error-message" id="error_sale_ship_state_id" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="deliveryinstructions">Delivery instructions</label>
                       <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="{{ $estimates->customer->sale_ship_delivery_desc }}">
+                      <span class="error-message" id="error_sale_ship_delivery_desc" style="color: red;"></span>
                     </div>
                   </div>
                 </div>
@@ -964,6 +999,7 @@
                     <div class="form-group">
                       <label for="customeraccountnumber">Account Number</label>
                       <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="{{ $estimates->customer->sale_cus_account_number }}">
+                      <span class="error-message" id="error_sale_cus_account_number" style="color: red;"></span>
                     </div>
                   </div>
                                     
@@ -971,6 +1007,7 @@
                     <div class="form-group">
                       <label for="customerwebsite">Website</label>
                       <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="{{ $estimates->customer->sale_cus_website }}">
+                      <span class="error-message" id="error_sale_cus_website" style="color: red;"></span>
                     </div>
                   </div>
                   
@@ -1131,14 +1168,16 @@
       var $addCustomerBox = $(this);
 
       if ($customerList.is(':visible')) {
-
+        // alert('customerlisdt');
         $customerList.hide();
         $addCustomerBox.show();
       } else {
-
+        // alert('close');
+        $('#customerInfo').hide();
         $('.add_customer_list').hide();
         $('.customer_list').show();
         $customerList.show();
+        $addCustomerBox.hide();
         $addCustomerBox.hide();
       }
     });
@@ -1398,7 +1437,7 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_ship_state_id_${customer.sale_cus_id}">State</label>
-                                                <select id="sale_ship_state_id_${customer.sale_cus_id}" name="sale_ship_state_id" class="form-control select2" style="width: 100%;" required>
+                                                <select id="sale_ship_state_id_${customer.sale_cus_id}" name="sale_ship_state_id" class="form-control select2" style="width: 100%;" >
                                                     <option value="" default>Select a State...</option>
                                                     @foreach($ship_state as $statest)
                                                         <option value="{{ $statest->id }}" ${customer.sale_ship_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
@@ -1446,7 +1485,7 @@
                                 </div>
                                 <div class="modal-footer">
                                   <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
-                                  <button type="submit" form="editCustomerForm_${customer.sale_cus_id}" class="btn btn-primary">Save</button>
+                                  <button type="submit" form="editCustomerForm_${customer.sale_cus_id}" class="add_btn">Save</button>
                                 </div>
                                 </form>
                               </div>
@@ -1586,12 +1625,12 @@
                     // $(`#editcustor_modal_${customer.sale_cus_id}`).modal('show');
                   
               } else {
-                  alert(response.message);
+                  // alert(response.message);
               }
           },
 
           error: function () {
-            alert('Error retrieving customer information');
+            // alert('Error retrieving customer information');
           }
         });
       } else {
@@ -1642,9 +1681,9 @@
         totalDiscount = (subTotal * globalDiscountValue) / 100;
       } else { 
         totalDiscount = globalDiscountValue;
-        $('#sale_estim_discount_type option[value="1"]').text(currencySymbol);
       }
-
+      
+      $('#sale_estim_discount_type option[value="1"]').text(currencySymbol);
       total = subTotal - totalDiscount + totalTax;
 
       // Update calculated values
@@ -1815,15 +1854,73 @@
           // $('#items-form')[0].reset();
           // $('#dynamic_field').find('.item-row').remove();
         },
-        error: function (response) {
-          alert('An error occurred.');
+        error: function (xhr) {
+        if (xhr.status === 422) {
+        var errors = xhr.responseJSON.errors;
+        console.log(errors); // Debug the errors object
+
+        // Clear previous error messages
+        $('.error-message').html('');
+        $('input, select').removeClass('is-invalid');
+
+        var firstErrorField = null; // Variable to store the first error field
+
+        $.each(errors, function (field, messages) {
+          // Replace characters to match the format of your HTML IDs
+          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+          var errorMessageContainerId = 'error_' + fieldId;
+          var errorMessageContainer = $('#' + errorMessageContainerId);
+
+          if (errorMessageContainer.length) {
+          errorMessageContainer.html(messages.join('<br>'));
+
+          // Find the input field related to the error
+          var $field = $('[name="' + field + '"]');
+
+          if ($field.length > 0) {
+            $field.addClass('is-invalid');
+            
+            // Set first error field for scrolling
+            if (!firstErrorField) {
+            firstErrorField = $field;
+            }
+            scrollToCenter($field);
+          } else {
+            // console.log('Field not found for:', field);
+          }
+          } else {
+          // console.log('Error container not found for:', errorMessageContainerId);
+          }
+        });
+
+
+        } else {
+        // console.log('An error occurred: ' + xhr.statusText);
         }
+      }
+     
       });
     });
 
   });
 
+  function scrollToCenter($element) {
+      if ($element.length) {
+          var elementOffset = $element.offset(); // Get element's offset
+          var elementTop = elementOffset.top; // Get element's top position
+          var elementHeight = $element.outerHeight(); // Get element's height
+          var windowHeight = $(window).height(); // Get window height
 
+          // Calculate the scroll position to center the element
+          var scrollTop = elementTop - (windowHeight / 2) + (elementHeight / 2);
+
+          // Scroll to the calculated position
+          $('html, body').scrollTop(scrollTop);
+      } else {
+          // console.log('Element not found or has zero length.');
+      }
+    }
+    
   $(document).ready(function() {
     $('#editCustomerForm').on('submit', function(e) {
       // alert('hii');
@@ -1865,9 +1962,9 @@
                 </div>
 
                 <div class="edit_es_text customer_list">
-                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-                </div>
-               
+                        <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                    </div>
+
             `;
             
             // Update the customer info section with the new data
@@ -1875,14 +1972,48 @@
 
             // Hide the modal
             $('#editcustor_modal_' + saleCusId).modal('hide');
+            
+            $('#customer_list').hide();
+            $('.list2').hide();
+            // Event delegation for dynamically added content
+            $('#customerInfo').on('click', '.customer_list', function (e) {
+                $('#customerInfo').hide(); // Hide the customer info
+                $('.add_customer_list').show(); // Show the dropdown list
+                $('#customerSelect').focus(); // Set focus to the select element
+            });
+
+            
 
             updateCustomerDropdown();
+
+             
+
         },
         error: function(xhr) {
-            console.log('An error occurred: ' + xhr.statusText);
+          
+          if (xhr.status === 422) {
+                var errors = xhr.responseJSON.errors;
+                console.log(errors); // Debug the errors object
+
+                // Clear previous error messages
+                $('.error-message').html('');
+
+                $.each(errors, function(field, messages) {
+                    // Find the error message container for the specific field
+                    var errorMessageContainer = $('#error_' + field);
+                    if (errorMessageContainer.length) {
+                        errorMessageContainer.html(messages.join('<br>'));
+                    }
+                });
+            } else {
+                console.log('An error occurred: ' + xhr.statusText);
+            }
         }
     });
 });
+
+
+
 function updateCustomerDropdown() {
         $.ajax({
             url: "{{ route('salescustomers.list') }}", 
@@ -1899,8 +2030,13 @@ function updateCustomerDropdown() {
                 
             },
             error: function(xhr) {
-                console.log('Failed to update customer dropdown: ' + xhr.statusText);
+            if(xhr.status === 422) { // Laravel validation error status
+                var errors = xhr.responseJSON.errors;
+                displayValidationErrors(errors);
+            } else {
+                console.log('An error occurred: ' + xhr.statusText);
             }
+        }
         });
     }
     
