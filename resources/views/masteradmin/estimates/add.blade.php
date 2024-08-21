@@ -214,11 +214,10 @@
         <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
           <thead>
           <tr>
-            <th style="width: 30%;">Items</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Tax</th>
-            <th class="text-right">Amount</th>
+            <th style="width: 30%;" id="itemsHeader">Items</th>
+            <th id="unitsHeader">Units</th>
+            <th id="priceHeader">Price</th>
+            <th id="amountHeader">Amount</th>
             <th>Actions</th> <!-- New column for actions -->
           </tr>
           </thead>
@@ -538,214 +537,81 @@
         <span aria-hidden="true">&times;</span>
       </button>
       </div>
-      <form method="post" action="" class="mt-6 space-y-6" enctype="multipart/form-data">
+      <form method="post" id="estimateForm" action="{{ route('estimatemenus.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
       @csrf
-      @method('patch')
-      <div class="modal-body">
-        <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This
-        Estimate:</div>
+    @method('patch')
+    <div class="modal-body">
+        <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This Estimate:</div>
+        @foreach($specificMenus as $menu)
         <div class="colum_box">
-        <h2 class="edit-colum_title">Items</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="item1" name="r1" checked>
-            <label for="item1">Items (Default)</label>
+          <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
+          @if($menu->children->count() > 0)
+          <div class="row align-items-center justify-content-between">
+            @foreach($menu->children as $child)
+              @if($child->mtitle == 'Other')
+              <div class="col-md-3">
+                <div class="icheck-primary d-flex align-items-center">
+                  <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}">
+                  <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
+                  <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">
+                </div>
+              </div>
+              @else
+              <div class="col-md-3">
+                <div class="icheck-primary">
+                  <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}">
+                  <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
+                </div>
+              </div>
+              @endif
+            @endforeach
           </div>
-          </div>
-          <div class="col-md-2">
-          <div class="icheck-primary">
-            <input type="radio" id="item2" name="r1">
-            <label for="item2">Products</label>
-          </div>
-          </div>
-          <div class="col-md-2">
-          <div class="icheck-primary">
-            <input type="radio" id="item3" name="r1">
-            <label for="item3">Services</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="item4" name="r1">
-            <label for="item4">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
+          @endif
         </div>
-        </div>
-
-        <div class="colum_box">
-        <h2 class="edit-colum_title">Units</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="quantity1" name="r2" checked>
-            <label for="quantity1">Quantity (Default)</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="quantity2" name="r2">
-            <label for="quantity2">Hours</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="quantity3" name="r2">
-            <label for="quantity3">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
-        </div>
-        </div>
-
-        <div class="colum_box">
-        <h2 class="edit-colum_title">Price</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="price1" name="r3" checked>
-            <label for="price1">Price (Default)</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="price2" name="r3">
-            <label for="price2">Rate</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="price3" name="r3">
-            <label for="price3">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
-        </div>
-        </div>
-
-        <div class="colum_box">
-        <h2 class="edit-colum_title">Discount</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="discount1" name="r4" checked>
-            <label for="discount1">Discount (Default)</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="discount2" name="r4">
-            <label for="discount2">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
-        </div>
-        </div>
-
-        <div class="colum_box">
-        <h2 class="edit-colum_title">Tax</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="tax1" name="r5" checked>
-            <label for="tax1">Tax (Default)</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="tax2" name="r5">
-            <label for="tax2">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
-        </div>
-        </div>
-
-        <div class="colum_box">
-        <h2 class="edit-colum_title">Amount</h2>
-        <div class="row align-items-center justify-content-between">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="amount1" name="r6" checked>
-            <label for="amount1">Amount (Default)</label>
-          </div>
-          </div>
-          <div class="col-md-5">
-          <div class="icheck-primary d-flex align-items-center">
-            <input type="radio" id="amount2" name="r6">
-            <label for="amount2">Other</label>
-            <input type="text" class="form-control mar_15" placeholder="">
-          </div>
-          </div>
-        </div>
-        </div>
+        @endforeach
 
         <div class="modal_sub_title px-15">Hide columns:</div>
-
+        
         <div class="colum_box">
         <div class="row align-items-center">
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hideitem" name="r7">
-            <label for="hideitem">Hide Item Name</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hideunit" name="r8">
-            <label for="hideunit">Hide Units</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hideprice" name="r9">
-            <label for="hideprice">Hide Price</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hidediscount" name="r10">
-            <label for="hidediscount">Hide Discount</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hidetax" name="r11">
-            <label for="hidetax">Hide Tax</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hideamount" name="r12">
-            <label for="hideamount">Hide Amount</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="icheck-primary">
-            <input type="radio" id="hidedescription" name="r13">
-            <label for="hidedescription">Hide Item Description</label>
-          </div>
-          </div>
+          @foreach($HideMenus as $hmenu)
+            <div class="col-md-3">
+              <div class="icheck-primary">
+                <input type="checkbox" id="{{ $hmenu->mname }}" name="{{ $hmenu->mname }}">
+                <label for="{{ $hmenu->mname }}">{{ $hmenu->mtitle }}</label>
+                <p>{{ $hmenu->sub_title }}</p>
+              </div>
+            </div>
+          @endforeach
+
+          @foreach($HideDescription as $dmenu)
+            <div class="col-md-12">
+              <div class="icheck-primary">
+                <input type="checkbox" id="{{ $dmenu->mname }}" name="{{ $dmenu->mname }}">
+                <label for="{{ $dmenu->mname }}">{{ $dmenu->mtitle }}</label>
+                <p>{{ $dmenu->sub_title }}</p>
+              </div>
+            </div>
+          @endforeach
         </div>
         </div>
 
         <div class="row pad-3">
         <div class="col-md-12">
+        @foreach($HideSettings as $smenu)
           <div class="icheck-primary">
-          <input type="radio" id="apply1" name="r16">
-          <label for="apply1">Apply These Settings to Future Estimates.</label>
-          <p>These settings will apply to estimates and invoices. You can change these anytime from
-            Invoice Customization settings.</p>
+          <input type="checkbox" id="{{ $smenu->mname }}" name="{{ $smenu->mname }}">
+          <label for="{{ $smenu->mname }}">{{ $smenu->mtitle }}</label>
+          <p>{{ $smenu->sub_title }}</p>
           </div>
+        @endforeach
         </div>
         </div>
 
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+        <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
         <button type="submit" class="add_btn">Save</button>
       </div>
       </form>
@@ -1233,7 +1099,74 @@
     }
 
   </script>
+<script>
+    $(document).ready(function () {
+        $('#estimateForm').on('submit', function (e) {
+            e.preventDefault(); 
+            $.ajax({
+              url: $(this).attr('action'),
+              type: 'PATCH',
+              data: $(this).serialize(),
+              success: function(response) {
+                  // console.log(response); 
 
+                  if (response.success) {
+                      updateTableHeaders();
+                      $('#editcolum').modal('hide');
+                      // alert(response.message);
+                  } else {
+                      alert('An unexpected error occurred.');
+                  }
+              },
+              error: function(xhr) {
+                  alert('An error occurred while updating the menu.');
+              }
+          });
+        });
+
+        function updateTableHeaders() {
+            $.ajax({
+                url: '{{ route('estimatemenus.menulist') }}',
+                type: 'GET',
+                success: function (data) {
+                  // console.log(data);
+                    // $('#itemsHeader').text(data.Items_other || data.Items || 'Items');
+                    // $('#unitsHeader').text(data.Units_other || data.Units || 'Units');
+                    // $('#priceHeader').text(data.Price_other || data.Price || 'Price');
+                    // $('#amountHeader').text(data.Amount_other || data.Amount || 'Amount');
+
+                    $('#itemsHeader').html(getHeaderTextWithIcon(
+                      data.Items_other || (data.Items === "Items (Default)" ? "Items" : data.Items), 
+                      data.hide_item_name
+                    ));
+                    $('#unitsHeader').html(getHeaderTextWithIcon(
+                        data.Units_other || (data.Units === "Units (Default)" ? "Units" : data.Units), 
+                        data.hide_units
+                    ));
+                    $('#priceHeader').html(getHeaderTextWithIcon(
+                        data.Price_other || (data.Price === "Price (Default)" ? "Price" : data.Price), 
+                        data.hide_price
+                    ));
+                    $('#amountHeader').html(getHeaderTextWithIcon(
+                        data.Amount_other || (data.Amount === "Amount (Default)" ? "Amount" : data.Amount), 
+                        data.hide_amount
+                    ));
+                        },
+                        error: function (xhr) {
+                            console.error('Failed to retrieve session data.');
+                        }
+                    });
+        }
+
+        function getHeaderTextWithIcon(headerText, hideIcon) {
+          if (hideIcon === "on") {
+              return `${headerText} <i class="fa fa-eye-slash" aria-hidden="true"></i>`;
+          } else {
+                return headerText;
+            }
+        }
+    });
+</script>
 
   <!-- ./wrapper -->
 

@@ -342,6 +342,7 @@ class Controller extends BaseController
                     $table->string('purchases_vendor_name')->nullable();
                     $table->string('purchases_vendor_type')->nullable();
                     $table->string('purchases_vendor_contractor_type')->nullable();
+                    $table->string('purchases_contractor_type')->nullable();
                     $table->string('purchases_vendor_security_number')->nullable();
                     $table->string('purchases_vendor_first_name')->nullable();
                     $table->string('purchases_vendor_last_name')->nullable();
@@ -360,6 +361,20 @@ class Controller extends BaseController
                     $table->string('purchases_vendor_website')->nullable();
                     $table->integer('purchases_vendor_currency_id')->nullable()->default(0);
                     $table->tinyInteger('purchases_vendor_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_customize_menu_estimates')) {
+                Schema::create($storeId . '_py_customize_menu_estimates', function (Blueprint $table) {
+                    $table->increments('esti_cust_menu_id')->unique();
+                    $table->integer('sale_estim_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('mname')->nullable();
+                    $table->string('mtitle')->nullable();
+                    $table->integer('mid')->nullable();
+                    $table->integer('is_access')->nullable();
+                    $table->string('esti_cust_menu_title')->nullable();
                     $table->timestamps();
                 });
             }

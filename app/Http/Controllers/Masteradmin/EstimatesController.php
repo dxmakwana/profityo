@@ -18,6 +18,10 @@ use App\Models\EstimatesItems;
 use Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Models\CustomizeMenu;
+use App\Models\EstimateCustomizeMenu;
+use Illuminate\Support\Facades\Session;
+
 class EstimatesController extends Controller
 {
     //
@@ -56,8 +60,27 @@ class EstimatesController extends Controller
         // dd($currencys);
         
         $salestax = SalesTax::all();
+
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+       
+
         // dd($businessDetails);
-        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax'));
+        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription'));
     }
 
     public function getProductDetails($id)
@@ -151,6 +174,33 @@ class EstimatesController extends Controller
 
             $estimateItem->save();
         }
+
+        $sessionData = session('form_data');
+        // dd( $sessionssData);
+            foreach ($sessionData as $key => $value) {
+                $mname = str_replace('_', ' ', $key);
+
+                $menu = CustomizeMenu::where('mname', $mname)->first();
+
+                if ($menu) {
+                    $data = [
+                        'sale_estim_id' => $estimate->id ?? null, 
+                        'id' => $user->id ?? NULL,
+                        'mname' => $menu->mname,
+                        'mtitle' => $menu->mtitle,
+                        'mid' => $menu->cust_menu_id,
+                        'is_access' => $value ? 1 : 0,
+                        'esti_cust_menu_title' => $value,
+                    ];
+
+                    $estimateMenu = new EstimateCustomizeMenu($data);
+                    $estimateMenu->save();
+                }
+            }
+
+    
+        // Clear the session data if necessary
+        session()->forget('form_data');
 
         // return redirect()->route('business.estimates.index')->with(['estimate-add' => __('messages.masteradmin.estimate.send_success')]);
         \MasterLogActivity::addToLog('Estimate is create.');
@@ -391,5 +441,24 @@ class EstimatesController extends Controller
 
         return redirect()->route('business.estimates.index')->with('estimate-delete', __('messages.masteradmin.estimate.delete_success'));
 
+    }
+
+    public function menuUpdate(Request $request) 
+    {   
+        // dd($request->all());
+        Session::put('form_data', $request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data saved successfully'
+        ]);
+
+    }
+
+    public function getMenuSessionData()
+    {
+        $sessionData = Session::get('form_data', []);
+        // dd($sessionData);
+        return response()->json($sessionData);
     }
 }
