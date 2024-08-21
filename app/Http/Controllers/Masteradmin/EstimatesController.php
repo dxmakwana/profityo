@@ -437,6 +437,8 @@ class EstimatesController extends Controller
 
         EstimatesItems::where('sale_estim_id', $id)->delete();
 
+        EstimateCustomizeMenu::where('sale_estim_id', $id)->delete();
+
         \MasterLogActivity::addToLog('Estimates details Deleted.');
 
         return redirect()->route('business.estimates.index')->with('estimate-delete', __('messages.masteradmin.estimate.delete_success'));
