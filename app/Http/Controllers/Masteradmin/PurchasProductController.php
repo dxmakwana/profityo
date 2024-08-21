@@ -99,6 +99,7 @@ class PurchasProductController extends Controller
             'purchases_product_income_account' => 'nullable|numeric',
             'purchases_product_expense_account' => 'nullable|numeric',
             'purchases_product_desc' => 'nullable|string|max:255',
+            'purchases_product_tax' =>'nullable',
         ]);
 
         $validatedData['purchases_product_sell'] = $request->has('purchases_product_sell') ? 'on' : 'off';

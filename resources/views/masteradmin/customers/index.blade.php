@@ -60,8 +60,8 @@
                     <th>Customer</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Balance</th> 
-                    <th>Overdue</th>
+                    <!-- <th>Balance</th>  -->
+                    <th>Balance | Overdue</th>
                     <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                   </tr>
                 </thead>
@@ -72,7 +72,7 @@
                   <td>{{ $value->sale_cus_business_name }}</td>
                   <td>{{ $value->sale_cus_email }}</td>
                   <td>{{ $value->sale_cus_phone }}</td>
-                  <td>{{ $value->tax_name }}</td>
+                  <!-- <td>{{ $value->tax_name }}</td> -->
                     <td><span class="overdue_text">$75.00 Overdue</span></td>
                     <td>
                       <ul class="navbar-nav ml-auto float-sm-right">

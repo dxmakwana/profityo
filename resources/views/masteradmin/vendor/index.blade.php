@@ -93,7 +93,7 @@
                 <div class="modal-body pad-1 text-center">
                 <i class="fas fa-solid fa-trash delete_icon"></i>
                 <p class="company_business_name px-10"><b>Delete vendor & services</b></p>
-                <p class="company_details_text px-10">Delete Item 2</p>
+                <!-- <p class="company_details_text px-10">Delete Item</p> -->
                 <p class="company_details_text">Are You Sure You Want to Delete This Item?</p>
                 <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
                 @csrf
@@ -125,7 +125,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Add Babk Details</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Add Bank Details</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -163,7 +163,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <a href="vendors-list.html"><button type="button" class="add_btn_br">Back To Vendors List</button></a>
+          <a href="{{ route('business.purchasvendor.index') }}"><button type="button" class="add_btn_br">Back To Vendors List</button></a>
           <button type="submit" class="add_btn">Save</button>
         </div>
       </div>

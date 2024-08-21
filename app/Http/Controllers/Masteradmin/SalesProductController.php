@@ -94,6 +94,7 @@ class SalesProductController extends Controller
      */
     public function update(Request $request, $sale_product_id): RedirectResponse
     {
+        // dd($request);
         $SalesProductu = SalesProduct::where('sale_product_id', $sale_product_id)->firstOrFail();
 
         $validatedData = $request->validate([
@@ -103,6 +104,7 @@ class SalesProductController extends Controller
             'sale_product_income_account' => 'nullable|numeric',
             'sale_product_expense_account' => 'nullable|numeric',
             'sale_product_desc' => 'nullable|string|max:255',
+            'sale_product_tax' => 'nullable',
         ]);
 
         $validatedData['sale_product_sell'] = $request->has('sale_product_sell') ? 'on' : 'off';

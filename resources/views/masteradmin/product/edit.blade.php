@@ -69,7 +69,7 @@
                 <div class="form-group">
                   <label>Price</label>
                   <div class="d-flex">
-                    <input type="number" class="form-control form-controltext" name="sale_product_currency_id"
+                    <input type="number" class="form-control form-controltext" name="sale_product_price"
                       aria-describedby="inputGroupPrepend" placeholder="0.00"
                       value="{{ $SalesProducte->sale_product_price }}">
                     <select
@@ -157,7 +157,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="sale_product_desc">Description</label>
-                  <textarea id="sale_product_desc" class="form-control @error('sale_product_desc') is-invalid @enderror"
+                  <textarea id="sale_product_desc" name="sale_product_desc" class="form-control @error('sale_product_desc') is-invalid @enderror"
                     rows="3" placeholder="Enter your text here">{{ $SalesProducte->sale_product_desc }}</textarea>
                   @error('sale_product_desc')
             <div class="invalid-feedback">{{ $message }}</div>

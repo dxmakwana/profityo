@@ -153,6 +153,7 @@ class UserController extends Controller
         $user = Auth::guard('masteradmins')->user();
         $masteruser = new MasterUserDetails();
         $masteruser->setTableForUniqueId($user->user_id);
+        $tableName = $masteruser->getTable();
       
         $userdetailu = $masteruser->where(['users_id' => $users_id,'id' => $user->id])->firstOrFail();
 
@@ -164,7 +165,7 @@ class UserController extends Controller
                 'email',
                 'max:255',
                 // Ensure the email is unique in the 'users' table, except for the current user's email if updating
-                Rule::unique('users', 'users_email')->ignore($request->route('user_id'))
+                Rule::unique($tableName, 'users_email')->ignore($users_id, 'users_id')
             ],
             'users_phone' => 'required|digits_between:10,15',
             'users_password' => 'nullable|string|min:8',

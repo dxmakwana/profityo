@@ -230,6 +230,16 @@
                     </select>
                 </div>
               </div>
+              <!-- <div class="col-md-4">
+                <div class="form-group">
+                <label for="ship_state">Province/State11</label>
+                  <select class="form-control" name="sale_ship_state_id" id="ship_state">
+                      <option value="">Select State</option>
+                  </select>
+
+                </div>
+              </div> -->
+
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="ship_phone">Phone</label>
@@ -306,6 +316,7 @@
  
   document.getElementById('same_address_checkbox').addEventListener('change', function() {
     if (this.checked) {
+      // alert(document.getElementById('bill_state').value);
       // Copy text fields
       document.getElementById('ship_to').value = document.getElementById('customertitle').value;
       document.getElementById('ship_address1').value = document.getElementById('bill_address1').value;
@@ -320,6 +331,7 @@
 
       document.getElementById('ship_state').value = document.getElementById('bill_state').value;
       document.getElementById('ship_state').dispatchEvent(new Event('change'));
+
     } else {
       // Clear text fields
       document.getElementById('ship_to').value = '';

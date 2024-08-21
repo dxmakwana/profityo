@@ -159,7 +159,7 @@ class SalesCustomersController extends Controller
             'sale_cus_account_number' => 'nullable|numeric',
             'sale_cus_website' => 'nullable|string|max:255',
             'sale_cus_notes' => 'nullable|string|max:255',
-            'sale_bill_currency_id' => 'nullable|exists:countries,id',
+            'sale_bill_currency_id' => 'nullable',
             'sale_bill_address1' => 'nullable|string|max:255',
             'sale_bill_address2' => 'nullable|string|max:255',
             'sale_bill_country_id' => 'nullable|numeric',

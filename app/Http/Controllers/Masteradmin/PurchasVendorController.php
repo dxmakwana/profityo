@@ -55,9 +55,9 @@ class PurchasVendorController extends Controller
             'purchases_vendor_zipcode' => 'nullable|string|max:255',
             'purchases_vendor_account_number' => 'nullable|string|max:255',
             'purchases_vendor_phone' => 'nullable|string|max:255',
-            'purchases_vendor_fax' => 'nullable|string|max:255',
+            // 'purchases_vendor_fax' => 'nullable|string|max:255',
             'purchases_vendor_mobile' => 'nullable|string|max:255',
-            'purchases_vendor_toll_free' => 'nullable|string|max:255',
+            // 'purchases_vendor_toll_free' => 'nullable|string|max:255',
             'purchases_vendor_website' => 'nullable|string|max:255',
             'purchases_vendor_currency_id' => 'nullable|string|max:255',
             'vendor_type' => 'required|string|in:Regular,1099-NEC Contractor',
@@ -96,9 +96,9 @@ class PurchasVendorController extends Controller
             'purchases_vendor_zipcode' => $validatedData['purchases_vendor_zipcode'],
             'purchases_vendor_account_number' => $validatedData['purchases_vendor_account_number'],
             'purchases_vendor_phone' => $validatedData['purchases_vendor_phone'],
-            'purchases_vendor_fax' => $validatedData['purchases_vendor_fax'],
+            // 'purchases_vendor_fax' => $validatedData['purchases_vendor_fax'],
             'purchases_vendor_mobile' => $validatedData['purchases_vendor_mobile'],
-            'purchases_vendor_toll_free' => $validatedData['purchases_vendor_toll_free'],
+            // 'purchases_vendor_toll_free' => $validatedData['purchases_vendor_toll_free'],
             'purchases_vendor_website' => $validatedData['purchases_vendor_website'],
             'id' => $validatedData['id'],
             'purchases_vendor_status' => 1,
@@ -151,7 +151,7 @@ class PurchasVendorController extends Controller
             'purchases_vendor_currency_id' => 'nullable|string|max:255',
             'purchases_contractor_type' => 'nullable|string|max:255',
         ]);
-
+        
         $validatedData['purchases_vendor_type'] = $request->has('purchases_vendor_type') ? 'on' : 'off';
         $validatedData['purchases_vendor_contractor_type'] = $request->has('purchases_vendor_contractor_type') ? 'on' : 'off';
 

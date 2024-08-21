@@ -6,6 +6,15 @@
 @csrf
 @method('patch')
 <?php //dd($user); ?>
+
+@if (session('status') === 'profile-updated')
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ __('Profile Updated successfully.') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+@endif
 <div class="card-body2">
     <div class="row pad-5">
         <div class="col-md-6">
@@ -80,10 +89,10 @@
     <div class="row py-20 px-10">
         <div class="col-md-12 text-center">
             <button type="submit" class="add_btn">{{ __('Save Changes') }}</button>
-            @if (session('status') === 'profile-updated')
+            <!-- @if (session('status') === 'profile-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600">{{ __('Profile Updated successfully.') }}</p>
-            @endif
+            @endif -->
         </div>
     </div>
 </div>

@@ -15,7 +15,7 @@
               <span class="fas fa-regular fa-envelope"></span>
             </div>
           </div>
-          <x-text-input id="user_email" class="form-control" type="email" name="user_email" :value="old('user_email', $request->email)" required autofocus autocomplete="username" placeholder="Email"/>
+          <x-text-input id="user_email" class="form-control" type="email" name="user_email" :value="old('user_email', $email)" required autofocus autocomplete="username" placeholder="Email"/>
           <x-input-error :messages="$errors->get('user_email')" class="mt-2" />
         </div>
 

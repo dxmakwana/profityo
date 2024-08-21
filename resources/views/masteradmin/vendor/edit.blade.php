@@ -215,24 +215,24 @@
                     <input type="number" class="form-control" id="vendorphonenumber" name="purchases_vendor_phone" placeholder="Enter Phone Number" value="{{ $PurchasVendore->purchases_vendor_phone }}">
                   </div>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                   <div class="form-group">
                     <label for="vendorphonenumber">Fax</label>
                     <input type="number" class="form-control" id="vendorphonenumber" name="purchases_vendor_fax" placeholder="Enter Fax" value="{{ $PurchasVendore->purchases_vendor_fax }}">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="vendorphonenumber">Mobile</label>
                     <input type="number" class="form-control" id="vendorphonenumber" name="purchases_vendor_mobile" placeholder="Enter Mobile" value="{{ $PurchasVendore->purchases_vendor_mobile }}">
                   </div>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                   <div class="form-group">
                     <label for="vendorphonenumber">Toll free</label>
                     <input type="number" class="form-control" id="vendorphonenumber" name="purchases_vendor_toll_free" placeholder="Enter Toll free" value="{{ $PurchasVendore->purchases_vendor_toll_free }}">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="vendorwebsite">Website</label>

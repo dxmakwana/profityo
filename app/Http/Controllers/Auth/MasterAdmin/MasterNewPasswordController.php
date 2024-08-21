@@ -24,7 +24,8 @@ class MasterNewPasswordController extends Controller
     public function create(Request $request): View
     {
         // dd($request);
-        return view('masteradmin.auth.reset-password', ['request' => $request]);
+        $email = $request->query('email');
+        return view('masteradmin.auth.reset-password', ['email' => $email]);
     }
 
     /**
