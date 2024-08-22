@@ -21,4 +21,16 @@ class EstimatesItems extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_estimates_items');
     }
+
+    public function estimate_product()
+    {
+        return $this->belongsTo(SalesProduct::class, 'sale_product_id','sale_product_id');
+    }
+
+    public function item_tax()
+    {
+        return $this->belongsTo(SalesTax::class, 'sale_estim_item_tax','tax_id');
+    }
+
+    
 }

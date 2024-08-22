@@ -1207,7 +1207,7 @@
                       <p class="company_details_text">${customer.state.name}</p>
                       <p class="company_details_text">${customer.country.name}</p>
 
-                      <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                      <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
                       <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
                       <p class="company_details_text">${customer.sale_ship_phone}</p>
 

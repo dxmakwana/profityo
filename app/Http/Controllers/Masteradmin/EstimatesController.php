@@ -463,4 +463,55 @@ class EstimatesController extends Controller
         // dd($sessionData);
         return response()->json($sessionData);
     }
+
+    public function view($id, Request $request): View
+    {
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+       
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+        // dd($salecustomer['sale_cus_id']);
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+        // dd($currencys);
+        
+        $salestax = SalesTax::all();
+        // dd($businessDetails);
+
+        $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
+
+        $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->with('estimate_product', 'item_tax')->get();
+        // dd($estimatesItems);
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        // $states = States::get();
+
+        // dd($estimates);
+        return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state'));
+
+    }
 }

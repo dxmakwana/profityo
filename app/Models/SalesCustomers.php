@@ -63,4 +63,14 @@ class SalesCustomers extends Model
     {
         return $this->belongsTo(Countries::class, 'sale_ship_country_id');
     }
+
+    public function ship_state()
+    {
+        return $this->belongsTo(States::class, 'sale_ship_state_id');
+    }
+
+    public function bill_country()
+    {
+        return $this->belongsTo(Countries::class, 'sale_bill_country_id');
+    }
 }

@@ -156,7 +156,7 @@
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-estimate.html" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
                                   @if(isset($access['update_estimates']) && $access['update_estimates']) 
@@ -252,7 +252,7 @@
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-estimate.html" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
                                   @if(isset($access['update_estimates']) && $access['update_estimates']) 
@@ -346,10 +346,13 @@
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
+                               
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-estimate.html" class="dropdown-item">
+                                  @if(isset($access['view_estimates']) && $access['view_estimates']) 
+                                  <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
+                                  @endif
                                   @if(isset($access['update_estimates']) && $access['update_estimates']) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit

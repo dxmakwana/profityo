@@ -167,7 +167,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/edit-estimates/{id}', [EstimatesController::class, 'edit'])->name('business.estimates.edit');
         Route::patch('/update-estimates/{estimates_id}', [EstimatesController::class, 'update'])->name('business.estimates.update');
         Route::delete('/estimatesdestroy/{id}', [EstimatesController::class, 'destroy'])->name('business.estimates.destroy');
-
+        Route::get('/view-estimates/{id}', [EstimatesController::class, 'view'])->name('business.estimates.view');
         Route::put('salescustomers/{sale_cus_id}', [EstimatesController::class, 'updateCustomer'])->name('salescustomers.update');
         Route::get('salescustomers/list', [EstimatesController::class, 'listCustomers'])->name('salescustomers.list');
 

@@ -216,8 +216,8 @@ class SalesCustomersController extends Controller
     {
         $sale_cus_id = $request->query('sale_cus_id');
         // dd($sale_cus_id);
-        $customer = SalesCustomers::where('sale_cus_id', $sale_cus_id)->first()->load('state', 'country');
-
+        $customer = SalesCustomers::where('sale_cus_id', $sale_cus_id)->first()->load('state', 'country','ship_state','bill_country');
+        // dd($customer);
         if (!$customer) {
             return response()->json(['error' => 'Customer not found'], 404);
         }
