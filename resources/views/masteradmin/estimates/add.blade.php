@@ -1140,7 +1140,7 @@
                       data.hide_item_name
                     ));
                     $('#unitsHeader').html(getHeaderTextWithIcon(
-                        data.Units_other || (data.Units === "Units (Default)" ? "Units" : data.Units), 
+                        data.Units_other || (data.Units === "Quantity (Default)" ? "Quantity" : data.Units), 
                         data.hide_units
                     ));
                     $('#priceHeader').html(getHeaderTextWithIcon(

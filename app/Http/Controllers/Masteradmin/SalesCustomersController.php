@@ -145,7 +145,7 @@ class SalesCustomersController extends Controller
     {
         // \DB::enableQueryLog(); // Enable query log
 
-        // dd($request);
+
         $user = Auth::guard('masteradmins')->user();
 
         $SalesCustomersu = SalesCustomers::where(['sale_cus_id' => $sale_cus_id])->firstOrFail();
@@ -175,17 +175,16 @@ class SalesCustomersController extends Controller
             'sale_ship_state_id' => 'nullable|numeric',
             'sale_ship_phone' => 'nullable|numeric',
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
-            'sale_same_address' => 'nullable|boolean',
         ]);
         
 
         // Handle checkboxes: if not checked, they won't be present in the request
     //     $validatedData = $request->all();
-    // //  dd($validatedData);
+   
         $validatedData['sale_same_address'] = $request->has('sale_same_address') ? 'on' : 'off';
     //     $validatedData['id'] = $user->id; // Use the correct field name for user ID
     //     $validatedData['sale_cus_status'] = 1;
-     
+    // dd($validatedData);
         $SalesCustomersu->where('sale_cus_id', $sale_cus_id)->update($validatedData);
         
      

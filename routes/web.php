@@ -95,7 +95,6 @@ Route::group(['prefix' => $busadminRoute], function () {
                         ->name('business.userdetail.changePassword');
         Route::post('/users/store-password/{user_id}', [UserController::class, 'storePassword'])
                         ->name('business.userdetail.storePassword');
-       
                 
     });
 

@@ -1,6 +1,6 @@
 @if(isset($access['update_customers']) && $access['update_customers']) 
 @extends('masteradmin.layouts.app')
-<title>Profityo | New Sales Customers</title>
+<title>Profityo | Edit Sales Customers</title>
 @section('content')
 
 <div class="content-wrapper">
@@ -8,10 +8,10 @@
         <div class="container-fluid">
             <div class="row mb-2 align-items-center justify-content-between">
                 <div class="col-auto">
-                    <h1 class="m-0">New Sales Customers</h1>
+                    <h1 class="m-0">Edit Sales Customers</h1>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">New Sales Customers</li>
+                        <li class="breadcrumb-item"><a href="{{route('business.home')}}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Edit Sales Customers</li>
                     </ol>
                 </div>
                 <div class="col-auto">
