@@ -32,7 +32,7 @@
             )
           <li class="nav-item {{ request()->is($busadminRoutes.'/estimates-list*') ||
            request()->is($busadminRoutes.'/create-estimates*') || 
-           request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') 
+           request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/view-estimates/*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') 
                     ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
@@ -46,7 +46,7 @@
               <li class="nav-item">
                 <a href="{{ route('business.estimates.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/estimates-list*') || 
                              request()->is($busadminRoutes.'/create-estimates*') || 
-                             request()->is($busadminRoutes.'/edit-estimates/*')  
+                             request()->is($busadminRoutes.'/edit-estimates/*')  || request()->is($busadminRoutes.'/view-estimates/*')
                               ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Estimates</p>

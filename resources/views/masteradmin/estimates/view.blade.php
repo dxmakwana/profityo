@@ -24,7 +24,7 @@
                                         class="fas fa-solid fa-print mr-2"></i>Print</button></a>
                             <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
                                     Pdf</button></a>
-                            <a href="#"><button class="add_btn_br"><i
+                            <a href="{{ route('business.estimates.duplicate', $estimates->sale_estim_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-regular fa-copy mr-2"></i>Duplicate</button></a>
                             <a href="{{ route('business.estimates.edit', $estimates->sale_estim_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-solid fa-pen-to-square mr-2"></i>Edit</button></a>
@@ -45,14 +45,18 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select class="form-control form-select" style="width: 100%;">
-                                        <option>Draft</option>
-                                        <option>Expired</option>
-                                        <option>Converted</option>
-                                        <option>Saved</option>
-                                        <option>Sent</option>
-                                        <option>Viewed</option>
+                                    <form id="estimateForm" method="POST" action="{{ route('business.estimates.statusStore', $estimates->sale_estim_id) }}">
+                                    @csrf
+                                    <select id="sale_status" class="form-control form-select" name="sale_status" style="width: 100%;">
+                                        <option > Select Status</option>
+                                        <option value="Draft" {{ $estimates->sale_status === 'Draft' ? 'selected' : '' }}>Draft</option>
+                                        <option value="Approve" {{ $estimates->sale_status === 'Approve' ? 'selected' : '' }}>Approve</option>
+                                        <option value="Convert to invoice" {{ $estimates->sale_status === 'Convert to invoice' ? 'selected' : '' }}>Convert to invoice</option>
+                                        <option value="Sent" {{ $estimates->sale_status === 'Sent' ? 'selected' : '' }}>Sent</option>
+                                        <option value="Cancel" {{ $estimates->sale_status === 'Cancel' ? 'selected' : '' }}>Cancel</option>
+                                        <option value="Mark as sent" {{ $estimates->sale_status === 'Mark as sent' ? 'selected' : '' }}>Mark as sent</option>
                                     </select>
+                                    </form>
                                 </div>
                             </div>
                             <!-- /.col -->
@@ -100,7 +104,23 @@
                                 <div class="view_es_box">
                                     <img src="{{url('public/dist/img/note.svg')}}" class="detaises_icon">
                                     <p class="view_es_title">Create Estimate</p>
-                                    <p class="view_es_create">Created On: 2024-04-18 at 3:59 PM GMT+5:30</p>
+                                    <p class="view_es_create">
+                                        Created On: 
+                                    @php
+                                        $date = $estimates->created_at; 
+                                        $carbonDate = \Carbon\Carbon::parse($date);
+                                        $carbonDate->setTimezone('Asia/Kolkata');
+                                        $formattedDate = $carbonDate->format('Y-m-d \a\t h:i A');
+
+                                        $offsetMinutes = $carbonDate->offsetMinutes; 
+                                        $offsetHours = intdiv($offsetMinutes, 60); 
+                                        $offsetMinutes = abs($offsetMinutes % 60); 
+
+                                        $formattedOffset = sprintf('GMT%+d:%02d', $offsetHours, $offsetMinutes);
+                                        @endphp
+                                        {{ $formattedDate }}
+                                         <!-- {{ $formattedOffset }} -->
+                                </p>
                                     <a href="{{ route('business.estimates.edit', $estimates->sale_estim_id) }}"><button class="viewdetails_btn"><i
                                                 class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Estimate</button></a>
                                 </div>
@@ -251,7 +271,7 @@
                                     <table class="table total_table">
                                         <tr>
                                             <td style="width:50%">Sub Total :</td>
-                                            <td>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }} {{ $estimates->sale_estim_sub_total }}</td>
+                                            <td>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}</td>
                                         </tr>
                                         <tr>
                                             <td>Discount:</td>
@@ -598,7 +618,7 @@
             success: function(response) {
                 // console.log(response.customer)
                 var customer = response.customer;
-                console.log(customer);
+                // console.log(customer);
 
                 var customerInfoHtml = `
                     <label>Customer</label>
@@ -677,5 +697,38 @@
 
 
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('estimateForm');
+        //alert(form);
+        function submitForm() {
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // console.log('Estimate saved successfully!');
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        form.addEventListener('change', submitForm);
+    });
+    </script>
+
     @endsection
 @endif

@@ -167,14 +167,14 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/edit-estimates/{id}', [EstimatesController::class, 'edit'])->name('business.estimates.edit');
         Route::patch('/update-estimates/{estimates_id}', [EstimatesController::class, 'update'])->name('business.estimates.update');
         Route::delete('/estimatesdestroy/{id}', [EstimatesController::class, 'destroy'])->name('business.estimates.destroy');
-        Route::get('/view-estimates/{id}', [EstimatesController::class, 'view'])->name('business.estimates.view');
         Route::put('salescustomers/{sale_cus_id}', [EstimatesController::class, 'updateCustomer'])->name('salescustomers.update');
         Route::get('salescustomers/list', [EstimatesController::class, 'listCustomers'])->name('salescustomers.list');
-
         Route::patch('/estimates/menu/update', [EstimatesController::class, 'menuUpdate'])->name('estimatemenus.update');
         Route::get('/estimates/menu/list', [EstimatesController::class, 'getMenuSessionData'])->name('estimatemenus.menulist');
-
-        
+        Route::get('/view-estimates/{id}', [EstimatesController::class, 'view'])->name('business.estimates.view');
+        Route::get('/duplicate-estimates/{id}', [EstimatesController::class, 'duplicate'])->name('business.estimates.duplicate');
+        Route::patch('/duplicate-estimates-store/{id}', [EstimatesController::class, 'duplicateStore'])->name('business.estimates.duplicateStore');
+        Route::post('/estimates-status-store/{id}', [EstimatesController::class, 'statusStore'])->name('business.estimates.statusStore');
 
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');

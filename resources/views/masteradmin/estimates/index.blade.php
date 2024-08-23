@@ -141,7 +141,7 @@
                   <tbody>
                     @if (count($activeEstimates) > 0)
                       @foreach ($activeEstimates as $value)
-                        <tr>
+                        <tr id="estimate-row-approve-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ $value->sale_estim_date }}</td>
@@ -151,7 +151,26 @@
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block">Approve</span>
+                                @php
+                                    $nextStatus = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Sent';
+                                    } elseif($value->sale_status == 'Sent') {
+                                        $nextStatus = 'Convert to Invoice';
+                                    } elseif($value->sale_status == 'Convert to Invoice') {
+                                        $nextStatus = 'Cancel';
+                                    }
+                                @endphp
+
+                                @if($nextStatus)
+                                <a href="javascript:void(0);" onclick="updateStatus({{ $value->sale_estim_id }}, '{{ $nextStatus }}')" >
+                                    {{ $nextStatus }}
+                                </a>
+                                @else
+                                    <span class="d-block">Unknown Status</span>
+                                @endif
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
@@ -164,7 +183,7 @@
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
                                   @endif
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
                                   <a href="#" class="dropdown-item">
@@ -194,7 +213,7 @@
                         <div class="modal fade" id="deleteestimateapprove-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                       <div class="modal-content">
-                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}" data-id="{{ $value->sale_estim_id }}">
                             @csrf
                             @method('DELETE')
                         <div class="modal-body pad-1 text-center">
@@ -204,7 +223,7 @@
                          
                             <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                           <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="delete_btn px-15">Delete</button>
+                          <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_estim_id }}">Delete</button>
                           </form>
                         </div>
                       </div>
@@ -237,7 +256,7 @@
                   <tbody>
                     @if (count($draftEstimates) > 0)
                       @foreach ($draftEstimates as $value)
-                        <tr>
+                        <tr id="estimate-row-draft-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ $value->sale_estim_date }}</td>
@@ -247,7 +266,26 @@
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block">Approve</span>
+                                @php
+                                    $nextStatus = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Sent';
+                                    } elseif($value->sale_status == 'Sent') {
+                                        $nextStatus = 'Convert to Invoice';
+                                    } elseif($value->sale_status == 'Convert to Invoice') {
+                                        $nextStatus = 'Cancel';
+                                    }
+                                @endphp
+
+                                @if($nextStatus)
+                                <a href="javascript:void(0);" onclick="updateStatus({{ $value->sale_estim_id }}, '{{ $nextStatus }}')" >
+                                    {{ $nextStatus }}
+                                </a>
+                                @else
+                                    <span class="d-block">Unknown Status</span>
+                                @endif
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
@@ -260,7 +298,7 @@
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
                                   @endif
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
                                   <a href="#" class="dropdown-item">
@@ -289,7 +327,7 @@
                         <div class="modal fade" id="deleteestimatedraft-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                       <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                         <div class="modal-content">
-                        <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                        <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}" data-id="{{ $value->sale_estim_id }}">
                               @csrf
                               @method('DELETE')
                           <div class="modal-body pad-1 text-center">
@@ -299,7 +337,7 @@
                           
                               <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                             <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="delete_btn px-15">Delete</button>
+                            <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_estim_id }}">Delete</button>
                             </form>
                           </div>
                         </div>
@@ -333,7 +371,7 @@
                   <tbody>
                     @if (count($allEstimates) > 0)
                       @foreach ($allEstimates as $value)
-                        <tr>
+                        <tr id="estimate-row-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ $value->sale_estim_date }}</td>
@@ -342,7 +380,27 @@
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block">Approve</span>
+                             
+                                @php
+                                    $nextStatus = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Sent';
+                                    } elseif($value->sale_status == 'Sent') {
+                                        $nextStatus = 'Convert to Invoice';
+                                    } elseif($value->sale_status == 'Convert to Invoice') {
+                                        $nextStatus = 'Cancel';
+                                    }
+                                @endphp
+
+                                @if($nextStatus)
+                                <a href="javascript:void(0);" onclick="updateStatus({{ $value->sale_estim_id }}, '{{ $nextStatus }}')" >
+                                    {{ $nextStatus }}
+                                </a>
+                                @else
+                                    <span class="d-block">Unknown Status</span>
+                                @endif
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
@@ -358,7 +416,7 @@
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
                                   @endif
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
                                   <a href="#" class="dropdown-item">
@@ -387,7 +445,7 @@
                         <div class="modal fade" id="deleteestimatall-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                       <div class="modal-content">
-                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}">
+                      <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}" data-id="{{ $value->sale_estim_id }}">
                             @csrf
                             @method('DELETE')
                         <div class="modal-body pad-1 text-center">
@@ -397,7 +455,7 @@
                          
                             <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                           <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="delete_btn px-15">Delete</button>
+                          <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_estim_id }}">Delete</button>
                           </form>
                         </div>
                       </div>
@@ -435,6 +493,62 @@
 
 </div>
 <!-- ./wrapper -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+  function updateStatus(estimateId, nextStatus) {
+    $.ajax({
+      url: "{{ route('business.estimates.statusStore', ':id') }}".replace(':id', estimateId),
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            sale_status: nextStatus 
+        },
+        success: function(response) {
+            if (response.success) {
+                // alert(response.message);
+                location.reload(); 
+            } else {
+                // alert(response.message);
+            }
+        },
+        error: function(xhr) {
+            alert('An error occurred while updating the status.');
+        }
+    });
+}
+
+$(document).on('click', '.delete_btn', function() {
+    var estimateId = $(this).data('id'); 
+    var form = $('#delete-form-' + estimateId);
+    var url = form.attr('action'); 
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: form.serialize(), 
+        success: function(response) {
+            if (response.success) {
+                $('#estimate-row-' + estimateId).remove();
+
+                $('#estimate-row-draft-' + estimateId).remove();
+
+                $('#estimate-row-approve-' + estimateId).remove();
+
+                $('#deleteestimatall-' + estimateId).modal('hide');
+                $('#deleteestimatedraft-' + estimateId).modal('hide');
+                $('#deleteestimateapprove-' + estimateId).modal('hide');
+
+                // alert(response.message);
+            } else {
+                alert('An error occurred: ' + response.message);
+            }
+        },
+        error: function(xhr) {
+            alert('An error occurred while deleting the record.');
+        }
+    });
+});
+</script>
 @endsection
 @endif

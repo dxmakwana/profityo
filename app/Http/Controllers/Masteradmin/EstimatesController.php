@@ -29,8 +29,11 @@ class EstimatesController extends Controller
     {
         //
         // dd('hii');
-        $activeEstimates = Estimates::where('sale_status', '1')->with('customer')->orderBy('created_at', 'desc')->get();
-        $draftEstimates = Estimates::where('sale_status', '0')->with('customer')->orderBy('created_at', 'desc')->get();
+        $activeEstimates = Estimates::whereIn('sale_status', ['Approve', 'Sent', 'Convert to Invoice'])
+        ->with('customer')
+        ->orderBy('created_at', 'desc')
+        ->get();
+        $draftEstimates = Estimates::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
         $allEstimates = Estimates::with('customer')->orderBy('created_at', 'desc')->get();
         // dd($allEstimates);
         return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates'));
@@ -207,7 +210,7 @@ class EstimatesController extends Controller
 
         session()->flash('estimate-add', __('messages.masteradmin.estimate.send_success'));
         return response()->json([
-            'redirect_url' => route('business.estimates.index'),
+            'redirect_url' => route('business.estimates.view', ['id' => $estimate->id]),
             'message' => __('messages.masteradmin.estimate.send_success')
         ]);
 
@@ -425,7 +428,7 @@ class EstimatesController extends Controller
     }
 
     //remove
-    public function destroy($id): RedirectResponse
+    public function destroy($id)
     {
         //
         $user = Auth::guard('masteradmins')->user();
@@ -441,7 +444,11 @@ class EstimatesController extends Controller
 
         \MasterLogActivity::addToLog('Estimates details Deleted.');
 
-        return redirect()->route('business.estimates.index')->with('estimate-delete', __('messages.masteradmin.estimate.delete_success'));
+       
+        return response()->json(['success' => true, 'message' => 'Estimate deleted successfully.']);
+       
+
+        // return redirect()->route('business.estimates.index')->with('estimate-delete', __('messages.masteradmin.estimate.delete_success'));
 
     }
 
@@ -513,5 +520,171 @@ class EstimatesController extends Controller
         // dd($estimates);
         return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state'));
 
+    }
+    
+    public function duplicate($id, Request $request): View
+    {
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+       
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+        // dd($salecustomer['sale_cus_id']);
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+        // dd($currencys);
+        
+        $salestax = SalesTax::all();
+        // dd($businessDetails);
+
+        $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
+
+        $lastEstimate = Estimates::orderBy('sale_estim_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_estim_id + 1 : 1;
+        // dd($newId);
+
+        $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->get();
+
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        // $states = States::get();
+
+        // dd($estimates);
+        return view('masteradmin.estimates.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId'));
+    }
+
+    public function duplicateStore(Request $request)
+    {
+        // dd($request->sale_currency_id);
+      $request->validate([
+        'sale_estim_title' => 'nullable|string|max:255',
+        'sale_estim_summary' => 'nullable|string',
+        'sale_cus_id' => 'nullable|integer',
+        'sale_estim_number' => 'required|string|max:255',
+        'sale_estim_customer_ref' => 'nullable|string|max:255',
+        'sale_estim_date' => 'required|date',
+        'sale_estim_valid_date' => 'required|date',
+        'sale_estim_discount_desc' => 'nullable|string',
+        'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+        'sale_currency_id' => 'required|integer',
+        'sale_estim_sub_total' => 'required|numeric',
+        'sale_estim_discount_total' => 'required|numeric',
+        'sale_estim_tax_amount' => 'required|numeric',
+        'sale_estim_final_amount' => 'required|numeric',
+        'sale_estim_notes' => 'nullable|string',
+        'sale_estim_footer_note' => 'nullable|string',
+        'sale_estim_image' => 'nullable|image',
+        'sale_status' => 'required|integer',
+        'sale_estim_item_discount' => 'nullable|integer',
+        ]);
+
+
+        $estimate = new Estimates();
+        $estimate->fill($request->only([
+            'sale_estim_title', 'sale_estim_summary', 'sale_cus_id', 'sale_estim_number',
+            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
+            'sale_estim_final_amount', 'sale_estim_notes', 'sale_estim_footer_note',
+            'sale_estim_image', 'sale_status'
+        ]));
+
+        $user = Auth::guard('masteradmins')->user();
+        $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
+        $estimate->sale_currency_id = $request->sale_currency_id;
+        $estimate->id = $user->id;
+        $estimate->sale_estim_status = 1;
+        
+        // dd($estimate);
+        $estimate->save();
+
+        foreach ($request->input('items') as $item) {
+            $estimateItem = new EstimatesItems();
+            
+            $estimateItem->fill($item);
+
+            $estimateItem->id = $user->id;
+            $estimateItem->sale_estim_id = $estimate->id; 
+            $estimateItem->sale_estim_item_status = 1;
+
+            $estimateItem->save();
+        }
+
+        $sessionData = session('form_data', []);
+
+        // dd( $sessionssData);
+            foreach ($sessionData as $key => $value) {
+                $mname = str_replace('_', ' ', $key);
+
+                $menu = CustomizeMenu::where('mname', $mname)->first();
+
+                if ($menu) {
+                    $data = [
+                        'sale_estim_id' => $estimate->id ?? null, 
+                        'id' => $user->id ?? NULL,
+                        'mname' => $menu->mname,
+                        'mtitle' => $menu->mtitle,
+                        'mid' => $menu->cust_menu_id,
+                        'is_access' => $value ? 1 : 0,
+                        'esti_cust_menu_title' => $value,
+                    ];
+
+                    $estimateMenu = new EstimateCustomizeMenu($data);
+                    $estimateMenu->save();
+                }
+            }
+
+    
+        // Clear the session data if necessary
+        session()->forget('form_data');
+
+      
+        \MasterLogActivity::addToLog('Estimate is Duplicate.');
+
+        return response()->json([
+            'redirect_url' => route('business.estimates.view', ['id' => $estimate->id]),
+        ]);
+
+    }
+    
+    public function statusStore(Request $request, $id)
+    {
+        $user = Auth::guard('masteradmins')->user();
+
+        $estimate = Estimates::where([
+            'sale_estim_id' => $id,
+            'id' => $user->id
+        ])->firstOrFail();
+        // dd($estimate); 
+
+        $validated = $request->validate([
+            'sale_status' => 'required|string|max:255',
+        ]);
+
+        $estimate->where('sale_estim_id', $id)->update($validated);
+
+        return response()->json(['success' => true, 'message' => 'Estimate saved successfully!']);
     }
 }
