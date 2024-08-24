@@ -379,6 +379,68 @@ class Controller extends BaseController
                 });
             }
 
+            //invoice
+            if (!Schema::hasTable($storeId . '_py_invoices_details')) {
+                Schema::create($storeId . '_py_invoices_details', function (Blueprint $table) {
+                    $table->increments('sale_inv_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('sale_inv_title')->nullable();
+                    $table->text('sale_inv_summary')->nullable();
+                    $table->integer('sale_cus_id')->nullable();
+                    $table->string('sale_inv_number')->nullable();
+                    $table->string('sale_inv_customer_ref')->nullable();
+                    $table->string('sale_inv_date')->nullable();
+                    $table->string('sale_inv_valid_date')->nullable();
+                    $table->string('sale_inv_item_discount')->nullable()->default(0);
+                    $table->text('sale_inv_discount_desc')->nullable();
+                    $table->integer('sale_inv_discount_type')->nullable()->default(0);
+                    $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->string('sale_inv_sub_total')->nullable()->default(0);
+                    $table->string('sale_inv_discount_total')->nullable()->default(0);
+                    $table->string('sale_inv_tax_amount')->nullable()->default(0);
+                    $table->string('sale_inv_final_amount')->nullable()->default(0);
+                    $table->string('sale_inv_notes')->nullable();
+                    $table->string('sale_inv_footer_note')->nullable();
+                    $table->string('sale_inv_image')->nullable();
+                    $table->integer('sale_status')->nullable()->default(0);
+                    $table->tinyInteger('sale_inv_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_invoices_items')) {
+                Schema::create($storeId . '_py_invoices_items', function (Blueprint $table) {
+                    $table->increments('sale_inv_item_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_inv_id')->nullable()->default(0);
+                    $table->integer('sale_product_id')->nullable()->default(0);
+                    $table->integer('sale_inv_item_qty')->nullable()->default(0);
+                    $table->string('sale_inv_item_price')->nullable()->default(0);
+                    // $table->string('sale_estim_item_discount')->nullable()->default(0);
+                    $table->string('sale_inv_item_tax')->nullable()->default(0);
+                    $table->text('sale_inv_item_desc')->nullable();
+                    $table->string('sale_inv_item_amount')->nullable()->default(0);
+                    // $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('sale_inv_item_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_customize_menu_invoices')) {
+                Schema::create($storeId . '_py_customize_menu_invoices', function (Blueprint $table) {
+                    $table->increments('inv_cust_menu_id')->unique();
+                    $table->integer('sale_inv_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('mname')->nullable();
+                    $table->string('mtitle')->nullable();
+                    $table->integer('mid')->nullable();
+                    $table->integer('is_access')->nullable();
+                    $table->string('inv_cust_menu_title')->nullable();
+                    $table->timestamps();
+                });
+            }
+
+
         }
     }
 

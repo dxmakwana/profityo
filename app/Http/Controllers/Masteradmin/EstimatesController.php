@@ -21,6 +21,14 @@ use Illuminate\Validation\ValidationException;
 use App\Models\CustomizeMenu;
 use App\Models\EstimateCustomizeMenu;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
+use App\Notifications\EstimateViewMail;
+// use Dompdf\Dompdf;
+// use Dompdf\Options;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\QueryException;
 
 class EstimatesController extends Controller
 {
@@ -29,6 +37,10 @@ class EstimatesController extends Controller
     {
         //
         // dd('hii');
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $user_id = $user->user_id;
+
         $activeEstimates = Estimates::whereIn('sale_status', ['Approve', 'Sent', 'Convert to Invoice'])
         ->with('customer')
         ->orderBy('created_at', 'desc')
@@ -36,7 +48,7 @@ class EstimatesController extends Controller
         $draftEstimates = Estimates::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
         $allEstimates = Estimates::with('customer')->orderBy('created_at', 'desc')->get();
         // dd($allEstimates);
-        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates'));
+        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates','user_id'));
 
     }
     public function create(): View
@@ -475,6 +487,8 @@ class EstimatesController extends Controller
     {
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
+        $user_id = $user->user_id;
+        // dd($user_id);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -518,7 +532,7 @@ class EstimatesController extends Controller
         // $states = States::get();
 
         // dd($estimates);
-        return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state'));
+        return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','user_id'));
 
     }
     
@@ -687,4 +701,264 @@ class EstimatesController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Estimate saved successfully!']);
     }
+
+    public function send(Request $request, $id, $slug)
+    {
+        $estimate = Estimates::where('sale_estim_id', $id)->firstOrFail();
+
+        $validated = [
+            'sale_status' => 'Sent', 
+        ];
+
+        $estimate->where('sale_estim_id', $id)->update($validated);
+
+        // Encrypt the IDs
+        $encryptedEstimateId = Crypt::encryptString($estimate->sale_estim_id);
+        $encryptedUserID = Crypt::encryptString($slug);
+
+        // Encode encrypted values to base64
+        $encodedEstimateId = base64_encode($encryptedEstimateId);
+        $encodedUserID = base64_encode($encryptedUserID);
+
+        // Optionally, use a more URL-safe encoding
+        $shortEncodedEstimateId = urlencode($encodedEstimateId);
+        $shortEncodedUserID = urlencode($encodedUserID);
+        
+        $estimateViewUrl = route('business.estimate.sendview', [$shortEncodedEstimateId, $shortEncodedUserID]);
+
+
+        // dd($estimateViewUrl);
+
+        $customer = SalesCustomers::where('sale_cus_id', $estimate->sale_cus_id)->first();
+        if (!$customer || empty($customer->sale_cus_email)) {
+            return back()->with('error', 'Customer email not found.');
+        }
+
+        \MasterLogActivity::addToLog('Admin Estimate Sent.');
+
+        Mail::to($customer->sale_cus_email)->send(new EstimateViewMail($estimateViewUrl));
+
+        return redirect()->back()->with('success', 'Estimate link sent to the customer successfully.');
+    }
+    
+    public function sendView(Request $request, $id, $slug)
+    {
+        try {
+            $id1= $id;
+            $slug1 = $slug;
+            $decodedEstimateId = urldecode($id);
+            $decodedUserID = urldecode($slug);
+    
+            $base64EstimateId = base64_decode($decodedEstimateId);
+            $base64UserID = base64_decode($decodedUserID);
+    
+            $decryptedEstimateId = Crypt::decryptString($base64EstimateId);
+            $decryptedUserID = Crypt::decryptString($base64UserID);
+            // dd($decryptedUserID);
+            
+            $tableName = $decryptedUserID . '_py_business_details';
+            
+            $businessDetails = \DB::table($tableName)
+                ->join('py_states', 'py_states.id', '=', $tableName . '.state_id')
+                ->join('py_countries', 'py_countries.id', '=', $tableName . '.country_id')
+                ->select($tableName . '.*', 'py_states.name as state_name', 'py_countries.name as country_name')
+                ->first();
+            
+            $tableNameCustomer = $decryptedUserID . '_py_sale_customers';
+            $customers = \DB::table($tableNameCustomer)
+                ->where('id', $businessDetails->id)
+                ->first();
+
+            $currencys = \DB::table('py_countries')->get();
+
+            
+
+
+            // $customers = SalesCustomers::where('id', $businessDetails->id)->first();
+    
+            // $currencys = Countries::all();
+
+            $tableNameEstimates = $decryptedUserID . '_py_estimates_details';
+            $tableNameStates = 'py_states'; // Assuming static names for states and countries
+            $tableNameCountries = 'py_countries';
+
+            $estimates = \DB::table($tableNameEstimates)
+            ->leftJoin($tableNameCustomer, $tableNameCustomer . '.sale_cus_id', '=', $tableNameEstimates . '.sale_cus_id')
+            // Join states and countries for billing address
+            ->leftJoin($tableNameStates . ' as bill_states', 'bill_states.id', '=', $tableNameCustomer . '.sale_bill_state_id')
+            ->leftJoin($tableNameCountries . ' as bill_countries', 'bill_countries.id', '=', $tableNameCustomer . '.sale_bill_country_id')
+            // Join states and countries for shipping address
+            ->leftJoin($tableNameStates . ' as ship_states', 'ship_states.id', '=', $tableNameCustomer . '.sale_ship_state_id')
+            ->leftJoin($tableNameCountries . ' as ship_countries', 'ship_countries.id', '=', $tableNameCustomer . '.sale_ship_country_id')
+            ->where($tableNameEstimates . '.sale_estim_id', $decryptedEstimateId)
+            ->select(
+                $tableNameEstimates . '.*',
+                $tableNameCustomer . '.*',
+                'bill_states.name as bill_state_name',
+                'bill_countries.name as bill_country_name',
+                'ship_states.name as ship_state_name',
+                'ship_countries.name as ship_country_name'
+            )
+            ->first();
+            
+            $tableNameEstimatesItems = $decryptedUserID . '_py_estimates_items';
+            $tableNameProduct = $decryptedUserID . '_py_sale_product';
+            $tableNameTax = $decryptedUserID . '_py_sales_tax';
+
+            $estimatesItems = \DB::table($tableNameEstimatesItems)
+            ->leftJoin($tableNameProduct, $tableNameProduct . '.sale_product_id', '=', $tableNameEstimatesItems . '.sale_product_id')
+            ->leftJoin($tableNameTax, $tableNameTax . '.tax_id', '=', $tableNameEstimatesItems . '.sale_estim_item_tax')
+            ->where($tableNameEstimatesItems . '.sale_estim_id', $decryptedEstimateId)
+            ->select(
+                $tableNameEstimatesItems . '.*',
+                $tableNameProduct . '.*',
+                $tableNameTax . '.*'
+            )
+            ->get();
+
+            $currency = $currencys->firstWhere('id', $estimates->sale_currency_id);
+
+            if ($request->has('download')) {
+                $pdf = PDF::loadView('masteradmin.estimates.pdf', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'))
+                ->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isRemoteEnabled', true);
+            
+                // return $pdf->stream('estimate.pdf');
+                return $pdf->download('estimate.pdf');
+                        }
+
+            return view('masteradmin.estimates.send', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'));
+            
+        } catch (DecryptException $e) {
+            abort(404, 'Invalid estimate link.');
+        }
+    }
+
+    public function authsendView(Request $request, $id, $slug)
+    {
+        try {
+            // dd('hiii');
+            $id1= $id;
+            $slug1 = $slug;
+    
+            $base64UserID =$id;
+    
+            $decryptedEstimateId = $id;
+            $decryptedUserID = $slug;
+            // dd($decryptedUserID);
+
+            
+            $tableName = $decryptedUserID . '_py_business_details';
+         
+            
+            try {
+                $businessDetails = \DB::table($tableName)
+                    ->join('py_states', 'py_states.id', '=', $tableName . '.state_id')
+                    ->join('py_countries', 'py_countries.id', '=', $tableName . '.country_id')
+                    ->select($tableName . '.*', 'py_states.name as state_name', 'py_countries.name as country_name')
+                    ->first();
+            
+                if (!$businessDetails) {
+                    abort(404);
+                }
+            
+            } catch (QueryException $e) {
+                if ($e->getCode() == '42S02') {
+                    abort(404); 
+                } else {
+                    throw $e;
+                }
+            }
+            
+            $tableNameCustomer = $decryptedUserID . '_py_sale_customers';
+            $customers = \DB::table($tableNameCustomer)
+                ->where('id', $businessDetails->id)
+                ->first();
+
+
+            $currencys = \DB::table('py_countries')->get();
+
+            // $customers = SalesCustomers::where('id', $businessDetails->id)->first();
+    
+            // $currencys = Countries::all();
+
+            $tableNameEstimates = $decryptedUserID . '_py_estimates_details';
+            $tableNameStates = 'py_states'; 
+            $tableNameCountries = 'py_countries';
+
+            try {
+                $estimates = \DB::table($tableNameEstimates)
+            ->leftJoin($tableNameCustomer, $tableNameCustomer . '.sale_cus_id', '=', $tableNameEstimates . '.sale_cus_id')
+            // Join states and countries for billing address
+            ->leftJoin($tableNameStates . ' as bill_states', 'bill_states.id', '=', $tableNameCustomer . '.sale_bill_state_id')
+            ->leftJoin($tableNameCountries . ' as bill_countries', 'bill_countries.id', '=', $tableNameCustomer . '.sale_bill_country_id')
+            // Join states and countries for shipping address
+            ->leftJoin($tableNameStates . ' as ship_states', 'ship_states.id', '=', $tableNameCustomer . '.sale_ship_state_id')
+            ->leftJoin($tableNameCountries . ' as ship_countries', 'ship_countries.id', '=', $tableNameCustomer . '.sale_ship_country_id')
+            ->where($tableNameEstimates . '.sale_estim_id', $decryptedEstimateId)
+            ->select(
+                $tableNameEstimates . '.*',
+                $tableNameCustomer . '.*',
+                'bill_states.name as bill_state_name',
+                'bill_countries.name as bill_country_name',
+                'ship_states.name as ship_state_name',
+                'ship_countries.name as ship_country_name'
+            )
+            ->first();
+            
+                if (!$estimates) {
+                    abort(404); 
+                }
+            
+            } catch (QueryException $e) {
+                if ($e->getCode() == '42S02') {
+                    abort(404);
+                } else {
+                    throw $e;
+                }
+            }
+
+           
+            
+            $tableNameEstimatesItems = $decryptedUserID . '_py_estimates_items';
+            $tableNameProduct = $decryptedUserID . '_py_sale_product';
+            $tableNameTax = $decryptedUserID . '_py_sales_tax';
+
+            $estimatesItems = \DB::table($tableNameEstimatesItems)
+            ->leftJoin($tableNameProduct, $tableNameProduct . '.sale_product_id', '=', $tableNameEstimatesItems . '.sale_product_id')
+            ->leftJoin($tableNameTax, $tableNameTax . '.tax_id', '=', $tableNameEstimatesItems . '.sale_estim_item_tax')
+            ->where($tableNameEstimatesItems . '.sale_estim_id', $decryptedEstimateId)
+            ->select(
+                $tableNameEstimatesItems . '.*',
+                $tableNameProduct . '.*',
+                $tableNameTax . '.*'
+            )
+            ->get();
+
+            $currency = $currencys->firstWhere('id', $estimates->sale_currency_id);
+
+            if ($request->has('download')) {
+                $pdf = PDF::loadView('masteradmin.estimates.pdf', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'))
+                ->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isRemoteEnabled', true);
+            
+                // return $pdf->stream('estimate.pdf');
+                return $pdf->download('estimate.pdf');
+                        }
+
+            if ($request->has('print')) {
+
+                return view('masteradmin.estimates.print', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'));
+            }            
+
+            return view('masteradmin.estimates.print', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'));
+            
+        } catch (DecryptException $e) {
+            abort(404, 'Invalid estimate link.');
+        }
+    }
+
+    
 }

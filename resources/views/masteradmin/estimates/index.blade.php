@@ -186,16 +186,16 @@
                                   <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
                                     <i class="fas fa-regular fa-paper-plane mr-2"></i> Send
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
                                   @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
@@ -301,16 +301,16 @@
                                   <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
                                     <i class="fas fa-regular fa-paper-plane mr-2"></i> Send
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
                                   @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
@@ -419,16 +419,16 @@
                                   <a href="{{ route('business.estimates.duplicate', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
                                   <a href="#" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="javascript:void(0);"  data-id="{{ $value->sale_estim_id }}" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
                                     <i class="fas fa-regular fa-paper-plane mr-2"></i> Send
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
                                   @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
@@ -549,6 +549,28 @@ $(document).on('click', '.delete_btn', function() {
         }
     });
 });
+</script>
+<script>
+    function sendEstimate(url, estimateId) {
+      // alert(estimateId); 
+        if (confirm('Are you sure you want to send this estimate?')) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    _token: '{{ csrf_token() }}' 
+                },
+                success: function(response) {
+                   
+                    alert('Estimate link sent to the customer successfully.');
+                    location.reload(); 
+                },
+                error: function(xhr) {
+                    alert('An error occurred while sending the estimate.');
+                }
+            });
+        }
+    }
 </script>
 @endsection
 @endif

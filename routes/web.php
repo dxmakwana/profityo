@@ -92,10 +92,13 @@ Route::group(['prefix' => $busadminRoute], function () {
 
         //user change password
         Route::get('/users/change-password', [UserController::class, 'changePassword'])
-                        ->name('business.userdetail.changePassword');
+        ->name('business.userdetail.changePassword');
+        
         Route::post('/users/store-password/{user_id}', [UserController::class, 'storePassword'])
-                        ->name('business.userdetail.storePassword');
-                
+        ->name('business.userdetail.storePassword');
+        
+        Route::get('/estimate/send/view/{id}/{slug}', [EstimatesController::class, 'sendView'])
+        ->name('business.estimate.sendview');
     });
 
     Route::middleware(['auth_master','set.user.details', 'guard.session:masteradmins', 'prevent.back.history'])->group(function () {
@@ -175,6 +178,14 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/duplicate-estimates/{id}', [EstimatesController::class, 'duplicate'])->name('business.estimates.duplicate');
         Route::patch('/duplicate-estimates-store/{id}', [EstimatesController::class, 'duplicateStore'])->name('business.estimates.duplicateStore');
         Route::post('/estimates-status-store/{id}', [EstimatesController::class, 'statusStore'])->name('business.estimates.statusStore');
+        Route::get('/estimate/send/{id}/{slug}', [EstimatesController::class, 'send'])
+        ->name('business.estimate.send');
+
+        Route::get('/estimate/send/views/{id}/{slug}', [EstimatesController::class, 'authsendView'])
+        ->name('business.estimate.sendviews');
+        
+        
+        
 
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');

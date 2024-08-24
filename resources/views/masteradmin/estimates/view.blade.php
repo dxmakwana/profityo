@@ -2,6 +2,7 @@
     @extends('masteradmin.layouts.app')
     <title>Profityo | View Estimates</title>
     @section('content')
+    
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -20,10 +21,16 @@
                         <ol class="breadcrumb float-sm-right">
                             <a href="#" data-toggle="modal" data-target="#deleteestimate-{{ $estimates->sale_estim_id }}"><button class="add_btn_br"><i
                                         class="fas fa-solid fa-trash mr-2"></i>Delete</button></a>
-                            <a href="#"><button class="add_btn_br"><i
-                                        class="fas fa-solid fa-print mr-2"></i>Print</button></a>
-                            <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
+                            <!-- <a href="#"><button class="add_btn_br" onclick="printPage()"><i
+                                        class="fas fa-solid fa-print mr-2"></i>Print</button></a> -->
+                            <a target="_blank" href="{{ route('business.estimate.sendviews', [ $estimates->sale_estim_id, $user_id,'print' => 'true']) }}">
+                                <button class="add_btn_br">
+                                    <i class="fas fa-solid fa-print mr-2"></i>Print
+                                </button>
+                            </a>
+                            <a href="{{ route('business.estimate.sendviews', [ $estimates->sale_estim_id, $user_id, 'download' => 'true']) }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
                                     Pdf</button></a>
+                            </a>
                             <a href="{{ route('business.estimates.duplicate', $estimates->sale_estim_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-regular fa-copy mr-2"></i>Duplicate</button></a>
                             <a href="{{ route('business.estimates.edit', $estimates->sale_estim_id) }}"><button class="add_btn_br"><i
@@ -39,7 +46,7 @@
         <section class="content px-10">
             <div class="container-fluid">
                 <!-- card -->
-                <div class="card">
+                <div class="card" id="card-header">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -133,9 +140,24 @@
                                     <img src="{{url('public/dist/img/send.svg')}}" class="detaises_icon">
                                     <p class="view_es_title">Send</p>
                                     <p class="view_es_create">Last sent: Never</p>
-                                    <a href="#"><button class="viewdetails_btn_br"></i>Mark As Sent</button></a>
-                                    <a href="#"><button class="viewdetails_btn"><i
-                                                class="fas fa-regular fa-paper-plane mr-2"></i>Send Estimate</button></a>
+                                    @if($estimates->sale_status === 'Sent')
+                                        <a href="#">
+                                            <button class="viewdetails_btn_br">Mark As Sent</button>
+                                        </a>
+                                    @else
+                                        <!-- <a href="{{ route('business.estimate.send', [ $estimates->sale_estim_id, $user_id]) }}"><button class="viewdetails_btn"><i
+                                        class="fas fa-regular fa-paper-plane mr-2"></i>Send Estimate</button></a> -->
+                                        <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$estimates->sale_estim_id, $user_id]) }}')">
+                                            <button class="viewdetails_btn">
+                                                <i class="fas fa-regular fa-paper-plane mr-2"></i>Send Estimate
+                                            </button>
+                                        </a>
+
+                                        
+                                    @endif
+
+                                   
+                                   
                                 </div>
                             </div>
                             <div class="col-md-1 text-center">
@@ -157,7 +179,7 @@
                 <!-- /.card -->
                 <!-- card -->
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" id="estimate-tab">
                         <h3 class="card-title">Estimates</h3>
                         <h3 class="card-title float-sm-right">#{{ $estimates->sale_estim_id }}</h3>
                     </div>
@@ -165,7 +187,11 @@
                     <div class="card-body2">
                         <div class="row justify-content-between pad-3">
                             <div class="col-md-3 ">
-                                <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img">
+                                <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
+                                @if($businessDetails && $businessDetails->bus_image)
+                                <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                class="elevation-2" target="_blank">
+                                @endif
                             </div>
                             <!-- /.col -->
                             <div class="col-md-6">
@@ -244,7 +270,7 @@
                                             <th class="text-center">Quantity</th>
                                             <th class="text-center">Price</th>
                                             <th class="text-center">Tax</th>
-                                            <th class="text-center">Description</th>
+                                            <!-- <th class="text-center">Description</th> -->
                                             <th class="text-right">Amount</th>
                                         </tr>
                                     </thead>
@@ -256,7 +282,7 @@
                                             <td class="text-center">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $item->sale_estim_item_price }}</td>
                                             <!-- <td class="text-center">5%</td> -->
                                             <td>{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
-                                            <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td>
+                                            <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
                                             <td class="text-right">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $item->sale_estim_item_qty * $item->sale_estim_item_price ?? '0'}} </td>
                                         </tr>
                                     </tbody>
@@ -729,6 +755,45 @@
         form.addEventListener('change', submitForm);
     });
     </script>
+    <script>
+        function printPage() {
+            window.print();
+        }
+    </script>
+ <style>
+        @media print {
+            .content-header {
+                display: none;
+            }
+            #card-header {
+                display: none;
+            }
+            #estimate-tab {
+                display: none;
+            }
+        
+        }
 
+    </style>
+    <script>
+    function sendEstimate(url) {
+        if (confirm('Are you sure you want to send this estimate?')) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    _token: '{{ csrf_token() }}' 
+                },
+                success: function(response) {
+                    alert('Estimate link sent to the customer successfully.');
+                    location.reload(); 
+                },
+                error: function(xhr) {
+                    alert('An error occurred while sending the estimate.');
+                }
+            });
+        }
+    }
+</script>
     @endsection
 @endif
