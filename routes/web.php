@@ -215,7 +215,9 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/purchasesvendoredit/{PurchasesVendor}', [PurchasVendorController::class, 'edit'])->name('business.purchasvendor.edit');
         Route::patch('/purchasesvendorupdate/{PurchasesVendor}', [PurchasVendorController::class, 'update'])->name('business.purchasvendor.update');
         Route::delete('/purchasesvendordestroy/{PurchasesVendor}', [PurchasVendorController::class, 'destroy'])->name('business.purchasvendor.destroy');
-    
+        Route::get('/vendordetails/{id}', [PurchasVendorController::class, 'show'])->name('business.vendordetails.show');
+        Route::post('/purchasvendor/addBankDetails', [PurchasVendorController::class, 'addBankDetails'])->name('business.purchasvendor.addBankDetails');
+        
         //invoice
         Route::get('/edit-invoice/{id}', [EstimatesController::class, 'viewInvoice'])->name('business.estimates.viewInvoice');
         Route::patch('/invoice-store/{id}', [InvoicesController::class, 'invoiceStore'])->name('business.invoices.invoiceStore');

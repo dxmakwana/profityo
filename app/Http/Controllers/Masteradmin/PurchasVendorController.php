@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchasVendor;
 use App\Models\Countries;
 use App\Models\States;
+use App\Models\PurchasVendorBankDetail;
 
 
 
@@ -181,5 +182,44 @@ class PurchasVendorController extends Controller
         $PurchasVendor->where('purchases_vendor_id', $purchases_vendor_id)->delete();
         return redirect()->route('business.purchasvendor.index')->with('purchases-vendor-delete', __('messages.masteradmin.purchases-vendor.delete_purchasesvendor_success'));
 
+    }
+    public function show($purchases_vendor_id): View
+    {
+        // Fetch the vendor details based on the ID
+        $PurchasVendor = PurchasVendor::where('purchases_vendor_id', $purchases_vendor_id)->firstOrFail();
+        $Country = Countries::all(); // Fetch all countries
+        $States = States::all();
+    
+        // Pass the vendor details, countries, and states to the view
+        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States'));
+    }
+    public function addBankDetails(Request $request)
+    {
+        $user = Auth::guard('masteradmins')->user();
+        
+        // Validate the incoming request
+        $request->validate([
+            'purchases_routing_number' => 'required|string|max:255',
+            'purchases_account_number' => 'nullable|string|max:255',
+            'bank_account_type' => 'nullable|string|max:255|in:Checking,Savings',
+          
+        ]);
+        $vendor_type = $request->input('account_type'); // This will be either 'Regular' or '1099-NEC Contractor'
+    
+        $validatedData = $request->all();
+        $validatedData['account_type'] = $vendor_type === 'Regular' ? 'on' : 'off';
+        $validatedData['id'] = $user->id;
+        PurchasVendorBankDetail::create([
+           
+            'purchases_routing_number' => $validatedData['purchases_routing_number'],
+            'purchases_account_number' => $validatedData['purchases_account_number'],
+            'bank_account_type' => $validatedData['bank_account_type'],
+            'id' => $validatedData['id'],
+            // 'purchases_vendor_status' => 1,
+        ]);
+    
+        // return redirect()->route('business.purchasvendor.index')->with(['purchases-vendor-add' => __('messages.masteradmin.purchases-vendor.send_success')]);
+    
+        return redirect()->back()->with('success', 'Bank details added successfully.');
     }
 }

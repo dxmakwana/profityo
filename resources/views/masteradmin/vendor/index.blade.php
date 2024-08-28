@@ -10,7 +10,7 @@
           <div class="col-auto">
             <h1 class="m-0">Vendors</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">Vendors</li>
             </ol>
           </div><!-- /.col -->
@@ -72,14 +72,37 @@
               <td>{{ $value->purchases_vendor_name }}</td>
               <td>{{ $value->purchases_vendor_email }}</td>
               <td>{{ $value->purchases_vendor_email }}</td>
-              <td><a href="new-bill.html" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account">Add Bank Details</a></td>
+              <td><a href="javascript:void(0);" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account" data-vendor-id="{{ $value->purchases_vendor_id }}">Add Bank Details</a></td>
+
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->
-              <a href="{{ route('business.purchasvendor.edit',$value->purchases_vendor_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+              <!-- <a href="{{ route('business.purchasvendor.edit',$value->purchases_vendor_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a> -->
               <!-- <a data-toggle="modal" data-target="#delete-role-modal"><i
                 class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
-                <a data-toggle="modal" data-target="#delete-vendor-modal-{{ $value->purchases_vendor_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
+                <!-- <a data-toggle="modal" data-target="#delete-vendor-modal-{{ $value->purchases_vendor_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
+                <ul class="navbar-nav ml-auto float-sm-right">
+                          <li class="nav-item dropdown d-flex align-items-center">
+                            <span class="d-block"><a href="new-bill.html" class="invoice_underline">Create Bill</a></span>
+                            <a class="nav-link user_nav" data-toggle="dropdown" href="#">
+                              <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a href="{{ route('business.vendordetails.show', $value->purchases_vendor_id) }}" class="dropdown-item">
+                                <i class="fas fa-regular fa-eye mr-2"></i> View
+                              </a>
+                              <a href="{{ route('business.purchasvendor.edit',$value->purchases_vendor_id) }}" class="dropdown-item">
+                                <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
+                              </a>
+                              <a href="new-bill.html" class="dropdown-item">
+                                <i class="fas fa-regular fa-copy mr-2"></i> Create Bill
+                              </a>
+                              <a data-toggle="modal" class="dropdown-item" data-target="#delete-vendor-modal-{{ $value->purchases_vendor_id }}">
+                                <i class="fas fa-solid fa-trash mr-2"></i> Delete
+                              </a>
+                            </div>
+                          </li>
+                        </ul>
               </td>
               </tr>
 
@@ -93,7 +116,7 @@
                 <div class="modal-body pad-1 text-center">
                 <i class="fas fa-solid fa-trash delete_icon"></i>
                 <p class="company_business_name px-10"><b>Delete vendor & services</b></p>
-                <!-- <p class="company_details_text px-10">Delete Item</p> -->
+                <p class="company_details_text px-10">Delete Item 2</p>
                 <p class="company_details_text">Are You Sure You Want to Delete This Item?</p>
                 <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
                 @csrf
@@ -123,53 +146,56 @@
 <!-- /.content-wrapper -->
 <div class="modal fade" id="add_bank_account" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Add Bank Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <h5 class="pad-3">oddevenInfotech2</h5>
-            <div class="row pxy-15 px-10">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="routingnumber">Routing Number <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" id="routingnumber" aria-describedby="inputGroupPrepend" placeholder="" required> 
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="accountnumber">Account Number <span class="text-danger">*</span></label>
-                  <input type="number" class="form-control" id="routingnumber" aria-describedby="inputGroupPrepend" placeholder="" required> 
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="accounttype">Bank Account Type <span class="text-danger">*</span></label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1" checked="">
-                    <label class="form-check-label">Checking</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="radio1">
-                    <label class="form-check-label">Savings</label>
-                  </div>
-                </div>
-              </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Bank Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-          </form>
+            <div class="modal-body">
+                <form id="bankDetailsForm" action="{{ route('business.purchasvendor.addBankDetails') }}" method="POST">
+                    @csrf
+                    <!-- Hidden field for storing purchases_vendor_id -->
+                    <input type="hidden" name="purchases_vendor_id" id="purchases_vendor_id">
+
+                    <div class="row pxy-15 px-10">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="routingnumber">Routing Number <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="routingnumber" id="routingnumber" required> 
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="accountnumber">Account Number <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="accountnumber" id="accountnumber" required> 
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="accounttype">Bank Account Type <span class="text-danger">*</span></label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="accounttype" value="checking" checked>
+                                    <label class="form-check-label">Checking</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="accounttype" value="savings">
+                                    <label class="form-check-label">Savings</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="add_btn_br" data-dismiss="modal">Back To Vendors List</button>
+                        <button type="submit" class="add_btn">Save</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="modal-footer">
-          <a href="{{ route('business.purchasvendor.index') }}"><button type="button" class="add_btn_br">Back To Vendors List</button></a>
-          <button type="submit" class="add_btn">Save</button>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
+
 <!-- Control Sidebar -->
 <aside class="control-sidebar control-sidebar-dark">
   <!-- Control sidebar content goes here -->
@@ -178,5 +204,16 @@
 
 <!-- ./wrapper -->
 
+<script>
+    $(document).ready(function() {
+        $('#add_bank_account').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var vendorId = button.data('vendor-id'); // Extract info from data-* attributes
+            
+            var modal = $(this);
+            modal.find('#purchases_vendor_id').val(vendorId); // Set the vendor ID in the hidden input
+        });
+    });
+</script>
 
 @endsection

@@ -11,7 +11,7 @@
           <div class="col-auto">
             <h1 class="m-0">New Vendor</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">New Vendor</li>
             </ol>
           </div><!-- /.col -->

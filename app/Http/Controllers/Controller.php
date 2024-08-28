@@ -440,6 +440,21 @@ class Controller extends BaseController
                 });
             }
 
+              // Purchases....bank details. module..
+            if (!Schema::hasTable($storeId . '_py_purchases_bank_details')) {
+                Schema::create($storeId . '_py_purchases_bank_details', function (Blueprint $table) {
+                    $table->increments('purchases_bank_id');
+                    $table->integer('purchases_vendor_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
+                    // $table->integer('users_id')->nullable()->default(0);
+                    $table->string('purchases_routing_number')->nullable();
+                    $table->string('purchases_account_number')->nullable();
+                    $table->string('bank_account_type')->nullable();
+                
+                    $table->timestamps();
+                });
+            }
+
 
         }
     }
