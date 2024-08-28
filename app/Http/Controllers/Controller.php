@@ -254,7 +254,7 @@ class Controller extends BaseController
                     $table->string('sale_estim_notes')->nullable();
                     $table->string('sale_estim_footer_note')->nullable();
                     $table->string('sale_estim_image')->nullable();
-                    $table->integer('sale_status')->nullable()->default(0);
+                    $table->string('sale_status')->nullable()->default(0);
                     $table->tinyInteger('sale_estim_status')->default(0)->nullable();
                     $table->timestamps();
                 });
@@ -402,7 +402,7 @@ class Controller extends BaseController
                     $table->string('sale_inv_notes')->nullable();
                     $table->string('sale_inv_footer_note')->nullable();
                     $table->string('sale_inv_image')->nullable();
-                    $table->integer('sale_status')->nullable()->default(0);
+                    $table->string('sale_status')->nullable()->default(0);
                     $table->tinyInteger('sale_inv_status')->default(0)->nullable();
                     $table->timestamps();
                 });

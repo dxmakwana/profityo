@@ -29,6 +29,8 @@ use App\Notifications\EstimateViewMail;
 // use Dompdf\Options;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
+use App\Models\InvoicesDetails;
+
 
 class EstimatesController extends Controller
 {
@@ -175,6 +177,7 @@ class EstimatesController extends Controller
         $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
         $estimate->sale_currency_id = $request->sale_currency_id;
         $estimate->id = $user->id;
+        $estimate->sale_status = 'Draft';
         // dd($estimate);
         $estimate->save();
 
@@ -683,6 +686,25 @@ class EstimatesController extends Controller
 
     }
     
+    // public function statusStore(Request $request, $id)
+    // {
+    //     $user = Auth::guard('masteradmins')->user();
+
+    //     $estimate = Estimates::where([
+    //         'sale_estim_id' => $id,
+    //         'id' => $user->id
+    //     ])->firstOrFail();
+    //     // dd($estimate); 
+
+    //     $validated = $request->validate([
+    //         'sale_status' => 'required|string|max:255',
+    //     ]);
+
+    //     $estimate->where('sale_estim_id', $id)->update($validated);
+
+    //     return response()->json(['success' => true, 'message' => 'Estimate saved successfully!']);
+    // }
+
     public function statusStore(Request $request, $id)
     {
         $user = Auth::guard('masteradmins')->user();
@@ -691,7 +713,6 @@ class EstimatesController extends Controller
             'sale_estim_id' => $id,
             'id' => $user->id
         ])->firstOrFail();
-        // dd($estimate); 
 
         $validated = $request->validate([
             'sale_status' => 'required|string|max:255',
@@ -699,7 +720,15 @@ class EstimatesController extends Controller
 
         $estimate->where('sale_estim_id', $id)->update($validated);
 
-        return response()->json(['success' => true, 'message' => 'Estimate saved successfully!']);
+        $response = ['success' => true, 'message' => 'Estimate saved successfully!'];
+
+        if ($validated['sale_status'] === 'Convert to Invoice') {
+            $response['redirect_url'] = route('business.estimates.viewInvoice', ['id' => $estimate->sale_estim_id]);
+        } elseif ($validated['sale_status'] === 'Sent') {
+            $response['redirect_url'] = route('business.estimate.send', [ $estimate->sale_estim_id, $user->user_id]); 
+        }
+
+        return response()->json($response);
     }
 
     public function send(Request $request, $id, $slug)
@@ -959,6 +988,60 @@ class EstimatesController extends Controller
             abort(404, 'Invalid estimate link.');
         }
     }
-
     
+    public function viewInvoice($id, Request $request): View
+    {
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+       
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+        // dd($salecustomer['sale_cus_id']);
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+        // dd($currencys);
+        
+        $salestax = SalesTax::all();
+        // dd($businessDetails);
+
+        $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
+
+        $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+        $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
+        // dd($newId);
+
+        $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->get();
+
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        // $states = States::get();
+
+        // dd($estimates);
+        return view('masteradmin.invoices.edit-invoice', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId'));
+
+    }
 }

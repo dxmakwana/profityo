@@ -23,6 +23,7 @@ use App\Http\Controllers\Masteradmin\EstimatesController;
 use App\Http\Controllers\Masteradmin\SalesProductController;
 use App\Http\Controllers\Masteradmin\PurchasProductController;
 use App\Http\Controllers\Masteradmin\PurchasVendorController;
+use App\Http\Controllers\Masteradmin\InvoicesController;
 
 
 /*
@@ -99,6 +100,9 @@ Route::group(['prefix' => $busadminRoute], function () {
         
         Route::get('/estimate/send/view/{id}/{slug}', [EstimatesController::class, 'sendView'])
         ->name('business.estimate.sendview');
+
+        Route::get('/invoice/send/view/{id}/{slug}', [InvoicesController::class, 'sendView'])
+        ->name('business.invoices.sendview');
     });
 
     Route::middleware(['auth_master','set.user.details', 'guard.session:masteradmins', 'prevent.back.history'])->group(function () {
@@ -184,8 +188,6 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/estimate/send/views/{id}/{slug}', [EstimatesController::class, 'authsendView'])
         ->name('business.estimate.sendviews');
         
-        
-        
 
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');
@@ -195,6 +197,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/productupdate/{SalesProduct}', [SalesProductController::class, 'update'])->name('business.salesproduct.update');
         Route::delete('/productdestroy/{salesproduct}', [SalesProductController::class, 'destroy'])->name('business.salesproduct.destroy');
         Route::get('productgetstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
+
 
         //  purchase product
         Route::get('/purchasesproduct', [PurchasProductController::class, 'index'])->name('business.purchasproduct.index');
@@ -212,6 +215,25 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/purchasesvendoredit/{PurchasesVendor}', [PurchasVendorController::class, 'edit'])->name('business.purchasvendor.edit');
         Route::patch('/purchasesvendorupdate/{PurchasesVendor}', [PurchasVendorController::class, 'update'])->name('business.purchasvendor.update');
         Route::delete('/purchasesvendordestroy/{PurchasesVendor}', [PurchasVendorController::class, 'destroy'])->name('business.purchasvendor.destroy');
+    
+        //invoice
+        Route::get('/edit-invoice/{id}', [EstimatesController::class, 'viewInvoice'])->name('business.estimates.viewInvoice');
+        Route::patch('/invoice-store/{id}', [InvoicesController::class, 'invoiceStore'])->name('business.invoices.invoiceStore');
+        Route::get('/view-invoice/{id}', [InvoicesController::class, 'view'])->name('business.invoices.view');
+        Route::post('/invoice-status-store/{id}', [InvoicesController::class, 'statusStore'])->name('business.invoices.statusStore');
+        Route::get('/edit_invoices/{id}', [InvoicesController::class, 'edit'])->name('business.invoices.edit');
+        Route::get('/invoice/send/{id}/{slug}', [InvoicesController::class, 'send'])
+        ->name('business.invoices.send');
+        Route::delete('/invoicedestroy/{id}', [InvoicesController::class, 'destroy'])->name('business.invoices.destroy');
+        Route::get('/invoice/send/views/{id}/{slug}', [InvoicesController::class, 'authsendView'])
+        ->name('business.invoices.sendviews');
+        Route::get('/create-invoice', [InvoicesController::class, 'create'])->name('business.invoices.create');
+        Route::patch('/update-invoice/{invoices_id}', [InvoicesController::class, 'update'])->name('business.invoices.update');
+        Route::post('/invoice-store', [InvoicesController::class, 'store'])->name('business.invoices.store');
+        Route::patch('/invoice/menu/update', [InvoicesController::class, 'menuUpdate'])->name('invoicesmenus.update');
+        Route::get('/invoice/menu/list', [InvoicesController::class, 'getMenuSessionData'])->name('invoicesmenus.menulist');
+
+      
     });
     
 });

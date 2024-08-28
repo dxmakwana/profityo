@@ -1,6 +1,6 @@
 @if(isset($access['add_estimates']) && $access['add_estimates'])
   @extends('masteradmin.layouts.app')
-  <title>Profityo | Add Estimates</title>
+  <title>Profityo | Add Invoice</title>
   @section('content')
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -9,10 +9,10 @@
     <div class="container-fluid">
       <div class="row mb-2 align-items-center justify-content-between">
       <div class="col-auto">
-        <h1 class="m-0">{{ __('New Estimate') }}</h1>
+        <h1 class="m-0">{{ __('New Invoice') }}</h1>
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">{{ __('New Estimate') }}</li>
+        <li class="breadcrumb-item active">{{ __('New Invoice') }}</li>
         </ol>
       </div><!-- /.col -->
       <div class="col-auto">
@@ -38,7 +38,7 @@
         </button>
         </div>
       </div>
-      <form id="items-form" action="{{ route('business.estimates.store') }}" method="POST">
+      <form id="items-form" action="{{ route('business.invoices.store') }}" method="POST">
         @csrf
         <!-- /.card-header -->
         <div class="card-body">
@@ -57,7 +57,7 @@
           <div class="modal-body pad-1 text-center">
           <i class="fas fa-solid fa-trash delete_icon"></i>
           <p class="company_details_text">Removing your logo will remove it from all existing and future
-          invoices and estimates. Are you sure you want to remove your business logo?</p>
+          invoices and invoices. Are you sure you want to remove your business logo?</p>
           <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
           <a type="submit" class="delete_btn px-15">Delete</a>
           </div>
@@ -160,14 +160,14 @@
         <div class="row">
           <div class="col-md-3">
           <div class="form-group">
-            <label for="estimatenumber">Estimate Number</label>
+            <label for="estimatenumber">Invoice Number</label>
             <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="">
             <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
           </div>
           </div>
           <div class="col-md-3">
           <div class="form-group">
-            <label for="estimatecustomerref">Customer Ref</label>
+            <label for="estimatecustomerref">P.O./S.O. Number</label>
             <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
             placeholder="">
             <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
@@ -175,7 +175,7 @@
           </div>
           <div class="col-md-3">
           <div class="form-group">
-            <label>Date</label>
+            <label>Invoice Date</label>
             <div class="input-group date" id="estimatedate" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
               data-target="#estimatedate" />
@@ -188,7 +188,7 @@
           </div>
           <div class="col-md-3">
           <div class="form-group">
-            <label>Valid Until</label>
+            <label>Payment Due</label>
             <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" placeholder=""
               data-target="#estimatevaliddate" name="sale_estim_valid_date" />
@@ -364,7 +364,7 @@
       <div class="row justify-content-between">
         <div class="col-md-12">
         <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-          placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)"></textarea>
+          placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)"></textarea>
         </div>
       </div>
       <!-- /.row -->
@@ -537,7 +537,7 @@
         <span aria-hidden="true">&times;</span>
       </button>
       </div>
-      <form method="post" id="estimateForm" action="{{ route('estimatemenus.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+      <form method="post" id="invoiceForm" action="{{ route('invoicesmenus.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
       @csrf
     @method('patch')
     <div class="modal-body">
@@ -1026,7 +1026,7 @@
 
 
       $.ajax({
-      url: "{{ route('business.estimates.store') }}",
+      url: "{{ route('business.invoices.store') }}",
       method: 'POST',
       data: formData,
       success: function (response) {
@@ -1101,7 +1101,7 @@
   </script>
 <script>
     $(document).ready(function () {
-        $('#estimateForm').on('submit', function (e) {
+        $('#invoiceForm').on('submit', function (e) {
             e.preventDefault(); 
             $.ajax({
               url: $(this).attr('action'),
@@ -1126,7 +1126,7 @@
 
         function updateTableHeaders() {
             $.ajax({
-                url: '{{ route('estimatemenus.menulist') }}',
+                url: '{{ route('invoicesmenus.menulist') }}',
                 type: 'GET',
                 success: function (data) {
                   // console.log(data);

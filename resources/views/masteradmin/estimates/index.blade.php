@@ -189,7 +189,7 @@
                                   <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.viewInvoice', [$value->sale_estim_id]) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
                                   <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
@@ -304,7 +304,7 @@
                                   <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.viewInvoice', [$value->sale_estim_id]) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
                                   <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
@@ -422,7 +422,7 @@
                                   <a target="_blank" href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a href="{{ route('business.estimates.viewInvoice', [$value->sale_estim_id]) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-invoice mr-2"></i> Convert To Invoice
                                   </a>
                                   <a href="javascript:void(0);"  data-id="{{ $value->sale_estim_id }}" onclick="sendEstimate('{{ route('business.estimate.send', [$value->sale_estim_id, $user_id]) }}', {{ $value->sale_estim_id }})"  class="dropdown-item">
@@ -505,9 +505,14 @@
             sale_status: nextStatus 
         },
         success: function(response) {
+          console.log(response);
             if (response.success) {
-                // alert(response.message);
-                location.reload(); 
+              if (response.redirect_url) {
+                    window.location.href = response.redirect_url;
+                } else {
+                    location.reload();
+                }
+               
             } else {
                 // alert(response.message);
             }
