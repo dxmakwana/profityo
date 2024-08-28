@@ -199,7 +199,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('productgetstates/{country_id}', [SalesProductController::class, 'productStates'])->name('get.states');
 
 
-        //  purchase product
+        //purchase product
         Route::get('/purchasesproduct', [PurchasProductController::class, 'index'])->name('business.purchasproduct.index');
         Route::get('/purchasesproductcreate', [PurchasProductController::class, 'create'])->name('business.purchasproduct.create');
         Route::post('/purchasesproductstore', [PurchasProductController::class, 'store'])->name('business.purchasproduct.store');
@@ -208,7 +208,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('/purchasesproductdestroy/{PurchasesProduct}', [PurchasProductController::class, 'destroy'])->name('business.purchasproduct.destroy');
       //   Route::get('getstates/{country_id}', [PurchasProductController::class, 'productStates'])->name('get.states');
 
-        //  purchase vendor
+        //purchase vendor
         Route::get('/purchasesvendor', [PurchasVendorController::class, 'index'])->name('business.purchasvendor.index');
         Route::get('/purchasesvendorcreate', [PurchasVendorController::class, 'create'])->name('business.purchasvendor.create');
         Route::post('/purchasesvendorstore', [PurchasVendorController::class, 'store'])->name('business.purchasvendor.store');
@@ -234,8 +234,10 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::post('/invoice-store', [InvoicesController::class, 'store'])->name('business.invoices.store');
         Route::patch('/invoice/menu/update', [InvoicesController::class, 'menuUpdate'])->name('invoicesmenus.update');
         Route::get('/invoice/menu/list', [InvoicesController::class, 'getMenuSessionData'])->name('invoicesmenus.menulist');
+        Route::get('/duplicate-invoice/{id}', [InvoicesController::class, 'duplicate'])->name('business.invoices.duplicate');
+        Route::patch('/duplicate-invoice-store/{id}', [InvoicesController::class, 'duplicateStore'])->name('business.invoices.duplicateStore');
+        Route::get('/invoice-list', [InvoicesController::class, 'index'])->name('business.invoices.index');
 
-      
     });
     
 });

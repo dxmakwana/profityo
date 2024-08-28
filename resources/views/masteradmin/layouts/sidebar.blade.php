@@ -32,7 +32,9 @@
             )
           <li class="nav-item {{ request()->is($busadminRoutes.'/estimates-list*') ||
            request()->is($busadminRoutes.'/create-estimates*') || 
-           request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/view-estimates/*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') 
+           request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/view-estimates/*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') || request()->is($busadminRoutes.'/invoice-list*') || 
+                             request()->is($busadminRoutes.'/create-invoice*') || 
+                             request()->is($busadminRoutes.'/edit_invoices/*')  || request()->is($busadminRoutes.'/view-invoice/*') || request()->is($busadminRoutes.'/duplicate-invoice/*') || request()->is($busadminRoutes.'/edit-invoice/*') || request()->is($busadminRoutes.'/duplicate-estimates/*')
                     ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
@@ -46,7 +48,7 @@
               <li class="nav-item">
                 <a href="{{ route('business.estimates.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/estimates-list*') || 
                              request()->is($busadminRoutes.'/create-estimates*') || 
-                             request()->is($busadminRoutes.'/edit-estimates/*')  || request()->is($busadminRoutes.'/view-estimates/*')
+                             request()->is($busadminRoutes.'/edit-estimates/*')  || request()->is($busadminRoutes.'/view-estimates/*') || request()->is($busadminRoutes.'/duplicate-estimates/*')
                               ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Estimates</p>
@@ -57,7 +59,10 @@
               @endif
               @if((isset($access['invoices']) && $access['invoices']))
               <li class="nav-item">
-                <a href="invoices-list.html" class="nav-link">
+                <a href="{{ route('business.invoices.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/invoice-list*') || 
+                             request()->is($busadminRoutes.'/create-invoice*') || 
+                             request()->is($busadminRoutes.'/edit_invoices/*')  || request()->is($busadminRoutes.'/view-invoice/*') || request()->is($busadminRoutes.'/duplicate-invoice/*') || request()->is($busadminRoutes.'/edit-invoice/*') 
+                              ? 'active' : '' }} " class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Invoices</p>
                 </a>
@@ -115,7 +120,7 @@
                              request()->is($busadminRoutes.'/purchasesproductcreate*') || 
                              request()->is($busadminRoutes.'/purchasesproductedit/*') || request()->is($busadminRoutes.'/purchasesvendor*') || 
                              request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesvendoredit/*') 
+                             request()->is($busadminRoutes.'/purchasesvendoredit/*') || request()->is($busadminRoutes.'/vendordetails/*')    
                     ? 'menu-open side_shape' : '' }} ">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
@@ -133,12 +138,12 @@
                   <p>Bills</p>
                 </a>
               </li>
-              @endif
+              @endif 
               @if(isset($access['vendors']) && $access['vendors']) 
               <li class="nav-item">
                 <a href="{{ route('business.purchasvendor.index') }}" class="nav-link {{  request()->is($busadminRoutes.'/purchasesvendor*') || 
                              request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesvendoredit/*')    
+                             request()->is($busadminRoutes.'/purchasesvendoredit/*')   || request()->is($busadminRoutes.'/vendordetails/*')    
                               ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Vendors</p>

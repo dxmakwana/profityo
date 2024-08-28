@@ -630,7 +630,369 @@ class InvoicesController extends Controller
             abort(404, 'Invalid estimate link.');
         }
     }
+    public function destroy($id)
+    {
+        //
+        $user = Auth::guard('masteradmins')->user();
 
+        $invoices = InvoicesDetails::where(['sale_inv_id' => $id, 'id' => $user->id])->firstOrFail();
+
+        // Delete the estimate details
+        $invoices->where('sale_inv_id', $id)->delete();
+
+        InvoicesItems::where('sale_inv_id', $id)->delete();
+
+        InvoicesCustomizeMenu::where('sale_inv_id', $id)->delete();
+
+        \MasterLogActivity::addToLog('Invoice details Deleted.');
+
+       
+        return response()->json(['success' => true, 'message' => 'Estimate deleted successfully.']);
+       
+
+    }
+
+    public function authsendView(Request $request, $id, $slug)
+    {
+        try {
+            // dd('hiii');
+            $id1= $id;
+            $slug1 = $slug;
+    
+            $base64UserID =$id;
+    
+            $decryptedEstimateId = $id;
+            $decryptedUserID = $slug;
+            // dd($decryptedUserID);
+
+            
+            $tableName = $decryptedUserID . '_py_business_details';
+         
+            
+            try {
+                $businessDetails = \DB::table($tableName)
+                    ->join('py_states', 'py_states.id', '=', $tableName . '.state_id')
+                    ->join('py_countries', 'py_countries.id', '=', $tableName . '.country_id')
+                    ->select($tableName . '.*', 'py_states.name as state_name', 'py_countries.name as country_name')
+                    ->first();
+            
+                if (!$businessDetails) {
+                    abort(404);
+                }
+            
+            } catch (QueryException $e) {
+                if ($e->getCode() == '42S02') {
+                    abort(404); 
+                } else {
+                    throw $e;
+                }
+            }
+            
+            $tableNameCustomer = $decryptedUserID . '_py_sale_customers';
+            $customers = \DB::table($tableNameCustomer)
+                ->where('id', $businessDetails->id)
+                ->first();
+
+
+            $currencys = \DB::table('py_countries')->get();
+
+            // $customers = SalesCustomers::where('id', $businessDetails->id)->first();
+    
+            // $currencys = Countries::all();
+
+            $tableNameEstimates = $decryptedUserID . '_py_estimates_details';
+            $tableNameStates = 'py_states'; 
+            $tableNameCountries = 'py_countries';
+
+            try {
+                $tableNameinvoice = $decryptedUserID . '_py_invoices_details';
+            $tableNameStates = 'py_states'; // Assuming static names for states and countries
+            $tableNameCountries = 'py_countries';
+
+            $invoices = \DB::table($tableNameinvoice)
+            ->leftJoin($tableNameCustomer, $tableNameCustomer . '.sale_cus_id', '=', $tableNameinvoice . '.sale_cus_id')
+            // Join states and countries for billing address
+            ->leftJoin($tableNameStates . ' as bill_states', 'bill_states.id', '=', $tableNameCustomer . '.sale_bill_state_id')
+            ->leftJoin($tableNameCountries . ' as bill_countries', 'bill_countries.id', '=', $tableNameCustomer . '.sale_bill_country_id')
+            // Join states and countries for shipping address
+            ->leftJoin($tableNameStates . ' as ship_states', 'ship_states.id', '=', $tableNameCustomer . '.sale_ship_state_id')
+            ->leftJoin($tableNameCountries . ' as ship_countries', 'ship_countries.id', '=', $tableNameCustomer . '.sale_ship_country_id')
+            ->where($tableNameinvoice . '.sale_inv_id', $decryptedEstimateId)
+            ->select(
+                $tableNameinvoice . '.*',
+                $tableNameCustomer . '.*',
+                'bill_states.name as bill_state_name',
+                'bill_countries.name as bill_country_name',
+                'ship_states.name as ship_state_name',
+                'ship_countries.name as ship_country_name'
+            )
+            ->first();
+            
+                if (!$invoices) {
+                    abort(404); 
+                }
+            
+            } catch (QueryException $e) {
+                if ($e->getCode() == '42S02') {
+                    abort(404);
+                } else {
+                    throw $e;
+                }
+            }
+
+           
+            
+            $tableNameInvoiceItems = $decryptedUserID . '_py_invoices_items';
+            $tableNameProduct = $decryptedUserID . '_py_sale_product';
+            $tableNameTax = $decryptedUserID . '_py_sales_tax';
+
+            $invoiceItems = \DB::table($tableNameInvoiceItems)
+            ->leftJoin($tableNameProduct, $tableNameProduct . '.sale_product_id', '=', $tableNameInvoiceItems . '.sale_product_id')
+            ->leftJoin($tableNameTax, $tableNameTax . '.tax_id', '=', $tableNameInvoiceItems . '.sale_inv_item_tax')
+            ->where($tableNameInvoiceItems . '.sale_inv_id', $decryptedEstimateId)
+            ->select(
+                $tableNameInvoiceItems . '.*',
+                $tableNameProduct . '.*',
+                $tableNameTax . '.*'
+            )
+            ->get();
+
+            $currency = $currencys->firstWhere('id', $invoices->sale_currency_id);
+
+            if ($request->has('download')) {
+                $pdf = PDF::loadView('masteradmin.invoices.pdf', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'))
+                ->setPaper('a4', 'portrait')
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isRemoteEnabled', true)
+                ->setOption('defaultMediaType', 'all')
+                ->setOption('isFontSubsettingEnabled', true);
+
+                // return $pdf->stream('estimate.pdf');
+                return $pdf->download('invoice.pdf');
+                        }
+
+            
+            if ($request->has('print')) {
+
+                return view('masteradmin.invoices.print', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'));
+            }            
+
+            return view('masteradmin.invoices.send', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'));
+            
+        } catch (DecryptException $e) {
+            abort(404, 'Invalid estimate link.');
+        }
+    }
+
+    public function duplicate($id, Request $request): View
+    {
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+       
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+        // dd($salecustomer['sale_cus_id']);
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+        // dd($currencys);
+        
+        $salestax = SalesTax::all();
+        // dd($businessDetails);
+
+        $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
+
+        $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+        $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
+        // dd($newId);
+
+        $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->get();
+
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        // $states = States::get();
+
+        // dd($estimates);
+        return view('masteradmin.invoices.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','newId'));
+    }
+
+    public function duplicateStore(Request $request)
+    {
+        // dd($request->sale_currency_id);
+        $request->validate([
+            'sale_estim_title' => 'nullable|string|max:255',
+            'sale_estim_summary' => 'nullable|string',
+            'sale_cus_id' => 'nullable|integer',
+            'sale_estim_number' => 'required|string|max:255',
+            'sale_estim_customer_ref' => 'nullable|string|max:255',
+            'sale_estim_date' => 'required|date',
+            'sale_estim_valid_date' => 'required|date',
+            'sale_estim_discount_desc' => 'nullable|string',
+            'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+            'sale_currency_id' => 'required|integer',
+            'sale_estim_sub_total' => 'required|numeric',
+            'sale_estim_discount_total' => 'required|numeric',
+            'sale_estim_tax_amount' => 'required|numeric',
+            'sale_estim_final_amount' => 'required|numeric',
+            'sale_estim_notes' => 'nullable|string',
+            'sale_estim_footer_note' => 'nullable|string',
+            'sale_estim_image' => 'nullable|image',
+            'sale_status' => 'required|integer',
+            'sale_estim_item_discount' => 'nullable|integer',
+           
+            ]);
+    
+    
+            $invoice = new InvoicesDetails();
+            $user = Auth::guard('masteradmins')->user();
+            $invoice->fill([
+                'sale_inv_title' => $request->sale_estim_title,
+                'sale_inv_summary' => $request->sale_estim_summary,
+                'sale_cus_id' => $request->sale_cus_id,
+                'sale_inv_number' => $request->sale_estim_number,
+                'sale_inv_customer_ref' => $request->sale_estim_customer_ref,
+                'sale_inv_date' => $request->sale_estim_date,
+                'sale_inv_valid_date' => $request->sale_estim_valid_date,
+                'sale_inv_discount_desc' => $request->sale_estim_discount_desc,
+                'sale_inv_discount_type' => $request->sale_estim_discount_type,
+                'sale_currency_id' => $request->sale_currency_id,
+                'sale_inv_sub_total' => $request->sale_estim_sub_total,
+                'sale_inv_discount_total' => $request->sale_estim_discount_total,
+                'sale_inv_tax_amount' => $request->sale_estim_tax_amount,
+                'sale_inv_final_amount' => $request->sale_estim_final_amount,
+                'sale_inv_notes' => $request->sale_estim_notes,
+                'sale_inv_footer_note' => $request->sale_estim_footer_note,
+                'sale_status' => 'Draft',
+                'sale_inv_item_discount' => $request->sale_estim_item_discount,
+                'sale_inv_status' => 1,
+                'id' => $user->id,
+            ]);
+            
+            $invoice->save();
+            $lastInsertedId = $invoice->id;
+            // dd($lastInsertedId);
+            
+    
+            foreach ($request->input('items') as $item) {
+                $invoiceItem = new InvoicesItems();
+                
+                $invoiceItem->sale_product_id = $item['sale_product_id'];
+                $invoiceItem->sale_inv_item_qty = $item['sale_estim_item_qty'];
+                $invoiceItem->sale_inv_item_price = $item['sale_estim_item_price'];
+                $invoiceItem->sale_inv_item_tax = $item['sale_estim_item_tax'];
+                $invoiceItem->sale_inv_item_desc = $item['sale_estim_item_desc'];
+            
+                $invoiceItem->id = $user->id;
+                $invoiceItem->sale_inv_id = $lastInsertedId;
+                $invoiceItem->sale_inv_item_status = 1;
+                        
+                $invoiceItem->save();
+               
+            }
+    
+            $sessionData = session('form_data', []);
+    
+            // dd( $sessionssData);
+                foreach ($sessionData as $key => $value) {
+                    $mname = str_replace('_', ' ', $key);
+    
+                    $menu = CustomizeMenu::where('mname', $mname)->first();
+    
+                    if ($menu) {
+                        $data = [
+                            'sale_inv_id' => $lastInsertedId ?? null, 
+                            'id' => $user->id ?? NULL,
+                            'mname' => $menu->mname,
+                            'mtitle' => $menu->mtitle,
+                            'mid' => $menu->cust_menu_id,
+                            'is_access' => $value ? 1 : 0,
+                            'inv_cust_menu_title' => $value,
+                        ];
+    
+                        $invoiceMenu = new InvoicesCustomizeMenu($data);
+                        $invoiceMenu->save();
+                    }
+                }
+    
+        
+        // Clear the session data if necessary
+        session()->forget('form_data');
+      
+        \MasterLogActivity::addToLog('Estimate is Duplicate.');
+
+        return response()->json([
+            'redirect_url' => route('business.invoices.view', ['id' => $lastInsertedId]),
+        ]);
+
+    }
+
+    public function index(): View
+    {
+        //
+        // dd('hii');
+        $user = Auth::guard('masteradmins')->user();
+        // dd($user);
+        $user_id = $user->user_id;
+
+        $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Approve', 'Send', 'Record Payment', 'View'])
+        ->with('customer')
+        ->orderBy('created_at', 'desc')
+        ->get();
+        $draftInvoices = InvoicesDetails::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
+        $allInvoices = InvoicesDetails::with('customer')->orderBy('created_at', 'desc')->get();
+        // dd($allEstimates);
+        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id'));
+
+    }
+
+    public function statusStore(Request $request, $id)
+    {
+        $user = Auth::guard('masteradmins')->user();
+
+        $incoice = InvoicesDetails::where([
+            'sale_inv_id' => $id,
+            'id' => $user->id
+        ])->firstOrFail();
+
+        $validated = $request->validate([
+            'sale_status' => 'required|string|max:255',
+        ]);
+
+        $incoice->where('sale_inv_id', $id)->update($validated);
+
+        $response = ['success' => true, 'message' => 'Invoice saved successfully!'];
+        if ($validated['sale_status'] === 'View') {
+            $response['redirect_url'] = route('business.invoices.view', [ $incoice->sale_inv_id]); 
+        }else
+        if ($validated['sale_status'] === 'Sent') {
+            $response['redirect_url'] = route('business.invoices.send', [ $incoice->sale_inv_id, $user->user_id]); 
+        }
+
+        return response()->json($response);
+    }
 
     
 }

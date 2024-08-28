@@ -1,4 +1,4 @@
-@if(isset($access['view_estimates']) && $access['view_estimates'])
+@if(isset($access['view_invoices']) && $access['view_invoices'])
     @extends('masteradmin.layouts.app')
     <title>Profityo | View Invoice</title>
     @section('content')
@@ -23,18 +23,18 @@
                                         class="fas fa-solid fa-trash mr-2"></i>Delete</button></a>
                             <!-- <a href="#"><button class="add_btn_br" onclick="printPage()"><i
                                         class="fas fa-solid fa-print mr-2"></i>Print</button></a> -->
-                            <a target="_blank" href="{{ route('business.estimate.sendviews', [ $invoices->sale_inv_id, $user_id,'print' => 'true']) }}">
+                            <a target="_blank" href="{{ route('business.invoices.sendviews', [ $invoices->sale_inv_id, $user_id,'print' => 'true']) }}">
                                 <button class="add_btn_br">
                                     <i class="fas fa-solid fa-print mr-2"></i>Print
                                 </button>
                             </a>
-                            <a href="{{ route('business.estimate.sendviews', [ $invoices->sale_inv_id, $user_id, 'download' => 'true']) }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
+                            <a href="{{ route('business.invoices.sendviews', [ $invoices->sale_inv_id, $user_id, 'download' => 'true']) }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
                                     Pdf</button></a>
                             </a>
                             <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Make Recurring</button></a>
-                            <a href="{{ route('business.estimates.duplicate', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
+                            <a href="{{ route('business.invoices.duplicate', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-regular fa-copy mr-2"></i>Duplicate</button></a>
-                            <a href="{{ route('business.estimates.edit', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
+                            <a href="{{ route('business.invoices.edit', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-solid fa-pen-to-square mr-2"></i>Edit</button></a>
                             <a href="{{ route('business.invoices.create') }}"><button class="add_btn">Create Another Estimate</button></a>
                         </ol>
@@ -857,7 +857,7 @@
     </style>
     <script>
     function sendEstimate(url) {
-        if (confirm('Are you sure you want to send this estimate?')) {
+        if (confirm('Are you sure you want to send this invoice?')) {
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -869,7 +869,7 @@
                     location.reload(); 
                 },
                 error: function(xhr) {
-                    alert('An error occurred while sending the estimate.');
+                    alert('An error occurred while sending the invoice.');
                 }
             });
         }

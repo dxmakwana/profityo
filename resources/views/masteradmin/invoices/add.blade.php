@@ -1,4 +1,4 @@
-@if(isset($access['add_estimates']) && $access['add_estimates'])
+@if(isset($access['add_invoices']) && $access['add_invoices'])
   @extends('masteradmin.layouts.app')
   <title>Profityo | Add Invoice</title>
   @section('content')
@@ -217,6 +217,7 @@
             <th style="width: 30%;" id="itemsHeader">Items</th>
             <th id="unitsHeader">Units</th>
             <th id="priceHeader">Price</th>
+            <th>Tax</th>
             <th id="amountHeader">Amount</th>
             <th>Actions</th> <!-- New column for actions -->
           </tr>

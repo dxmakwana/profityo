@@ -1,4 +1,4 @@
-@if(isset($access['update_estimates']) && $access['update_estimates']) 
+@if(isset($access['update_invoices']) && $access['update_invoices']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit invoice</title>
 @section('content')
@@ -71,7 +71,7 @@
                     <div class="modal-body pad-1 text-center">
                       <i class="fas fa-solid fa-trash delete_icon"></i>
                       <p class="company_details_text">Removing your logo will remove it from all existing and future
-                      invoices and estimates. Are you sure you want to remove your business logo?</p>
+                      invoices and invoices. Are you sure you want to remove your business logo?</p>
                       <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
                       <a type="submit" class="delete_btn px-15">Delete</a>
                     </div>
@@ -103,7 +103,7 @@
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right px-10">
                     <input type="text" class="form-control text-right" name="sale_estim_summary" id="estimatesummary"
-                      placeholder="Summary (e.g. project name, description of estimate)" value="{{ $estimates->sale_estim_summary }}">
+                      placeholder="Summary (e.g. project name, description of invoice)" value="{{ $estimates->sale_estim_summary }}">
                   </div>
                 </div>
                 <div class="px-10">
@@ -362,7 +362,7 @@
         <div class="row justify-content-between">
           <div class="col-md-12">
             <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-              placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
+              placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
           </div>
         </div>
         <!-- /.row -->
@@ -733,7 +733,7 @@
               <div class="icheck-primary">
                 <input type="radio" id="apply1" name="r16">
                 <label for="apply1">Apply These Settings to Future Estimates.</label>
-                <p>These settings will apply to estimates and invoices. You can change these anytime from
+                <p>These settings will apply to invoices and invoices. You can change these anytime from
                   Invoice Customization settings.</p>
               </div>
             </div>

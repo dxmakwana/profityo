@@ -1,6 +1,6 @@
 @if(isset($access['update_invoices']) && $access['update_invoices']) 
 @extends('masteradmin.layouts.app')
-<title>Profityo | Edit Invoice</title>
+<title>Profityo | Edit Invoices</title>
 @section('content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -13,7 +13,7 @@
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
             <li class="breadcrumb-item">{{ __('Edit Invoice') }}</li>
-            <li class="breadcrumb-item active">#{{ $invoices->sale_inv_id }}</li>
+            <li class="breadcrumb-item active">#{{ $newId }}</li>
           </ol>
         </div><!-- /.col -->
         <div class="col-auto">
@@ -30,15 +30,15 @@
   <section class="content px-10">
     <div class="container-fluid">
       <!-- card -->
-      @if(Session::has('invoice-edit'))
+      @if(Session::has('estimate-edit'))
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-          {{ Session::get('invoice-edit') }}
+          {{ Session::get('estimate-edit') }}
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
           </div>
           @php
-          Session::forget('invoice-edit');
+          Session::forget('estimate-edit');
       @endphp
       @endif
       <div class="card card-default">
@@ -50,7 +50,7 @@
             </button>
           </div>
         </div>
-        <form id="items-form" action="{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}"
+        <form id="items-form" action="{{ route('business.invoices.duplicateStore', ['id' => $invoices->sale_inv_id]) }}"
         method="POST">
           @csrf
           @method('Patch')
@@ -102,7 +102,7 @@
                 </div>
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right px-10">
-                    <input type="text" class="form-control text-right" name="sale_estim_summary" id="invoicesummary"
+                    <input type="text" class="form-control text-right" name="sale_estim_summary" id="estimatesummary"
                       placeholder="Summary (e.g. project name, description of invoice)" value="{{ $invoices->sale_inv_summary }}">
                   </div>
                 </div>
@@ -167,7 +167,7 @@
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="estimatenumber">Invoice number</label>
-                      <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $invoices->sale_inv_number }}">
+                      <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
                       <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
                     </div>
                   </div>
@@ -260,7 +260,7 @@
                             <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
                                 @foreach($salestax as $salesTax)
                                     <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
-                                        {{ $salesTax->tax_id == $item->sale_inv_item_tax ? 'selected' : '' }}>
+                                        {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
                                         {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
                                     </option>
                                 @endforeach
@@ -290,7 +290,7 @@
                 <div class="col-md-4">
                     <div class="d-flex">
                     <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
-                        aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_inv_item_discount }}" placeholder="Enter a discount value">
+                        aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_estim_item_discount }}" placeholder="Enter a discount value">
                     <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
                         <option value="1" {{ $invoices->sale_inv_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}</option>
                         <option value="2" {{ $invoices->sale_inv_discount_type == 2 ? 'selected' : '' }}>%</option>
@@ -530,7 +530,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Customize this Invoice</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Customize this Estimate</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -540,7 +540,7 @@
         @method('patch')
         <div class="modal-body">
           <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This
-            Invoice:</div>
+            Estimate:</div>
           <div class="colum_box">
             <h2 class="edit-colum_title">Items</h2>
             <div class="row align-items-center justify-content-between">
@@ -732,7 +732,7 @@
             <div class="col-md-12">
               <div class="icheck-primary">
                 <input type="radio" id="apply1" name="r16">
-                <label for="apply1">Apply These Settings to Future Invoices.</label>
+                <label for="apply1">Apply These Settings to Future Estimates.</label>
                 <p>These settings will apply to invoices and invoices. You can change these anytime from
                   Invoice Customization settings.</p>
               </div>
@@ -1843,7 +1843,7 @@
 
 
       $.ajax({
-        url: "{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}",
+        url: "{{ route('business.invoices.duplicateStore', ['id' => $invoices->sale_inv_id]) }}",
         method: 'PATCH',
         data: formData,
         success: function (response) {

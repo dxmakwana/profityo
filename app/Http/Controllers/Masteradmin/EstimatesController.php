@@ -1044,4 +1044,6 @@ class EstimatesController extends Controller
         return view('masteradmin.invoices.edit-invoice', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId'));
 
     }
+
+    
 }

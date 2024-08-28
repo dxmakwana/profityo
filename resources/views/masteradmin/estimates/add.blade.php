@@ -217,6 +217,7 @@
             <th style="width: 30%;" id="itemsHeader">Items</th>
             <th id="unitsHeader">Units</th>
             <th id="priceHeader">Price</th>
+            <th>Tax</th>
             <th id="amountHeader">Amount</th>
             <th>Actions</th> <!-- New column for actions -->
           </tr>
