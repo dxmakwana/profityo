@@ -132,7 +132,7 @@
 
      
     <!-- @include('masteradmin.layouts.footerlink') -->
-    <script>
+    <!-- <script>
         $(document).ready(function() {
             function updateParentCheckboxes(parentSelector, childSelector) {
                 $(childSelector).change(function() {
@@ -168,6 +168,53 @@
                 parentRow.find('.parent-checkbox').prop('checked', allChecked);
             });
         });
-    </script>
+    </script> -->
+    <script>
+    $(document).ready(function() {
+        $('.parent-checkbox').change(function() {
+            var isChecked = $(this).is(':checked');
+            $(this).closest('tr').find('.child-checkbox').prop('checked', isChecked);
+        });
+
+        $('.child-checkbox').change(function() {
+            var parentRow = $(this).closest('tr');
+            var allChecked = parentRow.find('.child-checkbox').length === parentRow.find('.child-checkbox:checked').length;
+            parentRow.find('.parent-checkbox').prop('checked', allChecked);
+
+            if (parentRow.find('.child-checkbox:checked').length > 0) {
+                parentRow.find('.parent-checkbox').prop('indeterminate', false).prop('checked', true);
+            } else {
+                parentRow.find('.parent-checkbox').prop('indeterminate', false).prop('checked', false);
+            }
+        });
+
+        // $('#chk_reports').change(function() {
+        //     var isChecked = $(this).is(':checked');
+        //     $('.report_row').find('.child-checkbox').prop('checked', isChecked);
+        // });
+
+        // $('.report_row .child-checkbox').change(function() {
+        //     var allChecked = $('.report_row .child-checkbox').length === $('.report_row .child-checkbox:checked').length;
+        //     $('#chk_reports').prop('checked', allChecked);
+        // });
+        // Specific for the Reports section
+        $('#chk_reports').change(function() {
+            var isChecked = $(this).is(':checked');
+            $('.report_row').find('.child-checkbox').prop('checked', isChecked);
+        });
+
+        $('.report_row .child-checkbox').change(function() {
+            var allChecked = $('.report_row .child-checkbox').length === $('.report_row .child-checkbox:checked').length;
+            $('#chk_reports').prop('checked', allChecked);
+
+            if ($('.report_row .child-checkbox:checked').length > 0) {
+                $('#chk_reports').prop('indeterminate', false).prop('checked', true);
+            } else {
+                $('#chk_reports').prop('indeterminate', false).prop('checked', false);
+            }
+        });
+    });
+</script>
+
 
 

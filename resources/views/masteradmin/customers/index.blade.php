@@ -81,7 +81,7 @@
                             <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                           </a>
                           <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-customer.html" class="dropdown-item">
+                            <a href="{{ route('business.customerdetails.show', $value->sale_cus_id) }}" class="dropdown-item">
                               <i class="fas fa-regular fa-eye mr-2"></i> View
                             </a>
                             @if(isset($access['update_customers']) && $access['update_customers']) 

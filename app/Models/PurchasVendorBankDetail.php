@@ -4,16 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class PurchasVendorBankDetail extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'id',
+        // 'id',
+        // 'purchases_vendor_id',
+        // 'purchases_routing_number',
+        // 'purchases_account_number',
+        // 'bank_account_type',
         'purchases_vendor_id',
         'purchases_routing_number',
         'purchases_account_number',
-        'account_type',
+        'bank_account_type',
+        'id',
 ];
 
     public function __construct(array $attributes = [])
@@ -25,5 +31,8 @@ class PurchasVendorBankDetail extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_purchases_bank_details');
     }
-  
+    public function vendor()
+    {
+        return $this->belongsTo(PurchasVendor::class, 'purchases_vendor_id','purchases_vendor_id');
+    }
 }

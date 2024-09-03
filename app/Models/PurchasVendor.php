@@ -58,4 +58,9 @@ class PurchasVendor extends Model
     {
         return $this->belongsTo(Countries::class, 'purchases_vendor_country_id');
     }
+    public function bankDetails()
+{
+    return $this->hasOne(PurchasVendorBankDetail::class, 'purchases_vendor_id', 'purchases_vendor_id');
+}
+
 }
