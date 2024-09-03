@@ -26,7 +26,7 @@
             <div class="small-box bg-customers">
               <div class="dash_board_icon" style="--bgcolor: #FF4E80"><i class="nav-icon fas fa-regular fa-building"></i></div>
               <p class="total_text">Total Business</p>
-              <h3 class="customer_total">5</h3>
+              <h3 class="customer_total">{{ $totalBusinesses }}</h3>
             </div>
           </div>
           <!-- ./col -->
@@ -35,7 +35,7 @@
             <div class="small-box bg-vendors">
               <div class="dash_board_icon" style="--bgcolor: #EC9053"><i class="nav-icon fas fa-regular fa-building"></i></div>
               <p class="total_text">Active Business</p>
-              <h3 class="customer_total vendor_total">5</h3>
+              <h3 class="customer_total vendor_total">{{ $activeBusinesses }}</h3>
             </div>
           </div>
           <!-- ./col -->
@@ -44,18 +44,18 @@
             <div class="small-box bg-invoices">
               <div class="dash_board_icon" style="--bgcolor: #22EB45"><i class="nav-icon fas fa-regular fa-building"></i></div>
               <p class="total_text">Inactive Business</p>
-              <h3 class="customer_total invoice_total">2</h3>
+              <h3 class="customer_total invoice_total">{{ $inactiveBusinesses }}</h3>
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-2 col-md-6">
-            <!-- small box -->
+          <!-- <div class="col-lg-2 col-md-6">
+            <!-- small box --
             <div class="small-box bg-bills">
               <div class="dash_board_icon" style="--bgcolor: #AF70FF"><i class="nav-icon fas fa-regular fa-building"></i></div>
               <p class="total_text">Delete Business</p>
               <h3 class="customer_total bill_total">0</h3>
             </div>
-          </div>
+          </div> -->
           <!-- ./col -->
         </div>
         <!-- /.row -->
