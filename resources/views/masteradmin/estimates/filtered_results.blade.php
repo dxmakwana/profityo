@@ -1,130 +1,5 @@
-@if(isset($access['view_estimates']) && $access['view_estimates']) 
-@extends('masteradmin.layouts.app')
-<title>Profityo | View All Estimates</title>
-@section('content')
-<!-- @include('flatpickr::components.style') -->
-<link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
 
-
-
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <div class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2 align-items-center justify-content-between">
-        <div class="col-auto">
-          <h1 class="m-0">{{ __('Estimates') }}</h1>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">{{ __('Estimates') }}</li>
-          </ol>
-        </div><!-- /.col -->
-        <div class="col-auto">
-          <ol class="breadcrumb float-sm-right">
-            <a href="{{ route('business.estimates.create') }}"><button class="add_btn"><i
-                  class="fas fa-plus add_plus_icon"></i>{{ __('Create Estimate') }}</button></a>
-          </ol>
-        </div><!-- /.col -->
-      </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </div>
-  <!-- /.content-header -->
-  <!-- Main content -->
-  <section class="content px-10">
-    <div class="container-fluid">
-      @if(Session::has('estimate-add'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ Session::get('estimate-add') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        @php
-        Session::forget('estimate-add');
-      @endphp
-      @endif
-
-      @if(Session::has('estimate-delete'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ Session::get('estimate-delete') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        @php
-        Session::forget('estimate-delete');
-      @endphp
-      @endif
-
-    
-
-      <!-- Small boxes (Stat box) -->
-      <div class="col-lg-12 fillter_box">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-auto">
-            <p class="m-0 filter-text"><i class="fas fa-solid fa-filter"></i>Filters</p>
-          </div><!-- /.col -->
-          <div class="col-auto">
-            <p class="m-0 float-sm-right filter-text">Clear Filters<i class="fas fa-regular fa-circle-xmark"></i></p>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-        <div class="row">
-          <div class="col-lg-3 col-1024 col-md-6 px-10">
-            <select id="sale_cus_id" class="form-control select2" style="width: 100%;" name="sale_cus_id">
-              <option value="" default>All customers</option>
-              @foreach($salecustomer as $value)
-                <option value="{{ $value->sale_cus_id }}">{{ $value->sale_cus_business_name }} </option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col-lg-2 col-1024 col-md-6 px-10">
-            <select class="form-control form-select" style="width: 100%;" name="sale_status" id="sale_status">
-              <option value="">All statuses</option>
-              <option value="Draft">Draft</option>
-              <option value="Saved">Saved</option>
-              <option value="Send">Sent</option>
-              <option value="Converted">Converted</option>
-            </select>
-          </div>
-          <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
-            <div class="input-group date mr-2" >
-              <x-flatpickr id="from-datepicker" placeholder="From"/>
-              <div class="input-group-append">
-                <span class="input-group-text" id="from-calendar-icon">
-                    <i class="fa fa-calendar-alt"></i>
-                </span>
-              </div>
-            </div>
-
-            <div class="input-group date" >
-              <x-flatpickr id="to-datepicker" placeholder="To" />
-              <div class="input-group-append">
-                <span class="input-group-text" id="to-calendar-icon">
-                    <i class="fa fa-calendar-alt"></i>
-                </span>
-              </div>
-            </div>
-
-
-            
-          </div>
-          <div class="col-lg-3 col-1024 col-md-6 px-10">
-            <div class="input-group">
-              <input type="search" class="form-control" name="sale_estim_number"  placeholder="Enter estimate #" id="sale_estim_number">
-              <div class="input-group-append" id="sale_estim_number_submit">
-                <button type="submit" class="btn btn-default" >
-                  <i class="fa fa-search"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- /.row -->
-      <!-- Main row -->
-      <div id="filter_data">
-      <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
+<div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
         <ul class="nav nav-pills p-2 tab_box">
           <li class="nav-item"><a class="nav-link active" href="#activeestimate" data-toggle="tab">Active <span
                 class="badge badge-toes">{{ count($activeEstimates) }}</span></a></li>
@@ -494,226 +369,92 @@
           <!-- /.tab-content -->
         </div><!-- /.card-body -->
       </div><!-- /.card-->
-      </div>                               
-      <!-- /.row (main row) -->
-    </div><!-- /.container-fluid -->
-  </section>
-  <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
 
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-dark">
-  <!-- Control sidebar content goes here -->
-</aside>
-<!-- /.control-sidebar -->
-
-</div>
-<!-- ./wrapper -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment"></script>
 <script>
-  function updateStatus(estimateId, nextStatus) {
-    $.ajax({
-      url: "{{ route('business.estimates.statusStore', ':id') }}".replace(':id', estimateId),
-        method: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            sale_status: nextStatus 
-        },
-        success: function(response) {
-          // console.log(response);
-            if (response.success) {
-              if (response.redirect_url) {
-                    window.location.href = response.redirect_url;
-                } else {
-                    location.reload();
-                }
-               
-            } else {
-                // alert(response.message);
-            }
-        },
-        error: function(xhr) {
-            alert('An error occurred while updating the status.');
-        }
+
+  $(function () {
+
+    $("#example1").DataTable({
+
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#example2').DataTable({
+
+      "paging": true,
+
+      "lengthChange": false,
+
+      "searching": false,
+
+      "ordering": true,
+
+      "info": true,
+
+      "autoWidth": false,
+
+      "responsive": true,
+
     });
-}
 
-$(document).on('click', '.delete_btn', function() {
-    var estimateId = $(this).data('id'); 
-    var form = $('#delete-form-' + estimateId);
-    var url = form.attr('action'); 
+  });
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: form.serialize(), 
-        success: function(response) {
-            if (response.success) {
-                $('#estimate-row-' + estimateId).remove();
-
-                $('#estimate-row-draft-' + estimateId).remove();
-
-                $('#estimate-row-approve-' + estimateId).remove();
-
-                $('#deleteestimatall-' + estimateId).modal('hide');
-                $('#deleteestimatedraft-' + estimateId).modal('hide');
-                $('#deleteestimateapprove-' + estimateId).modal('hide');
-
-                // alert(response.message);
-            } else {
-                alert('An error occurred: ' + response.message);
-            }
-        },
-        error: function(xhr) {
-            alert('An error occurred while deleting the record.');
-        }
-    });
-});
 </script>
 <script>
-    function sendEstimate(url, estimateId) {
-      // alert(estimateId); 
-        if (confirm('Are you sure you want to send this estimate?')) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                data: {
-                    _token: '{{ csrf_token() }}' 
-                },
-                success: function(response) {
-                   
-                    alert('Estimate link sent to the customer successfully.');
-                    location.reload(); 
-                },
-                error: function(xhr) {
-                    alert('An error occurred while sending the estimate.');
-                }
-            });
-        }
-    }
+
+  $(function () {
+
+    $("#example5").DataTable({
+
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#example2').DataTable({
+
+      "paging": true,
+
+      "lengthChange": false,
+
+      "searching": false,
+
+      "ordering": true,
+
+      "info": true,
+
+      "autoWidth": false,
+
+      "responsive": true,
+
+    });
+
+  });
+
 </script>
 
 <script>
-$(document).ready(function() {
-    var defaultStartDate = "";  
-    var defaultEndDate = "";    
-    var defaultSaleEstimNumber = ""; 
-    var defaultSaleCusId = "";  
-    var defaultSaleStatus = "";  
 
-  
-        $('#from-datepicker').val(defaultStartDate);
-   
-        $('#to-datepicker').val(defaultEndDate);
+  $(function () {
 
-        $('#sale_estim_number').val(defaultSaleEstimNumber);
+    $("#example4").DataTable({
 
-        $('#sale_cus_id').val(defaultSaleCusId);
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-        $('#sale_status').val(defaultSaleStatus);
+    $('#example2').DataTable({
 
-        var fromdatepicker = flatpickr("#from-datepicker", {
-                altInput: true,
-                dateFormat: "YYYY-MM-DD",
-                altFormat: "DD/MM/YYYY",
-                allowInput: true,
-                parseDate: (datestr, format) => {
-                  return moment(datestr, format, true).toDate();
-                },
-                formatDate: (date, format, locale) => {
-                  return moment(date).format(format);
-                }
-            });
-            document.getElementById('from-calendar-icon').addEventListener('click', function () {
-              fromdatepicker.open(); 
-            });
+      "paging": true,
 
-          var todatepicker = flatpickr("#to-datepicker", {
-              altInput: true,
-              dateFormat: "YYYY-MM-DD",
-              altFormat: "DD/MM/YYYY",
-              allowInput: true,
-              parseDate: (datestr, format) => {
-                return moment(datestr, format, true).toDate();
-              },
-              formatDate: (date, format, locale) => {
-                return moment(date).format(format);
-              }
-          });
-          document.getElementById('to-calendar-icon').addEventListener('click', function () {
-            todatepicker.open(); 
-          });
+      "lengthChange": false,
 
-          $('.filter-text').on('click', function() {
-                clearFilters();
-            });
+      "searching": false,
 
-            
-   
-    // Function to fetch filtered data
-    function fetchFilteredData() {
-        var formData = {
-            start_date: $('#from-datepicker').val(),
-            end_date: $('#to-datepicker').val(),
-            sale_estim_number: $('#sale_estim_number').val(),
-            sale_cus_id: $('#sale_cus_id').val(),
-            sale_status: $('#sale_status').val(),
-            _token: '{{ csrf_token() }}'
-        };
+      "ordering": true,
 
+      "info": true,
 
+      "autoWidth": false,
 
-        // alert(start_date);
-        // alert(end_date);
-        // alert(sale_cus_id);
-        // alert(sale_estim_number);
-        console.log('Form Data:', formData); // Debug: Log form data to console
+      "responsive": true,
 
-
-        $.ajax({
-            url: '{{ route('business.estimates.index') }}', // Define the route for filtering
-            type: 'GET',
-            data: formData,
-            success: function(response) {
-              // console.log(response);
-                $('#filter_data').html(response); // Update the results container with the filtered data
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr);
-                alert('An error occurred while fetching data.');
-            }
-        });
-    }
-
-    // Attach change event handlers to filter inputs
-    $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker, #sale_estim_number1').on('change keyup', function(e) {
-      e.preventDefault(); 
-      fetchFilteredData();
     });
 
-    $('#sale_estim_number_submit').on('click', function(e) {
-        e.preventDefault(); // Prevent default button behavior if inside a form
-        fetchFilteredData();
-    });
-
-    function clearFilters() {
-          $('#sale_cus_id').val('').trigger('change');
-
-            $('#from-datepicker').val('');  // Reset datepicker
-            $('#to-datepicker').val('');  // Reset datepicker
-            $('#sale_estim_number').val('');  // Reset input field
-            $('#sale_status').val('');  // Reset another dropdown/input field
-
-            // Trigger any additional functionality if needed
-            fetchFilteredData(); // Example: Fetch data based on the cleared filters
-            }
-
-});
+  });
 
 </script>
-
-@endsection
-@endif

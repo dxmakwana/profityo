@@ -35,24 +35,56 @@ use App\Models\InvoicesDetails;
 class EstimatesController extends Controller
 {
     //
-    public function index(): View
+    public function index(Request $request)
     {
-        //
-        // dd('hii');
+
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
         $user_id = $user->user_id;
+        // \DB::enableQueryLog();
 
-        $activeEstimates = Estimates::whereIn('sale_status', ['Approve', 'Sent', 'Convert to Invoice'])
-        ->with('customer')
-        ->orderBy('created_at', 'desc')
-        ->get();
-        $draftEstimates = Estimates::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
-        $allEstimates = Estimates::with('customer')->orderBy('created_at', 'desc')->get();
-        // dd($allEstimates);
-        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates','user_id'));
+        // Initialize the query builder for Estimates
+        $query = Estimates::with('customer')->orderBy('created_at', 'desc');
 
+        // Apply filters based on request input
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('sale_estim_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('sale_estim_date', '<=', $request->end_date);
+        }
+
+        if ($request->has('sale_estim_number') && $request->sale_estim_number) {
+            $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
+        }
+
+        if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+            $query->where('sale_cus_id', $request->sale_cus_id);
+        }
+
+        if ($request->has('sale_status') && $request->sale_status) {
+            $query->where('sale_status', $request->sale_status);
+        }
+
+        // Execute the query and get the results
+        $filteredEstimates = $query->get();
+
+        // Get other data needed for the view
+        $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent', 'Converted']);
+        $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
+        $allEstimates = $filteredEstimates;
+        $salecustomer = SalesCustomers::get();
+    
+        // Return the filtered data in the view
+        if ($request->ajax()) {
+            // dd(\DB::getQueryLog()); 
+            // dd($allEstimates);
+            return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
+        }
+
+        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'));
     }
+
     public function create(): View
     {
         $user = Auth::guard('masteradmins')->user();
@@ -705,31 +737,93 @@ class EstimatesController extends Controller
     //     return response()->json(['success' => true, 'message' => 'Estimate saved successfully!']);
     // }
 
+    // public function statusStore(Request $request, $id)
+    // {
+    //     $user = Auth::guard('masteradmins')->user();
+
+    //     $estimate = Estimates::where([
+    //         'sale_estim_id' => $id,
+    //         'id' => $user->id
+    //     ])->firstOrFail();
+
+    //     $validated = $request->validate([
+    //         'sale_status' => 'required|string|max:255',
+    //     ]);
+
+    //     $estimate->where('sale_estim_id', $id)->update($validated);
+
+    //     $response = ['success' => true, 'message' => 'Estimate saved successfully!'];
+
+    //     if ($validated['sale_status'] === 'Convert to Invoice') {
+    //         $response['redirect_url'] = route('business.estimates.viewInvoice', ['id' => $estimate->sale_estim_id]);
+    //     } elseif ($validated['sale_status'] === 'Sent') {
+    //         $response['redirect_url'] = route('business.estimate.send', [ $estimate->sale_estim_id, $user->user_id]); 
+    //     }
+
+    //     return response()->json($response);
+    // }
+
     public function statusStore(Request $request, $id)
     {
         $user = Auth::guard('masteradmins')->user();
 
-        $estimate = Estimates::where([
+        // Fetch the invoice record for the authenticated user and provided ID
+        $estimates = Estimates::where([
             'sale_estim_id' => $id,
             'id' => $user->id
         ])->firstOrFail();
 
-        $validated = $request->validate([
-            'sale_status' => 'required|string|max:255',
-        ]);
+        // Define the status transition map
+        $statusMap = [
+            'Draft' => 'Saved', // Clicking "Approve" changes "Draft" to "Saved"
+            'Saved' => 'Send', // Clicking "Send" changes "Saved" to "Sent"
+            'Sent' => 'Converted', // Clicking "Convert to Invoice" changes "Sent" to "Converted"
+            'Converted' => 'Duplicate', // Clicking "Duplicate" changes "Converted" to "Duplicate"
+        ];
+    
 
-        $estimate->where('sale_estim_id', $id)->update($validated);
+    $currentStatus = $estimates->sale_status;
 
-        $response = ['success' => true, 'message' => 'Estimate saved successfully!'];
+    $nextStatus = $statusMap[$currentStatus] ?? null;
 
-        if ($validated['sale_status'] === 'Convert to Invoice') {
-            $response['redirect_url'] = route('business.estimates.viewInvoice', ['id' => $estimate->sale_estim_id]);
-        } elseif ($validated['sale_status'] === 'Sent') {
-            $response['redirect_url'] = route('business.estimate.send', [ $estimate->sale_estim_id, $user->user_id]); 
+    // dd($nextStatus); // 
+
+        if ($nextStatus) {
+
+            if($nextStatus != 'Duplicate'){
+                $estimates->where('sale_estim_id', $id)->update(['sale_status' => $nextStatus]);
+            }
+
+            $response = [
+                'success' => true,
+                'message' => "Invoice status updated to $nextStatus successfully!"
+            ];
+           
+            switch ($nextStatus) {
+               
+                case 'Send':
+                    $response['redirect_url'] = route('business.estimate.send', [$estimates->sale_estim_id, $user->user_id]);
+                    break;
+                case 'Converted':
+                    $response['redirect_url'] = route('business.estimates.viewInvoice', [$estimates->sale_estim_id]);
+                    break;
+                case 'Duplicate':
+                    $response['redirect_url'] = route('business.estimates.duplicate', [$estimates->sale_estim_id]);
+                    break;
+                default:
+                    $response['redirect_url'] = route('business.estimates.index'); // Assuming you have an index route
+                    break;
+            }
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No further status updates available!',
+            ];
         }
 
         return response()->json($response);
     }
+
 
     public function send(Request $request, $id, $slug)
     {
@@ -991,6 +1085,7 @@ class EstimatesController extends Controller
     
     public function viewInvoice($id, Request $request): View
     {
+
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
@@ -1020,6 +1115,15 @@ class EstimatesController extends Controller
         // dd($businessDetails);
 
         $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
+
+        $estimate = Estimates::where('sale_estim_id', $id)->firstOrFail();
+
+        $validated = [
+            'sale_status' => 'Converted', 
+        ];
+
+        $estimate->where('sale_estim_id', $id)->update($validated);
+
 
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 

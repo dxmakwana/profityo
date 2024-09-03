@@ -50,7 +50,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label>Status</label>
                                     <form id="estimateForm" method="POST" action="{{ route('business.estimates.statusStore', $estimates->sale_estim_id) }}">
                                     @csrf
@@ -64,7 +64,7 @@
                                         <option value="Mark as sent" {{ $estimates->sale_status === 'Mark as sent' ? 'selected' : '' }}>Mark as sent</option>
                                     </select>
                                     </form>
-                                </div>
+                                </div> -->
                             </div>
                             <!-- /.col -->
                             <div class="col-md-3">
@@ -130,6 +130,14 @@
                                 </p>
                                     <a href="{{ route('business.estimates.edit', $estimates->sale_estim_id) }}"><button class="viewdetails_btn"><i
                                                 class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Estimate</button></a>
+                                    @if($estimates->sale_status === 'Draft') 
+                                    <a href="javascript:void(0);" 
+                                        onclick="updateStatus({{ $estimates->sale_estim_id }}, 'Saved')">
+                                        <button class="viewdetails_btn">
+                                            <i class="fas fa-solid fa-pen-to-square mr-2"></i>Approve Estimate
+                                        </button>
+                                    </a>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-1 text-center">
@@ -140,19 +148,19 @@
                                     <img src="{{url('public/dist/img/send.svg')}}" class="detaises_icon">
                                     <p class="view_es_title">Send</p>
                                     <p class="view_es_create">Last sent: Never</p>
-                                    @if($estimates->sale_status === 'Sent')
+                                    @if($estimates->sale_status === 'Send')
                                         <a href="#">
                                             <button class="viewdetails_btn_br">Mark As Sent</button>
                                         </a>
-                                    @else
-                                        <!-- <a href="{{ route('business.estimate.send', [ $estimates->sale_estim_id, $user_id]) }}"><button class="viewdetails_btn"><i
-                                        class="fas fa-regular fa-paper-plane mr-2"></i>Send Estimate</button></a> -->
+                                    @elseif($estimates->sale_status === 'Saved')
+                                       
                                         <a href="javascript:void(0);" onclick="sendEstimate('{{ route('business.estimate.send', [$estimates->sale_estim_id, $user_id]) }}')">
                                             <button class="viewdetails_btn">
                                                 <i class="fas fa-regular fa-paper-plane mr-2"></i>Send Estimate
                                             </button>
                                         </a>
-
+                                        
+                                    
                                         
                                     @endif
 
@@ -167,9 +175,13 @@
                                 <div class="view_es_box">
                                     <img src="{{url('public/dist/img/note.svg')}}" class="detaises_icon">
                                     <p class="view_es_title">Convert To invoice</p>
-                                    <a href="{{ route('business.estimates.viewInvoice', [$estimates->sale_estim_id]) }}"><button class="viewdetails_btn"><i
+                                    <!-- <a href="{{ route('business.estimates.viewInvoice', [$estimates->sale_estim_id]) }}"><button class="viewdetails_btn"><i
                                                 class="fas fa-solid fa-file-invoice mr-2"></i>Convert To
-                                            Invoice</button></a>
+                                            Invoice</button></a> -->
+                                    
+                                    <a href="#" data-toggle="modal" data-target="#sendestimate-{{ $estimates->sale_estim_id }}"><button class="viewdetails_btn"><i
+                                    class="fas fa-solid fa-file-invoice mr-2"></i>Convert To
+                                    Invoice</button></a>
                                 </div>
                             </div>
                         </div>
@@ -626,6 +638,25 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="sendestimate-{{ $estimates->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $estimates->sale_estim_id]) }}" id="delete-form-{{ $estimates->sale_estim_id }}">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body pad-1 text-center">
+                    <i class="fas fa-solid fa-trash delete_icon"></i>
+                    <p class="company_business_name px-10"><b>Delete Estimate</b></p>
+                    <p class="company_details_text px-10">Delete Estimate #{{ $estimates->sale_estim_id }}</p>
+                    <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
+                    <button type="button" class="delete_btn px-15" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="add_btn px-15">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
     <!-- ./wrapper -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -794,6 +825,41 @@
             });
         }
     }
+</script>
+
+<script>
+function updateStatus(estimateId, status) {
+    // Define the URL for the status update
+    var url = "{{ route('business.estimates.statusStore', ':id') }}";
+    url = url.replace(':id', estimateId);
+
+    // Send AJAX request to update the status
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
+        body: JSON.stringify({ sale_status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect if a redirect URL is provided
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else {
+                // Optionally handle success without redirection
+                alert(data.message);
+            }
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 </script>
     @endsection
 @endif

@@ -69,6 +69,7 @@ return [
             'send_success' => 'Vendor created successfully.',
             'edit_purchasesvendor_success' => 'Vendor updated successfully',
             'delete_purchasesvendor_success' => 'Vendor deleted successfully',
+            'add_bankdetail_success' => 'Bank detail added successfully',
         ],
         'invoice' => [
             'send_success'  => 'Invoice created successfully!',

@@ -165,6 +165,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('/customerdestroy/{SalesCustomers}', [SalesCustomersController::class, 'destroy'])->name('business.salescustomers.destroy');
         Route::get('getstates/{country_id}', [SalesCustomersController::class, 'getstates'])->name('get.states');
         Route::get('/get-customer-info', [SalesCustomersController::class, 'getCustomerInfo'])->name('business.salescustomers.getCustomerInfo');
+        Route::get('/customerdetails/{sale_cus_id}', [SalesCustomersController::class, 'show'])->name('business.customerdetails.show');
 
         //estimates
         Route::get('/estimates-list', [EstimatesController::class, 'index'])->name('business.estimates.index');
@@ -217,7 +218,11 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('/purchasesvendordestroy/{PurchasesVendor}', [PurchasVendorController::class, 'destroy'])->name('business.purchasvendor.destroy');
         Route::get('/vendordetails/{id}', [PurchasVendorController::class, 'show'])->name('business.vendordetails.show');
         Route::post('/purchasvendor/addBankDetails', [PurchasVendorController::class, 'addBankDetails'])->name('business.purchasvendor.addBankDetails');
-        
+        Route::post('/purchasvendor/addBankDetails/{PurchasesVendor}', [PurchasVendorController::class, 'addBankDetails'])->name('business.purchasvendor.addBankDetails');
+        Route::get('vendorgetstates/{country_id}', [PurchasVendorController::class, 'vendorStates'])->name('get.states');
+        Route::get('/purchasesvendorviewBankDetails/{purchases_vendor_id}', [PurchasVendorController::class, 'viewBankDetails'])->name('business.purchasvendor.viewBankDetails');
+
+
         //invoice
         Route::get('/edit-invoice/{id}', [EstimatesController::class, 'viewInvoice'])->name('business.estimates.viewInvoice');
         Route::patch('/invoice-store/{id}', [InvoicesController::class, 'invoiceStore'])->name('business.invoices.invoiceStore');
