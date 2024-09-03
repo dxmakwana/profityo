@@ -22,7 +22,7 @@
                   class="fas fa-plus add_plus_icon"></i>Add A Vendor</button></a>
             </ol>
           </div><!-- /.col -->
-        </div><!-- /.row -->
+        </div><!-- /.row --> 
       </div><!-- /.container-fluid -->
     </div>
   <section class="content px-10">
@@ -50,6 +50,18 @@
               Session::forget('purchases-vendor-delete');
             @endphp
           @endif
+
+          @if(Session::has('purchases-vendor-bankdetail'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ Session::get('purchases-vendor-bankdetail') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            @php
+              Session::forget('purchases-vendor-bankdetail');
+            @endphp
+          @endif
       <div class="card px-20">
         <div class="card-body1">
           <div class="col-md-12 table-responsive pad_table">
@@ -72,15 +84,20 @@
               <td>{{ $value->purchases_vendor_name }}</td>
               <td>{{ $value->purchases_vendor_email }}</td>
               <td>{{ $value->purchases_vendor_email }}</td>
-              <td><a href="javascript:void(0);" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account" data-vendor-id="{{ $value->purchases_vendor_id }}">Add Bank Details</a></td>
-
+              <td>
+                <!-- <a href="javascript:void(0);" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account" data-vendor-id="{{ $value->purchases_vendor_id }}">Add Bank Details</a></td> -->
+                @if ($value->purchases_vendor_type == '1099-NEC Contractor')
+                            @if($value->bankDetails) <!-- Check if bank details exist -->
+                                <a href="{{ route('business.purchasvendor.viewBankDetails', $value->purchases_vendor_id) }}" class="invoice_underline">View Bank Details</a>
+                            @else
+                                <a href="javascript:void(0);" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account{{ $value->purchases_vendor_id }}" data-vendor-id="{{ $value->purchases_vendor_id }}">Add Bank Details</a>
+                            @endif
+                        @else
+                            <span class="text-muted">Not Available</span>
+                        @endif
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
-              <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->
-              <!-- <a href="{{ route('business.purchasvendor.edit',$value->purchases_vendor_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a> -->
-              <!-- <a data-toggle="modal" data-target="#delete-role-modal"><i
-                class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
-                <!-- <a data-toggle="modal" data-target="#delete-vendor-modal-{{ $value->purchases_vendor_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
+            
                 <ul class="navbar-nav ml-auto float-sm-right">
                           <li class="nav-item dropdown d-flex align-items-center">
                             <span class="d-block"><a href="new-bill.html" class="invoice_underline">Create Bill</a></span>
@@ -103,8 +120,8 @@
                             </div>
                           </li>
                         </ul>
-              </td>
-              </tr>
+                      </td>
+                      </tr>
 
               <div class="modal fade" id="delete-vendor-modal-{{ $value->purchases_vendor_id }}" tabindex="-1" role="dialog"
               aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -127,6 +144,63 @@
               </div>
               </div>
               </div>
+
+              <div class="modal fade" id="add_bank_account{{ $value->purchases_vendor_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLongTitle">Add Bank Details</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                          <form id="bankDetailsForm" action="{{ route('business.purchasvendor.addBankDetails', ['PurchasesVendor' => $value->purchases_vendor_id]) }}" method="POST">
+                                  <input type="hidden" name="purchases_vendor_id" value="{{$value->purchases_vendor_id}}" id="purchases_vendor_id">
+                                  @csrf
+                                  <div class="row pxy-15 px-10">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="purchases_routing_number">Routing Number <span class="text-danger">*</span></label>
+                                              <input type="number" class="form-control @error('purchases_routing_number') is-invalid @enderror" name="purchases_routing_number" id="routingnumber"> 
+                                              @error('purchases_routing_number')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                              @enderror
+                                            </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="purchases_account_number">Account Number <span class="text-danger">*</span></label>
+                                              <input type="number" class="form-control @error('purchases_account_number') is-invalid @enderror" name="purchases_account_number" id="accountnumber"> 
+                                              @error('purchases_account_number')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                              @enderror
+                                            </div>
+                                      </div>
+                                      <div class="col-md-12">
+                                          <div class="form-group">
+                                              <label for="bank_account_type">Bank Account Type <span class="text-danger">*</span></label>
+                                              <div class="form-check">
+                                                  <input class="form-check-input mr-2" type="radio" name="bank_account_type" value="checking" {{ old('bank_account_type') == 'checking' ? 'checked' : '' }}>
+                                                  <label class="form-check-label">Checking</label>
+                                              </div>
+                                              <div class="form-check">
+                                                  <input class="form-check-input mr-2" type="radio" name="bank_account_type" value="savings" {{ old('bank_account_type') == 'savings' ? 'checked' : '' }}>
+                                                  <label class="form-check-label">Savings</label>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="add_btn_br" data-dismiss="modal">Back To Vendors List</button>
+                                      <button type="submit" class="add_btn">Save</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
               @endforeach            
                 @else
                   <tr class="odd">
@@ -144,57 +218,8 @@
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<div class="modal fade" id="add_bank_account" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add Bank Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="bankDetailsForm" action="{{ route('business.purchasvendor.addBankDetails') }}" method="POST">
-                    @csrf
-                    <!-- Hidden field for storing purchases_vendor_id -->
-                    <input type="hidden" name="purchases_vendor_id" id="purchases_vendor_id">
 
-                    <div class="row pxy-15 px-10">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="routingnumber">Routing Number <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="routingnumber" id="routingnumber" required> 
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="accountnumber">Account Number <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="accountnumber" id="accountnumber" required> 
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="accounttype">Bank Account Type <span class="text-danger">*</span></label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="accounttype" value="checking" checked>
-                                    <label class="form-check-label">Checking</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="accounttype" value="savings">
-                                    <label class="form-check-label">Savings</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="add_btn_br" data-dismiss="modal">Back To Vendors List</button>
-                        <button type="submit" class="add_btn">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <!-- Control Sidebar -->
 <aside class="control-sidebar control-sidebar-dark">

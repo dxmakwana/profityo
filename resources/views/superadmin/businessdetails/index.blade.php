@@ -70,10 +70,10 @@
                       <th>Name</th>
                       <th>Email</th>
                       <th>Phone</th>
-                      <th>Membership Plan</th>
+                      <!-- <th>Membership Plan</th> -->
                       <th>Total Users</th>
                       <th>Status</th>
-                      <th>Created Date</th>
+                      <!-- <th>Created Date</th> -->
                       <th>Last Updated Date</th>
                       <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                     </tr>
@@ -87,7 +87,7 @@
                             <td>{{ $value->user_first_name }}</td>
                             <td>{{ $value->user_email }}</td>
                             <td>{{ $value->user_phone }}</td>
-                            <td>{{ $value->plan ? $value->plan->sp_name : 'No Plan' }}</td>
+                            <!-- <td>{{ $value->plan ? $value->plan->sp_name : 'No Plan' }}</td> -->
                             <td>{{ $value->totalUserCount  }}</td>
                             <td>  
                               @if ($value->user_status == 1)
@@ -97,7 +97,7 @@
                                @endif
                            </td>
                       <!-- <td>{{ $value->user_status }}</td> -->
-                            <td>{{ $value->created_at }}</td>
+                            <!-- <td>{{ $value->created_at }}</td> -->
                             <td>{{ $value->updated_at }}</td>
                             <td>
                               <ul class="navbar-nav ml-auto float-sm-right">

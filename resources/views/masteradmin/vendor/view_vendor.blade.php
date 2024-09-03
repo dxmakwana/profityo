@@ -32,7 +32,7 @@
               <a href="{{ route('business.purchasvendor.edit',$PurchasVendor->purchases_vendor_id) }}"><button class="add_btn_br"><i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit</button></a>
               <a href="{{ route('business.purchasvendor.create') }}"><button class="add_btn">Create Another Vendor</button></a>
             </ol>
-          </div><!-- /.col -->
+          </div><!-- /.col --> 
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>

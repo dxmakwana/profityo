@@ -192,7 +192,24 @@ class SalesCustomersController extends Controller
         ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));
     }
 
+// add by dx......
+public function show($sale_cus_id): View
+{
+    // Fetch the vendor details based on the ID
+    $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
+    $Country = Countries::all(); // Fetch all countries
+    $States = States::all();
 
+    // Pass the vendor details, countries, and states to the view
+    return view('masteradmin.customers.view_customer', compact('SalesCustomers', 'Country', 'States'));
+}
+
+
+
+
+
+
+// end by dx.....
     /**
      * Remove the specified resource from storage.
      */

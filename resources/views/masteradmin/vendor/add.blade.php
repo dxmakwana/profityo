@@ -25,7 +25,7 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-    <!-- Main content -->
+    <!-- Main content --> 
     <section class="content px-10">
       <div class="container-fluid">
         <!-- card -->
@@ -55,7 +55,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-check d-flex">
-                                <input class="form-check-input mr-2" type="radio" name="vendor_type" value="Regular" {{ old('vendor_type') == 'on' ? 'checked' : '' }} id="regularType">
+                                   <input class="form-check-input mr-2" type="radio" name="type" value="Vendor" {{ old('type') == 'Vendor' ? 'checked' : '' }} id="regularType">
+                                <!-- <input class="form-check-input mr-2" type="radio" name="vendor_type" value="Regular" {{ old('vendor_type') == 'on' ? 'checked' : '' }} id="regularType"> -->
                                 <label class="form-check-label">
                                     <strong>Regular</strong> (Companies That Provide Goods and Services to your Business (E.G. Internet and Utility Providers).)
                                 </label>
@@ -63,7 +64,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-check d-flex">
-                                <input class="form-check-input mr-2" type="radio" name="vendor_type" value="1099-NEC Contractor" {{ old('vendor_type') == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType">
+                            <input class="form-check-input mr-2" type="radio" name="type" value="1099-NEC Contractor" {{ old('type') == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType">
+                                <!-- <input class="form-check-input mr-2" type="radio" name="vendor_type" value="1099-NEC Contractor" {{ old('vendor_type') == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType"> -->
                                 <label class="form-check-label">
                                     <strong>1099-NEC Contractor</strong> (Contractors that Perform a Service for Which you Pay them and Provide a 1099-NEC Form.)
                                 </label>
@@ -128,7 +130,7 @@
                 <div class="col-md-4">
                   <div class="form-group">
                     <label>Country</label>
-                    <select class="form-control from-select select2 @error('purchases_vendor_country_id') is-invalid @enderror" name="purchases_vendor_country_id" id="ship_country" style="width: 100%;">
+                    <select class="form-control from-select select2 @error('purchases_vendor_country_id') is-invalid @enderror" name="purchases_vendor_country_id" id="country" style="width: 100%;">
                   <option value="">Select Country</option>
                         @foreach($Country as $con)
                             <option value="{{ $con->id }}">{{ $con->name }}</option>
@@ -149,10 +151,10 @@
                     <input type="text" class="form-control" id="vendorzipcode" name="purchases_vendor_zipcode" placeholder="Enter a Zip Code" value="{{ old('purchases_vendor_zipcode') }}">
                   </div>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                   <div class="form-group">
                     <label>Province/State</label>
-                    <select class="form-control from-select select2 @error('purchases_vendor_state_id') is-invalid @enderror" name="purchases_vendor_state_id" id="ship_state" style="width: 100%;">
+                    <select class="form-control from-select select2 @error('purchases_vendor_state_id') is-invalid @enderror" name="purchases_vendor_state_id" id="state" style="width: 100%;">
                   <option value="">Select State</option>
                         @foreach($States as $states)
                             <option value="{{ $states->id }}">{{ $states->name }}</option>
@@ -160,7 +162,18 @@
                     </select>
                   
                   </div>
+                </div> -->
+                <div class="col-md-4">
+                <div class="form-group">
+                <label for="purchases_vendor_state_id">Province/State</label>
+                  <select class="form-control from-select select2" name="purchases_vendor_state_id" id="state" style="width: 100%;">
+                      <option value="">Select State</option>
+                      <!-- States will be populated here dynamically -->
+                  </select>
+
                 </div>
+              </div>
+           
                 <div class="col-md-4">
                   <div class="form-group">
                     <label>Currency</label>
@@ -229,8 +242,31 @@
     <!-- /.content --> 
   </div>
   <!-- /.content-wrapper -->
-
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#country').change(function() {
+        var country_id = $(this).val();
+        if (country_id) {
+            $.ajax({
+                url: '{{ url('business/vendorgetstates') }}/' + country_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#state').empty();
+                    $('#state').append('<option value="">Select State</option>');
+                    $.each(data, function(key, value) {
+                        $('#state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                    });
+                }
+            });
+        } else {
+            $('#state').empty();
+            $('#state').append('<option value="">Select State</option>');
+        }
+    });
+  });
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Get references to the radio buttons and the fields

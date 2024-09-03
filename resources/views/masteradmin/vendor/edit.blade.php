@@ -25,7 +25,7 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-    <!-- Main content -->
+    <!-- Main content --> 
     <section class="content px-10">
       <div class="container-fluid">
         <!-- card -->
@@ -51,7 +51,7 @@
                 </div>
               </div>
               <div class="col-md-8">
-    <div class="form-group">
+    <!-- <div class="form-group">
         <label for="vendorname">Type</label>
         <div class="row">
             <div class="col-md-6">
@@ -72,7 +72,30 @@
             </div>
         </div>
     </div>
+</div> -->
+<div class="form-group">
+    <label for="vendorname">Type</label>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-check d-flex">
+                <input class="form-check-input mr-2" type="radio" name="type" value="Vendor" {{ old('type', $PurchasVendore->purchases_vendor_type) == 'Vendor' ? 'checked' : '' }} id="regularType">
+                <label class="form-check-label" for="regularType">
+                    <strong>Regular</strong> (Companies That Provide Goods and Services to your Business (E.G. Internet and Utility Providers).)
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-check d-flex">
+                <input class="form-check-input mr-2" type="radio" name="type" value="1099-NEC Contractor" {{ old('type', $PurchasVendore->purchases_vendor_type) == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType">
+                <label class="form-check-label" for="contractorType">
+                    <strong>1099-NEC Contractor</strong> (Contractors that Perform a Service for Which you Pay them and Provide a 1099-NEC Form.)
+                </label>
+            </div>
+        </div>
+    </div>
 </div>
+</div>
+
 
             <!-- <div id="vendorregular">
               <div class="modal_sub_title">Primary Contact</div>
@@ -86,19 +109,19 @@
               <div class="col-md-6" id="contractorFields" style="display: none;">
                 <div class="form-group">
                     <label for="vendorfirstname">Contractor Type</label>
-                      <select class="form-control select2" name="purchases_contractor_type" style="width: 100%;" value="{{ old('purchases_contractor_type') }}">
-                      <option value="">Select Contractor Type</option>
-                      <option>Individual</option>
-                      <option>Business</option>
+                    <select class="form-control select2" name="purchases_contractor_type" style="width: 100%;">
+                        <option value="">Select Contractor Type</option>
+                        <option value="Individual" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Individual' ? 'selected' : '' }}>Individual</option>
+                        <option value="Business" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Business' ? 'selected' : '' }}>Business</option>
                     </select>
-                    <!-- <input type="text" class="form-control" id="vendorfirstname" name="purchases_vendor_contractor_type" placeholder="Enter First Name" value=""> -->
                 </div>
             </div>
+
 
             <div class="col-md-6" id="ssnField" style="display: none;">
                 <div class="form-group">
                     <label for="vendorsocialsecuritynumber">Social Security Number</label>
-                    <input type="text" class="form-control" id="purchases_vendor_security_number" name="purchases_vendor_security_number" value="" placeholder="Enter Number">
+                    <input type="text" class="form-control" id="purchases_vendor_security_number" name="purchases_vendor_security_number" value="{{ $PurchasVendore->purchases_vendor_security_number }}" placeholder="Enter Number">
                 </div>
             </div>
 
@@ -256,7 +279,31 @@
     <!-- /.content --> 
   </div>
   <!-- /.content-wrapper -->
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#country').change(function() {
+        var country_id = $(this).val();
+        if (country_id) {
+            $.ajax({
+                url: '{{ url('business/vendorgetstates') }}/' + country_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#state').empty();
+                    $('#state').append('<option value="">Select State</option>');
+                    $.each(data, function(key, value) {
+                        $('#state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                    });
+                }
+            });
+        } else {
+            $('#state').empty();
+            $('#state').append('<option value="">Select State</option>');
+        }
+    });
+  });
+</script>
   <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Get references to the radio buttons and the fields
