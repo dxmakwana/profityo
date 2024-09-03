@@ -334,66 +334,52 @@
         });
     });
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
- document.getElementById('add_contact_btn').addEventListener('click', function() {
-    // Clone the first contact field group
-    var container = document.getElementById('contact_fields_container');
-    var firstGroup = container.querySelector('.contact-field-group');
-    var newGroup = firstGroup.cloneNode(true);
-    
-    // Clear the values in the new group
-    var inputs = newGroup.querySelectorAll('input');
-    inputs.forEach(function(input) {
-      input.value = '';
+  $(document).ready(function() {
+    $('#bill_country').change(function() {
+        var country_id = $(this).val();
+        if (country_id) {
+            $.ajax({
+                url: '{{ url('business/productgetstates') }}/' + country_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#bill_state').empty();
+                    $('#bill_state').append('<option value="">Select State</option>');
+                    $.each(data, function(key, value) {
+                        $('#bill_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                    });
+                }
+            });
+        } else {
+            $('#bill_state').empty();
+            $('#bill_state').append('<option value="">Select State</option>');
+        }
     });
-    
-    // Append the new group to the container
-    container.appendChild(newGroup);
-  });
 
-  // Handle remove contact button click
-  document.getElementById('contact_fields_container').addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('remove-contact')) {
-      e.target.closest('.contact-field-group').remove();
-    }
-  });
+    // Handle "Same as Billing Address" functionality
+    $('#same_address_checkbox').change(function() {
+        if ($(this).is(':checked')) {
+            // Copy address fields
+            $('#ship_address1').val($('#bill_address1').val());
+            $('#ship_address2').val($('#bill_address2').val());
+            $('#ship_city').val($('#bill_city').val());
+            $('#ship_zipcode').val($('#bill_zipcode').val());
+            $('#ship_country').val($('#bill_country').val()).trigger('change');
 
-
-  document.getElementById('same_address_checkbox').addEventListener('change', function() {
-    if (this.checked) {
-      // Copy text fields
-      document.getElementById('ship_to').value = document.getElementById('customertitle').value;
-      document.getElementById('ship_address1').value = document.getElementById('bill_address1').value;
-      document.getElementById('ship_address2').value = document.getElementById('bill_address2').value;
-      document.getElementById('ship_city').value = document.getElementById('bill_city').value;
-      document.getElementById('ship_zipcode').value = document.getElementById('bill_zipcode').value;
-      // document.getElementById('ship_phone').value = document.getElementById('customerphonenumber').value;
-      
-      // Copy dropdown fields
-      document.getElementById('ship_country').value = document.getElementById('bill_country').value;
-      document.getElementById('ship_country').dispatchEvent(new Event('change'));
-
-      document.getElementById('ship_state').value = document.getElementById('bill_state').value;
-      document.getElementById('ship_state').dispatchEvent(new Event('change'));
-    } else {
-      // Clear text fields
-      document.getElementById('ship_to').value = '';
-      document.getElementById('ship_address1').value = '';
-      document.getElementById('ship_address2').value = '';
-      document.getElementById('ship_city').value = '';
-      document.getElementById('ship_zipcode').value = '';
-      document.getElementById('ship_phone').value = '';
-      
-      // Clear dropdown fields
-      document.getElementById('ship_country').value = '';
-      document.getElementById('ship_country').dispatchEvent(new Event('change'));
-
-      document.getElementById('ship_state').value = '';
-      document.getElementById('ship_state').dispatchEvent(new Event('change'));
-    }
-  });
+            // Copy the state after the country dropdown is populated
+            setTimeout(function() {
+                $('#ship_state').val($('#bill_state').val()).trigger('change');
+            }, 500);
+        } else {
+            // Clear shipping address fields if unchecked
+            $('#ship_address1, #ship_address2, #ship_city, #ship_zipcode, #ship_phone').val('');
+            $('#ship_country, #ship_state').val('').trigger('change');
+        }
+    });
+});
 </script>
-
 
 @endsection
 @endif
