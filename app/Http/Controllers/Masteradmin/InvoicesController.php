@@ -23,6 +23,7 @@ use App\Notifications\InvoiceViewMail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use App\Models\SentLog;
 
 
 class InvoicesController extends Controller
@@ -533,6 +534,22 @@ class InvoicesController extends Controller
         \MasterLogActivity::addToLog('Admin Invoice Sent.');
 
         Mail::to($customer->sale_cus_email)->send(new InvoiceViewMail($invoiceViewUrl));
+
+        $invoice_currency = Countries::find($invoice->sale_currency_id);
+
+        $currencySymbol = $invoice_currency ? $invoice_currency->currency_symbol : '';
+        
+        $logMsg = "Invoice #{$invoice->sale_inv_number} for {$currencySymbol}{$invoice->sale_inv_final_amount}";
+        // \DB::enableQueryLog();
+
+        SentLog::create([
+            'log_type' => '2',
+            'user_id' => Auth::guard('masteradmins')->id(),
+            'id' => $invoice->sale_inv_id,
+            'log_msg' => $logMsg,
+            'status' => 'Sent',
+            'log_status' => '1', 
+        ]);
 
         return redirect()->back()->with('success', 'Invoice link sent to the customer successfully.');
     }

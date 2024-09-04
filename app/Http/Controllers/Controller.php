@@ -460,7 +460,7 @@ class Controller extends BaseController
                 Schema::create($storeId . '_py_sent_log', function (Blueprint $table) {
                     $table->increments('log_id');
                     $table->integer('log_type')->nullable()->default(0)->comment('1-estimate,2-invoice');
-                    $table->integer('user_id')->nullable()->default(0);
+                    $table->integer('user_id')->nullable()->default(0)->comment('business id');
                     $table->integer('id')->nullable()->default(0);
                     $table->string('log_msg')->nullable();
                     $table->string('status')->nullable();

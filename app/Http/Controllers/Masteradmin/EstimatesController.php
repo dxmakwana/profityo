@@ -30,6 +30,7 @@ use App\Notifications\EstimateViewMail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
 use App\Models\InvoicesDetails;
+use App\Models\SentLog;
 
 
 class EstimatesController extends Controller
@@ -855,6 +856,25 @@ class EstimatesController extends Controller
         \MasterLogActivity::addToLog('Admin Estimate Sent.');
 
         Mail::to($customer->sale_cus_email)->send(new EstimateViewMail($estimateViewUrl));
+
+        $currency = Countries::find($estimate->sale_currency_id);
+
+        $currencySymbol = $currency ? $currency->currency_symbol : '';
+        
+        $logMsg = "Estimate #{$estimate->sale_estim_number} for {$currencySymbol}{$estimate->sale_estim_final_amount}";
+        // \DB::enableQueryLog();
+
+        SentLog::create([
+            'log_type' => '1',
+            'user_id' => Auth::guard('masteradmins')->id(),
+            'id' => $estimate->sale_estim_id,
+            'log_msg' => $logMsg,
+            'status' => 'Sent',
+            'log_status' => '1', 
+        ]);
+
+        // dd(\DB::gestQueryLog()); 
+
 
         return redirect()->back()->with('success', 'Estimate link sent to the customer successfully.');
     }

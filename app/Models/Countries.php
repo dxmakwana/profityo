@@ -15,5 +15,15 @@ class Countries extends Model
         return $this->hasMany(States::class);
     }
 
+    public function currency()
+    {
+        return $this->belongsTo(Estimates::class, 'sale_currency_id', 'id');
+    }
+
+    public function invoice_currency()
+    {
+        return $this->belongsTo(InvoicesDetails::class, 'sale_currency_id', 'id');
+    }
+
 
 }
