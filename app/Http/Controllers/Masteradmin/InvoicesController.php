@@ -949,7 +949,7 @@ class InvoicesController extends Controller
 
     }
 
-    public function index(): View
+    public function index(Request $request)
     {
         //
         // dd('hii');
@@ -957,38 +957,130 @@ class InvoicesController extends Controller
         // dd($user);
         $user_id = $user->user_id;
 
-        $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Approve', 'Send', 'Record Payment', 'View'])
-        ->with('customer')
-        ->orderBy('created_at', 'desc')
-        ->get();
-        $draftInvoices = InvoicesDetails::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
-        $allInvoices = InvoicesDetails::with('customer')->orderBy('created_at', 'desc')->get();
+        $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
+
+
+        if ($request->has('start_date') && $request->start_date) {
+            $query->whereDate('sale_inv_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date) {
+            $query->whereDate('sale_inv_date', '<=', $request->end_date);
+        }
+
+        if ($request->has('sale_inv_number') && $request->sale_inv_number) {
+            $query->where('sale_inv_number', 'like', '%' . $request->sale_inv_number . '%');
+        }
+
+        if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+            $query->where('sale_cus_id', $request->sale_cus_id);
+        }
+
+        if ($request->has('sale_status') && $request->sale_status) {
+            $query->where('sale_status', $request->sale_status);
+        }
+
+        $filteredInvoices = $query->get();
+
+        $unpaidInvoices = $filteredInvoices->whereIn('sale_status', ['Unsent', 'Sent', 'Partlal']);
+        $draftInvoices = $filteredInvoices->where('sale_status', 'Draft');
+        $allInvoices = $filteredInvoices;
+        $salecustomer = SalesCustomers::get();
+
+        if ($request->ajax()) {
+            // dd(\DB::getQueryLog()); 
+            // dd($allEstimates);
+            return view('masteradmin.invoices.filtered_results', compact('unpaidInvoices', 'draftInvoices', 'allInvoices', 'user_id', 'salecustomer'))->render();
+        }
+      
         // dd($allEstimates);
-        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id'));
+        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer'));
 
     }
+
+    // public function statusStore(Request $request, $id)
+    // {
+    //     $user = Auth::guard('masteradmins')->user();
+
+    //     $incoice = InvoicesDetails::where([
+    //         'sale_inv_id' => $id,
+    //         'id' => $user->id
+    //     ])->firstOrFail();
+
+    //     $validated = $request->validate([
+    //         'sale_status' => 'required|string|max:255',
+    //     ]);
+
+    //     $incoice->where('sale_inv_id', $id)->update($validated);
+
+    //     $response = ['success' => true, 'message' => 'Invoice saved successfully!'];
+    //     if ($validated['sale_status'] === 'View') {
+    //         $response['redirect_url'] = route('business.invoices.view', [ $incoice->sale_inv_id]); 
+    //     }else
+    //     if ($validated['sale_status'] === 'Sent') {
+    //         $response['redirect_url'] = route('business.invoices.send', [ $incoice->sale_inv_id, $user->user_id]); 
+    //     }
+
+    //     return response()->json($response);
+    // }
+
 
     public function statusStore(Request $request, $id)
     {
         $user = Auth::guard('masteradmins')->user();
 
-        $incoice = InvoicesDetails::where([
+        // Fetch the invoice record for the authenticated user and provided ID
+        $invoices = InvoicesDetails::where([
             'sale_inv_id' => $id,
             'id' => $user->id
         ])->firstOrFail();
 
-        $validated = $request->validate([
-            'sale_status' => 'required|string|max:255',
-        ]);
+        // Define the status transition map
+        $statusMap = [
+            'Draft' => 'Unsent', // Clicking "Approve" changes "Draft" to "Saved"
+            'Unsent' => 'Send', // Clicking "Send" changes "Saved" to "Sent"
+            'Sent' => 'Record Payment', // Clicking "Convert to Invoice" changes "Sent" to "Converted"
+            'Partlal' => 'Record Payment', // Clicking "Duplicate" changes "Converted" to "Duplicate"
+            'Paid' => 'View', 
+        ];
+    
 
-        $incoice->where('sale_inv_id', $id)->update($validated);
+    $currentStatus = $invoices->sale_status;
 
-        $response = ['success' => true, 'message' => 'Invoice saved successfully!'];
-        if ($validated['sale_status'] === 'View') {
-            $response['redirect_url'] = route('business.invoices.view', [ $incoice->sale_inv_id]); 
-        }else
-        if ($validated['sale_status'] === 'Sent') {
-            $response['redirect_url'] = route('business.invoices.send', [ $incoice->sale_inv_id, $user->user_id]); 
+    $nextStatus = $statusMap[$currentStatus] ?? null;
+
+    // dd($nextStatus); // 
+
+        if ($nextStatus) {
+
+        
+            $invoices->where('sale_inv_id', $id)->update(['sale_status' => $nextStatus]);
+         
+
+            $response = [
+                'success' => true,
+                'message' => "Invoice status updated to $nextStatus successfully!"
+            ];
+           
+            switch ($nextStatus) {
+               
+                case 'Send':
+                    $response['redirect_url'] = route('business.invoices.send', [$invoices->sale_inv_id, $user->user_id]);
+                    break;
+
+                case 'View':
+                    $response['redirect_url'] = route('business.invoices.view', [$invoices->sale_inv_id]);
+                    break;
+              
+                default:
+                    $response['redirect_url'] = route('business.invoices.index'); // Assuming you have an index route
+                    break;
+            }
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'No further status updates available!',
+            ];
         }
 
         return response()->json($response);

@@ -42,10 +42,8 @@ class EstimatesController extends Controller
         $user_id = $user->user_id;
         // \DB::enableQueryLog();
 
-        // Initialize the query builder for Estimates
         $query = Estimates::with('customer')->orderBy('created_at', 'desc');
 
-        // Apply filters based on request input
         if ($request->has('start_date') && $request->start_date) {
             $query->whereDate('sale_estim_date', '>=', $request->start_date);
         }
@@ -66,16 +64,13 @@ class EstimatesController extends Controller
             $query->where('sale_status', $request->sale_status);
         }
 
-        // Execute the query and get the results
         $filteredEstimates = $query->get();
 
-        // Get other data needed for the view
         $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent', 'Converted']);
         $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
         $allEstimates = $filteredEstimates;
         $salecustomer = SalesCustomers::get();
     
-        // Return the filtered data in the view
         if ($request->ajax()) {
             // dd(\DB::getQueryLog()); 
             // dd($allEstimates);

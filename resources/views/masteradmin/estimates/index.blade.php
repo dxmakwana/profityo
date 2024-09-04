@@ -88,7 +88,7 @@
             </select>
           </div>
           <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
-            <div class="input-group date mr-2" >
+            <div class="input-group date" >
               <x-flatpickr id="from-datepicker" placeholder="From"/>
               <div class="input-group-append">
                 <span class="input-group-text" id="from-calendar-icon">
@@ -105,9 +105,6 @@
                 </span>
               </div>
             </div>
-
-
-            
           </div>
           <div class="col-lg-3 col-1024 col-md-6 px-10">
             <div class="input-group">
@@ -670,7 +667,7 @@ $(document).ready(function() {
         // alert(end_date);
         // alert(sale_cus_id);
         // alert(sale_estim_number);
-        console.log('Form Data:', formData); // Debug: Log form data to console
+        // console.log('Form Data:', formData); // Debug: Log form data to console
 
 
         $.ajax({
