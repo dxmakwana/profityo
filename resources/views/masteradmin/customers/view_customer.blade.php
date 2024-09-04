@@ -30,10 +30,10 @@
             <ol class="breadcrumb float-sm-right">
               <a href="#" data-toggle="modal" data-target="#deletecustomer"><button class="add_btn_br"><i class="fas fa-solid fa-trash mr-2"></i>Delete</button></a>
               <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Send Statement</button></a>
-              <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Create Estimate</button></a>
-              <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Create Invoice</button></a>
+              <a href="{{ route('business.estimates.create') }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Create Estimate</button></a>
+              <a href="{{ route('business.invoices.create') }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Create Invoice</button></a>
               <a href="{{ route('business.salescustomers.edit',$SalesCustomers->sale_cus_id) }}"><button class="add_btn_br"><i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit</button></a>
-              <a href="new-customer.html"><button class="add_btn">Create Another Customer</button></a>
+              <a href="{{ route('business.salescustomers.create') }}"><button class="add_btn">Create Another Customer</button></a>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -73,7 +73,7 @@
           <div class="col-md-4">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">billping Information</h3>
+                <h3 class="card-title">Shipping Information</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -92,7 +92,7 @@
             <li class="nav-item"><a class="nav-link" href="#customeractivity" data-toggle="tab">Activity</a></li>
           </ul>
         </div><!-- /.card-header -->
-          <div class="tab-content px-20">
+        <div class="tab-content px-20">
             <div class="tab-pane active" id="customeroverview">
               <div class="card">
                 <div class="col-lg-12 card-body3">
@@ -101,7 +101,7 @@
                       <div class="invoice_count_box_br1">
                         <div class="invoice_count_box in-primary">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr1"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr1"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Paid last 12 Months</p>
                               <p class="in_contact_total text_color1">$0.00</p>
@@ -114,7 +114,7 @@
                       <div class="invoice_count_box_br4">
                         <div class="invoice_count_box in-info">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr4"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr4"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Total Unpaid</p>
                               <p class="in_contact_total text_color4">$88.50</p>
@@ -140,9 +140,10 @@
                 <!-- /.card-header -->
                 <div class="card-body1">
                   <div class="col-md-12 table-responsive pad_table">
-                    <table id="example1" class="table table-hover text-nowrap">
+                  <table id="example1" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
+                          <!-- <th>Customer</th> -->
                           <th>Number</th>
                           <th>Date</th>
                           <th>Due</th>
@@ -152,96 +153,136 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn overdue_status">Overdue</span></td>
+                      @if (count($unpaidInvoices) > 0)
+                      @foreach ($unpaidInvoices as $value)
+                        <tr id="invoices-row-unpaid-{{ $value->sale_inv_id }}">
+                          <!-- <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td> -->
+                          <td>{{ $value->sale_inv_number }}</td>
+                          <td>{{ $value->sale_inv_date }}</td>
+                          <td>{{ $value->sale_inv_final_amount }}</td>
+                          <td>{{ $value->sale_inv_final_amount }}</td>
+                          <td>@php
+                                    $nextStatus = '';
+                                    $nextStatusColor = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatusColor = '';
+                                        $nextStatus = 'Draft';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Approve';
+                                        $nextStatusColor = '';
+                                    } elseif($value->sale_status == 'Send') {
+                                        $nextStatus = 'Send';
+                                        $nextStatusColor = '';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatusColor = 'overdue_status';
+                                        $nextStatus = 'Overdue';
+                                    }elseif($value->sale_status == 'View') {
+                                        $nextStatusColor = 'Paid_status';
+                                        $nextStatus = 'Paid';
+                                    }
+                                @endphp
+                                <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span></td>
+                          <!-- Actions Dropdown -->
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown align-items-center">
+                              <li class="nav-item dropdown d-flex align-items-center">
+                                @php
+                                    $nextStatus = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Send';
+                                    } elseif($value->sale_status == 'Send') {
+                                        $nextStatus = 'Record Payment';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatus = 'View';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatus = 'View';
+                                    }elseif($value->sale_status == 'View') {
+                                        $nextStatus = 'View';
+                                    }
+                                @endphp
+
+                                @if($nextStatus == 'Record Payment')
+                                <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup" >
+                                Record Payment
+                                </a>
+                                
+                                @else
+                                <a href="javascript:void(0);" onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')" >
+                                {{ $nextStatus }}
+                                </a>
+                                @endif
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
+                                  <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
+                                  @if(isset($access['update_invoices']) && $access['update_invoices']) 
+                                  <a href="{{ route('business.invoices.edit', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  @endif
+                                  <a href="{{ route('business.invoices.duplicate', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#recordpaymentpopup">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Record Payment
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a target="_blank" href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
+                                  
+                                  <a href="javascript:void(0);" onclick="sendInvoice('{{ route('business.invoices.send', [$value->sale_inv_id, $user_id]) }}', {{ $value->sale_inv_id }})"  class="dropdown-item">
+                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send
+                                  </a>
+                                  <a href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
+                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
+                                  </a>
+                                  @if(isset($access['delete_invoices']) && $access['delete_invoices']) 
+                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoiceunpaid-{{ $value->sale_inv_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
+                                  @endif
                                 </div>
                               </li>
                             </ul>
                           </td>
+                       
                         </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn overdue_status">Overdue</span></td>
-                          <td>
-                            <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown align-items-center">
-                                <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                                  <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-regular fa-eye mr-2"></i> View
-                                  </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#recordpaymentpopup">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Record Payment
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-print mr-2"></i> Print
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
-                                    <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                                  </a>
-                                </div>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
+                        
+                        <div class="modal fade" id="deleteinvoiceunpaid-{{ $value->sale_inv_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                      <form method="POST" action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}" id="delete-form-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
+                            @csrf
+                            @method('DELETE')
+                        <div class="modal-body pad-1 text-center">
+                          <i class="fas fa-solid fa-trash delete_icon"></i>
+                          <p class="company_business_name px-10"><b>Delete invoice</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This invoice?</p>
+                         
+                            <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
+                          <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                          <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_inv_id }}">Delete</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                      @endforeach
+                    @else
+                      <tr>
+                        <th colspan="6">No Data found</th>
+                      </tr>
+                    @endif
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
             </div>
+                <!-- /.card-header -->
+             
             <!-- /.tab-pane -->
             <div class="tab-pane" id="customerinvoice">
               <div class="card">
@@ -251,7 +292,7 @@
                       <div class="invoice_count_box_br1">
                         <div class="invoice_count_box in-primary">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr1"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr1"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Total Unpaid</p>
                               <p class="in_contact_total text_color1">$88.50</p>
@@ -264,7 +305,7 @@
                       <div class="invoice_count_box_br4">
                         <div class="invoice_count_box in-info">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr4"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr4"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Overdue</p>
                               <p class="in_contact_total text_color4">$88.50</p>
@@ -277,7 +318,7 @@
                       <div class="invoice_count_box_br2">
                         <div class="invoice_count_box in-secondary">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr2"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr2"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Average Time To Pay</p>
                               <p class="in_contact_total text_color2">0 Days</p>
@@ -290,7 +331,7 @@
                       <div class="invoice_count_box_br3">
                         <div class="invoice_count_box in-success">
                           <div class="in_contact">
-                            <div class="invoice_icon_box"><img src="dist/img/invoice_report.svg" class="invoice_report_icon icon_cr3"></div>
+                            <div class="invoice_icon_box"><img src="{{url('public/dist/img/invoice_report.svg')}}" class="invoice_report_icon icon_cr3"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Not Yet Due</p>
                               <p class="in_contact_total text_color3">$0.00</p>
@@ -345,13 +386,13 @@
                 <div class="card-header">
                   <div class="row justify-content-between align-items-center">
                     <div class="col-auto"><h3 class="card-title">Invoices</h3></div>
-                    <div class="col-auto"><a href="new-invoice.html"><button class="reminder_btn">Create invoice</button></a></div>
+                    <div class="col-auto"><a href="{{ route('business.invoices.create') }}"><button class="reminder_btn">Create invoice</button></a></div>
                   </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body1">
                   <div class="col-md-12 table-responsive pad_table">
-                    <table id="example4" class="table table-hover text-nowrap">
+                  <table id="example4" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
                           <th>Customer</th>
@@ -364,211 +405,129 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Lamar Mitchell</td>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn Paid_status">Paid</span></td>
+                      @if (count($allInvoices) > 0)
+                      @foreach ($allInvoices as $value)
+                        <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
+                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->sale_inv_number }}</td>
+                          <td>{{ $value->sale_inv_date }}</td>
+                          <td>{{ $value->sale_inv_final_amount }}</td>
+                          <td>{{ $value->sale_inv_final_amount }}</td>
+                          <td>@php
+                                    $nextStatus = '';
+                                    $nextStatusColor = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatusColor = '';
+                                        $nextStatus = 'Draft';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Approve';
+                                        $nextStatusColor = '';
+                                    } elseif($value->sale_status == 'Send') {
+                                        $nextStatus = 'Send';
+                                        $nextStatusColor = '';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatusColor = 'overdue_status';
+                                        $nextStatus = 'Overdue';
+                                    }elseif($value->sale_status == 'View') {
+                                        $nextStatusColor = 'Paid_status';
+                                        $nextStatus = 'Paid';
+                                    }
+                                @endphp
+                                <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span></td>
+                          <!-- Actions Dropdown -->
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block invoice_underline">View</span>
+                                @php
+                                    $nextStatus = '';
+                                    if($value->sale_status == 'Draft') {
+                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Approve') {
+                                        $nextStatus = 'Send';
+                                    } elseif($value->sale_status == 'Send') {
+                                        $nextStatus = 'Record Payment';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatus = 'View';
+                                    } elseif($value->sale_status == 'Record Payment') {
+                                        $nextStatus = 'View';
+                                    }elseif($value->sale_status == 'View') {
+                                        $nextStatus = 'View';
+                                    }
+                                @endphp
+
+                                @if($nextStatus == 'Record Payment')
+                                <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup" >
+                                Record Payment
+                                </a>
+                                
+                                @else
+                                <a href="javascript:void(0);" onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')" >
+                                {{ $nextStatus }}
+                                </a>
+                                @endif
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
+                                  <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
+                                  @if(isset($access['update_invoices']) && $access['update_invoices']) 
+                                  <a href="{{ route('business.invoices.edit', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
-                                  <a href="#" class="dropdown-item">
+                                  @endif
+                                  <a href="{{ route('business.invoices.duplicate', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
                                   </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
+                                  <a target="_blank" href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id,'print' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-print mr-2"></i> Print
                                   </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
+                                 
+                                  <a href="javascript:void(0);" onclick="sendInvoice('{{ route('business.invoices.send', [$value->sale_inv_id, $user_id]) }}', {{ $value->sale_inv_id }})"  class="dropdown-item">
+                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send
+                                  </a>
+                                  <a href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
+                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
+                                  </a>
+                                  @if(isset($access['delete_invoices']) && $access['delete_invoices']) 
+                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoiceall-{{ $value->sale_inv_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
+                                  @endif
                                 </div>
                               </li>
                             </ul>
                           </td>
+                       
                         </tr>
-                        <tr>
-                          <td>Lamar Mitchell</td>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn">Draft</span></td>
-                          <td>
-                            <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block invoice_underline">Approve</span>
-                                <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                                  <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-regular fa-eye mr-2"></i> View
-                                  </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-print mr-2"></i> Print
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
-                                    <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                                  </a>
-                                </div>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Lamar Mitchell</td>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn Paid_status">Paid</span></td>
-                          <td>
-                            <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block invoice_underline">View</span>
-                                <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                                  <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-regular fa-eye mr-2"></i> View
-                                  </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-print mr-2"></i> Print
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
-                                    <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                                  </a>
-                                </div>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Lamar Mitchell</td>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn overdue_status">Overdue</span></td>
-                          <td>
-                            <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record Payment</span>
-                                <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                                  <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-regular fa-eye mr-2"></i> View
-                                  </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-print mr-2"></i> Print
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
-                                    <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                                  </a>
-                                </div>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Lamar Mitchell</td>
-                          <td>2</td>
-                          <td>2024-04-04</td>
-                          <td>20 Days Ago</td>
-                          <td>$12.50</td>
-                          <td><span class="status_btn">Draft</span></td>
-                          <td>
-                            <ul class="navbar-nav ml-auto float-sm-right">
-                              <li class="nav-item dropdown d-flex align-items-center">
-                                <span class="d-block invoice_underline">Approve</span>
-                                <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                                  <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                  <a href="view-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-regular fa-eye mr-2"></i> View
-                                  </a>
-                                  <a href="edit-invoice.html" class="dropdown-item">
-                                    <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-regular fa-paper-plane mr-2"></i> Send Invoice
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
-                                  </a>
-                                  <a href="#" class="dropdown-item">
-                                    <i class="fas fa-solid fa-print mr-2"></i> Print
-                                  </a>
-                                  <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoice">
-                                    <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                                  </a>
-                                </div>
-                              </li>
-                            </ul>
-                          </td>
-                        </tr>
+                        
+                        <div class="modal fade" id="deleteinvoiceall-{{ $value->sale_inv_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                      <form method="POST" action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}" id="delete-form-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
+                            @csrf
+                            @method('DELETE')
+                        <div class="modal-body pad-1 text-center">
+                          <i class="fas fa-solid fa-trash delete_icon"></i>
+                          <p class="company_business_name px-10"><b>Delete invoice</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This invoice?</p>
+                         
+                            <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
+                          <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                          <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_inv_id }}">Delete</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+
+                      @endforeach
+                    @else
+                      <tr>
+                        <th colspan="6">No Data found</th>
+                      </tr>
+                    @endif
                       </tbody>
                     </table>
                   </div>
