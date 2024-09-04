@@ -204,14 +204,13 @@ public function show($sale_cus_id): View
     $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
     $Country = Countries::all(); // Fetch all countries
     $States = States::all();
-    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Approve', 'Send', 'Record Payment', 'View'])->where('sale_cus_id', $sale_cus_id)->
+    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partlal','Overdue'])->where('sale_cus_id', $sale_cus_id)->
     with('customer')
     ->orderBy('created_at', 'desc')
     ->get();
-    $draftInvoices = InvoicesDetails::where('sale_status', 'Draft')->with('customer')->orderBy('created_at', 'desc')->get();
-    $allInvoices = InvoicesDetails::with('customer')->orderBy('created_at', 'desc')->get();
+    $allInvoices = InvoicesDetails::where('sale_cus_id', $sale_cus_id)->with('customer')->orderBy('created_at', 'desc')->get();
     // Pass the vendor details, countries, and states to the view
-    return view('masteradmin.customers.view_customer', compact('SalesCustomers', 'Country', 'States','unpaidInvoices', 'draftInvoices', 'allInvoices','user_id'));
+    return view('masteradmin.customers.view_customer', compact('SalesCustomers', 'Country', 'States','unpaidInvoices', 'allInvoices','user_id'));
 }
 
 

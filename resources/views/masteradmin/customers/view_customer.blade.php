@@ -166,39 +166,32 @@
                                     $nextStatusColor = '';
                                     if($value->sale_status == 'Draft') {
                                         $nextStatusColor = '';
-                                        $nextStatus = 'Draft';
-                                    } elseif($value->sale_status == 'Approve') {
-                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Unsent') {
                                         $nextStatusColor = '';
-                                    } elseif($value->sale_status == 'Send') {
-                                        $nextStatus = 'Send';
+                                    } elseif($value->sale_status == 'Sent') {
                                         $nextStatusColor = '';
-                                    } elseif($value->sale_status == 'Record Payment') {
+                                    } elseif($value->sale_status == 'Partlal') {
                                         $nextStatusColor = 'overdue_status';
-                                        $nextStatus = 'Overdue';
-                                    }elseif($value->sale_status == 'View') {
+                                    }elseif($value->sale_status == 'Paid') {
                                         $nextStatusColor = 'Paid_status';
-                                        $nextStatus = 'Paid';
                                     }
                                 @endphp
-                                <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span></td>
+                                <span class="status_btn {{ $nextStatusColor }}">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                @php
+                              @php
                                     $nextStatus = '';
                                     if($value->sale_status == 'Draft') {
                                         $nextStatus = 'Approve';
-                                    } elseif($value->sale_status == 'Approve') {
+                                    } elseif($value->sale_status == 'Unsent') {
                                         $nextStatus = 'Send';
-                                    } elseif($value->sale_status == 'Send') {
+                                    } elseif($value->sale_status == 'Sent') {
                                         $nextStatus = 'Record Payment';
-                                    } elseif($value->sale_status == 'Record Payment') {
-                                        $nextStatus = 'View';
-                                    } elseif($value->sale_status == 'Record Payment') {
-                                        $nextStatus = 'View';
-                                    }elseif($value->sale_status == 'View') {
+                                    } elseif($value->sale_status == 'Partlal') {
+                                        $nextStatus = 'Record Payment';
+                                    }elseif($value->sale_status == 'Paid') {
                                         $nextStatus = 'View';
                                     }
                                 @endphp
@@ -418,39 +411,32 @@
                                     $nextStatusColor = '';
                                     if($value->sale_status == 'Draft') {
                                         $nextStatusColor = '';
-                                        $nextStatus = 'Draft';
-                                    } elseif($value->sale_status == 'Approve') {
-                                        $nextStatus = 'Approve';
+                                    } elseif($value->sale_status == 'Unsent') {
                                         $nextStatusColor = '';
-                                    } elseif($value->sale_status == 'Send') {
-                                        $nextStatus = 'Send';
+                                    } elseif($value->sale_status == 'Sent') {
                                         $nextStatusColor = '';
-                                    } elseif($value->sale_status == 'Record Payment') {
+                                    } elseif($value->sale_status == 'Partlal') {
                                         $nextStatusColor = 'overdue_status';
-                                        $nextStatus = 'Overdue';
-                                    }elseif($value->sale_status == 'View') {
+                                    }elseif($value->sale_status == 'Paid') {
                                         $nextStatusColor = 'Paid_status';
-                                        $nextStatus = 'Paid';
                                     }
                                 @endphp
-                                <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span></td>
+                                <span class="status_btn {{ $nextStatusColor }}">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown d-flex align-items-center">
-                                @php
+                              @php
                                     $nextStatus = '';
                                     if($value->sale_status == 'Draft') {
                                         $nextStatus = 'Approve';
-                                    } elseif($value->sale_status == 'Approve') {
+                                    } elseif($value->sale_status == 'Unsent') {
                                         $nextStatus = 'Send';
-                                    } elseif($value->sale_status == 'Send') {
+                                    } elseif($value->sale_status == 'Sent') {
                                         $nextStatus = 'Record Payment';
-                                    } elseif($value->sale_status == 'Record Payment') {
-                                        $nextStatus = 'View';
-                                    } elseif($value->sale_status == 'Record Payment') {
-                                        $nextStatus = 'View';
-                                    }elseif($value->sale_status == 'View') {
+                                    } elseif($value->sale_status == 'Partlal') {
+                                        $nextStatus = 'Record Payment';
+                                    }elseif($value->sale_status == 'Paid') {
                                         $nextStatus = 'View';
                                     }
                                 @endphp

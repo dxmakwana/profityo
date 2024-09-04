@@ -999,7 +999,7 @@ class InvoicesController extends Controller
 
         $filteredInvoices = $query->get();
 
-        $unpaidInvoices = $filteredInvoices->whereIn('sale_status', ['Unsent', 'Sent', 'Partlal']);
+        $unpaidInvoices = $filteredInvoices->whereIn('sale_status', ['Unsent', 'Sent', 'Partlal','Overdue']);
         $draftInvoices = $filteredInvoices->where('sale_status', 'Draft');
         $allInvoices = $filteredInvoices;
         $salecustomer = SalesCustomers::get();
