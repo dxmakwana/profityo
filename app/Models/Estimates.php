@@ -27,5 +27,9 @@ class Estimates extends Model
     {
         return $this->belongsTo(SalesCustomers::class, 'sale_cus_id','sale_cus_id');
     }
+    public function sentLogs()
+{
+    return $this->hasMany(SentLog::class, 'sale_estim_id', 'id');
+}
 
 }

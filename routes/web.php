@@ -25,10 +25,11 @@ use App\Http\Controllers\Masteradmin\PurchasProductController;
 use App\Http\Controllers\Masteradmin\PurchasVendorController;
 use App\Http\Controllers\Masteradmin\InvoicesController;
 
+use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes 
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
@@ -244,6 +245,17 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/invoice-list', [InvoicesController::class, 'index'])->name('business.invoices.index');
 
     });
+
+    // chart of account..
+        Route::get('/chartofaccount', [ChartOfAccountController::class, 'index'])->name('business.chartofaccount.index');
+        Route::post('/chart-of-account/store', [ChartOfAccountController::class, 'store'])->name('chartofaccount.store');
+
+// Route::get('/purchasesvendorcreate', [ChartOfAccountController::class, 'create'])->name('business.purchasvendor.create');
+// Route::post('/purchasesvendorstore', [ChartOfAccountController::class, 'store'])->name('business.purchasvendor.store');
+
+
+
+    // end
     
 });
 

@@ -9,7 +9,10 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\SalesCustomers;
 use App\Models\Countries;
 use App\Models\States;
+use App\Models\SentLog;
 use App\Models\InvoicesDetails;
+use App\Models\EstimatesItems;
+
 
 use Illuminate\Http\JsonResponse;
 
@@ -194,23 +197,114 @@ class SalesCustomersController extends Controller
         ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));
     }
 
-// add by dx......
-public function show($sale_cus_id): View
+
+
+// public function show($sale_cus_id): View
+// {
+//     $user = Auth::guard('masteradmins')->user();
+//     $user_id = $user->user_id;
+
+//     // Fetch the vendor details based on the ID
+//     $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
+//     $Country = Countries::all(); // Fetch all countries
+//     $States = States::all();
+
+//     // Fetch SentLog data with related invoice or estimate details
+//     $sentLogs = SentLog::where('user_id', $user->id)->
+//     where('cust_id', $sale_cus_id)
+//     ->orderBy('created_at', 'desc')
+//     ->with(['estimate', 'invoice']) // Eager load the related estimates and invoices
+//     ->get();
+// // dd( $sentLogs);
+//     // Unpaid Invoices
+//     $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
+//         ->where('sale_cus_id', $sale_cus_id)
+//         ->with('customer')
+//         ->orderBy('created_at', 'desc')
+//         ->get();
+    
+//     // All Invoices related to customer
+//     $allInvoices = InvoicesDetails::where('sale_cus_id', $sale_cus_id)
+//         ->with('customer')
+//         ->orderBy('created_at', 'desc')
+//         ->get();
+
+//     // Pass the fetched data to the view
+//     return view('masteradmin.customers.view_customer', compact(
+//         'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs'
+//     ));
+// }
+
+public function show($sale_cus_id, Request $request): View
 {
     $user = Auth::guard('masteradmins')->user();
-    // dd($user);
     $user_id = $user->user_id;
-    // Fetch the vendor details based on the ID 
+
+    // Fetch the vendor details based on the ID
     $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
     $Country = Countries::all(); // Fetch all countries
     $States = States::all();
-    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partlal','Overdue'])->where('sale_cus_id', $sale_cus_id)->
-    with('customer')
-    ->orderBy('created_at', 'desc')
-    ->get();
-    $allInvoices = InvoicesDetails::where('sale_cus_id', $sale_cus_id)->with('customer')->orderBy('created_at', 'desc')->get();
-    // Pass the vendor details, countries, and states to the view
-    return view('masteradmin.customers.view_customer', compact('SalesCustomers', 'Country', 'States','unpaidInvoices', 'allInvoices','user_id'));
+
+    // Get status filter from request (if provided)
+    $status = $request->input('status');
+
+    // Fetch SentLog data with related invoice or estimate details
+    $sentLogsQuery = SentLog::where('user_id', $user->id)
+        ->where('cust_id', $sale_cus_id)
+        ->with(['estimate', 'invoice']) // Eager load the related estimates and invoices
+        ->orderBy('created_at', 'desc');
+
+    // Apply status filter if provided
+    if ($status) {
+        $sentLogsQuery->where('status', $status);
+    }
+
+    $sentLogs = $sentLogsQuery->get();
+
+    // Unpaid Invoices
+    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
+        ->where('sale_cus_id', $sale_cus_id)
+        ->with('customer')
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+
+    // All Invoices related to customer
+    // $allInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
+    // ->where('sale_cus_id', $sale_cus_id)
+    //     ->with('customer')
+    //     ->orderBy('created_at', 'desc')
+    //     ->get();
+
+    $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
+
+
+    if ($request->has('start_date') && $request->start_date) {
+        $query->whereDate('sale_inv_date', '>=', $request->start_date);
+    }
+
+    if ($request->has('end_date') && $request->end_date) {
+        $query->whereDate('sale_inv_date', '<=', $request->end_date);
+    }
+
+    if ($request->has('sale_inv_number') && $request->sale_inv_number) {
+        $query->where('sale_inv_number', 'like', '%' . $request->sale_inv_number . '%');
+    }
+
+
+
+    if ($request->has('sale_status') && $request->sale_status) {
+        $query->where('sale_status', $request->sale_status);
+    }
+
+    $filteredInvoices = $query->get();
+
+    $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue']);
+
+    // Pass the fetched data to the view
+    return view('masteradmin.customers.view_customer', compact(
+        'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'status'
+    ));
 }
 
 
