@@ -21,5 +21,19 @@ class SentLog extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_sent_log');
     }
+//     public function invoice()
+// {
+//     return $this->belongsTo(InvoicesDetails::class, 'sale_inv_id');
+public function estimate()
+    {
+        return $this->belongsTo(Estimates::class, 'id', 'sale_estim_id');
+    }
 
+    public function invoice()
+    {
+        return $this->belongsTo(InvoicesDetails::class, 'id', 'sale_inv_id');
+    }
 }
+
+
+// }

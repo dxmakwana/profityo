@@ -201,7 +201,7 @@
               @endif
               @if(isset($access['chart_of_accounts']) && $access['chart_of_accounts']) 
               <li class="nav-item">
-                <a href="chart-of-accounts.html" class="nav-link">
+                <a href="{{ route('business.chartofaccount.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Chart of Accounts</p>
                 </a>

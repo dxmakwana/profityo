@@ -89,7 +89,7 @@
                               <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                             </a>
                             @endif
-                            <a href="new-invoice.html" class="dropdown-item">
+                            <a href="{{ route('business.invoices.create') }}" class="dropdown-item">
                               <i class="fas fa-solid fa-file-invoice mr-2"></i> Create Invoice
                             </a>
                             <a href="#" class="dropdown-item">
