@@ -86,7 +86,7 @@
               <option value="">All statuses</option>
               <option value="Draft">Draft</option>
               <option value="Saved">Saved</option>
-              <option value="Send">Sent</option>
+              <option value="Sent">Sent</option>
               <option value="Converted">Converted</option>
             </select>
           </div>
@@ -556,12 +556,41 @@ $(document).on('click', '.delete_btn', function() {
         data: form.serialize(), 
         success: function(response) {
             if (response.success) {
+
+
+              //count update when delete the record 
+              var table = $('#example4').DataTable();
+
+                var row = $('#estimate-row-' + estimateId); 
+
+                if (row.length > 0) {
+                    table.row(row).remove().draw(false); 
+                }
+                
+                var example5 = $('#example5').DataTable();
+
+                var example5_row = $('#estimate-row-draft-' + estimateId); 
+
+                if (example5_row.length > 0) {
+                  example5.row(example5_row).remove().draw(false); 
+                }
+
+                var example1 = $('#example1').DataTable();
+
+                var example1_row = $('#estimate-row-approve-' + estimateId); 
+
+                if (example1_row.length > 0) {
+                  example1.row(example1_row).remove().draw(false); 
+                }
+
+                //delete the list 
                 $('#estimate-row-' + estimateId).remove();
 
                 $('#estimate-row-draft-' + estimateId).remove();
 
                 $('#estimate-row-approve-' + estimateId).remove();
 
+                //hide popup when delete record
                 $('#deleteestimatall-' + estimateId).modal('hide');
                 $('#deleteestimatedraft-' + estimateId).modal('hide');
                 $('#deleteestimateapprove-' + estimateId).modal('hide');
@@ -569,6 +598,8 @@ $(document).on('click', '.delete_btn', function() {
                 //update the raw count
                 updateBadgeCount('.nav-pills .nav-link[href="#activeestimate"] .badge');
                 updateBadgeCount('.nav-pills .nav-link[href="#draftestimate"] .badge');
+
+                
 
                 // alert(response.message);
             } else {

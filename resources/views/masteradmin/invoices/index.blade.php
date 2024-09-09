@@ -722,6 +722,33 @@ $(document).on('click', '.delete_btn', function() {
         data: form.serialize(), 
         success: function(response) {
             if (response.success) {
+
+               //count update when delete the record 
+               var table = $('#example4').DataTable();
+
+                var row = $('#invoices-row-all-' + invoiceId); 
+
+                if (row.length > 0) {
+                    table.row(row).remove().draw(false); 
+                }
+
+                var example5 = $('#example5').DataTable();
+
+                var example5_row = $('#invoices-row-draft-' + invoiceId); 
+
+                if (example5_row.length > 0) {
+                  example5.row(example5_row).remove().draw(false); 
+                }
+
+                var example1 = $('#example1').DataTable();
+
+                var example1_row = $('#invoices-row-unpaid-' + invoiceId); 
+
+                if (example1_row.length > 0) {
+                  example1.row(example1_row).remove().draw(false); 
+                }
+
+
                 $('#invoices-row-unpaid-' + invoiceId).remove();
 
                 $('#invoices-row-draft-' + invoiceId).remove();

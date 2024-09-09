@@ -382,9 +382,11 @@ class InvoicesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
+        $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
         // dd($businessDetails);
-        return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state'));
+        return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId'));
     }
 
     public function store(Request $request)

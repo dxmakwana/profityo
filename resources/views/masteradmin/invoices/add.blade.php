@@ -163,7 +163,7 @@
           <div class="col-md-3">
           <div class="form-group">
             <label for="estimatenumber">Invoice Number</label>
-            <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="">
+            <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
             <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
           </div>
           </div>

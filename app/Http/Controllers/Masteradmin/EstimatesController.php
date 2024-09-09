@@ -38,6 +38,7 @@ class EstimatesController extends Controller
     //
     public function index(Request $request)
     {
+        // dd($request->sale_status);
 
         $user = Auth::guard('masteradmins')->user();
         $user_id = $user->user_id;
@@ -147,8 +148,12 @@ class EstimatesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $lastEstimate = Estimates::orderBy('sale_estim_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_estim_id + 1 : 1;
+
         // dd($businessDetails);
-        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state'));
+        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId'));
     }
 
     public function getProductDetails($id)
