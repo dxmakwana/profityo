@@ -14,4 +14,9 @@ class LogActivities extends Model
 
     protected $table = 'log_activities_table';
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id', 'user_id');
+    }
+
 }

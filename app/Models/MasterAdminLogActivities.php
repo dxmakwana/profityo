@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 
 class MasterAdminLogActivities extends Model
 {
@@ -14,4 +16,11 @@ class MasterAdminLogActivities extends Model
     {
         $this->setTable($uniqueId . '_py_log_activities_table');
     }
+
+    public function user()
+    {
+        // This method defines the relationship
+        return $this->belongsTo(MasterUserDetails::class, 'user_id', 'users_id');
+    }
+
 }

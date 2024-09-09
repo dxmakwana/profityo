@@ -1,7 +1,9 @@
-@if(isset($access['add_invoices']) && $access['add_invoices'])
+@if(isset($access['add_invoices']) && $access['add_invoices'] == 1)
   @extends('masteradmin.layouts.app')
   <title>Profityo | Add Invoice</title>
   @section('content')
+  <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -139,7 +141,7 @@
           <div class="add_customer_list" style="display: none;">
           <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
             style="width: 100%;">
-            <option>Select Items</option>
+            <option>Select Customer</option>
             @foreach($salecustomer as $customer)
         <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
         {{ $customer->sale_cus_business_name }}
@@ -177,11 +179,21 @@
           <div class="form-group">
             <label>Invoice Date</label>
             <div class="input-group date" id="estimatedate" data-target-input="nearest">
-            <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+            <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
               data-target="#estimatedate" />
             <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
               <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
+            </div> -->
+              <x-flatpickr 
+                    id="from-datepicker" 
+                    name="sale_estim_date" 
+                    placeholder="Select a date" 
+                />
+              <div class="input-group-append">
+                <div class="input-group-text" id="from-calendar-icon">
+                    <i class="fa fa-calendar-alt"></i>
+                </div>
+              </div>
             </div>
             <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
           </div>
@@ -190,14 +202,28 @@
           <div class="form-group">
             <label>Payment Due</label>
             <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-            <input type="text" class="form-control datetimepicker-input" placeholder=""
+            <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
               data-target="#estimatevaliddate" name="sale_estim_valid_date" />
             <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
               <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
+            </div> -->
+            <x-flatpickr 
+                    id="to-datepicker" 
+                    name="sale_estim_valid_date" 
+                    placeholder="Select a date" 
+                />
+              <div class="input-group-append">
+                <div class="input-group-text" id="to-calendar-icon">
+                    <i class="fa fa-calendar-alt"></i>
+                </div>
+              </div>
             </div>
             <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
             <!-- <p class="within_day">Within 7 days</p> -->
+            <p class="within_day">Within <span id="total-days">0</span> days</p>
+            <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+            <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+
           </div>
           </div>
         </div>
@@ -227,7 +253,7 @@
             <td>
             <div>
               <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-              <option>Select Items</option>
+              <option>Select Customer</option>
               @foreach($products as $product)
           <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
           {{ $product->sale_product_name }}
@@ -623,6 +649,8 @@
 
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 
   <script>
     $(document).ready(function () {
@@ -801,13 +829,405 @@
         <p>${customer.sale_cus_email}</p>
         <p>${customer.sale_cus_phone}</p>
         <a href="#" id="chooseDifferentCustomer">Choose a different customer</a>
+        <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+          <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+        </div>
         `;
           $('#customerInfo').html(customerInfoHtml).show();
 
-          $('#chooseDifferentCustomer').click(function (e) {
+          $('#sale_bill_currency_id').val(customer.sale_bill_currency_id).trigger('change');
+
+          // If using Select2 or similar, trigger the change event to update the UI
+          $('#sale_bill_currency_id').trigger('change.select2');
+
+          var customer_id = customer.sale_cus_id;
+          var formActionUrl = "{{ route('salescustomers.update', ['sale_cus_id' => '__customer_id__']) }}".replace('__customer_id__', customer_id);
+
+          // Set the form action URL
+          var form = $(`#editCustomerForm_${customer_id}`);
+          form.attr('action', formActionUrl);
+
+          if ($(`#editcustor_modal_${customer.sale_cus_id}`).length === 0) {
+          var modalHtml = `
+      <div class="modal fade" id="editcustor_modal_${customer.sale_cus_id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+       <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Edit Customer</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editCustomerForm_${customer.sale_cus_id}" class="ajax-form" method="POST" data-customer-id="${customer.sale_cus_id}">
+          @csrf
+          @method('PUT')
+          <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id}">
+          <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
+          <ul class="nav nav-pills p-2 tab_box">
+            <li class="nav-item"><a class="nav-link active" href="#editcontactajax${customer.sale_cus_id}" data-toggle="tab">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="#editbillinajax${customer.sale_cus_id}" data-toggle="tab">Billing</a></li>
+            <li class="nav-item"><a class="nav-link" href="#editshippingajax${customer.sale_cus_id}" data-toggle="tab">Shipping</a></li>
+            <li class="nav-item"><a class="nav-link" href="#editmoreajax${customer.sale_cus_id}" data-toggle="tab">More</a></li>
+          </ul>
+          </div><!-- /.card-header -->
+
+          <div class="tab-content">
+          <div class="tab-pane active" id="editcontactajax${customer.sale_cus_id}">
+
+          <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id}">
+            <div class="row pxy-15 px-10">
+              <div class="col-md-12">
+              <div class="form-group">
+                <label for="customer">Customer <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="${customer.sale_cus_business_name}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer_email">Email</label>
+                <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="${customer.sale_cus_email}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer_phonenumber">Phone</label>
+                <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_cus_phone}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer_firstname">First Name</label>
+                <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="${customer.sale_cus_first_name}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer_lastname">Last Name</label>
+                <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="${customer.sale_cus_last_name}">
+              </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /.tab-pane -->
+          <div class="tab-pane" id="editbillinajax${customer.sale_cus_id}">
+
+            <div class="row pxy-15 px-10">
+              <div class="col-md-12">
+              <div class="form-group">
+                <label for="sale_bill_currency_id_${customer.sale_cus_id}">Currency</label>
+                <select id="sale_bill_currency_id_${customer.sale_cus_id}" name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
+                  <option value="" default>Select a Currency...</option>
+
+                  @foreach($currencys as $cur)
+          <option value="{{ $cur->id }}" ${customer.sale_bill_currency_id === "{{ $cur->id }}" ? 'selected' : ''}>
+            {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
+          </option>
+          @endforeach
+                </select>
+              </div>
+              </div>
+            </div>
+            <div class="modal_sub_title">Billing Address</div>
+            <div class="row pxy-15 px-10">
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businessaddress1">Address Line 1</label>
+                <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="${customer.sale_bill_address1}" placeholder="Enter a Location">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businessaddress2">Address Line 2</label>
+                <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="${customer.sale_bill_address2}" placeholder="Enter a Location">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businesscity">City</label>
+                <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="${customer.sale_bill_city_name}" placeholder="Enter A City">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businesszipcode">Postal/ZIP Code</label>
+                <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="${customer.sale_bill_zipcode}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="sale_bill_country_id_${customer.sale_cus_id}">Country</label>
+                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2 bill_country" style="width: 100%;" data-target="#sale_bill_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}" required>
+                  <option value="" default>Select a Country...</option>
+                  @foreach($countries as $con)
+          <option value="{{ $con->id }}" ${customer.sale_bill_country_id === "{{ $cur->id }}" ? 'selected' : ''}>
+           {{ $con->name }}
+          </option>
+          @endforeach
+                </select>
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="sale_bill_state_id_${customer.sale_cus_id}">State</label>
+                <select id="sale_bill_state_id_${customer.sale_cus_id}" name="sale_bill_state_id" class="form-control select2" style="width: 100%;" required>
+                  <option value="" default>Select a State...</option>
+                  @foreach($customer_states as $state)
+          <option value="{{ $state->id }}" ${customer.sale_bill_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
+           {{ $state->name }}
+          </option>
+          @endforeach
+                </select>
+              </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /.tab-pane -->
+          <div class="tab-pane" id="editshippingajax${customer.sale_cus_id}">
+
+            <div class="modal_sub_title px-15">Shipping Address</div>
+            <div class="row pxy-15 px-10">
+              <div class="col-md-12">
+              <div class="icheck-primary">
+                <input type="radio" id="shippingaddress" name="shipping" name="sale_same_address" value="on" ${customer.sale_same_address === 'on' ? 'checked' : ''}>
+                <label for="shippingaddress">Same As Billing Address</label>
+
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="${customer.sale_ship_shipto}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customer_phonenumber">Phone</label>
+                <input type="Number" class="form-control" name="sale_ship_phone" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_ship_phone}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businessaddress1">Address Line 1</label>
+                <input type="text" class="form-control" name="sale_ship_address1" id="company-businessaddress1" placeholder="Enter a Location" value="${customer.sale_ship_address1}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businessaddress2">Address Line 2</label>
+                <input type="text" class="form-control" id="company-businessaddress2" placeholder="Enter a Location" name="sale_ship_address2" value="${customer.sale_ship_address2}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businesscity">City</label>
+                <input type="text" class="form-control" name="sale_ship_city_name" id="company-businesscity"  placeholder="Enter A City" value="${customer.sale_ship_city_name}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="company-businesszipcode">Postal/ZIP Code</label>
+                <input type="text" class="form-control" id="company-businesszipcode" placeholder="Enter a Zip Code" name="sale_ship_zipcode" value="${customer.sale_ship_zipcode}">
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="sale_ship_country_id_${customer.sale_cus_id}">Country</label>
+                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_ship_country_id" class="form-control select2 ship_country" style="width: 100%;" required data-target="#sale_ship_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}">
+                  <option value="" default>Select a Country...</option>
+                  @foreach($currencys as $cont)
+          <option value="{{ $cont->id }}" >
+           {{ $cont->name }}
+          </option>
+          @endforeach
+                </select>
+
+              </div>
+              </div>
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="sale_ship_state_id_${customer.sale_cus_id}">State</label>
+                <select id="sale_ship_state_id_${customer.sale_cus_id}" name="sale_ship_state_id" class="form-control select2" style="width: 100%;" >
+                  <option value="" default>Select a State...</option>
+                  @foreach($ship_state as $statest)
+          <option value="{{ $statest->id }}" ${customer.sale_ship_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
+           {{ $statest->name }}
+          </option>
+          @endforeach
+                </select>
+
+              </div>
+              </div>
+              <div class="col-md-12">
+              <div class="form-group">
+                <label for="deliveryinstructions">Delivery instructions</label>
+                <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="${customer.sale_ship_delivery_desc}">
+              </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /.tab-pane -->
+          <div class="tab-pane" id="editmoreajax${customer.sale_cus_id}">
+
+            <div class="row pxy-15 px-10">
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customeraccountnumber">Account Number</label>
+                <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="${customer.sale_cus_account_number}">
+              </div>
+              </div>
+
+              <div class="col-md-6">
+              <div class="form-group">
+                <label for="customerwebsite">Website</label>
+                <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="${customer.sale_cus_website}">
+              </div>
+              </div>
+
+            </div>
+
+          </div>
+          <!-- /.tab-pane -->
+          </div>
+
+          <!-- /.tab-content -->
+        </div>
+        <div class="modal-footer">
+          <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
+          <button type="submit" form="editCustomerForm_${customer.sale_cus_id}" class="add_btn">Save</button>
+        </div>
+        </form>
+        </div>
+      </div>
+      </div>
+    `;
+          $('body').append(modalHtml);
+
+          // Set the selected value in the dropdown
+          var selectcurrency = $(`#sale_bill_currency_id_${customer.sale_cus_id}`);
+          selectcurrency.val(customer.sale_bill_currency_id).trigger('change');
+
+          var selectcountry = $(`#sale_bill_country_id_${customer.sale_cus_id}`);
+          selectcountry.val(customer.sale_bill_country_id).trigger('change');
+
+          var selectstate = $(`#sale_bill_state_id_${customer.sale_cus_id}`);
+          selectstate.val(customer.sale_bill_state_id).trigger('change');
+
+          var shipselectstate = $(`#sale_ship_state_id_${customer.sale_cus_id}`);
+          shipselectstate.val(customer.sale_ship_state_id).trigger('change');
+
+          var shipselectcountry = $(`#sale_ship_country_id_${customer.sale_cus_id}`);
+          shipselectcountry.val(customer.sale_ship_country_id).trigger('change');
+
+
+          selectcurrency.select2();
+          selectcountry.select2();
+          selectstate.select2();
+          shipselectcountry.select2();
+          shipselectstate.select2();
+
+          function loadStates($countryDropdown, selectedStateId) {
+            var countryId = $countryDropdown.val();
+            var targetSelector = $countryDropdown.data('target');
+            var url = $countryDropdown.data('url');
+            var $stateDropdown = $(targetSelector);
+
+            if (countryId) {
+            $.ajax({
+              url: url + '/' + countryId,
+              type: 'GET',
+              dataType: 'json',
+              success: function (response) {
+              if (response) {
+                $stateDropdown.empty();
+                $stateDropdown.append('<option value="">Select State...</option>');
+                $.each(response, function (key, state) {
+                $stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                });
+                if (selectedStateId) {
+                $stateDropdown.val(selectedStateId).trigger('change');
+                }
+                $stateDropdown.select2();
+              }
+              },
+              error: function (xhr, status, error) {
+              console.error('AJAX Error: ', status, error);
+              }
+            });
+            } else {
+            $stateDropdown.empty();
+            $stateDropdown.append('<option value="">Select State...</option>');
+            }
+          }
+
+          function loadShipStates($countryDropdown, selectedStateId) {
+            var countryId = $countryDropdown.val();
+            var targetSelector = $countryDropdown.data('target');
+            var url = $countryDropdown.data('url');
+            var $stateDropdown = $(targetSelector);
+
+            if (countryId) {
+            $.ajax({
+              url: url + '/' + countryId,
+              type: 'GET',
+              dataType: 'json',
+              success: function (response) {
+              if (response) {
+                $stateDropdown.empty();
+                $stateDropdown.append('<option value="">Select State...</option>');
+                $.each(response, function (key, state) {
+                $stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                });
+                if (selectedStateId) {
+                $stateDropdown.val(selectedStateId).trigger('change');
+                }
+                $stateDropdown.select2();
+              }
+              },
+              error: function (xhr, status, error) {
+              console.error('AJAX Error: ', status, error);
+              }
+            });
+            } else {
+            $stateDropdown.empty();
+            $stateDropdown.append('<option value="">Select State...</option>');
+            }
+          }
+          // Bind change event for bill_country
+          $(document).on('change', '.bill_country', function () {
+            loadStates($(this));
+          });
+
+          $(document).on('change', '.ship_country', function () {
+            loadShipStates($(this));
+          });
+
+          // Pre-select the state for an existing customer
+          loadStates($(`#sale_bill_country_id_${customer.sale_cus_id}`), customer.sale_bill_state_id);
+
+          loadShipStates($(`#sale_ship_country_id_${customer.sale_cus_id}`), customer.sale_ship_state_id);
+
+
+
+          }
+          $('.select2').select2();
+          // Event delegation for dynamically added content
+          $('#customerInfo').on('click', '.customer', function (e) {
           e.preventDefault();
-          $('#customerInfo').hide();
-          $('#customerSelect').focus();
+          var customerId = $(this).data('id');
+          $(`#editcustor_modal_${customerId}`).modal('show');
+          });
+
+       
+
+          $('#chooseDifferentCustomer').click(function (e) {
+            e.preventDefault();
+            $('#customerInfo').hide(); // Hide the customer info
+            $('.add_customer_list').show(); // Show the dropdown list
+            $('#customerSelect').focus(); // Set focus to the select element
           });
         } else {
           alert(response.message);
@@ -821,6 +1241,93 @@
       $('#customerInfo').hide();
       }
     });
+
+
+    
+    $(document).ready(function() {
+    $(document).on('submit', 'form.ajax-form', function(e) {
+      // alert('hii');
+        e.preventDefault();
+        
+        var form = $(this);
+        var customerId = form.data('customer-id');  
+        var formData = form.serialize();
+        var formAction = "{{ route('salescustomers.update', ['sale_cus_id' => '__customer_id__']) }}".replace('__customer_id__', customerId);
+
+        $.ajax({
+            url: formAction,
+            type: 'PUT',
+            data: formData,
+            success: function(response) {
+                var customer = response.customer;
+
+                var customerInfoHtml = `
+                    <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                    <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
+                    <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+                    <p class="company_details_text">${customer.sale_cus_account_number}</p>
+                    <p class="company_details_text">${customer.sale_cus_website}</p>
+                    <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+                    <p class="company_details_text">${customer.state.name}</p>
+                    <p class="company_details_text">${customer.country.name}</p>
+
+                    <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
+                    <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+                    <p class="company_details_text">${customer.sale_ship_phone}</p>
+
+                    <p class="company_details_text">${customer.sale_cus_email}</p>
+                    <p class="company_details_text">${customer.sale_cus_phone}</p>
+
+                    <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                        <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+                    </div>
+                    <div class="edit_es_text customer_list">
+                        <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                    </div>
+                `;
+
+                $('#customerInfo').html(customerInfoHtml).show();
+
+                $('#editcustor_modal_' + customer.sale_cus_id).modal('hide');
+
+                 $('#customerInfo').on('click', '.customer_list', function (e) {
+                      e.preventDefault();
+                      $('#customerInfo').hide(); // Hide the customer info
+                      $('.add_customer_list').show(); // Show the dropdown list
+                      $('#customerSelect').focus(); // Set focus to the select element
+                  });
+
+                updateCustomerDropdown();
+            },
+            error: function(xhr) {
+                console.log('An error occurred: ' + xhr.statusText);
+            }
+        });
+    });
+
+    function updateCustomerDropdown() {
+        $.ajax({
+            url: "{{ route('salescustomers.list') }}", 
+            type: 'GET',
+            success: function(customers) {
+                var customerSelect = $('#customerSelect');
+                customerSelect.empty(); 
+                
+                customers.forEach(function(customer) {
+                    var optionHtml = `<option value="${customer.sale_cus_id}">${customer.sale_cus_business_name}</option>`;
+                    customerSelect.append(optionHtml);
+                });
+
+            },
+            error: function(xhr) {
+                console.log('Failed to update customer dropdown: ' + xhr.statusText);
+            }
+        });
+    }
+
+   
+}); 
+
 
 
     // Function to calculate my items amount
@@ -942,7 +1449,7 @@
       <td>
       <div>
         <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-        <option>Select Items</option>
+        <option>Select Customer</option>
         @foreach($products as $product)
         <option value="{{ $product->sale_product_id }}">{{ $product->sale_product_name }}</option>
     @endforeach
@@ -1024,6 +1531,7 @@
       formData['sale_estim_status'] = 1;
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
 
 
       $.ajax({
@@ -1168,6 +1676,64 @@
         }
     });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+        var fromdatepicker = flatpickr("#from-datepicker", {
+            locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "d/m/Y",
+            allowInput: true,
+            onChange: calculateDays
+        });
+
+        var todatepicker = flatpickr("#to-datepicker", {
+            locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "d/m/Y",
+            allowInput: true,
+            onChange: calculateDays
+        });
+
+        document.getElementById('from-calendar-icon').addEventListener('click', function() {
+            fromdatepicker.open(); 
+        });
+
+        document.getElementById('to-calendar-icon').addEventListener('click', function() {
+            todatepicker.open(); 
+        });
+
+        function calculateDays() {
+        var sdate = fromdatepicker.input.value;  
+        var edate = todatepicker.input.value;  
+        var totalDays = 0;   
+
+        if(sdate && edate) {
+            var startDate = new Date(sdate);
+            var endDate = new Date(edate);
+
+            var timeDifference = endDate.getTime() - startDate.getTime();
+
+            var totalDays = timeDifference / (1000 * 3600 * 24); 
+
+            if (totalDays < 0) {
+            document.getElementById("total-days").innerText = "Invalid date range"; 
+            document.getElementById("hidden-total-days").value = ''; 
+
+          } else {
+              document.getElementById("total-days").innerText = totalDays; 
+              document.getElementById("hidden-total-days").value = totalDays; 
+          }
+
+        }
+
+      }
+});
+
+    </script>
 
   <!-- ./wrapper -->
 

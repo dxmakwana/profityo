@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="users_password">Password <span class="text-danger">*</span></label>
+                                    <label for="users_password">Password</label>
                                     <input type="Password" name="users_password" class="form-control @error('users_password') is-invalid @enderror"
                                            id="textrate" placeholder="Password" value="{{ old('users_password') }}">
                                      @error('users_password')

@@ -93,7 +93,13 @@ class ProfileController extends Controller
             // \DB::enableQueryLog();
             
             $logs = \LogActivity::logActivityLists();
+            // dd($logs);
 
+            $logs->transform(function ($log) use ($user) {
+                $log->user_name = $user ? $user->name : 'Unknown'; 
+                return $log;
+            });
+            // dd($logs);
             // dd(\DB::getQueryLog()); 
             
                 return view('superadmin.logs.index')

@@ -70,8 +70,8 @@
                     <!-- <div><h4>Bill To:</h4></div> -->
                     <div ><strong>Estimate Number: </strong>{{ $invoices->sale_inv_number }}</div>
                     <div ><strong>Customer Ref:: </strong>{{ $invoices->sale_inv_customer_ref }}</div>
-                    <div><strong>Estimate Date: </strong>{{ $invoices->sale_inv_date }}</div>
-                    <div ><strong>Valid Until: </strong>{{ $invoices->sale_inv_valid_date }}</div>
+                    <div><strong>Estimate Date: </strong>{{ \Carbon\Carbon::parse($invoices->sale_inv_date)->format('M d, Y') }}</div>
+                    <div ><strong>Valid Until: </strong>{{ \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('M d, Y') }}</div>
                     <div ><strong>Grand Total ({{ $currency ? $currency->currency : 'N/A' }}):</strong><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $invoices->sale_inv_final_amount }}</strong></div>
                 </td>
            

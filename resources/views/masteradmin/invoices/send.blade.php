@@ -97,11 +97,11 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Invoice Date:</strong></td>
-                                        <td>{{ $invoices->sale_inv_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($invoices->sale_inv_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Payment Due:</strong></td>
-                                        <td>{{ $invoices->sale_inv_valid_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Grand Total ({{ $currency ? $currency->currency : 'N/A' }}):</strong></td>

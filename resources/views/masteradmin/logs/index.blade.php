@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row mb-2 align-items-center">
           <div class="col-sm-12">
-            <h1 class="m-0">{{ __("User Role") }}Log Activity</h1>
+            <h1 class="m-0">{{ __("Log Activity") }}</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">Log Activity</li>
@@ -34,7 +34,7 @@
                                 <th>Method</th>
                                 <th>Ip</th>
                                 <th>Browser</th>
-                                <th>User Id</th>
+                                <th>User Name</th>
                                 <th>Date Time</th>
                             </tr>
                         </thead>
@@ -47,7 +47,7 @@
                                         <td>{{ $log->method }}</td>
                                         <td>{{ $log->ip }}</td>
                                         <td>{{ $log->agent }}</td>
-                                        <td>{{ $log->user_id }}</td>
+                                        <td>{{ $log->user_name }}</td>
                                         <td>{{ $log->created_at }}</td>
                                     </tr>
                                 @endforeach    

@@ -1,4 +1,4 @@
-@if((isset($access['add_product_services_sales']) && $access['add_product_services_sales']) )
+@if((isset($access['add_product_services_sales']) && $access['add_product_services_sales'] == 1) )
 @extends('masteradmin.layouts.app')
 <title>Profityo | New Product Or Service</title>
 @section('content')

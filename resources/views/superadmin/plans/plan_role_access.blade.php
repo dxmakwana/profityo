@@ -86,19 +86,29 @@
                                                             id="chk_add_{{ $permission->mname }}" value="1">
                                                     </td>
                                                     <td class="text-center">
-                                                        <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_view ? 'checked' : '' }}
+                                                        <!-- <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_view ? 'checked' : '' }}
                                                             name="view_{{ $permission->mname }}"
-                                                            id="chk_view_{{ $permission->mname }}" value="1">
-                                                    </td>
-                                                    <td class="text-center">
+                                                            id="chk_view_{{ $permission->mname }}" value="1"> -->
                                                         <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_update ? 'checked' : '' }}
                                                             name="update_{{ $permission->mname }}"
                                                             id="chk_update_{{ $permission->mname }}" value="1">
                                                     </td>
                                                     <td class="text-center">
+                                                        <!-- <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_update ? 'checked' : '' }}
+                                                            name="update_{{ $permission->mname }}"
+                                                            id="chk_update_{{ $permission->mname }}" value="1"> -->
                                                         <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_delete ? 'checked' : '' }}
                                                             name="delete_{{ $permission->mname }}"
                                                             id="chk_delete_{{ $permission->mname }}" value="1">
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <!-- <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_delete ? 'checked' : '' }}
+                                                            name="delete_{{ $permission->mname }}"
+                                                            id="chk_delete_{{ $permission->mname }}" value="1"> -->
+                                                        <input class="form-check-input child-checkbox {{ $permission->mname }}-checkbox" type="checkbox" {{ $permission->is_access_view ? 'checked' : '' }}
+                                                            name="view_{{ $permission->mname }}"
+                                                            id="chk_view_{{ $permission->mname }}" value="1">
                                                     </td>
                                                 </tr>
                                             @endforeach

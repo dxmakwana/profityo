@@ -30,7 +30,7 @@
                         <tr id="estimate-row-approve-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
@@ -147,7 +147,7 @@
                         <tr id="estimate-row-draft-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
@@ -264,7 +264,7 @@
                         <tr id="estimate-row-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <td>
@@ -370,29 +370,20 @@
         </div><!-- /.card-body -->
       </div><!-- /.card-->
 
-<script>
+<!-- <script>
 
   $(function () {
 
-    $("#example1").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example1').DataTable({
 
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+      paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
 
     });
 
@@ -403,25 +394,16 @@
 
   $(function () {
 
-    $("#example5").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example5').DataTable({
 
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+      paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
 
     });
 
@@ -433,28 +415,17 @@
 
   $(function () {
 
-    $("#example4").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
-
+    $('#example4').DataTable({
+      paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
     });
 
   });
 
-</script>
+</script> -->

@@ -69,8 +69,8 @@
                     <!-- <div><h4>Bill To:</h4></div> -->
                     <div ><strong>Estimate Number: </strong>{{ $estimates->sale_estim_number }}</div>
                     <div ><strong>Customer Ref:: </strong>{{ $estimates->sale_estim_customer_ref }}</div>
-                    <div><strong>Estimate Date: </strong>{{ $estimates->sale_estim_date }}</div>
-                    <div ><strong>Valid Until: </strong>{{ $estimates->sale_estim_valid_date }}</div>
+                    <div><strong>Estimate Date: </strong>{{ \Carbon\Carbon::parse($estimates->sale_estim_date)->format('M d, Y') }}</div>
+                    <div ><strong>Valid Until: </strong>{{ \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('M d, Y') }}</div>
                     <div ><strong>Grand Total ({{ $currency ? $currency->currency : 'N/A' }}):</strong><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_final_amount }}</strong></div>
                 </td>
            
@@ -94,7 +94,7 @@
                 <td class="text-center">{{ $item->sale_estim_item_qty }}</td>
                 <td class="text-center">{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $item->sale_estim_item_price }}</td>
                 <!-- <td class="text-center">5%</td> -->
-                <td>{{ $item->tax_name ?? 'No Tax Name' }} {{ $item->tax_rate ?? 'No Tax Name' }}%</td>
+                <td class="text-center">{{ $item->tax_name ?? 'No Tax Name' }} {{ $item->tax_rate ?? 'No Tax Name' }}%</td>
                 <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
                 <td class="text-right">{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $item->sale_estim_item_qty * $item->sale_estim_item_price ?? '0'}} </td>
             </tr>

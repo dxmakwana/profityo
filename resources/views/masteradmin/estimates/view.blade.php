@@ -1,4 +1,4 @@
-@if(isset($access['view_estimates']) && $access['view_estimates'])
+@if(isset($access['view_estimates']) && $access['view_estimates'] == 1)
     @extends('masteradmin.layouts.app')
     <title>Profityo | View Estimates</title>
     @section('content')
@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <label>Valid Until</label>
-                                        <p class="company_business_name">{{ $estimates->sale_estim_valid_date }}</p>
+                                        <p class="company_business_name">{{ \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('M d, Y') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
                                         $date = $estimates->created_at; 
                                         $carbonDate = \Carbon\Carbon::parse($date);
                                         $carbonDate->setTimezone('Asia/Kolkata');
-                                        $formattedDate = $carbonDate->format('Y-m-d \a\t h:i A');
+                                        $formattedDate = $carbonDate->format('M d, Y \a\t h:i A');
 
                                         $offsetMinutes = $carbonDate->offsetMinutes; 
                                         $offsetHours = intdiv($offsetMinutes, 60); 
@@ -179,7 +179,7 @@
                                                 class="fas fa-solid fa-file-invoice mr-2"></i>Convert To
                                             Invoice</button></a> -->
                                     
-                                    <a href="#" data-toggle="modal" data-target="#sendestimate-{{ $estimates->sale_estim_id }}"><button class="viewdetails_btn"><i
+                                    <a href="#" data-toggle="modal" data-target="#convertestimate-{{ $estimates->sale_estim_id }}"><button class="viewdetails_btn"><i
                                     class="fas fa-solid fa-file-invoice mr-2"></i>Convert To
                                     Invoice</button></a>
                                 </div>
@@ -259,11 +259,11 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Estimate Date:</strong></td>
-                                        <td>{{ $estimates->sale_estim_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($estimates->sale_estim_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Valid Until:</strong></td>
-                                        <td>{{ $estimates->sale_estim_valid_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Grand Total ({{ $currencys->find($estimates->sale_currency_id)->currency }}):</strong></td>
@@ -639,6 +639,22 @@
         </div>
     </div>
 
+    <div class="modal fade" id="convertestimate-{{ $estimates->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body pad-1 text-center">
+                    <p class="company_business_name px-10"><b>Convert To invoice</b></p>
+                    <p class="company_details_text">Are You Sure You Want to convert This invoice?</p>
+                    <a type="button" class="delete_btn px-15" data-dismiss="modal">Cancel</a>
+                    <a href="{{ route('business.estimates.viewInvoice', $estimates->sale_estim_id) }}" type="submit" class="add_btn px-15">Yes</a>
+                </div>
+            </div>
+        </div>
+   
+        
+    </div>
+
     <div class="modal fade" id="sendestimate-{{ $estimates->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
@@ -656,10 +672,11 @@
                 </div>
             </div>
         </div>
-    </div>
+
     </div>
     <!-- ./wrapper -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
     $(document).ready(function () {
           $('#editCustomerForm').on('submit', function(e) {
@@ -755,37 +772,7 @@
 
     </script>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var form = document.getElementById('estimateForm');
-        //alert(form);
-        function submitForm() {
-            var formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // console.log('Estimate saved successfully!');
-                } else {
-                    console.error('Error:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        form.addEventListener('change', submitForm);
-    });
-    </script>
+ 
     <script>
         function printPage() {
             window.print();

@@ -53,6 +53,7 @@ class InvoicesController extends Controller
         'sale_estim_image' => 'nullable|image',
         'sale_status' => 'required|integer',
         'sale_estim_item_discount' => 'nullable|integer',
+        'sale_total_days' => 'required|integer',
        
         ]);
 
@@ -78,6 +79,7 @@ class InvoicesController extends Controller
             'sale_inv_footer_note' => $request->sale_estim_footer_note,
             'sale_status' => 'Draft',
             'sale_inv_item_discount' => $request->sale_estim_item_discount,
+            'sale_total_days' => $request->sale_total_days,
             'sale_inv_status' => 1,
             'id' => $user->id,
         ]);
@@ -270,6 +272,7 @@ class InvoicesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
+            'sale_total_days' => 'required|integer',
         ]);
 
         $user = Auth::guard('masteradmins')->user();
@@ -295,6 +298,7 @@ class InvoicesController extends Controller
             'sale_inv_notes' => $request->sale_estim_notes,
             'sale_inv_footer_note' => $request->sale_estim_footer_note,
             'sale_inv_item_discount' => $request->sale_estim_item_discount,
+            'sale_total_days' => $request->sale_total_days
         ]);
         
         InvoicesItems::where('sale_inv_id', $invoice_id)->delete();
@@ -350,6 +354,8 @@ class InvoicesController extends Controller
         
         $salestax = SalesTax::all();
 
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
         $specificMenus = CustomizeMenu::with('children')
         ->whereIn('cust_menu_id', [1, 2, 3, 4])
         ->get();
@@ -366,9 +372,19 @@ class InvoicesController extends Controller
         ->whereIn('cust_menu_id', [9])
         ->get();
 
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
 
         // dd($businessDetails);
-        return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription'));
+        return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state'));
     }
 
     public function store(Request $request)
@@ -393,6 +409,7 @@ class InvoicesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
+            'sale_total_days' => 'required|integer',
            
             ]);
     
@@ -407,6 +424,7 @@ class InvoicesController extends Controller
                 'sale_inv_customer_ref' => $request->sale_estim_customer_ref,
                 'sale_inv_date' => $request->sale_estim_date,
                 'sale_inv_valid_date' => $request->sale_estim_valid_date,
+                'sale_total_days' => $request->sale_total_days,
                 'sale_inv_discount_desc' => $request->sale_estim_discount_desc,
                 'sale_inv_discount_type' => $request->sale_estim_discount_type,
                 'sale_currency_id' => $request->sale_currency_id,
@@ -443,7 +461,9 @@ class InvoicesController extends Controller
                
             }
     
-            $sessionData = session('form_data', []);
+            // $sessionData = session('form_data', []);
+
+            $sessionData = session('form_data') ?? [];
     
             // dd( $sessionssData);
                 foreach ($sessionData as $key => $value) {
@@ -879,6 +899,7 @@ class InvoicesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
+            'sale_total_days' => 'nullable|integer',
            
             ]);
     
@@ -904,6 +925,7 @@ class InvoicesController extends Controller
                 'sale_inv_footer_note' => $request->sale_estim_footer_note,
                 'sale_status' => 'Draft',
                 'sale_inv_item_discount' => $request->sale_estim_item_discount,
+                'sale_total_days' => $request->sale_total_days,
                 'sale_inv_status' => 1,
                 'id' => $user->id,
             ]);
@@ -974,15 +996,30 @@ class InvoicesController extends Controller
         // dd($user);
         $user_id = $user->user_id;
 
+        $startDate = $request->input('start_date'); 
+        $endDate = $request->input('end_date');   
+        // \DB::enableQueryLog();
+
         $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
 
 
-        if ($request->has('start_date') && $request->start_date) {
-            $query->whereDate('sale_inv_date', '>=', $request->start_date);
-        }
+        // if ($request->has('start_date') && $request->start_date) {
+        //     $query->whereDate('sale_inv_date', '>=', $request->start_date);
+        // }
 
-        if ($request->has('end_date') && $request->end_date) {
-            $query->whereDate('sale_inv_date', '<=', $request->end_date);
+        // if ($request->has('end_date') && $request->end_date) {
+        //     $query->whereDate('sale_inv_date', '<=', $request->end_date);
+        // }
+
+        if ($startDate) {
+
+            $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+
+        }
+    
+        if ($endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_inv_valid_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+
         }
 
         if ($request->has('sale_inv_number') && $request->sale_inv_number) {

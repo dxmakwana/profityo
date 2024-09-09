@@ -2,6 +2,8 @@
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit invoice</title>
 @section('content')
+<link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -182,11 +184,29 @@
                     <div class="form-group">
                       <label>Date</label>
                       <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
                         data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
                         <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                        </div>
+                        </div> -->
+                        <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" /> 
+
+                          @php
+                          $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
+                          @endphp
+
+                          <x-flatpickr 
+                                id="from-datepicker" 
+                                name="sale_estim_date" 
+                                placeholder="Select a date" 
+                                :value="$saleEstimDate" 
+                            />
+
+                          <div class="input-group-append">
+                            <div class="input-group-text" id="from-calendar-icon">
+                                <i class="fa fa-calendar-alt"></i>
+                            </div>
+                          </div>
                         <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                       </div>
                     </div>
@@ -195,14 +215,34 @@
                     <div class="form-group">
                       <label>Valid Until</label>
                       <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" placeholder=""
+                        <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
                         data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
                         <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        </div> -->
+                          <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
+                        
+                        @php
+                            $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
+                        @endphp
+
+                        <x-flatpickr 
+                              id="to-datepicker" 
+                              name="sale_estim_valid_date" 
+                              placeholder="Select a date" 
+                              :value="$formattedSaleEstimDate" 
+                          />
+                        <div class="input-group-append">
+                          <div class="input-group-text" id="to-calendar-icon">
+                              <i class="fa fa-calendar-alt"></i>
+                          </div>
                         </div>
                       </div>
                       <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
                       <!-- <p class="within_day">Within 7 days</p> -->
+                      <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span> days</p>
+                      <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+                      <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
                     </div>
                   </div>
                 </div>
@@ -1031,7 +1071,8 @@
 
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+  <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 <script>
   $(document).ready(function () {
     $('.select2').select2();
@@ -1840,6 +1881,7 @@
       formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
 
 
       $.ajax({
@@ -2169,6 +2211,76 @@ $(document).ready(function() {
     });
 </script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var fromInput = document.getElementById('from-datepicker-hidden');
+    var toInput = document.getElementById('to-datepicker-hidden');
+
+    // console.log('From Input Value:', fromInput ? fromInput.value : 'No value');
+    // console.log('To Input Value:', toInput ? toInput.value : 'No value');
+
+    if (fromInput && toInput) {
+        var fromdatepicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: fromInput.value || null,
+            onChange: calculateDays
+        });
+
+        var todatepicker = flatpickr("#to-datepicker", {
+          locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: toInput.value || null,
+            onChange: calculateDays
+        });
+
+        document.getElementById('from-calendar-icon').addEventListener('click', function() {
+            fromdatepicker.open(); 
+        });
+
+        document.getElementById('to-calendar-icon').addEventListener('click', function() {
+            todatepicker.open(); 
+        });
+
+        function calculateDays() {
+        var sdate = fromdatepicker.input.value;  
+        var edate = todatepicker.input.value;  
+        var totalDays = 0;   
+
+        if(sdate && edate) {
+            var startDate = new Date(sdate);
+            var endDate = new Date(edate);
+
+            var timeDifference = endDate.getTime() - startDate.getTime();
+
+            var totalDays = timeDifference / (1000 * 3600 * 24); 
+
+            if (totalDays < 0) {
+            document.getElementById("total-days").innerText = "Invalid date range"; 
+            document.getElementById("hidden-total-days").value = ''; 
+
+          } else {
+              document.getElementById("total-days").innerText = totalDays; 
+              document.getElementById("hidden-total-days").value = totalDays; 
+          }
+
+        }
+
+      }
+
+    } else {
+        console.error('Hidden input elements not found or have no value');
+    }
+});
+
+    </script>
 
 @endsection
 @endif

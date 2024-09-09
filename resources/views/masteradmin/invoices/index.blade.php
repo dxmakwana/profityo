@@ -1,4 +1,4 @@
-@if(isset($access['view_invoices']) && $access['view_invoices']) 
+@if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View Invoice</title>
 @section('content')
@@ -184,7 +184,7 @@
                         <tr id="invoices-row-unpaid-{{ $value->sale_inv_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
-                          <td>{{ $value->sale_inv_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>@php
@@ -236,10 +236,12 @@
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
+                                  @if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  @if(isset($access['update_invoices']) && $access['update_invoices']) 
+                                  @endif
+                                  @if(isset($access['update_invoices']) && $access['update_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.edit', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -257,7 +259,7 @@
                                   <a href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_invoices']) && $access['delete_invoices']) 
+                                  @if(isset($access['delete_invoices']) && $access['delete_invoices'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoiceunpaid-{{ $value->sale_inv_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -319,7 +321,7 @@
                         <tr id="invoices-row-draft-{{ $value->sale_inv_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
-                          <td>{{ $value->sale_inv_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>@php
@@ -371,10 +373,12 @@
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
+                                  @if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  @if(isset($access['update_invoices']) && $access['update_invoices']) 
+                                  @endif
+                                  @if(isset($access['update_invoices']) && $access['update_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.edit', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -392,7 +396,7 @@
                                   <a href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_invoices']) && $access['delete_invoices']) 
+                                  @if(isset($access['delete_invoices']) && $access['delete_invoices'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoicedraft-{{ $value->sale_inv_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -456,7 +460,7 @@
                         <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
-                          <td>{{ $value->sale_inv_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
                           <td>@php
@@ -507,11 +511,14 @@
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
+                                
                                 <div class="dropdown-menu dropdown-menu-right">
+                                  @if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  @if(isset($access['update_invoices']) && $access['update_invoices']) 
+                                  @endif
+                                  @if(isset($access['update_invoices']) && $access['update_invoices'] == 1) 
                                   <a href="{{ route('business.invoices.edit', $value->sale_inv_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -529,7 +536,7 @@
                                   <a href="{{ route('business.invoices.sendviews', [ $value->sale_inv_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_invoices']) && $access['delete_invoices']) 
+                                  @if(isset($access['delete_invoices']) && $access['delete_invoices'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteinvoiceall-{{ $value->sale_inv_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -725,6 +732,10 @@ $(document).on('click', '.delete_btn', function() {
                 $('#deleteinvoicedraft-' + invoiceId).modal('hide');
                 $('#deleteinvoiceunpaid-' + invoiceId).modal('hide');
 
+                //update the raw count
+                updateBadgeCount('.nav-pills .nav-link[href="#unpaidinvoice"] .badge');
+                updateBadgeCount('.nav-pills .nav-link[href="#draftinvoice"] .badge');
+
                 // alert(response.message);
             } else {
                 alert('An error occurred: ' + response.message);
@@ -735,6 +746,14 @@ $(document).on('click', '.delete_btn', function() {
         }
     });
 });
+
+function updateBadgeCount(selector) {
+    var badge = $(selector);
+    var currentCount = parseInt(badge.text(), 10); 
+    if (currentCount > 0) {
+        badge.text(currentCount - 1);
+    }
+}
 </script>
 <script>
     function sendInvoice(url, invoiceId) {
@@ -779,9 +798,10 @@ $(document).ready(function() {
         $('#sale_status').val(defaultSaleStatus);
 
         var fromdatepicker = flatpickr("#from-datepicker", {
+          locale: 'en',
                 altInput: true,
-                dateFormat: "YYYY-MM-DD",
-                altFormat: "DD/MM/YYYY",
+                dateFormat: "MM/DD/YYYY",
+                altFormat: "MM/DD/YYYY",
                 allowInput: true,
                 parseDate: (datestr, format) => {
                   return moment(datestr, format, true).toDate();
@@ -795,9 +815,10 @@ $(document).ready(function() {
             });
 
           var todatepicker = flatpickr("#to-datepicker", {
+            locale: 'en',
               altInput: true,
-              dateFormat: "YYYY-MM-DD",
-              altFormat: "DD/MM/YYYY",
+              dateFormat: "MM/DD/YYYY",
+              altFormat: "MM/DD/YYYY",
               allowInput: true,
               parseDate: (datestr, format) => {
                 return moment(datestr, format, true).toDate();

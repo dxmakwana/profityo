@@ -28,7 +28,7 @@
                 <tr id="invoices-row-unpaid-{{ $value->sale_inv_id }}">
                     <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                     <td>{{ $value->sale_inv_number }}</td>
-                    <td>{{ $value->sale_inv_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>@php
@@ -163,7 +163,7 @@
                 <tr id="invoices-row-draft-{{ $value->sale_inv_id }}">
                     <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                     <td>{{ $value->sale_inv_number }}</td>
-                    <td>{{ $value->sale_inv_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>@php
@@ -300,7 +300,7 @@
                 <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
                     <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                     <td>{{ $value->sale_inv_number }}</td>
-                    <td>{{ $value->sale_inv_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>{{ $value->sale_inv_final_amount }}</td>
                     <td>@php
@@ -421,29 +421,22 @@
     </div><!-- /.card-body -->
 </div><!-- /.card-->
 
+
+
 <script>
 
   $(function () {
 
-    $("#example1").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example1').DataTable({
 
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+      paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
 
     });
 
@@ -454,25 +447,16 @@
 
   $(function () {
 
-    $("#example5").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example5').DataTable({
 
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+      paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
 
     });
 
@@ -484,25 +468,15 @@
 
   $(function () {
 
-    $("#example4").DataTable({
 
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-
-    $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+    $('#example4').DataTable({
+      paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
 
     });
 

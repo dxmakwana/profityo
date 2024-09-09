@@ -94,7 +94,7 @@ class UserController extends Controller
         'users_phone.required' => 'The phone field is required.',
         'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
         'role_id.required' => 'The role field is required.',
-        'role_id.integer' => 'The role must be an integer.',
+        'role_id.integer' => 'The role field is required.',
     ]);
 
         

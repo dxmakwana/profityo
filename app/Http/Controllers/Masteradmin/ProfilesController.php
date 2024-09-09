@@ -242,18 +242,32 @@ class ProfilesController extends Controller
     public function logActivity()
     {
         $user = Auth::guard('masteradmins')->user();
-
-        if($user)
-        {
-            $admin_user = MasterUser::where('user_id','=',$user->user_id);
-            
-            $logs = \MasterLogActivity::logActivityLists();
+     
+        if ($user) {
+           
+            $uniqueId = $user->user_id; // Assuming this is your unique ID
+            $adminUserModel = new MasterUserDetails();
+            $adminUserModel->setTableForUniqueId($uniqueId);
+            // dd($adminUserModel);
+        
+            $logs = \MasterLogActivity::logActivityLists()
+                ->where('user_id', $user->users_id);        
+          
+            $userIds = $logs->pluck('user_id')->unique();
+            $userDetails = $adminUserModel->whereIn('users_id', $userIds)->get()->keyBy('users_id');
+            // dd($userDetails);
+          
+            $logs->transform(function ($log) use ($userDetails) {
+                $userDetail = $userDetails->get($log->user_id);
+                $log->user_name = $userDetail ? $userDetail->users_name : 'Unknown'; 
+                return $log;
+            });
             // dd($logs);
-            
-                return view('masteradmin.logs.index')
-                                            ->with('admin_user',$admin_user)
-                                            ->with('logs',$logs);
+            return view('masteradmin.logs.index')
+                ->with('admin_user', $user) 
+                ->with('logs', $logs);  
         }
+      
     }
 
 }

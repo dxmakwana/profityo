@@ -49,7 +49,7 @@
                                 <th>Method</th>
                                 <th>Ip</th>
                                 <th>Browser</th>
-                                <th>User Id</th>
+                                <th>User Name</th>
                                 <th>Date Time</th>
                             </tr>
                         </thead>
@@ -62,7 +62,7 @@
                                         <td>{{ $log->method }}</td>
                                         <td>{{ $log->ip }}</td>
                                         <td>{{ $log->agent }}</td>
-                                        <td>{{ $log->user_id }}</td>
+                                        <td>{{ $log->user_name }}</td>
                                         <td>{{ $log->created_at }}</td>
                                     </tr>
                                 @endforeach    

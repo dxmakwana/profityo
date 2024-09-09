@@ -1,4 +1,4 @@
-@if((isset($access['update_product_services_sales']) && $access['update_product_services_sales']) )
+@if((isset($access['update_product_services_sales']) && $access['update_product_services_sales'] == 1 ) )
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Product Or Service</title>
 @section('content')

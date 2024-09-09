@@ -1,7 +1,9 @@
-@if(isset($access['update_invoices']) && $access['update_invoices']) 
+@if(isset($access['update_invoices']) && $access['update_invoices'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Invoice</title>
 @section('content')
+<link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -182,10 +184,27 @@
                     <div class="form-group">
                       <label>Invoice Date</label>
                       <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
                         data-target="#estimatedate" value="{{ $invoices->sale_inv_date }}"/>
                         <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        </div> -->
+                        <input type="hidden" id="from-datepicker-hidden" value="{{ $invoices->sale_inv_date }}" /> 
+
+                        @php
+                        $saleEstimDate = \Carbon\Carbon::parse($invoices->sale_inv_date)->format('m/d/Y');
+                        @endphp
+
+                        <x-flatpickr 
+                              id="from-datepicker" 
+                              name="sale_estim_date" 
+                              placeholder="Select a date" 
+                              :value="$saleEstimDate" 
+                          />
+                        <div class="input-group-append">
+                          <div class="input-group-text" id="from-calendar-icon">
+                              <i class="fa fa-calendar-alt"></i>
+                          </div>
                         </div>
                         <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                       </div>
@@ -195,14 +214,35 @@
                     <div class="form-group">
                       <label>Payment Due</label>
                       <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" placeholder=""
+                        <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
                         data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $invoices->sale_inv_valid_date }}"/>
                         <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        </div> -->
+                        <input type="hidden" id="to-datepicker-hidden" value="{{ $invoices->sale_inv_valid_date }}" />
+                       
+                        @php
+                            $formattedSaleEstimDate = \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('m/d/Y');
+                        @endphp
+
+                        <x-flatpickr 
+                              id="to-datepicker" 
+                              name="sale_estim_valid_date" 
+                              placeholder="Select a date" 
+                              :value="$formattedSaleEstimDate" 
+                          />
+                        <div class="input-group-append">
+                          <div class="input-group-text" id="to-calendar-icon">
+                              <i class="fa fa-calendar-alt"></i>
+                          </div>
                         </div>
                       </div>
                       <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
                       <!-- <p class="within_day">Within 7 days</p> -->
+                      <p class="within_day">Within <span id="total-days">{{ $invoices->sale_total_days ?? '0' }}</span> days</p>
+                      <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+                      <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+
                     </div>
                   </div>
                 </div>
@@ -1031,6 +1071,8 @@
 
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 
 <script>
   $(document).ready(function () {
@@ -1253,15 +1295,15 @@
                                     <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id}">
                                   <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
                                     <ul class="nav nav-pills p-2 tab_box">
-                                      <li class="nav-item"><a class="nav-link active" href="#editcontactajax" data-toggle="tab">Contact</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="#editbillinajax" data-toggle="tab">Billing</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="#editshippingajax" data-toggle="tab">Shipping</a></li>
-                                      <li class="nav-item"><a class="nav-link" href="#editmoreajax" data-toggle="tab">More</a></li>
+                                      <li class="nav-item"><a class="nav-link active" href="#editcontactajax${customer.sale_cus_id}" data-toggle="tab">Contact</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editbillinajax${customer.sale_cus_id}" data-toggle="tab">Billing</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editshippingajax${customer.sale_cus_id}" data-toggle="tab">Shipping</a></li>
+                                      <li class="nav-item"><a class="nav-link" href="#editmoreajax${customer.sale_cus_id}" data-toggle="tab">More</a></li>
                                     </ul>
                                   </div><!-- /.card-header -->
 
                                   <div class="tab-content">
-                                    <div class="tab-pane active" id="editcontactajax">
+                                    <div class="tab-pane active" id="editcontactajax${customer.sale_cus_id}">
                                   
                                     <input type="hidden" name="sale_cus_id" value="${customer.sale_cus_id }">
                                         <div class="row pxy-15 px-10">
@@ -1299,7 +1341,7 @@
                                       
                                     </div>
                                     <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="editbillinajax">
+                                    <div class="tab-pane" id="editbillinajax${customer.sale_cus_id}">
                                     
                                         <div class="row pxy-15 px-10">
                                           <div class="col-md-12">
@@ -1373,7 +1415,7 @@
                                       
                                     </div>
                                     <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="editshippingajax">
+                                    <div class="tab-pane" id="editshippingajax${customer.sale_cus_id}">
                                   
                                         <div class="modal_sub_title px-15">Shipping Address</div>
                                         <div class="row pxy-15 px-10">
@@ -1458,7 +1500,7 @@
                                   
                                     </div>
                                     <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="editmoreajax">
+                                    <div class="tab-pane" id="editmoreajax${customer.sale_cus_id}">
                                   
                                         <div class="row pxy-15 px-10">
                                           <div class="col-md-6">
@@ -1840,6 +1882,7 @@
       formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
 
 
       $.ajax({
@@ -2169,6 +2212,74 @@ $(document).ready(function() {
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var fromInput = document.getElementById('from-datepicker-hidden');
+    var toInput = document.getElementById('to-datepicker-hidden');
+
+    // console.log('From Input Value:', fromInput ? fromInput.value : 'No value');
+    // console.log('To Input Value:', toInput ? toInput.value : 'No value');
+
+    if (fromInput && toInput) {
+        var fromdatepicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: fromInput.value || null,
+            onChange: calculateDays
+        });
+
+        var todatepicker = flatpickr("#to-datepicker", {
+          locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "m/d/Y",
+            allowInput: true,
+            defaultDate: toInput.value || null,
+            onChange: calculateDays
+        });
+
+        document.getElementById('from-calendar-icon').addEventListener('click', function() {
+            fromdatepicker.open(); 
+        });
+
+        document.getElementById('to-calendar-icon').addEventListener('click', function() {
+            todatepicker.open(); 
+        });
+
+        function calculateDays() {
+        var sdate = fromdatepicker.input.value;  
+        var edate = todatepicker.input.value;  
+        var totalDays = 0;   
+
+        if(sdate && edate) {
+            var startDate = new Date(sdate);
+            var endDate = new Date(edate);
+
+            var timeDifference = endDate.getTime() - startDate.getTime();
+
+            var totalDays = timeDifference / (1000 * 3600 * 24); 
+
+            if (totalDays < 0) {
+            document.getElementById("total-days").innerText = "Invalid date range"; 
+            document.getElementById("hidden-total-days").value = ''; 
+
+          } else {
+              document.getElementById("total-days").innerText = totalDays; 
+              document.getElementById("hidden-total-days").value = totalDays; 
+          }
+
+        }
+
+      }
+    } else {
+        console.error('Hidden input elements not found or have no value');
+    }
+});
+
+    </script>
 
 @endsection
 @endif

@@ -1,4 +1,4 @@
-@if(isset($access['view_invoices']) && $access['view_invoices'])
+@if(isset($access['view_invoices']) && $access['view_invoices'] == 1)
     @extends('masteradmin.layouts.app')
     <title>Profityo | View Invoice</title>
     @section('content')
@@ -101,7 +101,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <label>Due On</label>
-                                        <p class="company_business_name">{{ $invoices->sale_inv_valid_date }}</p>
+                                        <p class="company_business_name">{{ \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('M d, Y') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -246,11 +246,11 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Invoice Date:</strong></td>
-                                        <td>{{ $invoices->sale_inv_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($invoices->sale_inv_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Payment Due:</strong></td>
-                                        <td>{{ $invoices->sale_inv_valid_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Grand Total ({{ $currencys->find($invoices->sale_currency_id)->currency }}):</strong></td>
@@ -804,7 +804,7 @@
 
     </script>
 
-    <script>
+    <!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.getElementById('estimateForm');
         //alert(form);
@@ -834,7 +834,7 @@
 
         form.addEventListener('change', submitForm);
     });
-    </script>
+    </script> -->
     <script>
         function printPage() {
             window.print();

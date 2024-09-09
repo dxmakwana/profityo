@@ -97,11 +97,11 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Estimate Date:</strong></td>
-                                        <td>{{ $estimates->sale_estim_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($estimates->sale_estim_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Valid Until:</strong></td>
-                                        <td>{{ $estimates->sale_estim_valid_date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('M d, Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Grand Total ({{ $currency ? $currency->currency : 'N/A' }}):</strong></td>

@@ -42,15 +42,27 @@ class EstimatesController extends Controller
         $user = Auth::guard('masteradmins')->user();
         $user_id = $user->user_id;
         // \DB::enableQueryLog();
-
+        $startDate = $request->input('start_date'); 
+        $endDate = $request->input('end_date');   
         $query = Estimates::with('customer')->orderBy('created_at', 'desc');
 
-        if ($request->has('start_date') && $request->start_date) {
-            $query->whereDate('sale_estim_date', '>=', $request->start_date);
-        }
+        // if ($request->has('start_date') && $request->start_date) {
+        //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
+        // }
 
-        if ($request->has('end_date') && $request->end_date) {
-            $query->whereDate('sale_estim_date', '<=', $request->end_date);
+        // if ($request->has('end_date') && $request->end_date) {
+        //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
+        // }
+
+        if ($startDate) {
+
+            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+
+        }
+    
+        if ($endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_estim_valid_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+
         }
 
         if ($request->has('sale_estim_number') && $request->sale_estim_number) {
@@ -67,7 +79,7 @@ class EstimatesController extends Controller
 
         $filteredEstimates = $query->get();
 
-        $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent', 'Converted']);
+        $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
         $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
         $allEstimates = $filteredEstimates;
         $salecustomer = SalesCustomers::get();
@@ -106,6 +118,8 @@ class EstimatesController extends Controller
         
         $salestax = SalesTax::all();
 
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
         $specificMenus = CustomizeMenu::with('children')
         ->whereIn('cust_menu_id', [1, 2, 3, 4])
         ->get();
@@ -123,9 +137,18 @@ class EstimatesController extends Controller
         ->get();
 
        
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
 
         // dd($businessDetails);
-        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription'));
+        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state'));
     }
 
     public function getProductDetails($id)
@@ -141,6 +164,8 @@ class EstimatesController extends Controller
 
     public function store(Request $request)
     {
+        // $sessionData = session('form_data');
+        // dd($request);
         // dd($request->sale_currency_id);
       $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
@@ -163,6 +188,7 @@ class EstimatesController extends Controller
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_estim_status' => 'required|integer',
+            'sale_total_days' => 'required|integer',
             'items.*.sale_product_id' => 'required|integer',
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
@@ -184,6 +210,7 @@ class EstimatesController extends Controller
             'sale_estim_image.image' => 'The file uploaded must be a valid image.',
             'sale_status.required' => 'Please set the status of the estimate.',
             'sale_estim_status.required' => 'Please set the estimate status.',
+            'sale_total_days.required' => 'Please set valid date range.',
             'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
             'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
             'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
@@ -197,13 +224,14 @@ class EstimatesController extends Controller
         $estimate = new Estimates();
         $estimate->fill($request->only([
             'sale_estim_title', 'sale_estim_summary', 'sale_cus_id', 'sale_estim_number',
-            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
+            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date','sale_total_days', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
             'sale_estim_final_amount', 'sale_estim_notes', 'sale_estim_footer_note',
             'sale_estim_image', 'sale_status', 'sale_estim_status'
         ]));
         $user = Auth::guard('masteradmins')->user();
         $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
         $estimate->sale_currency_id = $request->sale_currency_id;
+        $estimate->sale_total_days = $request->sale_total_days;
         $estimate->id = $user->id;
         $estimate->sale_status = 'Draft';
         // dd($estimate);
@@ -221,7 +249,9 @@ class EstimatesController extends Controller
             $estimateItem->save();
         }
 
-        $sessionData = session('form_data');
+        $sessionData = session('form_data') ?? [];
+
+
         // dd( $sessionssData);
             foreach ($sessionData as $key => $value) {
                 $mname = str_replace('_', ' ', $key);
@@ -342,6 +372,7 @@ class EstimatesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
+            'sale_total_days' => 'required|integer',
         
         ]);
 
@@ -349,6 +380,7 @@ class EstimatesController extends Controller
 
         $estimate->sale_estim_item_discount = $validatedData['sale_estim_item_discount'];
         $estimate->sale_currency_id = $validatedData['sale_currency_id'];
+        $estimate->sale_total_days = $validatedData['sale_total_days'];
         $estimate->where('sale_estim_id', $estimates_id)->update($validatedData);
 
         // dd(\DB::getQueryLog()); 
@@ -645,13 +677,14 @@ class EstimatesController extends Controller
         'sale_estim_image' => 'nullable|image',
         'sale_status' => 'required|integer',
         'sale_estim_item_discount' => 'nullable|integer',
+        'sale_total_days' => 'required|integer',
         ]);
 
 
         $estimate = new Estimates();
         $estimate->fill($request->only([
             'sale_estim_title', 'sale_estim_summary', 'sale_cus_id', 'sale_estim_number',
-            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
+            'sale_estim_customer_ref', 'sale_estim_date', 'sale_estim_valid_date','sale_total_days', 'sale_estim_item_discount', 'sale_estim_discount_desc', 'sale_estim_discount_type', 'sale_currency_id','sale_estim_sub_total', 'sale_estim_discount_total', 'sale_estim_tax_amount',
             'sale_estim_final_amount', 'sale_estim_notes', 'sale_estim_footer_note',
             'sale_estim_image', 'sale_status'
         ]));
@@ -659,7 +692,9 @@ class EstimatesController extends Controller
         $user = Auth::guard('masteradmins')->user();
         $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
         $estimate->sale_currency_id = $request->sale_currency_id;
+        $estimate->sale_total_days = $request->sale_total_days;
         $estimate->id = $user->id;
+        $estimate->sale_status = 'Draft';
         $estimate->sale_estim_status = 1;
         
         // dd($estimate);

@@ -243,6 +243,7 @@ class Controller extends BaseController
                     $table->string('sale_estim_customer_ref')->nullable();
                     $table->string('sale_estim_date')->nullable();
                     $table->string('sale_estim_valid_date')->nullable();
+                    $table->integer('sale_total_days')->nullable()->default(0);
                     $table->string('sale_estim_item_discount')->nullable()->default(0);
                     $table->text('sale_estim_discount_desc')->nullable();
                     $table->integer('sale_estim_discount_type')->nullable()->default(0);
@@ -258,7 +259,15 @@ class Controller extends BaseController
                     $table->tinyInteger('sale_estim_status')->default(0)->nullable();
                     $table->timestamps();
                 });
+            }else{
+                
+                Schema::table($storeId.'_py_estimates_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_estimates_details', 'sale_total_days')) {
+                        $table->integer('sale_total_days')->nullable()->default(0);
+                    }
+                });
             }
+
 
             if (!Schema::hasTable($storeId . '_py_estimates_items')) {
                 Schema::create($storeId . '_py_estimates_items', function (Blueprint $table) {
@@ -307,7 +316,7 @@ class Controller extends BaseController
                     $table->integer('acc_type_id')->nullable()->default(0);
                     $table->string('chart_acc_name')->nullable();
                     $table->integer('currency_id')->nullable()->default(0);
-                    $table->integer('chart_account_id')->nullable()->default(0);
+                    $table->string('chart_account_id')->nullable();
                     $table->string('sale_acc_desc')->nullable();
                     $table->tinyInteger('sale_product_status')->default(0)->nullable();
                     $table->timestamps();
@@ -338,7 +347,7 @@ class Controller extends BaseController
                 Schema::create($storeId . '_py_purchases_vendor', function (Blueprint $table) {
                     $table->increments('purchases_vendor_id');
                     $table->integer('id')->nullable()->default(0);
-                    // $table->integer('users_id')->nullable()->default(0);
+                    $table->string('type')->nullable();
                     $table->string('purchases_vendor_name')->nullable();
                     $table->string('purchases_vendor_type')->nullable();
                     $table->string('purchases_vendor_contractor_type')->nullable();
@@ -391,6 +400,7 @@ class Controller extends BaseController
                     $table->string('sale_inv_customer_ref')->nullable();
                     $table->string('sale_inv_date')->nullable();
                     $table->string('sale_inv_valid_date')->nullable();
+                    $table->integer('sale_total_days')->nullable()->default(0);
                     $table->string('sale_inv_item_discount')->nullable()->default(0);
                     $table->text('sale_inv_discount_desc')->nullable();
                     $table->integer('sale_inv_discount_type')->nullable()->default(0);
@@ -406,7 +416,14 @@ class Controller extends BaseController
                     $table->tinyInteger('sale_inv_status')->default(0)->nullable();
                     $table->timestamps();
                 });
+            }else{
+                Schema::table($storeId.'_py_invoices_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_invoices_details', 'sale_total_days')) {
+                        $table->integer('sale_total_days')->nullable()->default(0);
+                    }
+                });
             }
+            
 
             if (!Schema::hasTable($storeId . '_py_invoices_items')) {
                 Schema::create($storeId . '_py_invoices_items', function (Blueprint $table) {

@@ -1,4 +1,5 @@
-@if(isset($access['view_estimates']) && $access['view_estimates']) 
+<?php //dd($access); ?>
+@if(isset($access['view_estimates']) && $access['view_estimates'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View All Estimates</title>
 @section('content')
@@ -22,8 +23,10 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
+          @if(isset($access['add_estimates']) && $access['add_estimates']) 
             <a href="{{ route('business.estimates.create') }}"><button class="add_btn"><i
                   class="fas fa-plus add_plus_icon"></i>{{ __('Create Estimate') }}</button></a>
+          @endif
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -152,7 +155,7 @@
                         <tr id="estimate-row-approve-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
@@ -185,10 +188,12 @@
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right">
+                                @if(isset($access['view_estimates']) && $access['view_estimates'] == 1)   
                                   <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
+                                  @endif
+                                  @if(isset($access['update_estimates']) && $access['update_estimates'] == 1) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -208,7 +213,7 @@
                                   <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimateapprove-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -269,7 +274,7 @@
                         <tr id="estimate-row-draft-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
@@ -301,11 +306,13 @@
                                 <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                                   <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                                 </a>
+                                @if(isset($access['view_estimates']) && $access['view_estimates'] == 1) 
                                 <div class="dropdown-menu dropdown-menu-right">
                                   <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
-                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
+                                  @endif
+                                  @if(isset($access['update_estimates']) && $access['update_estimates'] == 1) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -325,7 +332,7 @@
                                   <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}"  class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatedraft-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -386,7 +393,7 @@
                         <tr id="estimate-row-{{ $value->sale_estim_id }}">
                           <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
-                          <td>{{ $value->sale_estim_date }}</td>
+                          <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <td>
@@ -420,12 +427,12 @@
                                 </a>
                                
                                 <div class="dropdown-menu dropdown-menu-right">
-                                  @if(isset($access['view_estimates']) && $access['view_estimates']) 
+                                  @if(isset($access['view_estimates']) && $access['view_estimates'] == 1) 
                                   <a href="{{ route('business.estimates.view', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-regular fa-eye mr-2"></i> View
                                   </a>
                                   @endif
-                                  @if(isset($access['update_estimates']) && $access['update_estimates']) 
+                                  @if(isset($access['update_estimates']) && $access['update_estimates'] == 1) 
                                   <a href="{{ route('business.estimates.edit', $value->sale_estim_id) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                                   </a>
@@ -445,7 +452,7 @@
                                   <a href="{{ route('business.estimate.sendviews', [ $value->sale_estim_id, $user_id, 'download' => 'true']) }}" class="dropdown-item">
                                     <i class="fas fa-solid fa-file-pdf mr-2"></i> Export As Pdf
                                   </a>
-                                  @if(isset($access['delete_estimates']) && $access['delete_estimates']) 
+                                  @if(isset($access['delete_estimates']) && $access['delete_estimates'] == 1) 
                                   <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deleteestimatall-{{ $value->sale_estim_id }}">
                                     <i class="fas fa-solid fa-trash mr-2"></i> Delete
                                   </a>
@@ -559,6 +566,10 @@ $(document).on('click', '.delete_btn', function() {
                 $('#deleteestimatedraft-' + estimateId).modal('hide');
                 $('#deleteestimateapprove-' + estimateId).modal('hide');
 
+                //update the raw count
+                updateBadgeCount('.nav-pills .nav-link[href="#activeestimate"] .badge');
+                updateBadgeCount('.nav-pills .nav-link[href="#draftestimate"] .badge');
+
                 // alert(response.message);
             } else {
                 alert('An error occurred: ' + response.message);
@@ -569,6 +580,14 @@ $(document).on('click', '.delete_btn', function() {
         }
     });
 });
+
+function updateBadgeCount(selector) {
+    var badge = $(selector);
+    var currentCount = parseInt(badge.text(), 10); 
+    if (currentCount > 0) {
+        badge.text(currentCount - 1); 
+    }
+}
 </script>
 <script>
     function sendEstimate(url, estimateId) {
@@ -613,9 +632,10 @@ $(document).ready(function() {
         $('#sale_status').val(defaultSaleStatus);
 
         var fromdatepicker = flatpickr("#from-datepicker", {
+          locale: 'en',
                 altInput: true,
-                dateFormat: "YYYY-MM-DD",
-                altFormat: "DD/MM/YYYY",
+                dateFormat: "MM/DD/YYYY",
+                altFormat: "MM/DD/YYYY",
                 allowInput: true,
                 parseDate: (datestr, format) => {
                   return moment(datestr, format, true).toDate();
@@ -629,9 +649,10 @@ $(document).ready(function() {
             });
 
           var todatepicker = flatpickr("#to-datepicker", {
+            locale: 'en',
               altInput: true,
-              dateFormat: "YYYY-MM-DD",
-              altFormat: "DD/MM/YYYY",
+              dateFormat: "MM/DD/YYYY",
+              altFormat: "MM/DD/YYYY",
               allowInput: true,
               parseDate: (datestr, format) => {
                 return moment(datestr, format, true).toDate();
@@ -671,19 +692,58 @@ $(document).ready(function() {
 
 
         $.ajax({
-            url: '{{ route('business.estimates.index') }}', // Define the route for filtering
-            type: 'GET',
-            data: formData,
-            success: function(response) {
-              // console.log(response);
-                $('#filter_data').html(response); // Update the results container with the filtered data
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr);
-                alert('An error occurred while fetching data.');
-            }
+    url: '{{ route('business.estimates.index') }}',
+    type: 'GET',
+    data: formData,
+    success: function(response) {
+        $('#filter_data').html(response); // Update the results container with HTML content
+        
+        // If you need to reinitialize DataTables after updating the HTML content:
+         if ($.fn.DataTable.isDataTable('#example4')) {
+            $('#example4').DataTable().destroy(); // Destroy existing DataTable
+        }
+        $('#example4').DataTable({
+            paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
         });
+        
+        
+        $('#example5').DataTable().destroy(); // Destroy existing DataTable
+        $('#example5').DataTable({
+            paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
+        });
+        
+        $('#example1').DataTable().destroy(); // Destroy existing DataTable
+        $('#example1').DataTable({
+            paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true
+        });
+    },
+    error: function(xhr) {
+        console.error('Error:', xhr);
+        alert('An error occurred while fetching data.');
     }
+});
+
+    }
+
+
 
     // Attach change event handlers to filter inputs
     $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker, #sale_estim_number1').on('change keyup', function(e) {
@@ -697,16 +757,21 @@ $(document).ready(function() {
     });
 
     function clearFilters() {
-          $('#sale_cus_id').val('').trigger('change');
+    // Clear filters
+    $('#sale_cus_id').val('').trigger('change');
 
-            $('#from-datepicker').val('');  // Reset datepicker
-            $('#to-datepicker').val('');  // Reset datepicker
-            $('#sale_estim_number').val('');  // Reset input field
-            $('#sale_status').val('');  // Reset another dropdown/input field
+    // Clear datepicker fields
+     $('#from-datepicker').val('');  // Reset datepicker
+     $('#to-datepicker').val('');  // Reset datepicker
 
-            // Trigger any additional functionality if needed
-            fetchFilteredData(); // Example: Fetch data based on the cleared filters
-            }
+    // Reset other fields
+    $('#sale_estim_number').val('');  // Reset input field
+    $('#sale_status').val('');  // Reset dropdown field
+
+    // Trigger any additional functionality if needed
+    fetchFilteredData(); // Example: Fetch data based on the cleared filters
+}
+
 
 });
 
