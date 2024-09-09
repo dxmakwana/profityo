@@ -1,6 +1,6 @@
-@if(isset($access['update_invoices']) && $access['update_invoices']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit invoice</title>
+@if(isset($access['update_invoices']) && $access['update_invoices']) 
 @section('content')
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
 

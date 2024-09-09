@@ -1,7 +1,7 @@
 <?php //dd($access); ?>
-@if(isset($access['view_estimates']) && $access['view_estimates'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View All Estimates</title>
+@if(isset($access['view_estimates']) && $access['view_estimates'] == 1) 
 @section('content')
 <!-- @include('flatpickr::components.style') -->
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
@@ -729,42 +729,6 @@ $(document).ready(function() {
     success: function(response) {
         $('#filter_data').html(response); // Update the results container with HTML content
         
-        // If you need to reinitialize DataTables after updating the HTML content:
-         if ($.fn.DataTable.isDataTable('#example4')) {
-            $('#example4').DataTable().destroy(); // Destroy existing DataTable
-        }
-        $('#example4').DataTable({
-            paging: true,
-            lengthChange: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            autoWidth: false,
-            responsive: true
-        });
-        
-        
-        $('#example5').DataTable().destroy(); // Destroy existing DataTable
-        $('#example5').DataTable({
-            paging: true,
-            lengthChange: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            autoWidth: false,
-            responsive: true
-        });
-        
-        $('#example1').DataTable().destroy(); // Destroy existing DataTable
-        $('#example1').DataTable({
-            paging: true,
-            lengthChange: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            autoWidth: false,
-            responsive: true
-        });
     },
     error: function(xhr) {
         console.error('Error:', xhr);

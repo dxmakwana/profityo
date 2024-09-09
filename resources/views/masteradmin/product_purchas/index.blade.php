@@ -1,6 +1,6 @@
-@if(isset($access['view_products_services_purchases']) && $access['view_products_services_purchases']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Products & Services (Purchases)</title>
+@if(isset($access['view_products_services_purchases']) && $access['view_products_services_purchases']) 
 @section('content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -17,8 +17,10 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
+          @if(isset($access['add_products_services_purchases']) && $access['add_products_services_purchases']) 
             <a href="{{ route('business.purchasproduct.create') }}"><button class="add_btn"><i
                   class="fas fa-plus add_plus_icon"></i>Add A Product Or Service</button></a>
+          @endif
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->

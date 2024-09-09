@@ -17,7 +17,9 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
+            @if(isset($access['add_users']) && $access['add_users'])
               <a href="{{ route('business.userdetail.create') }}"><button class="add_btn"><i class="fas fa-plus add_plus_icon"></i>Add User</button></a>
+            @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

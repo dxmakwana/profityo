@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Profityo | Business Detail</title>
+    @if(isset($access['view_vendors']) && $access['view_vendors'])
     @include('masteradmin.layouts.headerlink')
 </head>
 

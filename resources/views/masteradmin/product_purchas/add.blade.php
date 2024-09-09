@@ -1,6 +1,6 @@
-@if(isset($access['add_products_services_purchases']) && $access['add_products_services_purchases']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | New Product Or Service</title>
+@if(isset($access['add_products_services_purchases']) && $access['add_products_services_purchases']) 
 @section('content')
 
 <!-- Content Wrapper. Contains page content -->

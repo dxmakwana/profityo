@@ -1,6 +1,6 @@
-@if(isset($access['view_customers']) && $access['view_customers']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Sales Customers</title>
+@if(isset($access['view_customers']) && $access['view_customers']) 
 @section('content')
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">

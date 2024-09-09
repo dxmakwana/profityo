@@ -1,6 +1,6 @@
-@if(isset($access['view_roles']) && $access['view_roles']) 
 @extends('masteradmin.layouts.app')
 <title>User Role | Profityo</title>
+@if(isset($access['view_roles']) && $access['view_roles']) 
 @section('content')
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -17,7 +17,9 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
+            @if(isset($access['add_roles']) && $access['add_roles']) 
               <a href="{{ route('business.role.create') }}"><button class="add_btn"><i class="fas fa-plus add_plus_icon"></i>Add User Role</button></a>
+              @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

@@ -1,6 +1,6 @@
-@if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | View Invoice</title>
+@if(isset($access['view_invoices']) && $access['view_invoices'] == 1) 
 @section('content')
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
 
@@ -19,7 +19,9 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
+            @if(isset($access['add_invoices']) && $access['add_invoices'] == 1)
               <a href="{{ route('business.invoices.create') }}"><button class="add_btn"><i class="fas fa-plus add_plus_icon"></i>Create Invoices</button></a>
+            @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

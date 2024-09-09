@@ -1,6 +1,6 @@
-@if(isset($access['update_customers']) && $access['update_customers']) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Sales Customers</title>
+@if(isset($access['update_customers']) && $access['update_customers']) 
 @section('content')
 
 <div class="content-wrapper">

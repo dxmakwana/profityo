@@ -370,62 +370,77 @@
         </div><!-- /.card-body -->
       </div><!-- /.card-->
 
-<!-- <script>
+      <script>
 
-  $(function () {
+$(function () {
 
+  $("#example1").DataTable({
+    "stateSave": true, 
+    "stateDuration": -1, 
 
-    $('#example1').DataTable({
+  }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-      paging: true,
-        lengthChange: true,
-        searching: true,
-        ordering: true,
-        info: true,
-        autoWidth: false,
-        responsive: true
+  $('#example2').DataTable({
 
-    });
-
-  });
-
-</script>
-<script>
-
-  $(function () {
-
-
-    $('#example5').DataTable({
-
-      paging: true,
-        lengthChange: true,
-        searching: true,
-        ordering: true,
-        info: true,
-        autoWidth: false,
-        responsive: true
-
-    });
+   "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
 
   });
+
+});
 
 </script>
 
 <script>
 
-  $(function () {
+$(function () {
 
+  $("#example5").DataTable({
+    "stateSave": true, 
+    "stateDuration": -1, 
 
-    $('#example4').DataTable({
-      paging: true,
-        lengthChange: true,
-        searching: true,
-        ordering: true,
-        info: true,
-        autoWidth: false,
-        responsive: true
-    });
+  }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  $('#example2').DataTable({
+
+    "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
 
   });
 
-</script> -->
+});
+
+</script>
+
+<script>
+
+$(function () {
+
+  $("#example4").DataTable({
+      "stateSave": true, 
+      "stateDuration": -1, 
+  }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+  $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+  });
+
+});
+
+</script>

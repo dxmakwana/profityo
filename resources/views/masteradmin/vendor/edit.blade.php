@@ -1,5 +1,6 @@
 @extends('masteradmin.layouts.app')
 <title>Profityo | New Product Or Service</title>
+@if(isset($access['update_vendors']) && $access['update_vendors'])
 @section('content')
 
  <!-- Content Wrapper. Contains page content -->
@@ -334,3 +335,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+@endif

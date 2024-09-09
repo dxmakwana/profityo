@@ -1,5 +1,6 @@
 @extends('masteradmin.layouts.app')
 <title>Profityo | Vendors & Services (Purchases)</title>
+@if(isset($access['view_vendors']) && $access['view_vendors'])
 @section('content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -18,8 +19,10 @@
             <ol class="breadcrumb float-sm-right">
               <a href="#"><button class="add_btn_br"><i class="fas fa-download add_plus_icon"></i>Import From Google Contact</button></a>
               <a href="#"><button class="add_btn_br"><i class="fas fa-download add_plus_icon"></i>Import From CSV</button></a>
+              @if(isset($access['add_vendors']) && $access['add_vendors'])
               <a href="{{ route('business.purchasvendor.create') }}"><button class="add_btn"><i
                   class="fas fa-plus add_plus_icon"></i>Add A Vendor</button></a>
+              @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row --> 
@@ -105,18 +108,24 @@
                               <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
+                            @if(isset($access['view_vendors']) && $access['view_vendors'])
                               <a href="{{ route('business.vendordetails.show', $value->purchases_vendor_id) }}" class="dropdown-item">
                                 <i class="fas fa-regular fa-eye mr-2"></i> View
                               </a>
+                              @endif
+                              @if(isset($access['update_vendors']) && $access['update_vendors'])
                               <a href="{{ route('business.purchasvendor.edit',$value->purchases_vendor_id) }}" class="dropdown-item">
                                 <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                               </a>
+                              @endif
                               <a href="new-bill.html" class="dropdown-item">
                                 <i class="fas fa-regular fa-copy mr-2"></i> Create Bill
                               </a>
+                              @if(isset($access['delete_vendors']) && $access['delete_vendors'])
                               <a data-toggle="modal" class="dropdown-item" data-target="#delete-vendor-modal-{{ $value->purchases_vendor_id }}">
                                 <i class="fas fa-solid fa-trash mr-2"></i> Delete
                               </a>
+                              @endif
                             </div>
                           </li>
                         </ul>
@@ -243,3 +252,4 @@
 </script>
 
 @endsection
+@endif

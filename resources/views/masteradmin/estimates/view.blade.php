@@ -1,6 +1,6 @@
-@if(isset($access['view_estimates']) && $access['view_estimates'] == 1)
     @extends('masteradmin.layouts.app')
     <title>Profityo | View Estimates</title>
+    @if(isset($access['view_estimates']) && $access['view_estimates'] == 1)
     @section('content')
     
     <!-- Content Wrapper. Contains page content -->

@@ -210,24 +210,20 @@
   $(function () {
 
     $("#example1").DataTable({
+      "stateSave": true, 
+      "stateDuration": -1, 
 
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
     $('#example2').DataTable({
 
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+     "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
 
     });
 
@@ -240,24 +236,20 @@
   $(function () {
 
     $("#example5").DataTable({
+      "stateSave": true, 
+      "stateDuration": -1, 
 
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
     $('#example2').DataTable({
 
       "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
 
     });
 
@@ -270,25 +262,18 @@
   $(function () {
 
     $("#example4").DataTable({
-
+        "stateSave": true, 
+        "stateDuration": -1, 
     }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
     $('#example2').DataTable({
-
-      "paging": true,
-
-      "lengthChange": false,
-
-      "searching": false,
-
-      "ordering": true,
-
-      "info": true,
-
-      "autoWidth": false,
-
-      "responsive": true,
-
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
     });
 
   });

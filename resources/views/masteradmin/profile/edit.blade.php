@@ -1,6 +1,6 @@
-@if(isset($access['personal_profile']) && $access['personal_profile'])
 @extends('masteradmin.layouts.app')
 <title>Personal Profile | Profityo</title>
+@if(isset($access['personal_profile']) && $access['personal_profile'])
 @section('content')
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">

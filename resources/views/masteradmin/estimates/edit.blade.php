@@ -1,6 +1,6 @@
-@if($access['update_estimates'] == 1) 
 @extends('masteradmin.layouts.app')
 <title>Profityo | Edit Estimates</title>
+@if($access['update_estimates'] == 1) 
 @section('content')
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
 

@@ -1,6 +1,6 @@
-@if(isset($access['update_roles']) && $access['update_roles']) 
 @extends('masteradmin.layouts.app')
 <title>Edit User Role | Profityo</title>
+@if(isset($access['update_roles']) && $access['update_roles']) 
 @section('content')
 
 <!-- Content Wrapper. Contains page content -->

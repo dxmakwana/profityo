@@ -17,8 +17,10 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
+          @if((isset($access['add_product_services_sales']) && $access['add_product_services_sales'] == 1) )
             <a href="{{ route('business.salesproduct.create') }}"><button class="add_btn"><i
                   class="fas fa-plus add_plus_icon"></i>Add A Product Or Service</button></a>
+          @endif
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
