@@ -566,6 +566,7 @@ class InvoicesController extends Controller
             'log_type' => '2',
             'user_id' => Auth::guard('masteradmins')->id(),
             'id' => $invoice->sale_inv_id,
+            'cust_id'=> $invoice->sale_cus_id,
             'log_msg' => $logMsg,
             'status' => 'Sent',
             'log_status' => '1', 

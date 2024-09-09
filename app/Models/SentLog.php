@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class SentLog extends Model
 {
     use HasFactory;
-    protected $fillable = ['log_type','user_id', 'id', 'log_msg', 'status', 'log_status'];
+    protected $fillable = ['log_type','user_id', 'cust_id' ,'id', 'log_msg', 'status', 'log_status'];
 
     public function __construct(array $attributes = [])
     {

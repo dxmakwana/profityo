@@ -903,6 +903,7 @@ class EstimatesController extends Controller
             'log_type' => '1',
             'user_id' => Auth::guard('masteradmins')->id(),
             'id' => $estimate->sale_estim_id,
+            'cust_id'=> $estimate->sale_cus_id,
             'log_msg' => $logMsg,
             'status' => 'Sent',
             'log_status' => '1', 
