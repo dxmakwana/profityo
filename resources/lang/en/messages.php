@@ -77,6 +77,16 @@ return [
             'delete_success' => 'Invoice deleted successfully.',
             
         ],
+        'chart-of-account' => [
+            'send_success' => 'account created successfully.',
+            'edit_account_success' => 'account updated successfully',
+            'delete_account_success' => 'account deleted successfully',
+            
+        ],
+        're-invoice' => [
+            'edit_success' => 'Recurring Invoice updated successfully.',
+            
+        ],
 
     ]
     

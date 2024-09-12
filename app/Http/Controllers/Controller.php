@@ -318,8 +318,15 @@ class Controller extends BaseController
                     $table->integer('currency_id')->nullable()->default(0);
                     $table->string('chart_account_id')->nullable();
                     $table->string('sale_acc_desc')->nullable();
+                    $table->integer('archive_account')->nullable()->default(0);
                     $table->tinyInteger('sale_product_status')->default(0)->nullable();
                     $table->timestamps();
+                });
+            }else{
+                Schema::table($storeId.'_py_chart_account', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_chart_account', 'archive_account')) {
+                        $table->integer('archive_account')->nullable()->default(0);
+                    }
                 });
             }
 
@@ -483,6 +490,74 @@ class Controller extends BaseController
                     $table->string('log_msg')->nullable();
                     $table->string('status')->nullable();
                     $table->tinyInteger('log_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_inv_recurring_details')) {
+                Schema::create($storeId . '_py_inv_recurring_details', function (Blueprint $table) {
+                    $table->increments('sale_re_inv_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('sale_re_inv_title')->nullable();
+                    $table->text('sale_re_inv_summary')->nullable();
+                    $table->integer('sale_cus_id')->nullable();
+                    $table->string('sale_re_inv_number')->nullable();
+                    $table->string('sale_re_inv_customer_ref')->nullable();
+                    $table->string('sale_re_inv_date')->nullable();
+                    $table->integer('sale_re_inv_payment_due_id')->nullable()->default(0);
+                    $table->string('sale_re_inv_valid_date')->nullable();
+                    $table->string('sale_re_inv_item_discount')->nullable()->default(0);
+                    $table->text('sale_re_inv_discount_desc')->nullable();
+                    $table->integer('sale_re_inv_discount_type')->nullable()->default(0);
+                    $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->string('sale_re_inv_sub_total')->nullable()->default(0);
+                    $table->string('sale_re_inv_discount_total')->nullable()->default(0);
+                    $table->string('sale_re_inv_tax_amount')->nullable()->default(0);
+                    $table->string('sale_re_inv_final_amount')->nullable()->default(0);
+                    $table->string('sale_re_inv_notes')->nullable();
+                    $table->string('sale_re_inv_footer_note')->nullable();
+                    $table->string('sale_re_inv_image')->nullable();
+                    $table->string('sale_status')->nullable()->default(0);
+                    $table->tinyInteger('sale_re_inv_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }else{
+                Schema::table($storeId.'_py_inv_recurring_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_inv_recurring_details', 'sale_re_inv_payment_due_id')) {
+                        $table->integer('sale_re_inv_payment_due_id')->nullable()->default(0);
+                    }
+                });
+            }
+            
+
+            if (!Schema::hasTable($storeId . '_py_inv_recurring_items')) {
+                Schema::create($storeId . '_py_inv_recurring_items', function (Blueprint $table) {
+                    $table->increments('sale_re_inv_item_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_re_inv_id')->nullable()->default(0);
+                    $table->integer('sale_product_id')->nullable()->default(0);
+                    $table->integer('sale_re_inv_item_qty')->nullable()->default(0);
+                    $table->string('sale_re_inv_item_price')->nullable()->default(0);
+                    // $table->string('sale_estim_item_discount')->nullable()->default(0);
+                    $table->string('sale_re_inv_item_tax')->nullable()->default(0);
+                    $table->text('sale_re_inv_item_desc')->nullable();
+                    $table->string('sale_re_inv_item_amount')->nullable()->default(0);
+                    // $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->tinyInteger('sale_re_inv_item_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_customize_menu_re_invoices')) {
+                Schema::create($storeId . '_py_customize_menu_re_invoices', function (Blueprint $table) {
+                    $table->increments('re_inv_cust_menu_id')->unique();
+                    $table->integer('sale_re_inv_id')->nullable()->default(0);
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('mname')->nullable();
+                    $table->string('mtitle')->nullable();
+                    $table->integer('mid')->nullable();
+                    $table->integer('is_access')->nullable();
+                    $table->string('re_inv_cust_menu_title')->nullable();
                     $table->timestamps();
                 });
             }

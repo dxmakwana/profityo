@@ -33,8 +33,10 @@
           <li class="nav-item {{ request()->is($busadminRoutes.'/estimates-list*') ||
            request()->is($busadminRoutes.'/create-estimates*') || 
            request()->is($busadminRoutes.'/edit-estimates*') || request()->is($busadminRoutes.'/view-estimates/*') || request()->is($busadminRoutes.'/salescustomers*') || request()->is($busadminRoutes.'/customercreate*') ||  request()->is($busadminRoutes.'/customeredit/*') || request()->is($busadminRoutes.'/salesproduct*') ||  request()->is($busadminRoutes.'/productcreate*') || request()->is($busadminRoutes.'/productedit/*') || request()->is($busadminRoutes.'/invoice-list*') || 
-                             request()->is($busadminRoutes.'/create-invoice*') || 
-                             request()->is($busadminRoutes.'/edit_invoices/*')  || request()->is($busadminRoutes.'/view-invoice/*') || request()->is($busadminRoutes.'/duplicate-invoice/*') || request()->is($busadminRoutes.'/edit-invoice/*') || request()->is($busadminRoutes.'/duplicate-estimates/*')
+            request()->is($busadminRoutes.'/create-invoice*') || 
+            request()->is($busadminRoutes.'/edit_invoices/*')  || request()->is($busadminRoutes.'/view-invoice/*') || request()->is($busadminRoutes.'/duplicate-invoice/*') || request()->is($busadminRoutes.'/edit-invoice/*') || request()->is($busadminRoutes.'/duplicate-estimates/*') || request()->is($busadminRoutes.'/recurring-invoice-list*') || 
+              request()->is($busadminRoutes.'/create-recurring-invoice*') || 
+              request()->is($busadminRoutes.'/edit-recurring-invoices/*')  || request()->is($busadminRoutes.'/view-recurring-invoice/*') || request()->is($busadminRoutes.'/duplicate-recurring-invoice/*')
                     ? 'menu-open side_shape' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
@@ -78,7 +80,10 @@
               @endif
               @if((isset($access['recurring_invoices']) && $access['recurring_invoices']) )
               <li class="nav-item">
-                <a href="recurringinvoices-list.html" class="nav-link">
+                <a href="{{ route('business.recurring_invoices.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/recurring-invoice-list*') || 
+                             request()->is($busadminRoutes.'/create-recurring-invoice*') || 
+                             request()->is($busadminRoutes.'/edit-recurring-invoices/*')  || request()->is($busadminRoutes.'/view-recurring-invoice/*') || request()->is($busadminRoutes.'/duplicate-recurring-invoice/*') 
+                              ? 'active' : '' }} ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Recurring Invoices</p>
                 </a>

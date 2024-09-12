@@ -1,6 +1,7 @@
 @extends('masteradmin.layouts.app')
 <title>Profityo | Products & Services (Purchases)</title>
-@if(isset($access['view_products_services_purchases']) && $access['view_products_services_purchases']) 
+<?php //dd($access); ?>
+@if(isset($access['view_product_services_purchases']) && $access['view_product_services_purchases'] == 1) 
 @section('content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -17,7 +18,7 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-          @if(isset($access['add_products_services_purchases']) && $access['add_products_services_purchases']) 
+          @if(isset($access['add_product_services_purchases']) && $access['add_product_services_purchases']) 
             <a href="{{ route('business.purchasproduct.create') }}"><button class="add_btn"><i
                   class="fas fa-plus add_plus_icon"></i>Add A Product Or Service</button></a>
           @endif
@@ -76,13 +77,13 @@
               <td><strong>{{ $value->tax->tax_abbreviation }} ({{ $value->tax->tax_rate }}%)</strong> - {{ $value->tax->tax_name }}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
-              @if(isset($access['update_products_services_purchases']) && $access['update_products_services_purchases']) 
+              @if(isset($access['update_product_services_purchases']) && $access['update_product_services_purchases']) 
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->
               <a href="{{ route('business.purchasproduct.edit',$value->purchases_product_id) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
               @endif
               <!-- <a data-toggle="modal" data-target="#delete-role-modal"><i
                 class="fas fa-solid fa-trash delete_icon_grid"></i></a> -->
-                @if(isset($access['delete_products_services_purchases']) && $access['delete_products_services_purchases']) 
+                @if(isset($access['delete_product_services_purchases']) && $access['delete_product_services_purchases']) 
                 <a data-toggle="modal" data-target="#delete-product-modal-{{ $value->purchases_product_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                 @endif
               </td>

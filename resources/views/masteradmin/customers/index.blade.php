@@ -18,7 +18,9 @@
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
               <a href="#"><button class="add_btn_br"><i class="fas fa-download add_plus_icon"></i>Import From CSV</button></a>
+              @if(isset($access['add_customers']) && $access['add_customers']) 
               <a href="{{ route('business.salescustomers.create') }}"><button class="add_btn"><i class="fas fa-plus add_plus_icon"></i>Add A Customer</button></a>
+              @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

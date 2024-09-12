@@ -26,6 +26,8 @@ use App\Http\Controllers\Masteradmin\PurchasVendorController;
 use App\Http\Controllers\Masteradmin\InvoicesController;
 
 use App\Http\Controllers\Masteradmin\ChartOfAccountController;
+use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +70,7 @@ Route::group(['prefix' => $adminRoute], function () {
         
         Route::get('/businessdetails', [BusinessDetailController::class, 'index'])->name('businessdetails.index');
         Route::get('/businessdetails/{id}', [BusinessDetailController::class, 'show'])->name('businessdetails.show');
+        Route::post('/business-detail/{id}/update-status', [BusinessDetailController::class, 'updateStatus'])->name('business.updateStatus');
 
         //logs
         Route::get('/logActivity', [ProfileController::class, 'logActivity'])->name('adminlog.index');
@@ -248,15 +251,22 @@ Route::group(['prefix' => $busadminRoute], function () {
 
     // chart of account..
         Route::get('/chartofaccount', [ChartOfAccountController::class, 'index'])->name('business.chartofaccount.index');
-        Route::post('/chart-of-account/store', [ChartOfAccountController::class, 'store'])->name('chartofaccount.store');
-
-// Route::get('/purchasesvendorcreate', [ChartOfAccountController::class, 'create'])->name('business.purchasvendor.create');
-// Route::post('/purchasesvendorstore', [ChartOfAccountController::class, 'store'])->name('business.purchasvendor.store');
-
-
-
+        Route::post('/chart-of-account/store', [ChartOfAccountController::class, 'store'])->name('business.chartofaccount.store');
+        Route::get('/chartofaccount/edit/{acc_type_id}', [ChartOfAccountController::class, 'edit'])->name('business.chartofaccount.edit');
+        Route::patch('/chartofaccount/update/{account}', [ChartOfAccountController::class, 'update'])->name('business.chartofaccount.update');
+        
     // end
-    
+    //recurring invoices
+    Route::get('/recurring-invoice-list', [RecurringInvoicesController::class, 'index'])->name('business.recurring_invoices.index');
+    Route::get('/create-recurring-invoice', [RecurringInvoicesController::class, 'create'])->name('business.recurring_invoices.create');
+    Route::post('/create-recurring-store', [RecurringInvoicesController::class, 'store'])->name('business.recurring_invoices.store');
+    Route::get('/edit-recurring-invoices/{id}', [RecurringInvoicesController::class, 'edit'])->name('business.recurring_invoices.edit');
+    Route::patch('/update-recurring-invoice/{reinvoices_id}', [RecurringInvoicesController::class, 'update'])->name('business.recurring_invoices.update');
+    Route::get('/view-recurring-invoice/{id}', [RecurringInvoicesController::class, 'view'])->name('business.recurring_invoices.view');
+    Route::get('/duplicate-recurring-invoice/{id}', [RecurringInvoicesController::class, 'duplicate'])->name('business.recurring_invoices.duplicate');
+    Route::patch('/duplicate-recurring-invoice-store/{id}', [RecurringInvoicesController::class, 'duplicateStore'])->name('business.recurring_invoices.duplicateStore');
+
+
 });
 
 require __DIR__.'/auth.php';
