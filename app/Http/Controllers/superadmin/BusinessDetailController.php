@@ -47,5 +47,19 @@ class BusinessDetailController extends Controller
 
         return view('superadmin.businessdetails.view_business', compact('user', 'udetail'));
     }
+    public function updateStatus($id)
+    {
+        // Fetch the user (business) by ID
+        $business = MasterUser::findOrFail($id);
+
+        // Toggle the business status (assuming the field is 'user_status')
+        $business->user_status = $business->user_status == 1 ? 0 : 1;
+        $business->save();
+
+        // Return JSON response with the updated status
+        return response()->json(['status' => 'success', 'new_status' => $business->user_status]);
+    }
+
+
 
 }

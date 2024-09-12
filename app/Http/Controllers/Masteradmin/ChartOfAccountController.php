@@ -14,73 +14,59 @@ use App\Models\ChartAccount;
 
 class ChartOfAccountController extends Controller
 {
-//     public function index(): View
-//     {
-//         // Fetch data categorized by 'menu_id'
-//         $assets = DB::table('py_chart_account_menu')
-//         ->where('menu_id', 3) // Assuming '3' corresponds to 'Assets'
-//         ->where('chart_menu_status', 1)
-//         ->get();
 
-//         $expenses = DB::table('py_chart_account_menu')
-//         ->where('menu_id', 1) // Assuming '3' corresponds to 'expenses'
-//         ->where('chart_menu_status', 1)
-//         ->get();
-// // dd($assets);
-//         $liabilitiesAndCreditCards = DB::table('py_chart_account_menu')
-//         ->where('menu_id', 2)  // Assuming '2' corresponds to 'Liabilities and Credit Cards'
-//         ->where('chart_menu_status', 1)
-//         ->get();
-//             // dd($liabilitiesAndCreditCards);
-
-//         $income = DB::table('py_chart_account_menu')
-//         ->where('menu_id', 4)  // Assuming '4' corresponds to 'Income'
-//         ->where('chart_menu_status', 1)
-//         ->get();
-//         // dd($income);
-//         $equity = DB::table('py_chart_account_menu')
-//         ->where('menu_id', 5) // Assuming '3' corresponds to 'equity'
-//         ->where('chart_menu_status', 1)
-//         ->get();
-//         // Pass the data to the view
-//         return view('masteradmin.chartofaccount.index', compact('assets','liabilitiesAndCreditCards','income','equity','expenses'));
-//     }
-
-
-
-
-public function index(): View
-{
-    // Fetch data categorized by 'menu_id'
-    $Country = Countries::all();
-    $assets = DB::table('py_chart_account_menu')
-        ->where('menu_id', 3) // Assets
-        ->where('chart_menu_status', 1)
-        ->get();
-
-    $liabilitiesAndCreditCards = DB::table('py_chart_account_menu')
-        ->where('menu_id', 2)  // Liabilities and Credit Cards
-        ->where('chart_menu_status', 1)
-        ->get();
-
-    $income = DB::table('py_chart_account_menu')
-        ->where('menu_id', 4)  // Income
-        ->where('chart_menu_status', 1)
-        ->get();
-
-    $equity = DB::table('py_chart_account_menu')
-        ->where('menu_id', 5) // Equity
-        ->where('chart_menu_status', 1)
-        ->get();
-
-    $expenses = DB::table('py_chart_account_menu')
-        ->where('menu_id', 1) // Expenses
-        ->where('chart_menu_status', 1)
-        ->get();
-
-    // Pass the data to the view
-    return view('masteradmin.chartofaccount.index', compact('assets', 'liabilitiesAndCreditCards', 'income', 'equity', 'expenses','Country'));
-}
+    public function index(): View
+    {
+        // Fetching all countries
+        $Country = Countries::all();
+    
+        // Fetching different account types
+        $assets = DB::table('py_chart_account_menu')
+            ->where('menu_id', 3) // Assets
+            ->where('chart_menu_status', 1)
+            ->get();
+    // dd($assets);
+        $liabilitiesAndCreditCards = DB::table('py_chart_account_menu')
+            ->where('menu_id', 2)  
+            ->where('chart_menu_status', 1)
+            ->get();
+    
+        $income = DB::table('py_chart_account_menu')
+            ->where('menu_id', 4)  // Income
+            ->where('chart_menu_status', 1)
+            ->get();
+    
+        $equity = DB::table('py_chart_account_menu')
+            ->where('menu_id', 5) // Equity
+            ->where('chart_menu_status', 1)
+            ->get();
+    
+        $expenses = DB::table('py_chart_account_menu')
+            ->where('menu_id', 1) // Expenses
+            ->where('chart_menu_status', 1)
+            ->get();
+    
+        // Getting the currently authenticated user
+        $user = Auth::guard('masteradmins')->user();
+        $uniq_id = $user->user_id; // Fetching the unique ID of the logged-in user
+    
+        // Fetching accounts and grouping them by 'acc_type_id'
+        $list = ChartAccount::where('sale_product_status', 1)
+            ->get()
+            ->groupBy('acc_type_id');
+    
+        // Pass all data to the view
+        return view('masteradmin.chartofaccount.index', compact(
+            'assets', 
+            'liabilitiesAndCreditCards', 
+            'income', 
+            'equity', 
+            'expenses', 
+            'Country',
+            'list'
+        ));
+    }
+    
 
 
 public function store(Request $request)
@@ -110,7 +96,36 @@ public function store(Request $request)
         $validatedData['type_id'] = $query->menu_id; 
     ChartAccount::create($validatedData);
 
-    return redirect()->back()->with('success', 'Account created successfully.');
+    return redirect()->back()->with('chart-of-account-add', __('messages.masteradmin.chart-of-account.send_success'));
 }
+// Add this method to fetch the data for the modal
+public function edit($chart_acc_id)
+{
+    $account = ChartAccount::find($chart_acc_id);
+    // dd($account);
+    return response()->json($account);
+   
+}
+
+// Add this method to handle the update request
+public function update(Request $request,$chart_acc_id)
+{
+// dd($chart_acc_id);
+    $validatedData = $request->validate([
+        'chart_acc_name' => 'nullable|string|max:255',
+        'currency_id' => 'nullable|integer',
+        'chart_account_id' => 'nullable|string|max:255',
+        'sale_acc_desc' => 'nullable|string|max:255',
+        'archive_account' => 'nullable|integer',
+    ]);
+
+    $account = ChartAccount::where('chart_acc_id', $chart_acc_id)->firstOrFail();
+    // $account->update($validatedData);
+    // dd($account);
+    $account->where('chart_acc_id', $chart_acc_id)->update($validatedData);
+// dd($account);
+    return redirect()->back()->with('success', 'Account updated successfully.');
+}
+
 
 }
