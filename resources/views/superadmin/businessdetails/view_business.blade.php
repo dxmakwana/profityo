@@ -91,13 +91,17 @@
                           <tr>
                             <td><strong>User Status :</strong></td>
                             <td>
-                              @if ($user->user_status == 1)
-                                    <span class="status_btn converted_status"> Active </span>
-                                  @else
-                              <span class="status_btn overdue_status">Inactive</span>
+                              <span class="status_btn" id="status-text" data-id="{{ $user->id }}"
+                                style="cursor: pointer;">
+                                @if ($user->user_status == 1)
+                                        <span class="status_btn converted_status">Active</span>
+                                      @else
+                                <span class="status_btn overdue_status">Inactive</span>
                             @endif
+                              </span>
                             </td>
                           </tr>
+
                         </tbody>
                       </table>
                     </div>
@@ -130,25 +134,27 @@
                       <!-- <th class="sorting_disabled text-right" data-orderable="false">Actions</th> -->
                     </tr>
                   </thead>
+                  <!-- <input type="hidden" name='u_id' id="u_id" value="{{ $user->id }}"> -->
                   <tbody>
                     @foreach ($udetail as $detail)
-            <tr>
-              <td>{{ $detail->users_name }}</td>
-              <td>{{ $detail->users_email  }}</td>
-              <td>{{ $detail->users_phone  }}</td>
-              <td>{{ $detail->role_name}}</td>
-              <td>{{ $detail->updated_at }}</td>
-              <td> @if ($detail->user_status == 0)
-          <span class="status_btn converted_status"> Active </span>
-        @else
-        <span class="status_btn overdue_status">Inactive</span>
-      @endif
-              </td>
-              <!-- <td class="text-right">
+                      <tr>
+                        <td>{{ $detail->users_name }}</td>
+                        <td>{{ $detail->users_email  }}</td>
+                        <td>{{ $detail->users_phone  }}</td>
+                        <td>{{ $detail->role_name}}</td>
+                        <td>{{ $detail->updated_at }}</td>
+                        <td>
+                        @if ($detail->users_status == 0)
+                            <span class="status_btn converted_status"> Active </span>
+                          @else
+                          <span class="status_btn overdue_status">Inactive</span>
+                        @endif
+                     </td>
+                        <!-- <td class="text-right">
                           <a data-toggle="modal" data-target="#deleteuser"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                         </td> -->
-            </tr>
-          @endforeach
+                  </tr>
+                 @endforeach
                   </tbody>
                 </table>
               </div>
@@ -198,6 +204,33 @@
 
 
   @include('layouts.footerlink')
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script>
+    document.getElementById('status-text').addEventListener('click', function () {
+      const userId = this.getAttribute('data-id');
+
+      fetch(`{{ url('/admin/business-detail') }}/${userId}/update-status`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const statusText = document.getElementById('status-text');
+
+            // Update the status text and class based on the new status
+            if (data.new_status == 1) {
+              statusText.innerHTML = '<span class="converted_status">Active</span>';
+            } else {
+              statusText.innerHTML = '<span class="overdue_status">Inactive</span>';
+            }
+          }
+        });
+    });
+  </script>
 
 </body>
 
