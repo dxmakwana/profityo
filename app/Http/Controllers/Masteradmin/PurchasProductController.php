@@ -27,7 +27,7 @@ class PurchasProductController extends Controller
         // Fetch ChartAccount records based on type_id
         $IncomeAccounts = ChartAccount::where('type_id', 3)->get();
         $ExpenseAccounts = ChartAccount::where('type_id', 4)->get(); // Assuming type_id 4 for expenses, change as necessary
-
+       
         return view('masteradmin.product_purchas.add', compact('Country', 'SalesTax', 'IncomeAccounts', 'ExpenseAccounts'));
     }
     public function store(Request $request)
@@ -66,7 +66,7 @@ class PurchasProductController extends Controller
             'id' => $validatedData['id'], // Use the correct field name for user ID
             'purchases_product_status' => 1,
         ]);
-
+        \MasterLogActivity::addToLog('Purchases product is created.');
         return redirect()->route('business.purchasproduct.index')->with(['purchases-product-add' => __('messages.masteradmin.purchases-product.send_success')]);
     }
 
@@ -116,7 +116,7 @@ class PurchasProductController extends Controller
         }
 
         $PurchasProductu->where('purchases_product_id', $purchases_product_id)->update($validatedData);
-
+        \MasterLogActivity::addToLog('Purchases product is updated.');
         return redirect()->route('business.purchasproduct.edit', ['PurchasesProduct' => $PurchasProductu->purchases_product_id])
             ->with('purchases-product-edit', __('messages.masteradmin.purchases-product.edit_purchasesproduct_success'));
     }
@@ -129,6 +129,7 @@ class PurchasProductController extends Controller
         $PurchasProduct = PurchasProduct::where(['purchases_product_id' => $purchases_product_id, 'id' => $user->id])->firstOrFail();
 
         $PurchasProduct->where('purchases_product_id', $purchases_product_id)->delete();
+        \MasterLogActivity::addToLog('Purchases product is deleted.');
         return redirect()->route('business.purchasproduct.index')->with('purchases-product-delete', __('messages.masteradmin.purchases-product.delete_purchasesproduct_success'));
 
     }

@@ -249,9 +249,11 @@ class ProfilesController extends Controller
             $adminUserModel = new MasterUserDetails();
             $adminUserModel->setTableForUniqueId($uniqueId);
             // dd($adminUserModel);
-        
+            // \DB::enableQueryLog();
+
             $logs = \MasterLogActivity::logActivityLists()
-                ->where('user_id', $user->users_id);        
+            ->where('user_id', $user->users_id)
+            ->sortByDesc('id');
           
             $userIds = $logs->pluck('user_id')->unique();
             $userDetails = $adminUserModel->whereIn('users_id', $userIds)->get()->keyBy('users_id');
@@ -262,6 +264,7 @@ class ProfilesController extends Controller
                 $log->user_name = $userDetail ? $userDetail->users_name : 'Unknown'; 
                 return $log;
             });
+            // dd(\DB::getQueryLog()); 
             // dd($logs);
             return view('masteradmin.logs.index')
                 ->with('admin_user', $user) 

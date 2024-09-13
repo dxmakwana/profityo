@@ -104,7 +104,7 @@ class PurchasVendorController extends Controller
         'id' => $validatedData['id'],
         'purchases_vendor_status' => 1,
     ]);
-
+    \MasterLogActivity::addToLog('Purchases vendor is created.');
     return redirect()->route('business.purchasvendor.index')->with(['purchases-vendor-add' => __('messages.masteradmin.purchases-vendor.send_success')]);
 }
 
@@ -161,7 +161,7 @@ class PurchasVendorController extends Controller
     $validatedData['purchases_contractor_type'] = $purchases_contractor_type; 
     // Update the vendor record with validated data
     $PurchasVendoru->where('purchases_vendor_id', $purchases_vendor_id)->update($validatedData);
-
+    \MasterLogActivity::addToLog('Purchases vendor is updated.');
     return redirect()->route('business.purchasvendor.edit', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
         ->with('purchases-vendor-edit', __('messages.masteradmin.purchases-vendor.edit_purchasesvendor_success'));
 }
@@ -175,6 +175,7 @@ class PurchasVendorController extends Controller
         $PurchasVendor = PurchasVendor::where(['purchases_vendor_id' => $purchases_vendor_id, 'id' => $user->id])->firstOrFail();
 
         $PurchasVendor->where('purchases_vendor_id', $purchases_vendor_id)->delete();
+        \MasterLogActivity::addToLog('Purchases vendor is deleted.');
         return redirect()->route('business.purchasvendor.index')->with('purchases-vendor-delete', __('messages.masteradmin.purchases-vendor.delete_purchasesvendor_success'));
 
     }
@@ -184,7 +185,7 @@ class PurchasVendorController extends Controller
         $PurchasVendor = PurchasVendor::where('purchases_vendor_id', $purchases_vendor_id)->firstOrFail();
         $Country = Countries::all(); // Fetch all countries
         $States = States::all();
-    
+        \MasterLogActivity::addToLog('Purchases vendor is viewed.');
         // Pass the vendor details, countries, and states to the view
         return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States'));
     }
@@ -216,6 +217,7 @@ class PurchasVendorController extends Controller
     
         // Store the bank details
         PurchasVendorBankDetail::create($validatedData);
+        \MasterLogActivity::addToLog('Purchases vendor is add bank details.');
         return redirect()->route('business.purchasvendor.index')->with('purchases-vendor-bankdetail', __('messages.masteradmin.purchases-vendor.add_bankdetail_success'));
         // return redirect()->back()->with('success', 'Bank details added successfully.');
     }
@@ -230,6 +232,7 @@ class PurchasVendorController extends Controller
     public function viewBankDetails($purchases_vendor_id): View
     {
         $PurchasVendorbank = PurchasVendorBankDetail::where('purchases_vendor_id', $purchases_vendor_id)->with('vendor')->firstOrFail();
+        \MasterLogActivity::addToLog('Purchases vendor is view bank details.');
         return view('masteradmin.vendor.viewBankDetails', compact('PurchasVendorbank'));
     }
 }

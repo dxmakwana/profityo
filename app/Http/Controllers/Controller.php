@@ -563,6 +563,25 @@ class Controller extends BaseController
             }
 
 
+            if (!Schema::hasTable($storeId . '_py_re_invoices_schedule')) {
+                Schema::create($storeId . '_py_re_invoices_schedule', function (Blueprint $table) {
+                    $table->increments('re_inv_sch_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_re_inv_id')->nullable()->default(0);
+                    $table->string('repeat_inv_type')->nullable();
+                    $table->string('repeat_inv_month')->nullable();
+                    $table->string('repeat_inv_day')->nullable();
+                    $table->string('repeat_inv_date')->nullable();
+                    $table->string('invoice_date')->nullable();
+                    $table->string('create_inv_type')->nullable();
+                    $table->integer('create_inv_number')->nullable()->default(0);
+                    $table->string('create_inv_date')->nullable();
+                    $table->tinyInteger('re_inv_sch_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+
         }
     }
 

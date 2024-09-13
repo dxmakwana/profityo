@@ -99,7 +99,7 @@
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right">
                     <input type="text" class="form-control text-right" name="sale_estim_title" id="estimatetitle"
-                      placeholder="Estimate Title" value="{{ $reinvoices->sale_re_inv_title }}">
+                      placeholder="Invoice Title" value="{{ $reinvoices->sale_re_inv_title }}">
                   </div>
                 </div>
                 <div class="row justify-content-end">
@@ -527,7 +527,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Customize this Estimate</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Customize this Invoice</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -537,7 +537,7 @@
         @method('patch')
         <div class="modal-body">
           <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This
-            Estimate:</div>
+            Invoice:</div>
           <div class="colum_box">
             <h2 class="edit-colum_title">Items</h2>
             <div class="row align-items-center justify-content-between">
@@ -729,7 +729,7 @@
             <div class="col-md-12">
               <div class="icheck-primary">
                 <input type="radio" id="apply1" name="r16">
-                <label for="apply1">Apply These Settings to Future Estimates.</label>
+                <label for="apply1">Apply These Settings to Future Invoice.</label>
                 <p>These settings will apply to invoices and invoices. You can change these anytime from
                   Invoice Customization settings.</p>
               </div>

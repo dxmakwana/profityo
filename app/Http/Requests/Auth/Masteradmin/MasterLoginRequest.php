@@ -103,6 +103,10 @@ class MasterLoginRequest extends FormRequest
         Cache::put('masteradmins_user_' . Auth::guard('masteradmins')->id(), Auth::guard('masteradmins')->user(), now()->addMinutes(30));
 
         session(['user_details' => $users]);
+
+        $msg=$users->users_name." is Logged in";
+
+        \MasterLogActivity::addToLog($msg);
         
         if ($this->boolean('user_remember')) {
             

@@ -99,7 +99,7 @@
                 <div class="row justify-content-end">
                   <div class="col-md-7 float-sm-right">
                     <input type="text" class="form-control text-right" name="sale_estim_title" id="estimatetitle"
-                      placeholder="Estimate Title" value="{{ $invoices->sale_inv_title }}">
+                      placeholder="Invoice Title" value="{{ $invoices->sale_inv_title }}">
                   </div>
                 </div>
                 <div class="row justify-content-end">

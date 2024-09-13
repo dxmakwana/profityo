@@ -29,6 +29,7 @@
                 <table id="example1" class="table table-hover text-nowrap">
                 <thead>
                             <tr>
+                                <!-- <th>#</th> -->
                                 <th>Subject</th>
                                 <th>Url</th>
                                 <th>Method</th>
@@ -39,9 +40,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                          <?php //dd($logs); ?>
                             @if (count($logs) > 0)
                                 @foreach ($logs as $log)
                                     <tr>
+                                        <!-- <td>{{ $log->id }}</td> -->
                                         <td>{{ $log->subject }}</td>
                                         <td>{{ $log->url }}</td>
                                         <td>{{ $log->method }}</td>

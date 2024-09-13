@@ -8,13 +8,13 @@
         @include('masteradmin.layouts.headerlink')
 
     </head>    
-    <body class="hold-transition sidebar-mini layout-fixed">
+    <body class="hold-transition layout-fixed">
     <div class="wrapper">
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="">
         <!-- Content Header (Page header) -->
         <div class="content-header">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row mb-2 align-items-center justify-content-between">
                     <div class="col-auto">
                         <ol class="breadcrumb float-sm-right">
@@ -31,7 +31,7 @@
         <!-- /.content-header -->
         <!-- Main content -->
         <section class="content px-10">
-            <div class="container-fluid">
+            <div class="container">
                 <!-- card -->
                 <div class="card">
                     <!-- /.card-header -->
@@ -131,7 +131,7 @@
                                             <td class="text-center">{{ $item->sale_estim_item_qty }}</td>
                                             <td class="text-center">{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $item->sale_estim_item_price }}</td>
                                             <!-- <td class="text-center">5%</td> -->
-                                            <td>{{ $item->tax_name ?? 'No Tax Name' }} {{ $item->tax_rate ?? 'No Tax Name' }}%</td>
+                                            <td class="text-center">{{ $item->tax_name ?? 'No Tax Name' }} {{ $item->tax_rate ?? 'No Tax Name' }}%</td>
                                             <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
                                             <td class="text-right">{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $item->sale_estim_item_qty * $item->sale_estim_item_price ?? '0'}} </td>
                                         </tr>
@@ -146,7 +146,7 @@
                                 <div class="table-responsive">
                                     <table class="table total_table">
                                         <tr>
-                                            <td style="width:50%">Sub Total :</td>
+                                            <td style="width:70%">Sub Total :</td>
                                             <td>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_sub_total }}</td>
                                         </tr>
                                         <tr>

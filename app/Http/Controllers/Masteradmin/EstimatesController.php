@@ -90,7 +90,7 @@ class EstimatesController extends Controller
             // dd($allEstimates);
             return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
         }
-
+        
         return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'));
     }
 
@@ -600,6 +600,7 @@ class EstimatesController extends Controller
         // $states = States::get();
 
         // dd($estimates);
+        \MasterLogActivity::addToLog('Estimate is viewed.');
         return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','user_id'));
 
     }
@@ -828,12 +829,15 @@ class EstimatesController extends Controller
 
             if($nextStatus != 'Duplicate'){
                 $estimates->where('sale_estim_id', $id)->update(['sale_status' => $nextStatus]);
+                \MasterLogActivity::addToLog('Estimate is Duplicate.');
             }
 
             $response = [
                 'success' => true,
                 'message' => "Invoice status updated to $nextStatus successfully!"
             ];
+            \MasterLogActivity::addToLog('Estimate is '.$nextStatus.' successfully!');
+            
            
             switch ($nextStatus) {
                
@@ -998,6 +1002,7 @@ class EstimatesController extends Controller
             $currency = $currencys->firstWhere('id', $estimates->sale_currency_id);
 
             if ($request->has('download')) {
+                \MasterLogActivity::addToLog('Estimate PDF is download.');
                 $pdf = PDF::loadView('masteradmin.estimates.pdf', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'))
                 ->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)
@@ -1005,8 +1010,10 @@ class EstimatesController extends Controller
             
                 // return $pdf->stream('estimate.pdf');
                 return $pdf->download('estimate.pdf');
-                        }
+                
+            }
 
+            \MasterLogActivity::addToLog('Estimate is send.');
             return view('masteradmin.estimates.send', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'));
             
         } catch (DecryptException $e) {
@@ -1118,6 +1125,7 @@ class EstimatesController extends Controller
             $currency = $currencys->firstWhere('id', $estimates->sale_currency_id);
 
             if ($request->has('download')) {
+                \MasterLogActivity::addToLog('Estimate PDF is download.');
                 $pdf = PDF::loadView('masteradmin.estimates.pdf', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'))
                 ->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)
@@ -1128,7 +1136,7 @@ class EstimatesController extends Controller
                         }
 
             if ($request->has('print')) {
-
+                \MasterLogActivity::addToLog('Estimate PDF is print.');
                 return view('masteradmin.estimates.print', compact('businessDetails', 'currencys', 'estimates', 'estimatesItems','currency','id','slug'));
             }            
 

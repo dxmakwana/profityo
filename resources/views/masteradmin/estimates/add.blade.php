@@ -1551,7 +1551,7 @@
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
 
-      console.log(formData);
+      // console.log(formData);
 
       $.ajax({
       url: "{{ route('business.estimates.store') }}",
