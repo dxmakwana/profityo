@@ -30,6 +30,17 @@
     <section class="content px-10">
       <div class="container-fluid">
         <!-- card -->
+        @if(Session::has('purchases-vendor-edit'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('purchases-vendor-edit') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('purchases-vendor-edit');
+    @endphp
+    @endif
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Basic Information</h3>
@@ -160,7 +171,7 @@
                 <div class="col-md-4">
                   <div class="form-group">
                     <label>Country</label>
-                    <select class="form-control from-select select2 @error('purchases_vendor_country_id') is-invalid @enderror" name="purchases_vendor_country_id" id="ship_country" style="width: 100%;">
+                    <select class="form-control from-select select2 @error('purchases_vendor_country_id') is-invalid @enderror" name="purchases_vendor_country_id" id="purchases_vendor_country_id" style="width: 100%;">
                   <option value="">Select Country</option>
                         @foreach($Country as $con)
                         <option value="{{ $con->id }}" @if($con->id == $PurchasVendore->purchases_vendor_country_id) selected @endif>
@@ -189,7 +200,7 @@
                 <div class="col-md-4">
                   <div class="form-group">
                     <label>Province/State</label>
-                    <select class="form-control from-select select2 @error('purchases_vendor_state_id') is-invalid @enderror" name="purchases_vendor_state_id" id="ship_state" style="width: 100%;">
+                    <select class="form-control from-select select2 @error('purchases_vendor_state_id') is-invalid @enderror" name="purchases_vendor_state_id" id="purchases_vendor_state_id" style="width: 100%;">
                   <option value="">Select State</option>
                         @foreach($States as $states)
                         <option value="{{ $states->id }}" @if($states->id == $PurchasVendore->purchases_vendor_state_id) selected @endif>
@@ -281,57 +292,39 @@
   </div>
   <!-- /.content-wrapper -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function() {
-    $('#country').change(function() {
+  <script>
+$(document).ready(function() {
+    $('#purchases_vendor_country_id').change(function() {
         var country_id = $(this).val();
+        var stateSelect = $('#purchases_vendor_state_id');
+
         if (country_id) {
             $.ajax({
                 url: '{{ url('business/vendorgetstates') }}/' + country_id,
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    $('#state').empty();
-                    $('#state').append('<option value="">Select State</option>');
+                    stateSelect.empty();
+                    stateSelect.append('<option value="">Select State</option>');
                     $.each(data, function(key, value) {
-                        $('#state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                        stateSelect.append('<option value="'+ value.id +'" ' + (value.id == '{{ $PurchasVendore->purchases_vendor_state_id }}' ? 'selected' : '') + '>' + value.name + '</option>');
                     });
+                },
+                error: function(xhr) {
+                    console.error('AJAX error:', xhr.responseText);
                 }
             });
         } else {
-            $('#state').empty();
-            $('#state').append('<option value="">Select State</option>');
+            stateSelect.empty();
+            stateSelect.append('<option value="">Select State</option>');
         }
     });
-  });
-</script>
-  <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Get references to the radio buttons and the fields
-    var contractorRadio = document.getElementById('contractorType');
-    var regularRadio = document.getElementById('regularType');
-    var contractorFields = document.getElementById('contractorFields');
-    var ssnField = document.getElementById('ssnField');
 
-    // Function to toggle visibility
-    function toggleFields() {
-        if (contractorRadio.checked) {
-            contractorFields.style.display = 'block';
-            ssnField.style.display = 'block';
-        } else {
-            contractorFields.style.display = 'none';
-            ssnField.style.display = 'none';
-        }
-    }
-
-    // Initial toggle based on the default checked state
-    toggleFields();
-
-    // Add event listeners to radio buttons
-    contractorRadio.addEventListener('change', toggleFields);
-    regularRadio.addEventListener('change', toggleFields);
+    // Trigger change event on page load to set the initial state options
+    $('#purchases_vendor_country_id').trigger('change');
 });
 </script>
+
 
 
 @endsection

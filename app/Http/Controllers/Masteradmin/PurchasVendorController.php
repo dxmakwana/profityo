@@ -126,8 +126,48 @@ class PurchasVendorController extends Controller
      * Update the specified resource in storage.
      */
    
-    public function update(Request $request, $purchases_vendor_id): RedirectResponse
+//     public function update(Request $request, $purchases_vendor_id): RedirectResponse
+// {
+//     $PurchasVendoru = PurchasVendor::where('purchases_vendor_id', $purchases_vendor_id)->firstOrFail();
+
+//     // Validate the incoming request
+//     $validatedData = $request->validate([
+//         'purchases_vendor_name' => 'required|string|max:255',
+//         'purchases_vendor_security_number' => 'nullable|string|max:255',
+//         'purchases_vendor_first_name' => 'nullable|string|max:255',
+//         'purchases_vendor_last_name' => 'nullable|string|max:255',
+//         'purchases_vendor_email' => 'nullable|string|max:255',
+//         'purchases_vendor_country_id' => 'nullable|string|max:255',
+//         'purchases_vendor_state_id' => 'nullable|string|max:255',
+//         'purchases_vendor_address1' => 'nullable|string|max:255',
+//         'purchases_vendor_address2' => 'nullable|string|max:255',
+//         'purchases_vendor_city_name' => 'nullable|string|max:255',
+//         'purchases_vendor_zipcode' => 'nullable|string|max:255',
+//         'purchases_vendor_account_number' => 'nullable|string|max:255',
+//         'purchases_vendor_phone' => 'nullable|string|max:255',
+//         'purchases_vendor_fax' => 'nullable|string|max:255',
+//         'purchases_vendor_mobile' => 'nullable|string|max:255',
+//         'purchases_vendor_toll_free' => 'nullable|string|max:255',
+//         'purchases_vendor_website' => 'nullable|string|max:255',
+//         'purchases_vendor_currency_id' => 'nullable|string|max:255',
+//         'purchases_contractor_type'=>'required|string|in:Individual,Business',
+//         'type' => 'required|string|in:Vendor,1099-NEC Contractor', // Add validation for type
+//     ]);
+
+//     // Capture the selected radio button value
+//     $type = $request->input('type'); 
+//     $purchases_contractor_type = $request->input('purchases_contractor_type');// This will be either 'Regular' or '1099-NEC Contractor'
+//     $validatedData['purchases_vendor_type'] = $type; // Store the value directly in the 'purchases_vendor_type' column
+//     $validatedData['purchases_contractor_type'] = $purchases_contractor_type; 
+//     // Update the vendor record with validated data
+//     $PurchasVendoru->where('purchases_vendor_id', $purchases_vendor_id)->update($validatedData);
+
+//     return redirect()->route('business.purchasvendor.edit', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
+//         ->with('purchases-vendor-edit', __('messages.masteradmin.purchases-vendor.edit_purchasesvendor_success'));
+// }
+public function update(Request $request, $purchases_vendor_id): RedirectResponse
 {
+    // Fetch the vendor record
     $PurchasVendoru = PurchasVendor::where('purchases_vendor_id', $purchases_vendor_id)->firstOrFail();
 
     // Validate the incoming request
@@ -150,18 +190,21 @@ class PurchasVendorController extends Controller
         'purchases_vendor_toll_free' => 'nullable|string|max:255',
         'purchases_vendor_website' => 'nullable|string|max:255',
         'purchases_vendor_currency_id' => 'nullable|string|max:255',
-        'purchases_contractor_type'=>'required|string|in:Individual,Business',
-        'type' => 'required|string|in:Vendor,1099-NEC Contractor', // Add validation for type
+        // 'purchases_contractor_type' => 'required|string|in:Individual,Business',
+        // 'type' => 'required|string|in:Vendor,1099-NEC Contractor', // Add validation for type
     ]);
-
-    // Capture the selected radio button value
+    // dd($validatedData);    // Capture the selected radio button value
     $type = $request->input('type'); 
-    $purchases_contractor_type = $request->input('purchases_contractor_type');// This will be either 'Regular' or '1099-NEC Contractor'
+    $purchases_contractor_type = $request->input('purchases_contractor_type'); // This will be either 'Individual' or 'Business'
+    
+    // Assign values to the validated data
     $validatedData['purchases_vendor_type'] = $type; // Store the value directly in the 'purchases_vendor_type' column
     $validatedData['purchases_contractor_type'] = $purchases_contractor_type; 
+    
     // Update the vendor record with validated data
-    $PurchasVendoru->where('purchases_vendor_id', $purchases_vendor_id)->update($validatedData);
+    $PurchasVendoru->update($validatedData);
 
+    // Redirect with success message
     return redirect()->route('business.purchasvendor.edit', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
         ->with('purchases-vendor-edit', __('messages.masteradmin.purchases-vendor.edit_purchasesvendor_success'));
 }
