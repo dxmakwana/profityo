@@ -138,10 +138,7 @@
             <ul class="nav nav-treeview">
               @if(isset($access['bills']) && $access['bills']) 
               <li class="nav-item">
-                <a href="{{ route('business.bill.index') }}" class="nav-link {{  request()->is($busadminRoutes.'/purchasesvendor*') || 
-                             request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesvendoredit/*')   || request()->is($busadminRoutes.'/vendordetails/*')    
-                              ? 'active' : '' }}" class="nav-link">
+                <a href="bills-list.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Bills</p>
                 </a>

@@ -217,7 +217,7 @@
 
     $('#example2').DataTable({
 
-        "paging": true,
+     "paging": true,
         "lengthChange": false,
         "searching": false,
         "ordering": true,

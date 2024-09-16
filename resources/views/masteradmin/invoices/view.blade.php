@@ -31,12 +31,12 @@
                             <a href="{{ route('business.invoices.sendviews', [ $invoices->sale_inv_id, $user_id, 'download' => 'true']) }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-pdf mr-2"></i>Export As
                                     Pdf</button></a>
                             </a>
-                            <a href="{{ route('business.recurring_invoices.recurringinvoiceStore', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Make Recurring</button></a>
+                            <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Make Recurring</button></a>
                             <a href="{{ route('business.invoices.duplicate', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-regular fa-copy mr-2"></i>Duplicate</button></a>
                             <a href="{{ route('business.invoices.edit', $invoices->sale_inv_id) }}"><button class="add_btn_br"><i
                                         class="fas fa-solid fa-pen-to-square mr-2"></i>Edit</button></a>
-                            <a href="{{ route('business.invoices.create') }}"><button class="add_btn">Create Another Invoice</button></a>
+                            <a href="{{ route('business.invoices.create') }}"><button class="add_btn">Create Another Estimate</button></a>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -280,7 +280,7 @@
                                             <td class="text-center">{{ $item->sale_inv_item_qty }}</td>
                                             <td class="text-center">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $item->sale_inv_item_price }}</td>
                                             <!-- <td class="text-center">5%</td> -->
-                                            <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
+                                            <td>{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
                                             <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
                                             <td class="text-right">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $item->sale_inv_item_qty * $item->sale_inv_item_price ?? '0'}} </td>
                                         </tr>
@@ -865,7 +865,7 @@
                     _token: '{{ csrf_token() }}' 
                 },
                 success: function(response) {
-                    alert('Invoice link sent to the customer successfully.');
+                    alert('Estimate link sent to the customer successfully.');
                     location.reload(); 
                 },
                 error: function(xhr) {
