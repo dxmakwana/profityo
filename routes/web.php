@@ -27,6 +27,7 @@ use App\Http\Controllers\Masteradmin\InvoicesController;
 
 use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
+use App\Http\Controllers\Masteradmin\BillsController;
 
 
 /*
@@ -265,7 +266,11 @@ Route::group(['prefix' => $busadminRoute], function () {
     Route::get('/view-recurring-invoice/{id}', [RecurringInvoicesController::class, 'view'])->name('business.recurring_invoices.view');
     Route::get('/duplicate-recurring-invoice/{id}', [RecurringInvoicesController::class, 'duplicate'])->name('business.recurring_invoices.duplicate');
     Route::patch('/duplicate-recurring-invoice-store/{id}', [RecurringInvoicesController::class, 'duplicateStore'])->name('business.recurring_invoices.duplicateStore');
+    
 
+    //bills
+    Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');
+    Route::get('/create-bill', [BillsController::class, 'create'])->name('business.bill.create');
 
 });
 
