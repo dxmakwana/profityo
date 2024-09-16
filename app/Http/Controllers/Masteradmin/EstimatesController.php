@@ -829,7 +829,7 @@ class EstimatesController extends Controller
 
             if($nextStatus != 'Duplicate'){
                 $estimates->where('sale_estim_id', $id)->update(['sale_status' => $nextStatus]);
-                \MasterLogActivity::addToLog('Estimate is Duplicate.');
+                // \MasterLogActivity::addToLog('Estimate is Duplicate.');
             }
 
             $response = [

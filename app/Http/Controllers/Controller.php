@@ -562,7 +562,6 @@ class Controller extends BaseController
                 });
             }
 
-
             if (!Schema::hasTable($storeId . '_py_re_invoices_schedule')) {
                 Schema::create($storeId . '_py_re_invoices_schedule', function (Blueprint $table) {
                     $table->increments('re_inv_sch_id')->unique();
@@ -581,6 +580,44 @@ class Controller extends BaseController
                 });
             }
 
+            if (!Schema::hasTable($storeId . '_py_bills_details')) {
+                Schema::create($storeId . '_py_bills_details', function (Blueprint $table) {
+                    $table->increments('sale_bill_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->string('sale_bill_title')->nullable();
+                    $table->text('sale_bill_summary')->nullable();
+                    $table->integer('sale_vendor_id')->nullable();
+                    $table->string('sale_bill_number')->nullable();
+                    $table->string('sale_bill_customer_ref')->nullable();
+                    $table->string('sale_bill_date')->nullable();
+                    $table->string('sale_bill_valid_date')->nullable();
+                    $table->text('sale_bill_note')->nullable()->default(0);
+                    $table->integer('sale_currency_id')->nullable()->default(0);
+                    $table->string('sale_bill_sub_total')->nullable()->default(0);
+                    $table->string('sale_bill_tax_amount')->nullable()->default(0);
+                    $table->string('sale_bill_final_amount')->nullable()->default(0);
+                    $table->string('sale_status')->nullable()->default(0);
+                    $table->tinyInteger('sale_bill_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+
+            if (!Schema::hasTable($storeId . '_py_bills_items')) {
+                Schema::create($storeId . '_py_bills_items', function (Blueprint $table) {
+                    $table->increments('sale_bill_item_id')->unique();
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_bill_id')->nullable()->default(0);
+                    $table->integer('sale_product_id')->nullable()->default(0);
+                    $table->integer('sale_expense_id')->nullable()->default(0);
+                    $table->integer('sale_bill_item_qty')->nullable()->default(0);
+                    $table->string('sale_bill_item_price')->nullable()->default(0);
+                    $table->string('sale_bill_item_tax')->nullable()->default(0);
+                    $table->text('sale_bill_item_desc')->nullable();
+                    $table->tinyInteger('sale_bill_item_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
+            
 
         }
     }

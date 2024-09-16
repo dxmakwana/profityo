@@ -397,7 +397,7 @@
 
 
     @include('masteradmin.layouts.footerlink')
-
+@endif
 </body>
 
 </html>

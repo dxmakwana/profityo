@@ -337,10 +337,10 @@
             required>
             @foreach($currencys as $curr)
         <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-        <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
-          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-        </option>
-      @endforeach
+              <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
+                {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+              </option>
+            @endforeach
             </select>
 
             <td>Total:</td>

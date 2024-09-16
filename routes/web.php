@@ -27,7 +27,7 @@ use App\Http\Controllers\Masteradmin\InvoicesController;
 
 use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
-
+use App\Http\Controllers\Masteradmin\BillsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -265,6 +265,10 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/recurring-invoice-store/set_schedule/{id}', [RecurringInvoicesController::class, 'setScheduleStore'])->name('business.recurring_invoices.setScheduleStore');
         Route::get('/recurring-invoice-store/invoice/{id}', [RecurringInvoicesController::class, 'recurringinvoiceStore'])->name('business.recurring_invoices.recurringinvoiceStore');
 
+        //bills
+        Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');
+        Route::get('/create-bill', [BillsController::class, 'create'])->name('business.bill.create');
+        
     });
 
 
