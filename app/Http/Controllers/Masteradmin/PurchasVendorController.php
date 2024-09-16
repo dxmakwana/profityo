@@ -70,7 +70,11 @@ class PurchasVendorController extends Controller
         'purchases_vendor_name.required' => 'The name field is required.',
         'type.required' => 'The vendor type field is required.',
         // 'type.in' => 'The selected vendor type is invalid.',
-    ]);
+    ]);      
+
+
+
+    
 
     // Capture the selected radio button value
     $type = $request->input('type'); // This will be either 'Regular' or '1099-NEC Contractor'
