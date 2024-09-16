@@ -28,7 +28,7 @@
             </td>
             <td class="w-half">
                 <h2>Invoice ID: {{ $invoices->sale_inv_id }}</h2>
-                <div><strong>Invoice Summary</strong></div>
+                <div><strong>Estimate Summary</strong></div>
                 <div >{{ $businessDetails->bus_company_name }}</div>
                 <div >{{  $businessDetails->bus_address1 }}</div>
                 <div >{{  $businessDetails->bus_address2 }}</div>
@@ -68,9 +68,9 @@
                 </td>
                 <td class="w-half">
                     <!-- <div><h4>Bill To:</h4></div> -->
-                    <div ><strong>Invoice Number: </strong>{{ $invoices->sale_inv_number }}</div>
+                    <div ><strong>Estimate Number: </strong>{{ $invoices->sale_inv_number }}</div>
                     <div ><strong>Customer Ref:: </strong>{{ $invoices->sale_inv_customer_ref }}</div>
-                    <div><strong>Invoice Date: </strong>{{ \Carbon\Carbon::parse($invoices->sale_inv_date)->format('M d, Y') }}</div>
+                    <div><strong>Estimate Date: </strong>{{ \Carbon\Carbon::parse($invoices->sale_inv_date)->format('M d, Y') }}</div>
                     <div ><strong>Valid Until: </strong>{{ \Carbon\Carbon::parse($invoices->sale_inv_valid_date)->format('M d, Y') }}</div>
                     <div ><strong>Grand Total ({{ $currency ? $currency->currency : 'N/A' }}):</strong><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $invoices->sale_inv_final_amount }}</strong></div>
                 </td>

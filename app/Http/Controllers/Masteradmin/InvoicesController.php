@@ -78,11 +78,12 @@ class InvoicesController extends Controller
             'sale_inv_notes' => $request->sale_estim_notes,
             'sale_inv_footer_note' => $request->sale_estim_footer_note,
             'sale_status' => 'Draft',
+            'sale_inv_item_discount' => $request->sale_estim_item_discount,
             'sale_total_days' => $request->sale_total_days,
             'sale_inv_status' => 1,
             'id' => $user->id,
         ]);
-        $invoice->sale_inv_item_discount = $request->sale_estim_item_discount;
+        
         $invoice->save();
         $lastInsertedId = $invoice->id;
         // dd($lastInsertedId);
@@ -191,7 +192,6 @@ class InvoicesController extends Controller
         // $states = States::get();
 
         // dd($estimates);
-        \MasterLogActivity::addToLog('Invoice is viewed.');
         return view('masteradmin.invoices.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','user_id'));
 
     }
@@ -249,7 +249,7 @@ class InvoicesController extends Controller
 
     public function update(Request $request, $invoice_id)
     {
-        // dd($request->all());
+        // dd($request);
         // \DB::enableQueryLog();
 
         $validatedData = $request->validate([
@@ -274,7 +274,6 @@ class InvoicesController extends Controller
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
         ]);
-        
 
         $user = Auth::guard('masteradmins')->user();
 
@@ -392,7 +391,6 @@ class InvoicesController extends Controller
 
     public function store(Request $request)
     {
-        
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
@@ -417,7 +415,7 @@ class InvoicesController extends Controller
            
             ]);
     
-            // dd( $request->sale_estim_item_discount);
+    
             $invoice = new InvoicesDetails();
             $user = Auth::guard('masteradmins')->user();
             $invoice->fill([
@@ -438,13 +436,12 @@ class InvoicesController extends Controller
                 'sale_inv_final_amount' => $request->sale_estim_final_amount,
                 'sale_inv_notes' => $request->sale_estim_notes,
                 'sale_inv_footer_note' => $request->sale_estim_footer_note,
-                'sale_inv_item_discount' => $request->sale_estim_item_discount,
                 'sale_status' => 'Draft',
+                'sale_inv_item_discount' => $request->sale_estim_item_discount,
                 'sale_inv_status' => 1,
                 'id' => $user->id,
             ]);
-            $invoice->sale_inv_item_discount = $request->sale_estim_item_discount;
-            // dd($invoice);
+            
             $invoice->save();
             $lastInsertedId = $invoice->id;
             // dd($lastInsertedId);
@@ -496,7 +493,7 @@ class InvoicesController extends Controller
             // Clear the session data if necessary
             session()->forget('form_data');
           
-            \MasterLogActivity::addToLog('Invoice is Added.');
+            \MasterLogActivity::addToLog('Estimate is Added.');
     
             return response()->json([
                 'redirect_url' => route('business.invoices.view', ['id' => $lastInsertedId]),
@@ -656,7 +653,6 @@ class InvoicesController extends Controller
             $currency = $currencys->firstWhere('id', $invoices->sale_currency_id);
 
             if ($request->has('download')) {
-                \MasterLogActivity::addToLog('Invoice PDF is download.');
                 $pdf = PDF::loadView('masteradmin.invoices.pdf', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'))
                 ->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)
@@ -668,7 +664,6 @@ class InvoicesController extends Controller
                 return $pdf->download('invoice.pdf');
                         }
 
-            \MasterLogActivity::addToLog('Invoice is send.');            
             return view('masteradmin.invoices.send', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'));
             
         } catch (DecryptException $e) {
@@ -805,7 +800,6 @@ class InvoicesController extends Controller
             $currency = $currencys->firstWhere('id', $invoices->sale_currency_id);
 
             if ($request->has('download')) {
-                \MasterLogActivity::addToLog('Invoice PDF is download.');
                 $pdf = PDF::loadView('masteradmin.invoices.pdf', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'))
                 ->setPaper('a4', 'portrait')
                 ->setOption('isHtml5ParserEnabled', true)
@@ -819,14 +813,14 @@ class InvoicesController extends Controller
 
             
             if ($request->has('print')) {
-                \MasterLogActivity::addToLog('Invoice PDF is print.');
+
                 return view('masteradmin.invoices.print', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'));
             }            
 
             return view('masteradmin.invoices.send', compact('businessDetails', 'currencys', 'invoices', 'invoiceItems','currency','id','slug'));
             
         } catch (DecryptException $e) {
-            abort(404, 'Invalid Invoice link.');
+            abort(404, 'Invalid estimate link.');
         }
     }
 
@@ -938,7 +932,7 @@ class InvoicesController extends Controller
                 'sale_inv_status' => 1,
                 'id' => $user->id,
             ]);
-            $invoice->sale_inv_item_discount = $request->sale_estim_item_discount;
+            
             $invoice->save();
             $lastInsertedId = $invoice->id;
             // dd($lastInsertedId);
@@ -989,7 +983,7 @@ class InvoicesController extends Controller
         // Clear the session data if necessary
         session()->forget('form_data');
       
-        \MasterLogActivity::addToLog('Invoice is Duplicate.');
+        \MasterLogActivity::addToLog('Estimate is Duplicate.');
 
         return response()->json([
             'redirect_url' => route('business.invoices.view', ['id' => $lastInsertedId]),
@@ -1124,8 +1118,6 @@ class InvoicesController extends Controller
                 'success' => true,
                 'message' => "Invoice status updated to $nextStatus successfully!"
             ];
-
-            \MasterLogActivity::addToLog('Invoice is '.$nextStatus.' successfully!');
            
             switch ($nextStatus) {
                

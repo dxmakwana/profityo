@@ -8,13 +8,13 @@
         @include('masteradmin.layouts.headerlink')
 
     </head>    
-    <body class="hold-transition layout-fixed">
+    <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
     <!-- Content Wrapper. Contains page content -->
-    <div class="">
+    <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row mb-2 align-items-center justify-content-between">
                     <div class="col-auto">
                         <ol class="breadcrumb float-sm-right">
@@ -31,7 +31,7 @@
         <!-- /.content-header -->
         <!-- Main content -->
         <section class="content px-10">
-            <div class="container">
+            <div class="container-fluid">
                 <!-- card -->
                 <div class="card">
                     <!-- /.card-header -->

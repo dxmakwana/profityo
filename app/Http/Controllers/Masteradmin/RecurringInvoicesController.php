@@ -19,18 +19,12 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\SentLog;
 use App\Models\CustomizeMenu;
 use App\Models\RecurringInvoicesCustomizeMenu;
-use App\Models\RecurringInvoicesSchedule;
-use App\Models\InvoicesItems;
-use App\Models\InvoicesDetails;
-use App\Models\InvoicesCustomizeMenu;
-use Illuminate\Support\Facades\Redirect;
 
 class RecurringInvoicesController extends Controller
 {
     //
     public function index(Request $request)
     {
-        // dd($request->has('sale_cus_id'));
         //
         // dd('hii');
         $user = Auth::guard('masteradmins')->user();
@@ -431,13 +425,10 @@ class RecurringInvoicesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
-        $reinvoicesschedule = RecurringInvoicesSchedule::where('sale_re_inv_id', $id)->first();
-        // dd($reinvoicesschedule);
         // $states = States::get();
 
         // dd($estimates);
-        \MasterLogActivity::addToLog('Recurring Invoices is viewed.');
-        return view('masteradmin.recurring_invoices.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','reinvoices','reinvoicesItems','customer_states','ship_state','user_id','reinvoicesschedule'));
+        return view('masteradmin.recurring_invoices.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','reinvoices','reinvoicesItems','customer_states','ship_state','user_id'));
 
     }
 
@@ -604,159 +595,4 @@ class RecurringInvoicesController extends Controller
 
     }
 
-    public function setScheduleStore(Request $request, $id)
-    {
-        // dd($id);
-        $user = Auth::guard('masteradmins')->user();
-        // dd($user);
-        $user_id = $user->id;
-        
-        $request->validate([ 
-            'repeat_inv_type' => 'required|string', 
-            'repeat_inv_day' => 'nullable|string', 
-            'repeat_inv_date' => 'nullable|string', 
-            'repeat_inv_month' => 'nullable|string',
-            'create_inv_type' => 'nullable|string', 
-            'invoice_date' => 'nullable|date', 
-            'create_inv_number' => 'nullable|string', 
-            'create_inv_date' => 'nullable|date', 
-        ]);
-        
-        $repeatType = $request->input('repeat_inv_type');
-        // dd($repeatType);
-        $scheduleData = [
-            'repeat_inv_type' => $repeatType,
-            'invoice_date' => $request->input('invoice_date'),
-            'create_inv_type' => $request->input('create_inv_type'),
-            're_inv_sch_status' => '1', 
-        ];
-
-        switch ($repeatType) {
-            case 'Daily':
-               
-                break;
-
-            case 'Weekly':
-                $scheduleData['repeat_inv_day'] = $request->input('repeat_inv_day');
-                break;
-
-            case 'Monthly':
-                $scheduleData['repeat_inv_date'] = $request->input('repeat_inv_date');
-                break;
-
-            case 'Yearly':
-                $scheduleData['repeat_inv_date'] = $request->input('repeat_inv_date');
-                $scheduleData['repeat_inv_month'] = $request->input('repeat_inv_month');
-                break;
-
-            default:
-                break;
-        }
-
-        $endType = $request->input('create_inv_type');
-
-        if ($endType === 'after') {
-            $scheduleData['create_inv_number'] = $request->input('create_inv_number');
-        } elseif ($endType === 'on') {
-            $scheduleData['create_inv_date'] = $request->input('create_inv_date');
-        }
-        // dd($scheduleData);
-        $scheduleData['id'] = $user_id;
-        // dd($id);
-        $scheduleData['sale_re_inv_id'] = $id;
-        
-        RecurringInvoicesSchedule::where('sale_re_inv_id', $id)->delete();
-
-        RecurringInvoicesSchedule::create($scheduleData);
-
-        \MasterLogActivity::addToLog('Recurring Invoices is to set schedule.');
-
-        return back()->with('success', 'Recurring Invoice schedule updated successfully!');
-
-    }
-    
-    public function recurringinvoiceStore(Request $request, $id)
-    {
-        // dd($id);
-        $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
-        $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->with('invoices_product', 'item_tax')->get();
-        // dd($invoices);
-
-        $re_invoice = new RecurringInvoices();
-        $user = Auth::guard('masteradmins')->user();
-        $re_invoice->fill([
-            'sale_re_inv_title' => $invoices->sale_inv_title,
-            'sale_re_inv_summary' => $invoices->sale_inv_summary,
-            'sale_cus_id' => $invoices->sale_cus_id,
-            'sale_re_inv_number' => '',
-            'sale_re_inv_payment_due_id' =>'0',
-            'sale_re_inv_customer_ref' => '',
-            'sale_re_inv_date' => now()->format('m/d/Y'),
-            'sale_re_inv_valid_date' => '',
-            'sale_re_inv_discount_desc' => $invoices->sale_inv_discount_desc,
-            'sale_re_inv_discount_type' => $invoices->sale_inv_discount_type,
-            'sale_currency_id' => $invoices->sale_currency_id,
-            'sale_re_inv_sub_total' => $invoices->sale_inv_sub_total,
-            'sale_re_inv_discount_total' => $invoices->sale_inv_discount_total,
-            'sale_re_inv_tax_amount' => $invoices->sale_inv_tax_amount,
-            'sale_re_inv_final_amount' => $invoices->sale_inv_final_amount,
-            'sale_re_inv_notes' => $invoices->sale_inv_notes,
-            'sale_re_inv_footer_note' => $invoices->sale_inv_footer_note,
-            'sale_status' => 'Draft',
-            'sale_re_inv_item_discount' => $invoices->sale_inv_item_discount,
-            'sale_re_inv_status' => 1,
-            'id' => $invoices->id,
-        ]);
-        // dd($re_invoice);
-        $re_invoice->save();
-        $lastInsertedId = $re_invoice->id;
-        // dd($lastInsertedId);
-
-        foreach ($invoicesItems as $item) {
-            $reinvoiceItem = new RecurringInvoicesItems();
-
-            //INSERT INTO `chir62_py_invoices_items`(`sale_inv_item_id`, `id`, `sale_inv_id`, `sale_product_id`, `sale_inv_item_qty`, `sale_inv_item_price`, `sale_inv_item_tax`, `sale_inv_item_desc`, `sale_inv_item_amount`, `sale_inv_item_status`, `created_at`, `updated_at`) 
-
-
-            //INSERT INTO `chir62_py_inv_recurring_items`(`sale_re_inv_item_id`, `id`, `sale_re_inv_id`, `sale_product_id`, `sale_re_inv_item_qty`, `sale_re_inv_item_price`, `sale_re_inv_item_tax`, `sale_re_inv_item_desc`, `sale_re_inv_item_amount`, `sale_re_inv_item_status`, `created_at`, `updated_at`)
-            
-            $reinvoiceItem->sale_product_id = $item['sale_product_id'];
-            $reinvoiceItem->sale_re_inv_item_qty = $item['sale_inv_item_qty'];
-            $reinvoiceItem->sale_re_inv_item_price = $item['sale_inv_item_price'];
-            $reinvoiceItem->sale_re_inv_item_tax = $item['sale_inv_item_tax'];
-            $reinvoiceItem->sale_re_inv_item_desc = $item['sale_inv_item_desc'];
-            $reinvoiceItem->id = $item['id'];
-            $reinvoiceItem->sale_re_inv_id = $lastInsertedId;
-            $reinvoiceItem->sale_re_inv_item_status = 1;
-                    
-            $reinvoiceItem->save();
-           
-        }
-
-        // $sessionData = session('form_data', []);
-
-        $CustomizeinvoicesItems = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
-        // dd($CustomizeinvoicesItems);
-
-        // dd( $sessionData);
-            foreach ($CustomizeinvoicesItems as $value) {
-
-                    $data = [
-                        'sale_re_inv_id' => $value->sale_inv_id ?? null, 
-                        'id' => $value->id ?? NULL,
-                        'mname' => $value->mname,
-                        'mtitle' => $value->mtitle,
-                        'mid' => $value->mid,
-                        'is_access' => $value->is_access,
-                        're_inv_cust_menu_title' => $value->inv_cust_menu_title,
-                    ];
-
-                    $reinvoiceMenu = new RecurringInvoicesCustomizeMenu($data);
-                    $reinvoiceMenu->save();
-                }
-      
-        \MasterLogActivity::addToLog('Recurring Invoices is created from invoice.');
-
-        return Redirect::route('business.recurring_invoices.view', ['id' => $lastInsertedId])->with('status', 'profile-updated');
-    }
 }

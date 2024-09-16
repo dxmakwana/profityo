@@ -115,8 +115,6 @@ class SalesCustomersController extends Controller
             'sale_cus_status' => $validatedData['sale_cus_status'],
         ]);
 
-        \MasterLogActivity::addToLog('Customer is created');
-
         return redirect()->route('business.salescustomers.index')->with(['sales-customers-add' => __('messages.masteradmin.sales-customers.send_success')]);
     }
 
@@ -194,7 +192,7 @@ class SalesCustomersController extends Controller
     // dd($validatedData);
         $SalesCustomersu->where('sale_cus_id', $sale_cus_id)->update($validatedData);
         
-        \MasterLogActivity::addToLog('Customer is updated.');
+     
         return redirect()->route('business.salescustomers.edit', ['SalesCustomers' => $SalesCustomersu->sale_cus_id])
         ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));
     }
@@ -302,7 +300,7 @@ public function show($sale_cus_id, Request $request): View
     $filteredInvoices = $query->get();
 
     $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue']);
-    \MasterLogActivity::addToLog('Customer is viewed.');
+
     // Pass the fetched data to the view
     return view('masteradmin.customers.view_customer', compact(
         'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'status'
@@ -329,7 +327,7 @@ public function show($sale_cus_id, Request $request): View
         $SalesCustomers->where('sale_cus_id', $sale_cus_id)->delete();
 
         // \MasterLogActivity::addToLog('Admin SalesCustomers Deleted.');
-        \MasterLogActivity::addToLog('Customer is Deleted');
+
         return redirect()->route('business.salescustomers.index')->with('sales-customers-delete', __('messages.masteradmin.sales-customers.delete_salescustomers_success'));
 
     }
