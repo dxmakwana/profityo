@@ -596,9 +596,23 @@ class Controller extends BaseController
                     $table->string('sale_bill_sub_total')->nullable()->default(0);
                     $table->string('sale_bill_tax_amount')->nullable()->default(0);
                     $table->string('sale_bill_final_amount')->nullable()->default(0);
+                    $table->string('sale_bill_paid_amount')->nullable()->default(0);
+                    $table->string('sale_bill_due_amount')->nullable()->default(0);
                     $table->string('sale_status')->nullable()->default(0);
                     $table->tinyInteger('sale_bill_status')->default(0)->nullable();
                     $table->timestamps();
+                });
+            }else{
+                Schema::table($storeId.'_py_bills_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_bills_details', 'sale_bill_paid_amount')) {
+                        $table->string('sale_bill_paid_amount')->nullable()->default(0);
+                    }
+                });
+
+                Schema::table($storeId.'_py_bills_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_bills_details', 'sale_bill_due_amount')) {
+                        $table->string('sale_bill_due_amount')->nullable()->default(0);
+                    }
                 });
             }
 

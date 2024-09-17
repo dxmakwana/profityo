@@ -1,6 +1,6 @@
 @extends('masteradmin.layouts.app')
-<title>Profityo | Add Bills</title>
-@if(isset($access['add_bills']) && $access['add_bills'] == 1) 
+<title>Profityo | Edit Bills</title>
+@if(isset($access['update_bills']) && $access['update_bills'] == 1) 
 @section('content')
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
 
@@ -12,10 +12,10 @@
       <div class="container-fluid">
         <div class="row mb-2 align-items-center justify-content-between">
           <div class="col-auto">
-            <h1 class="m-0">{{ __('New Bill') }}</h1>
+            <h1 class="m-0">{{ __('Edit Bill') }}</h1>
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-              <li class="breadcrumb-item active">{{ __('New Bill') }}</li>
+              <li class="breadcrumb-item active">{{ __('Edit Bill') }}</li>
             </ol>
           </div><!-- /.col -->
           <div class="col-auto">
@@ -31,28 +31,49 @@
     <!-- Main content -->
     <section class="content px-10">
       <div class="container-fluid">
+        @if(Session::has('bill-edit'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ Session::get('bill-edit') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            @php
+            Session::forget('bill-edit');
+        @endphp
+        @endif
         <!-- card -->   
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">New Bill</h3>
+            <h3 class="card-title">Edit Bill</h3>
           </div>
           <!-- /.card-header -->
-          <form id="items-form" action="{{ route('business.bill.store') }}" method="POST">
+          <form id="items-form" action="{{ route('business.bill.duplicateStore', ['id' => $bill->sale_bill_id]) }}" method="POST">
           @csrf
+          @method('Patch')
           <div class="card-body2">
             <div class="row pad-5">
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="vendor">Vendor <span class="text-danger">*</span></label>
+                  <?php //dd($bill->sale_vendor_id); ?>
                   <select class="form-control select2" name="sale_vendor_id" id="sale_vendor_id" style="width: 100%;" required>
                     <option>Select a Vendor...</option>
                     @foreach($salevendor as $vendor)
-                        <option value="{{ $vendor->purchases_vendor_id }}" {{ $vendor->purchases_vendor_id == old('sale_vendor_id') ? 'selected' : '' }}>
+                        <option value="{{ $vendor->purchases_vendor_id }}" {{ $bill->sale_vendor_id == $vendor->purchases_vendor_id ? 'selected' : '' }}>
                         {{ $vendor->purchases_vendor_name }}
                         </option>
                     @endforeach
                   </select>
+                  <p>{{ $bill->vendor->purchases_vendor_name }}</p>
+                  <p>{{ $bill->vendor->purchases_vendor_address1 }}</p>
+                  <p>{{ $bill->vendor->purchases_vendor_address2 }}</p>
+                  <p>{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
+                  <p>{{ $bill->vendor->country->name }}</p>
+                  <p>{{ $bill->vendor->purchases_vendor_email }}</p>
+                  
                 </div>
+
               </div>
               <div class="col-md-4">
                 <div class="form-group">
@@ -62,8 +83,12 @@
                     <div class="input-group-append" data-target="#billdate" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
                     </div> -->
+                    <input type="hidden" id="from-datepicker-hidden" value="{{ $bill->sale_bill_date }}" /> 
+                    @php
+                        $saleBillDate = \Carbon\Carbon::parse($bill->sale_bill_date)->format('m/d/Y');
+                    @endphp
 
-                    <x-flatpickr id="from-datepicker" class="form-control" name="sale_bill_date" placeholder="Select a date" />
+                    <x-flatpickr id="from-datepicker" class="form-control" name="sale_bill_date" placeholder="Select a date" :value="$saleBillDate"  />
                     <div class="input-group-append">
                         <div class="input-group-text" id="from-calendar-icon">
                         <i class="fa fa-calendar-alt"></i>
@@ -76,7 +101,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="billnumber">Bill #</label>
-                  <input type="number" name="sale_bill_number" id="sale_bill_number" class="form-control" id="billnumber" placeholder="Enter Bill #">
+                  <input type="text" name="sale_bill_number" id="sale_bill_number" class="form-control" id="billnumber" placeholder="Enter Bill #" value="{{ $bill->sale_bill_number }}-copy">
                 </div>
               </div>
               <div class="col-md-4">
@@ -85,7 +110,7 @@
                   <select class="form-control select2" id="sale_currency_id" name="sale_currency_id"style="width: 100%;" required>
                     <option>Select a Currency...</option>
                     @foreach($currencys as $curr)
-                        <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
+                        <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == $bill->sale_currency_id ? 'selected' : '' }}>
                         {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
                         </option>
                     @endforeach
@@ -96,7 +121,11 @@
                 <div class="form-group">
                   <label for="vendor">Due Date</label>
                   <div class="input-group date" id="duedate" data-target-input="nearest">
-                  <x-flatpickr id="to-datepicker" class="form-control" name="sale_bill_valid_date" placeholder="Select a date" />
+                  <input type="hidden" id="to-datepicker-hidden" value="{{ $bill->sale_bill_valid_date }}" />
+                  @php
+                        $saleBillDueDate = \Carbon\Carbon::parse($bill->sale_bill_valid_date)->format('m/d/Y');
+                    @endphp
+                  <x-flatpickr id="to-datepicker" class="form-control" name="sale_bill_valid_date" placeholder="Select a date" :value="$saleBillDueDate"/>
                     <div class="input-group-append">
                         <div class="input-group-text" id="to-calendar-icon">
                         <i class="fa fa-calendar-alt"></i>
@@ -108,13 +137,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="sale_bill_customer_ref">P.O./S.O.</label>
-                  <input type="text" class="form-control" id="sale_bill_customer_ref" name="sale_bill_customer_ref" placeholder="Enter P.O./S.O.">
+                  <input type="text" class="form-control" id="sale_bill_customer_ref" name="sale_bill_customer_ref" placeholder="Enter P.O./S.O." value="{{ $bill->sale_bill_customer_ref }}">
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="sale_bill_note">Notes</label>
-                  <textarea id="sale_bill_note" name="sale_bill_note" class="form-control" rows="3" placeholder=""></textarea>
+                  <textarea id="sale_bill_note" name="sale_bill_note" class="form-control" rows="3" placeholder="">{{ $bill->sale_bill_note }}</textarea>
                 </div>
               </div>
             </div>
@@ -136,13 +165,14 @@
                   </tr>
                   </thead>
                   <tbody>
+                  @foreach($billsItems as $item)
                   <tr class="item-row" id="item-row-template">
                     <td>
                     <div>
                       <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
                       <option>Select Items</option>
                       @foreach($products as $product)
-                  <option value="{{ $product->purchases_product_id }}" {{ $product->purchases_product_id == old('sale_product_id') ? 'selected' : '' }}>
+                  <option value="{{ $product->purchases_product_id }}" {{ $product->purchases_product_id == $item->sale_product_id ? 'selected' : '' }}>
                   {{ $product->purchases_product_name }}
                   </option>
                 @endforeach
@@ -150,7 +180,7 @@
                       <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
 
                       <input type="text" class="form-control px-10" name="items[][sale_bill_item_desc]"
-                      placeholder="Enter item description">
+                      placeholder="Enter item description" value="{{ $item->sale_bill_item_desc }}">
                       <span class="error-message" id="error_items_0_sale_bill_item_desc" style="color: red;"></span>
                     </div>
                     </td>
@@ -158,7 +188,7 @@
                     <select class="form-control select2" name="items[][sale_expense_id]" style="width: 100%;">
                       <option>Select Category</option>
                       @foreach($ExpenseAccounts as $accounts)
-                        <option value="{{ $accounts->chart_acc_id }}" {{ $accounts->chart_acc_id == old('sale_expense_id') ? 'selected' : '' }}>
+                        <option value="{{ $accounts->chart_acc_id }}" {{ $accounts->chart_acc_id == $item->sale_expense_id ? 'selected' : '' }}>
                         {{ $accounts->chart_acc_name }}
                         </option>
                       @endforeach
@@ -166,13 +196,13 @@
                       <span class="error-message" id="error_items_0_sale_expense_id" style="color: red;"></span>
                     </td>
                     <td><input type="number" class="form-control" name="items[][sale_bill_item_qty]"
-                      placeholder="Enter item Quantity">
+                      placeholder="Enter item Quantity" value="{{ $item->sale_bill_item_qty }}">
                     <span class="error-message" id="error_items_0_sale_bill_item_qty" style="color: red;"></span>
                     </td>
                     <td>
                     <div class="d-flex">
                       <input type="text" name="items[][sale_bill_item_price]" class="form-control"
-                      aria-describedby="inputGroupPrepend" placeholder="Enter item Price">
+                      aria-describedby="inputGroupPrepend" placeholder="Enter item Price" value="{{ $item->sale_bill_item_price }}">
 
                     </div>
                     <span class="error-message" id="error_items_0_sale_bill_item_price" style="color: red;"></span>
@@ -181,48 +211,49 @@
                     <td>
                     <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
                       @foreach($salestax as $salesTax)
-                        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                        {{ $salesTax->tax_id == $item->sale_bill_item_tax ? 'selected' : '' }} >
                         {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
                         </option>
                       @endforeach
                     </select>
                     </td>
-                    <td class="text-right item-price">0.00</td>
+                    <td class="text-right item-price">{{ number_format( $item->sale_bill_item_price * $item->sale_bill_item_qty, 2) }}</td>
                     <td><i class="fa fa-trash delete-item"></i></td>
                   </tr>
-
+                  @endforeach
                   </tbody>
                 </table>
               </div>
               <!-- /.col -->
             </div>
             <hr />
-            <input type="hidden" name="sale_bill_sub_total" value="0">
-            <input type="hidden" name="sale_bill_tax_amount" value="0">
-            <input type="hidden" name="sale_bill_final_amount" value="0">
+            <input type="hidden" name="sale_bill_sub_total" value="{{ $bill->sale_bill_sub_total }}">
+            <input type="hidden" name="sale_bill_tax_amount" value="{{ $bill->sale_bill_tax_amount }}">
+            <input type="hidden" name="sale_bill_final_amount" value="{{ $bill->sale_bill_final_amount }}">
             <div class="row justify-content-end">
               <div class="col-md-4 subtotal_box">
                 <div class="table-responsive">
                   <table class="table total_table">
                     <tr>
                       <td style="width:50%">Sub Total :</td>
-                      <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
+                      <td id="sub-total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_sub_total }}</td>
                     </tr>
                     <tr>
                       <td>Tax :</td>
-                      <td id="tax">{{ $currency->currency_symbol }}0.00</td>
+                      <td id="tax">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_tax_amount }}</td>
                     </tr>
                     <tr>
                       <td>Total :</td>
-                      <td id="total">{{ $currency->currency_symbol }}0.00</td>
+                      <td id="total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_final_amount }}</td>
                     </tr>
                     <tr>
                       <td>Total Paid :</td>
-                      <td id="total-paid">{{ $currency->currency_symbol }}0.00</td>
+                      <td id="total-paid">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_paid_amount }}</td>
                     </tr>
                     <tr>
                       <td>Amount Due :</td>
-                      <td id="amount-due">{{ $currency->currency_symbol }}0.00</td>
+                      <td id="amount-due">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_due_amount }}</td>
                     </tr>
                   </table>
                 </div>
@@ -437,11 +468,11 @@ $(document).ready(function () {
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
 
-      console.log(formData);
+    //   console.log(formData);
 
       $.ajax({
-      url: "{{ route('business.bill.store') }}",
-      method: 'POST',
+      url: "{{ route('business.bill.duplicateStore', ['id' => $bill->sale_bill_id]) }}",
+      method: 'PATCH',
       data: formData,
       success: function (response) {
         window.location.href = response.redirect_url;
@@ -517,13 +548,17 @@ $(document).ready(function () {
     <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        var fromInput = document.getElementById('from-datepicker-hidden');
+        var toInput = document.getElementById('to-datepicker-hidden');
+
+
     var fromdatepicker = flatpickr("#from-datepicker", {
       locale: 'en',
       altInput: true,
       dateFormat: "m/d/Y",
       altFormat: "d/m/Y",
       allowInput: true,
-      defaultDate: new Date(),
+      defaultDate: fromInput.value || null,
     });
 
     var todatepicker = flatpickr("#to-datepicker", {
@@ -532,7 +567,7 @@ $(document).ready(function () {
       dateFormat: "m/d/Y",
       altFormat: "d/m/Y",
       allowInput: true,
-      defaultDate: new Date(),
+      defaultDate: toInput.value || null,
     });
 
     document.getElementById('from-calendar-icon').addEventListener('click', function () {

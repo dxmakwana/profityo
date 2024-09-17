@@ -275,10 +275,10 @@
             <td>
             <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
               @foreach($salestax as $salesTax)
-          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-          </option>
-        @endforeach
+                <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                </option>
+              @endforeach
             </select>
             </td>
             <td class="text-right item-price">0.00</td>

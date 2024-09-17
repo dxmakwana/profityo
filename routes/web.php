@@ -271,6 +271,16 @@ Route::group(['prefix' => $busadminRoute], function () {
     //bills
     Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');
     Route::get('/create-bill', [BillsController::class, 'create'])->name('business.bill.create');
+    Route::get('/bill/get-product-details/{id}', [BillsController::class, 'getProductDetails'])->name('business.bill.getProductDetails');
+    Route::post('/create-bill-store', [BillsController::class, 'store'])->name('business.bill.store');
+    Route::get('/edit-bill/{id}', [BillsController::class, 'edit'])->name('business.bill.edit');
+    Route::patch('/update-bill/{id}', [BillsController::class, 'update'])->name('business.bill.update');
+    Route::delete('/bill-destroy/{id}', [BillsController::class, 'destroy'])->name('business.bill.destroy');
+    Route::get('/view-bill/{id}', [BillsController::class, 'view'])->name('business.bill.view');
+    Route::get('/duplicate-bill/{id}', [BillsController::class, 'duplicate'])->name('business.bill.duplicate');
+    Route::patch('/duplicate-bill-store/{id}', [BillsController::class, 'duplicateStore'])->name('business.bill.duplicateStore');
+
+
 
 });
 

@@ -87,6 +87,10 @@ return [
             'edit_success' => 'Recurring Invoice updated successfully.',
             
         ],
+        'bill' => [
+            'send_success' => 'Bill created successfully!.',
+            'edit_success' => 'Bill updated successfully.',
+        ],
 
     ]
     

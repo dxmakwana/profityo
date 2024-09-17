@@ -23,5 +23,19 @@ class BillsItems extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_bills_items');
     }
+    public function bill_product()
+    {
+        return $this->belongsTo(PurchasProduct::class, 'sale_product_id','purchases_product_id');
+    }
+
+    public function item_tax()
+    {
+        return $this->belongsTo(SalesTax::class, 'sale_bill_item_tax','tax_id');
+    }
+
+    public function expense_category()
+    {
+        return $this->belongsTo(ChartAccount::class, 'sale_expense_id','chart_acc_id');
+    }
 
 }

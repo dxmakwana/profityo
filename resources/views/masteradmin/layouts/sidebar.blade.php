@@ -125,7 +125,9 @@
                              request()->is($busadminRoutes.'/purchasesproductcreate*') || 
                              request()->is($busadminRoutes.'/purchasesproductedit/*') || request()->is($busadminRoutes.'/purchasesvendor*') || 
                              request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesvendoredit/*') || request()->is($busadminRoutes.'/vendordetails/*')    
+                             request()->is($busadminRoutes.'/purchasesvendoredit/*') || request()->is($busadminRoutes.'/vendordetails/*')  ||  request()->is($busadminRoutes.'/bill-list*') || 
+                             request()->is($busadminRoutes.'/create-bill*') || 
+                             request()->is($busadminRoutes.'/edit-bill/*')   || request()->is($busadminRoutes.'/view-bill/*') || request()->is($busadminRoutes.'/duplicate-bill/*')     
                     ? 'menu-open side_shape' : '' }} ">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
@@ -138,9 +140,9 @@
             <ul class="nav nav-treeview">
               @if(isset($access['bills']) && $access['bills']) 
               <li class="nav-item">
-                <a href="{{ route('business.bill.index') }}" class="nav-link {{  request()->is($busadminRoutes.'/purchasesvendor*') || 
-                             request()->is($busadminRoutes.'/purchasesvendorcreate*') || 
-                             request()->is($busadminRoutes.'/purchasesvendoredit/*')   || request()->is($busadminRoutes.'/vendordetails/*')    
+                <a href="{{ route('business.bill.index') }}" class="nav-link {{  request()->is($busadminRoutes.'/bill-list*') || 
+                             request()->is($busadminRoutes.'/create-bill*') || 
+                             request()->is($busadminRoutes.'/edit-bill/*')   || request()->is($busadminRoutes.'/view-bill/*') || request()->is($busadminRoutes.'/duplicate-bill/*')    
                               ? 'active' : '' }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Bills</p>
