@@ -7,6 +7,8 @@
     <title>Profityo | Business Detail</title>
     @if(isset($access['view_vendors']) && $access['view_vendors'])
     @include('masteradmin.layouts.headerlink')
+    <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -37,6 +39,7 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
+    <input type="hidden" name="sale_vendor_id" id="sale_vendor_id" value="{{ $PurchasVendor->purchases_vendor_id }}">
     <!-- /.content-header -->
     <!-- Main content -->
     <section class="content px-10">
@@ -71,18 +74,19 @@
             </div>
           </div>
         </div>
+        <?php //dd($PurchasVendor); ?>
 
         <div class="card">
           <div class="card-header">
             <div class="row justify-content-between align-items-center">
               <div class="col-auto"><h3 class="card-title">Bills</h3></div>
-              <div class="col-auto"><a href="new-bill.html"><button class="reminder_btn">Create Bill</button></a></div>
+              <div class="col-auto"><a href="{{ route('business.bill.create') }}"><button class="reminder_btn">Create Bill</button></a></div>
             </div>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             <div class="row">
-              <div class="col-md-3">
+              <!-- <div class="col-md-3">
                 <div class="input-group">
                   <input type="search" class="form-control" placeholder="Search by Description">
                   <div class="input-group-append">
@@ -91,24 +95,29 @@
                       </button>
                   </div>
                 </div>
-              </div>
-              <div class="col-md-3 d-flex">
+              </div> -->
+              <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
                 <div class="input-group date" id="fromdate" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" placeholder="From" data-target="#fromdate">
-                  <div class="input-group-append" data-target="#fromdate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                  <x-flatpickr id="from-datepicker" placeholder="From"/>
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="from-calendar-icon">
+                        <i class="fa fa-calendar-alt"></i>
+                    </span>
                   </div>
                 </div>
                 <div class="input-group date" id="todate" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" placeholder="To" data-target="#todate">
-                  <div class="input-group-append" data-target="#todate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                  <x-flatpickr id="to-datepicker" placeholder="To" />
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="to-calendar-icon">
+                        <i class="fa fa-calendar-alt"></i>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="vendordividerline"></div>
+          <div id="filter_data">
           <div class="card-body1">
             <div class="col-md-12 table-responsive pad_table">
               <table id="example4" class="table table-hover text-nowrap">
@@ -124,169 +133,72 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Lamar Mitchell</td>
-                    <td>2</td>
-                    <td>2024-04-04</td>
-                    <td>20 Days Ago</td>
-                    <td>$12.50</td>
-                    <td><span class="status_btn Paid_status">Paid</span></td>
-                    <td>
-                      <ul class="navbar-nav ml-auto float-sm-right">
-                        <li class="nav-item dropdown d-flex align-items-center">
-                          <span class="d-block invoice_underline">View</span>
-                          <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                            <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-bill.html" class="dropdown-item">
-                              <i class="fas fa-regular fa-eye mr-2"></i> View
+                  <?php //dd($bills); ?>
+                  @if (count($bills) > 0)
+                  @foreach ($bills as $value)
+                    <tr id="row-bill-{{ $value->sale_bill_id }}">
+                      <td>{{ $value->vendor->purchases_vendor_name }}</td>
+                      <td>{{ $value->sale_bill_number }}</td>
+                      <td>{{ \Carbon\Carbon::parse($value->sale_bill_date)->format('M d, Y') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($value->sale_bill_valid_date)->format('M d, Y') }}</td>
+                      <td>{{ $value->sale_bill_due_amount }}</td>
+                      <td><span class="status_btn Paid_status">{{ $value->sale_status }}</span></td>
+                      <td>
+                        <ul class="navbar-nav ml-auto float-right">
+                          <li class="nav-item dropdown d-flex align-items-center">
+                            <a class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record a payment</a>
+                            <a class="nav-link user_nav" data-toggle="dropdown" href="#">
+                              <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                             </a>
-                            <a href="edit-bill.html" class="dropdown-item">
-                              <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                            </a>
-                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill">
-                              <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a href="{{ route('business.bill.view',$value->sale_bill_id) }}" class="dropdown-item">
+                                <i class="fas fa-regular fa-eye mr-2"></i> View
+                              </a>
+                              <a href="{{ route('business.bill.edit',$value->sale_bill_id) }}" class="dropdown-item">
+                                <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
+                              </a>
+                              <a href="{{ route('business.bill.duplicate',$value->sale_bill_id) }}" class="dropdown-item">
+                                <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
+                              </a>
+                              <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill_{{ $value->sale_bill_id }}">
+                                <i class="fas fa-solid fa-trash mr-2"></i> Delete
+                              </a>
+
+
+                            </div>
+                          </li>
+                        </ul>
+                      </td>
+
+                      <div class="modal fade" id="deletebill_{{ $value->sale_bill_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                          <form method="POST" action="{{ route('business.bill.destroy', ['id' => $value->sale_bill_id]) }}" id="delete-form-{{ $value->sale_bill_id }}" data-id="{{ $value->sale_bill_id }}">
+                            @csrf
+                            @method('DELETE')
+                            <div class="modal-body pad-1 text-center">
+                              <i class="fas fa-solid fa-trash delete_icon"></i>
+                              <p class="company_business_name px-10"><b>Delete Bill</b></p>
+                              <p class="company_details_text px-10">Delete Bill {{ $value->sale_bill_id }}</p>
+                              <p class="company_details_text">Are You Sure You Want to Delete This Bill?</p>
+                              <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="delete_btn px-15" data-id="{{ $value->sale_bill_id }}">Delete</button>
+                            </div>
+                            </form>
                           </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lamar Mitchell</td>
-                    <td>2</td>
-                    <td>2024-04-04</td>
-                    <td>20 Days Ago</td>
-                    <td>$12.50</td>
-                    <td><span class="status_btn">Draft</span></td>
-                    <td>
-                      <ul class="navbar-nav ml-auto float-sm-right">
-                        <li class="nav-item dropdown d-flex align-items-center">
-                          <span class="d-block invoice_underline">Approve</span>
-                          <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                            <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-bill.html" class="dropdown-item">
-                              <i class="fas fa-regular fa-eye mr-2"></i> View
-                            </a>
-                            <a href="edit-bill.html" class="dropdown-item">
-                              <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                            </a>
-                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill">
-                              <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lamar Mitchell</td>
-                    <td>2</td>
-                    <td>2024-04-04</td>
-                    <td>20 Days Ago</td>
-                    <td>$12.50</td>
-                    <td><span class="status_btn Paid_status">Paid</span></td>
-                    <td>
-                      <ul class="navbar-nav ml-auto float-sm-right">
-                        <li class="nav-item dropdown d-flex align-items-center">
-                          <span class="d-block invoice_underline">View</span>
-                          <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                            <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-bill.html" class="dropdown-item">
-                              <i class="fas fa-regular fa-eye mr-2"></i> View
-                            </a>
-                            <a href="edit-bill.html" class="dropdown-item">
-                              <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                            </a>
-                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill">
-                              <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lamar Mitchell</td>
-                    <td>2</td>
-                    <td>2024-04-04</td>
-                    <td>20 Days Ago</td>
-                    <td>$12.50</td>
-                    <td><span class="status_btn overdue_status">Unpaid</span></td>
-                    <td>
-                      <ul class="navbar-nav ml-auto float-sm-right">
-                        <li class="nav-item dropdown d-flex align-items-center">
-                          <span class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record Payment</span>
-                          <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                            <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-bill.html" class="dropdown-item">
-                              <i class="fas fa-regular fa-eye mr-2"></i> View
-                            </a>
-                            <a href="edit-bill.html" class="dropdown-item">
-                              <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                            </a>
-                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill">
-                              <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Lamar Mitchell</td>
-                    <td>2</td>
-                    <td>2024-04-04</td>
-                    <td>20 Days Ago</td>
-                    <td>$12.50</td>
-                    <td><span class="status_btn">Draft</span></td>
-                    <td>
-                      <ul class="navbar-nav ml-auto float-sm-right">
-                        <li class="nav-item dropdown d-flex align-items-center">
-                          <span class="d-block invoice_underline">Approve</span>
-                          <a class="nav-link user_nav" data-toggle="dropdown" href="#">
-                            <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a href="view-bill.html" class="dropdown-item">
-                              <i class="fas fa-regular fa-eye mr-2"></i> View
-                            </a>
-                            <a href="edit-bill.html" class="dropdown-item">
-                              <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
-                            </a>
-                            <a href="#" class="dropdown-item">
-                              <i class="fas fa-regular fa-copy mr-2"></i> Duplicate
-                            </a>
-                            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#deletebill">
-                              <i class="fas fa-solid fa-trash mr-2"></i> Delete
-                            </a>
-                          </div>
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
+                        </div>
+                      </div>
+
+                    </tr>
+
+                    @endforeach    
+                  @else
+                    <tr class="odd"><td valign="top" colspan="7" class="dataTables_empty">No records found</td></tr>
+                  @endif
                 </tbody>
               </table>
             </div>
+          </div>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -396,8 +308,125 @@
 <!-- ./wrapper -->
 
 
-    @include('masteradmin.layouts.footerlink')
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+    <script>
+$(document).ready(function() {
+    var sale_vendor_id = $('#sale_vendor_id').val();
+    // alert(sale_vendor_id);
+    var defaultStartDate = "";  
+    var defaultEndDate = "";    
+  
+        $('#from-datepicker').val(defaultStartDate);
+   
+        $('#to-datepicker').val(defaultEndDate);
 
+
+        var fromdatepicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+                altInput: true,
+                dateFormat: "MM/DD/YYYY",
+                altFormat: "MM/DD/YYYY",
+                allowInput: true,
+                parseDate: (datestr, format) => {
+                  return moment(datestr, format, true).toDate();
+                },
+                formatDate: (date, format, locale) => {
+                  return moment(date).format(format);
+                }
+            });
+            document.getElementById('from-calendar-icon').addEventListener('click', function () {
+              fromdatepicker.open(); 
+            });
+
+          var todatepicker = flatpickr("#to-datepicker", {
+            locale: 'en',
+              altInput: true,
+              dateFormat: "MM/DD/YYYY",
+              altFormat: "MM/DD/YYYY",
+              allowInput: true,
+              parseDate: (datestr, format) => {
+                return moment(datestr, format, true).toDate();
+              },
+              formatDate: (date, format, locale) => {
+                return moment(date).format(format);
+              }
+          });
+          document.getElementById('to-calendar-icon').addEventListener('click', function () {
+            todatepicker.open(); 
+          });
+
+          $('.filter-text').on('click', function() {
+                clearFilters();
+            });
+
+            
+   
+    // Function to fetch filtered data
+    function fetchFilteredData() {
+        var formData = {
+            start_date: $('#from-datepicker').val(),
+            end_date: $('#to-datepicker').val(),
+            _token: '{{ csrf_token() }}'
+        };
+
+
+
+        // alert(start_date);
+        // alert(end_date);
+        // alert(sale_cus_id);
+        // alert(sale_estim_number);
+        // console.log('Form Data:', formData); // Debug: Log form data to console
+
+
+        $.ajax({
+          url: '{{ route("business.vendordetails.show", ":id") }}'.replace(':id', sale_vendor_id),
+        type: 'GET',
+        data: formData,
+        success: function(response) {
+            $('#filter_data').html(response); // Update the results container with HTML content
+            
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr);
+                // alert('An error occurred while fetching data.');
+            }
+        });
+
+      }
+
+
+
+    // Attach change event handlers to filter inputs
+    $('#sale_vendor_id, #from-datepicker, #to-datepicker').on('change keyup', function(e) {
+      e.preventDefault(); 
+      fetchFilteredData();
+    });
+
+    function clearFilters() {
+    // Clear filters
+    $('#sale_vendor_id').val('').trigger('change');
+
+
+    const fromDatePicker = flatpickr('#from-datepicker');
+    const toDatePicker = flatpickr('#to-datepicker');
+    fromDatePicker.clear(); // Clears the "from" datepicker
+    toDatePicker.clear();   // Clears the "to" datepicker
+
+    // $('#from-datepicker').flatpickr().clear();  // Clear "from" datepicker
+    // $('#to-datepicker').flatpickr().clear();    // Clear "to" datepicker
+
+    fetchFilteredData(); 
+    }
+
+
+    });
+
+</script>
+@include('masteradmin.layouts.footerlink')
+    @endif
 </body>
 
 </html>

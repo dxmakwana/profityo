@@ -103,7 +103,7 @@
             
                 <ul class="navbar-nav ml-auto float-sm-right">
                           <li class="nav-item dropdown d-flex align-items-center">
-                            <span class="d-block"><a href="new-bill.html" class="invoice_underline">Create Bill</a></span>
+                            <span class="d-block"><a href="{{ route('business.bill.add',$value->purchases_vendor_id) }}" class="invoice_underline">Create Bill</a></span>
                             <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                               <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                             </a>
@@ -118,7 +118,7 @@
                                 <i class="fas fa-solid fa-pen-to-square mr-2"></i> Edit
                               </a>
                               @endif
-                              <a href="new-bill.html" class="dropdown-item">
+                              <a href="{{ route('business.bill.create') }}" class="dropdown-item">
                                 <i class="fas fa-regular fa-copy mr-2"></i> Create Bill
                               </a>
                               @if(isset($access['delete_vendors']) && $access['delete_vendors'])

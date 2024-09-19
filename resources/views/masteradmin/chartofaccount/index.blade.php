@@ -1,5 +1,5 @@
 @extends('masteradmin.layouts.app')
-<title>Profityo | Sales Customers</title>
+<title>Profityo | Chart of Accounts</title>
 @if(isset($access['view_customers']) && $access['view_customers']) 
 @section('content')
   <!-- Content Wrapper. Contains page content -->
@@ -30,17 +30,29 @@
       <div class="container-fluid">
         <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
         <ul class="nav nav-pills p-2 tab_box">
-            <li class="nav-item"><a class="nav-link active" id="assets-tab" href="#account-assets" data-toggle="tab">Assets <span class="badge badge-toes">9</span></a></li>
-            <li class="nav-item"><a class="nav-link" id="liabilities-tab" href="#account-liabilities-creditcards" data-toggle="tab">Liabilities & Credit Cards <span class="badge badge-toes">10</span></a></li>
-            <li class="nav-item"><a class="nav-link" id="income-tab" href="#account-income" data-toggle="tab">Income <span class="badge badge-toes">5</span></a></li>
-            <li class="nav-item"><a class="nav-link" id="expenses-tab" href="#account-expenses" data-toggle="tab">Expenses <span class="badge badge-toes">6</span></a></li>
-            <li class="nav-item"><a class="nav-link" id="equity-tab" href="#account-equity" data-toggle="tab">Equity <span class="badge badge-toes">2</span></a></li>
+            <!-- <li class="nav-item"><a class="nav-link active" id="assets-tab" href="#account-assets" data-toggle="tab">Assets <span class="badge badge-toes">{{ count($assets) }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" id="liabilities-tab" href="#account-liabilities-creditcards" data-toggle="tab">Liabilities & Credit Cards <span class="badge badge-toes">{{ count($liabilitiesAndCreditCards) }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" id="income-tab" href="#account-income" data-toggle="tab">Income <span class="badge badge-toes">{{ count($income) }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" id="expenses-tab" href="#account-expenses" data-toggle="tab">Expenses <span class="badge badge-toes">{{ count($expenses) }}</span></a></li>
+            <li class="nav-item"><a class="nav-link" id="equity-tab" href="#account-equity" data-toggle="tab">Equity <span class="badge badge-toes">{{ count($equity) }}</span></a></li> -->
+            @foreach($tabs as $tab)
+              <li class="nav-item">
+                  <a class="nav-link @if($loop->first) active @endif" id="{{ strtolower($tab->chart_menu_id) }}-tab" href="#account-{{ strtolower($tab->chart_menu_id) }}" data-toggle="tab">
+                      {{ $tab->chart_menu_title }} 
+                      <span class="badge badge-toes"> 
+                      {{ $counts->get($tab->chart_menu_id, 0) }}
+
+                      </span>
+                  </a>
+              </li>
+            @endforeach
           </ul>
        
         </div><!-- /.card-header -->
         <div class="tab-content px-20">
-          <div class="tab-pane active" id="account-assets">
+          <div class="tab-pane active" id="account-1">
             @foreach ($assets as $asset)
+            <?php //dd( $assets); ?>
             <div class="card">
               <div class="card-header">
               
@@ -72,78 +84,19 @@
                                         <td>{{ $account->sale_acc_desc }}</td>
                                         <td class="text-right">
                                        <div class="modal-body">
-                                            <a data-toggle="modal" data-id="{{ $account->chart_acc_id }}" data-target="#editthisaccount_{{$account->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                            <a data-toggle="modal" 
+                                            data-child-id="{{ $asset->chart_menu_id }}" 
+                                            data-id="{{ $asset->chart_menu_id }}" 
+                                            data-target="#editthisaccount_{{ $account->chart_acc_id }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                         </td>
                                     </tr>
 
-                                    <div class="modal fade" id="addanaccountassets" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
-                                          @csrf
-                                              <div class="row pxy-15 px-10">
-                                                <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label>Account Type</label>
-                                                  <select id="accountTypeDropdownAssets" name="acc_type_id" class="form-control">
-                                                    <!-- Options will be dynamically populated -->
-                                                  </select>
-                                                </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label>Account Currency <span class="text-danger">*</span></label>
-                                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
-                                                        <option value="">Select a Currency</option>
-                                                        @foreach($Country as $cur) 
-                                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_id">Account ID</label>
-                                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                  <div class="form-group">
-                                                    <label for="inputDescription">Description</label>
-                                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                          
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="add_btn">Save</button>
-                                          </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
 
-
-                                    <div class="modal fade" id="editthisaccount_{{$account->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal fade" id="editthisaccount_{{$account->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">Edit Account</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$asset->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -157,8 +110,12 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                 <label>Account Type</label>
-                                                <select id="accountTypeDropdown1" name="acc_type_id" class="form-control">
-                                                  <!-- Options will be dynamically populated -->
+                                                <select id="accountTypeDropdownAssets_{{ $account->chart_acc_id }}" name="acc_type_id" class="form-control" disabled>
+                                                  @foreach($assets as $asset1)
+                                                    <option value="{{ $asset1->chart_menu_id }}">
+                                                        {{ $asset1->chart_menu_title }}
+                                                    </option>
+                                                  @endforeach
                                                 </select>
                                                 </div>
                                               </div>
@@ -171,7 +128,7 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label>Account Currency <span class="text-danger">*</span></label>
-                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;" disabled>
                                                       <!-- <option value="">Select a Currency</option> -->
                                                       @foreach($Country as $cur)
                                                         <option value="{{ $cur->id }}" @if($cur->id == $account->currency_id) selected @endif>
@@ -211,14 +168,14 @@
                                               <p class="mb-0 pad-1">No transactions for this account.</p>
                                             </div>
                                             <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                              <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="add_btn">Save</button>
                                             </div>
                                           </form>
                                         </div>
                                       </div>
-                                    </div>
-
+                                </div>
+                              </div>
 
 
                                 @endforeach
@@ -232,12 +189,87 @@
                     </table>
                 </div>
                 <div class="col-md-12"><div class="account-divider"></div></div>
-                <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountassets"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+                <div class="col-auto account_pad">
+                    <a class="add_new_account_text" 
+                      data-toggle="modal" 
+                      data-target="#addanaccountassets" 
+                      data-child-id="{{ $asset->chart_menu_id }}" 
+                      data-id="{{ $asset->chart_menu_id }}">
+                      <i class="fas fa-plus mr-2"></i>Add A New Account
+                    </a>
+                </div>
+
+                <div class="modal fade" id="addanaccountassets" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                      <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                      @csrf
+                          <div class="row pxy-15 px-10">
+                            <div class="col-md-6">
+                            <div class="form-group">
+                              <label>Account Type</label>
+                              <select id="accountTypeDropdownAssets" data-id="" name="acc_type_id" class="form-control">
+                                @foreach($assets as $assetss)
+                                    <option value="{{ $assetss->chart_menu_id }}">
+                                        {{ $assetss->chart_menu_title }}
+                                    </option>
+                                @endforeach
+                              </select>
+                            </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Account Currency <span class="text-danger">*</span></label>
+                                <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                    <option value="">Select a Currency</option>
+                                    @foreach($Country as $cur) 
+                                        <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                                    @endforeach
+                                  </select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label for="account_id">Account ID</label>
+                                <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                              </div>
+                            </div>
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label for="inputDescription">Description</label>
+                                <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                              </div>
+                            </div>
+                          </div>
+                      
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="add_btn">Save</button>
+                      </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
             </div>
             @endforeach
           </div>
-          <div class="tab-pane" id="account-liabilities-creditcards">
+          <div class="tab-pane" id="account-2">
           @foreach ($liabilitiesAndCreditCards as $lccard)
             <div class="card">
               <div class="card-header">
@@ -267,80 +299,21 @@
                                         <td>{{ $liabilities->chart_acc_name }}</td>
                                         <td>{{ $liabilities->sale_acc_desc }}</td>
                                         <td class="text-right">
-                                        <a data-toggle="modal" data-id="{{ $liabilities->chart_acc_id }}" data-target="#editthisliabilities_{{$liabilities->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                        <a data-toggle="modal"
+                                            data-child-id="{{ $lccard->chart_menu_id }}" 
+                                            data-id="{{ $lccard->chart_menu_id }}" 
+                                            data-target="#editthisliabilities_{{$liabilities->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                         </td>
                                     </tr>
 
 
-                                    <!-- add model -->
-                                    <div class="modal fade" id="addanaccountliabilities" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
-                                          @csrf
-                                              <div class="row pxy-15 px-10">
-                                                <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label>Account Type</label>
-                                                  <select id="accountTypeDropdownLiabilities" name="acc_type_id" class="form-control">
-                                                    <!-- Options will be dynamically populated -->
-                                                  </select>
-                                                </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label>Account Currency <span class="text-danger">*</span></label>
-                                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
-                                                        <option value="">Select a Currency</option>
-                                                        @foreach($Country as $cur) 
-                                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_id">Account ID</label>
-                                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                  <div class="form-group">
-                                                    <label for="inputDescription">Description</label>
-                                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                          
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="add_btn">Save</button>
-                                          </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
-
+                                   
                                     <!-- end -->
                                     <div class="modal fade" id="editthisliabilities_{{$liabilities->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">Edit Account</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$lccard->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -354,8 +327,12 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                 <label>Account Type</label>
-                                                <select id="accountTypeDropdown" name="acc_type_id" class="form-control">
-                                                  <!-- Options will be dynamically populated -->
+                                                <select id="accountTypeDropdownLiabilities_{{ $liabilities->chart_acc_id }}" name="acc_type_id" class="form-control" disabled>
+                                                  @foreach($liabilitiesAndCreditCards as $lccard1)
+                                                    <option value="{{ $lccard1->chart_menu_id }}">
+                                                        {{ $lccard1->chart_menu_title }}
+                                                    </option>
+                                                  @endforeach
                                                 </select>
                                                 </div>
                                               </div>
@@ -368,7 +345,7 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label>Account Currency <span class="text-danger">*</span></label>
-                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;" disabled>
                                                       <!-- <option value="">Select a Currency</option> -->
                                                       @foreach($Country as $cur)
                                                         <option value="{{ $cur->id }}" @if($cur->id == $liabilities->currency_id) selected @endif>
@@ -408,12 +385,13 @@
                                               <p class="mb-0 pad-1">No transactions for this account.</p>
                                             </div>
                                             <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                              <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="add_btn">Save</button>
                                             </div>
                                           </form>
                                         </div>
                                       </div>
+                                    </div>
                                     </div>
                                 @endforeach
                             @else
@@ -426,14 +404,86 @@
                     </table>
                   </div>
                   <div class="col-md-12"><div class="account-divider"></div></div>
-                  <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountliabilities"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+                  <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountliabilities"
+                      data-child-id="{{ $lccard->chart_menu_id }}" 
+                      data-id="{{ $lccard->chart_menu_id }}"
+                      ><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+
+                   <!-- add model -->
+                  <div class="modal fade" id="addanaccountliabilities" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                        <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                        @csrf
+                            <div class="row pxy-15 px-10">
+                              <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Account Type</label>
+                                <select id="accountTypeDropdownLiabilities" name="acc_type_id" class="form-control">
+                                @foreach($liabilitiesAndCreditCards as $lccardedit)
+                                    <option value="{{ $lccardedit->chart_menu_id }}">
+                                        {{ $lccardedit->chart_menu_title }}
+                                    </option>
+                                @endforeach
+                                </select>
+                                
+                              </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Account Currency <span class="text-danger">*</span></label>
+                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                      <option value="">Select a Currency</option>
+                                      @foreach($Country as $cur) 
+                                          <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                                      @endforeach
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_id">Account ID</label>
+                                  <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="inputDescription">Description</label>
+                                  <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                                </div>
+                              </div>
+                            </div>
+                        
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="add_btn">Save</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
               </div>
             </div>
             @endforeach
-            </div>
-         
+          </div>
+   
           
-          <div class="tab-pane" id="account-income">
+          <div class="tab-pane" id="account-3">
           @foreach ($income as $incomes)
             <div class="card">
               <div class="card-header">
@@ -463,78 +513,21 @@
                                         <td>{{ $incm->chart_acc_name }}</td>
                                         <td>{{ $incm->sale_acc_desc }}</td>
                                         <td class="text-right">
-                                        <a data-toggle="modal" data-id="{{ $incm->chart_acc_id }}" data-target="#editthisincm_{{$incm->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                        <a data-toggle="modal" data-id="{{ $incm->chart_acc_id }}" 
+                                        data-child-id="{{ $incomes->chart_menu_id }}" 
+                                        data-id="{{ $incomes->chart_menu_id }}" 
+                                        data-target="#editthisincm_{{$incm->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                         </td>
                                     </tr>
                                    <!-- add model addanaccountincome -->
-                                   <div class="modal fade" id="addanaccountincome" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
-                                          @csrf
-                                              <div class="row pxy-15 px-10">
-                                                <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label>Account Type</label>
-                                                  <select id="accountTypeDropdownIncome" name="acc_type_id" class="form-control">
-                                                    <!-- Options will be dynamically populated -->
-                                                  </select>
-                                                </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label>Account Currency <span class="text-danger">*</span></label>
-                                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
-                                                        <option value="">Select a Currency</option>
-                                                        @foreach($Country as $cur) 
-                                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_id">Account ID</label>
-                                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                  <div class="form-group">
-                                                    <label for="inputDescription">Description</label>
-                                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                          
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="add_btn">Save</button>
-                                          </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
+                                  
                                    <!-- end -->
                                    
                                     <div class="modal fade" id="editthisincm_{{$incm->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">Edit Account</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$incomes->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -548,9 +541,15 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                 <label>Account Type</label>
-                                                <select id="accountTypeDropdown" name="acc_type_id" class="form-control">
-                                                  <!-- Options will be dynamically populated -->
+                                               
+                                                <select id="accountTypeDropdownIncome_{{ $incm->chart_acc_id }}"  name="acc_type_id" class="form-control" disabled>
+                                                @foreach($income as $incomess)
+                                                    <option value="{{ $incomess->chart_menu_id }}">
+                                                        {{ $incomess->chart_menu_title }}
+                                                    </option>
+                                                @endforeach
                                                 </select>
+                                                
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -562,7 +561,7 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label>Account Currency <span class="text-danger">*</span></label>
-                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;" disabled>
                                                       <!-- <option value="">Select a Currency</option> -->
                                                       @foreach($Country as $cur)
                                                         <option value="{{ $cur->id }}" @if($cur->id == $incm->currency_id) selected @endif>
@@ -602,12 +601,13 @@
                                               <p class="mb-0 pad-1">No transactions for this account.</p>
                                             </div>
                                             <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                              <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="add_btn">Save</button>
                                             </div>
                                           </form>
                                         </div>
                                       </div>
+                                    </div>
                                     </div>
                                 @endforeach
                             @else
@@ -620,12 +620,82 @@
                     </table>
                   </div>
                   <div class="col-md-12"><div class="account-divider"></div></div>
-                  <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountincome"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+                  <div class="col-auto account_pad"><a class="add_new_account_text"
+                      data-child-id="{{ $incomes->chart_menu_id }}" 
+                      data-id="{{ $incomes->chart_menu_id }}"
+                   data-toggle="modal" data-target="#addanaccountincome"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+
+                  <div class="modal fade" id="addanaccountincome" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                        <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                        @csrf
+                            <div class="row pxy-15 px-10">
+                              <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Account Type</label>
+                                <select id="accountTypeDropdownIncome" name="acc_type_id" class="form-control">
+                                  @foreach($income as $income1)
+                                    <option value="{{ $income1->chart_menu_id }}">
+                                        {{ $income1->chart_menu_title }}
+                                    </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Account Currency <span class="text-danger">*</span></label>
+                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                      <option value="">Select a Currency</option>
+                                      @foreach($Country as $cur) 
+                                          <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                                      @endforeach
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_id">Account ID</label>
+                                  <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="inputDescription">Description</label>
+                                  <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                                </div>
+                              </div>
+                            </div>
+                        
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="add_btn">Save</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
               </div>
             </div>
             @endforeach
           </div>
-          <div class="tab-pane" id="account-expenses">
+          <div class="tab-pane" id="account-4">
           @foreach ($expenses as $expense)
             <div class="card">
               <div class="card-header">
@@ -655,80 +725,19 @@
                                         <td>{{ $exp->chart_acc_name }}</td>
                                         <td>{{ $exp->sale_acc_desc }}</td>
                                         <td class="text-right">
-                                        <a data-toggle="modal" data-id="{{ $exp->chart_acc_id }}" data-target="#editthisexp_{{$exp->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                        <a data-toggle="modal" 
+                                        data-id="{{ $exp->chart_acc_id }}" 
+                                        data-child-id="{{ $expense->chart_menu_id }}" 
+                                        data-id="{{ $expense->chart_menu_id }}" 
+                                        data-target="#editthisexp_{{$exp->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                         </td>
                                     </tr>
 
-
-
-                                       <!-- add model addanaccountexpenses -->
-                                   <div class="modal fade" id="addanaccountexpenses" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
-                                          @csrf
-                                              <div class="row pxy-15 px-10">
-                                                <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label>Account Type</label>
-                                                  <select id="accountTypeDropdownExpenses" name="acc_type_id" class="form-control">
-                                                    <!-- Options will be dynamically populated -->
-                                                  </select>
-                                                </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label>Account Currency <span class="text-danger">*</span></label>
-                                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
-                                                        <option value="">Select a Currency</option>
-                                                        @foreach($Country as $cur) 
-                                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_id">Account ID</label>
-                                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                  <div class="form-group">
-                                                    <label for="inputDescription">Description</label>
-                                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                          
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="add_btn">Save</button>
-                                          </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
-                                   <!-- end -->
                                     <div class="modal fade" id="editthisexp_{{$exp->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">Edit Account</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$expense->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -742,8 +751,12 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                 <label>Account Type</label>
-                                                <select id="accountTypeDropdown" name="acc_type_id" class="form-control">
-                                                  <!-- Options will be dynamically populated -->
+                                                <select id="accountTypeDropdownExpenses_{{ $exp->chart_acc_id }}" name="acc_type_id" class="form-control" disabled>
+                                                  @foreach($expenses as $expenses1)
+                                                    <option value="{{ $expenses1->chart_menu_id }}">
+                                                        {{ $expenses1->chart_menu_title }}
+                                                    </option>
+                                                  @endforeach
                                                 </select>
                                                 </div>
                                               </div>
@@ -756,7 +769,7 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label>Account Currency <span class="text-danger">*</span></label>
-                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;" disabled>
                                                       <!-- <option value="">Select a Currency</option> -->
                                                       @foreach($Country as $cur)
                                                         <option value="{{ $cur->id }}" @if($cur->id == $exp->currency_id) selected @endif>
@@ -796,12 +809,13 @@
                                               <p class="mb-0 pad-1">No transactions for this account.</p>
                                             </div>
                                             <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                              <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="add_btn">Save</button>
                                             </div>
                                           </form>
                                         </div>
                                       </div>
+                                    </div>
                                     </div>
                                 @endforeach
                             @else
@@ -814,12 +828,80 @@
                     </table>
                   </div>
                   <div class="col-md-12"><div class="account-divider"></div></div>
-                  <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountexpenses"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+                  <div class="col-auto account_pad"><a class="add_new_account_text" data-child-id="{{ $expense->chart_menu_id }}" 
+                  data-id="{{ $expense->chart_menu_id }}" data-toggle="modal" data-target="#addanaccountexpenses"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+
+                    <!-- add model addanaccountexpenses -->
+                    <div class="modal fade" id="addanaccountexpenses" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                          @csrf
+                              <div class="row pxy-15 px-10">
+                                <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Account Type</label>
+                                  <select id="accountTypeDropdownExpenses" name="acc_type_id" class="form-control">
+                                  @foreach($expenses as $expensesss)
+                                    <option value="{{ $expensesss->chart_menu_id }}">
+                                        {{ $expensesss->chart_menu_title }}
+                                    </option>
+                                  @endforeach
+                                </select>
+                                </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label>Account Currency <span class="text-danger">*</span></label>
+                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                        <option value="">Select a Currency</option>
+                                        @foreach($Country as $cur) 
+                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                                        @endforeach
+                                      </select>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="account_id">Account ID</label>
+                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                                  </div>
+                                </div>
+                                <div class="col-md-12">
+                                  <div class="form-group">
+                                    <label for="inputDescription">Description</label>
+                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                          
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="add_btn">Save</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
               </div>
             </div>
             @endforeach
           </div>
-          <div class="tab-pane" id="account-equity">
+          <div class="tab-pane" id="account-5">
           @foreach ($equity as $equitys)
             <div class="card">
               <div class="card-header">
@@ -849,81 +931,18 @@
                                         <td>{{ $eq->chart_acc_name }}</td>
                                         <td>{{ $eq->sale_acc_desc }}</td>
                                         <td class="text-right">
-                                        <a data-toggle="modal" data-id="{{ $eq->chart_acc_id }}" data-target="#editthiseq_{{$eq->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                                        <a data-toggle="modal" data-id="{{ $eq->chart_acc_id }}" 
+                                        data-child-id="{{ $equitys->chart_menu_id }}" 
+                                        data-id="{{ $equitys->chart_menu_id }}" 
+                                        data-target="#editthiseq_{{$eq->chart_acc_id}}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
                                         </td>
                                     </tr>
 
-                                    <!-- add model addanaccountequity -->
-                                    <div class="modal fade" id="addanaccountequity" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
-                                          @csrf
-                                              <div class="row pxy-15 px-10">
-                                                <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label>Account Type</label>
-                                                  <select id="accountTypeDropdownEquity" name="acc_type_id" class="form-control">
-                                                    <!-- Options will be dynamically populated -->
-                                                  </select>
-                                                </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label>Account Currency <span class="text-danger">*</span></label>
-                                                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
-                                                        <option value="">Select a Currency</option>
-                                                        @foreach($Country as $cur) 
-                                                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
-                                                        @endforeach
-                                                      </select>
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                  <div class="form-group">
-                                                    <label for="account_id">Account ID</label>
-                                                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                  <div class="form-group">
-                                                    <label for="inputDescription">Description</label>
-                                                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                          
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="add_btn">Save</button>
-                                          </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
-                                   <!-- end -->
-
-
-                                    
-                                    <div class="modal fade" id="editthiseq_{{$eq->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                  <div class="modal fade" id="editthiseq_{{$eq->chart_acc_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">Edit Account</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$equitys->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
@@ -937,9 +956,13 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                 <label>Account Type</label>
-                                                <select id="accountTypeDropdown" name="acc_type_id" class="form-control">
-                                                  <!-- Options will be dynamically populated -->
-                                                </select>
+                                                <select id="accountTypeDropdownEquity_{{ $eq->chart_acc_id }}"  name="acc_type_id" class="form-control" disabled>
+                                                    @foreach($equity as $equityss)
+                                                      <option value="{{ $equityss->chart_menu_id }}">
+                                                          {{ $equityss->chart_menu_title }}
+                                                      </option>
+                                                    @endforeach
+                                                  </select>
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -951,7 +974,7 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label>Account Currency <span class="text-danger">*</span></label>
-                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;" disabled>
                                                       <!-- <option value="">Select a Currency</option> -->
                                                       @foreach($Country as $cur)
                                                         <option value="{{ $cur->id }}" @if($cur->id == $eq->currency_id) selected @endif>
@@ -959,7 +982,7 @@
                                                         </option>
                                                     @endforeach
                                                     </select>
-                                                 
+                                                  
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -991,14 +1014,16 @@
                                               <p class="mb-0 pad-1">No transactions for this account.</p>
                                             </div>
                                             <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                              <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="add_btn">Save</button>
                                             </div>
                                           </form>
                                         </div>
                                       </div>
                                     </div>
-                                @endforeach
+                                  </div>
+
+                            @endforeach
                             @else
                                 <!-- Show a message if there are no child accounts -->
                                 <tr>
@@ -1009,7 +1034,76 @@
                   </table>
                 </div>
                 <div class="col-md-12"><div class="account-divider"></div></div>
-                <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" data-target="#addanaccountequity"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+                <div class="col-auto account_pad"><a class="add_new_account_text" data-toggle="modal" 
+                data-child-id="{{ $equitys->chart_menu_id }}" 
+                      data-id="{{ $equitys->chart_menu_id }}"
+                      data-target="#addanaccountequity"><i class="fas fa-plus mr-2"></i>Add A New Account</a></div>
+
+                  <div class="modal fade" id="addanaccountequity" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                        <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                        @csrf
+                            <div class="row pxy-15 px-10">
+                              <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Account Type</label>
+                                <select id="accountTypeDropdownEquity" name="acc_type_id" class="form-control">
+                                    @foreach($equity as $equity1)
+                                      <option value="{{ $equity1->chart_menu_id }}">
+                                          {{ $equity1->chart_menu_title }}
+                                      </option>
+                                    @endforeach
+                                </select>
+                              </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label>Account Currency <span class="text-danger">*</span></label>
+                                  <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                      <option value="">Select a Currency</option>
+                                      @foreach($Country as $cur) 
+                                          <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                                      @endforeach
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="account_id">Account ID</label>
+                                  <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                                </div>
+                              </div>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="inputDescription">Description</label>
+                                  <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                                </div>
+                              </div>
+                            </div>
+                        
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="add_btn">Save</button>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
               </div>
             </div>
             @endforeach
@@ -1017,104 +1111,242 @@
         </div>
       </div><!-- /.container-fluid -->
     </section>
+
+    <div class="modal fade" id="addaccount" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Add an Account</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+          @csrf
+              <div class="row pxy-15 px-10">
+                <div class="col-md-6">
+                <div class="form-group">
+                  <label>Account Type</label>
+                  <select id="account" data-id="" name="acc_type_id" class="form-control">
+                  @foreach ($tabs as $tab)
+                    <optgroup label="{{ $tab->chart_menu_title }}">
+                        @foreach ($subMenus[$tab->chart_menu_id] ?? [] as $submenu)
+                            <option value="{{ $submenu->chart_menu_id }}">
+                                {{ $submenu->chart_menu_title }}
+                            </option>
+                        @endforeach
+                    </optgroup>
+                  @endforeach
+                    <!-- @foreach($assets as $assetss)
+                        <option value="{{ $assetss->chart_menu_id }}">
+                            {{ $assetss->chart_menu_title }}
+                        </option>
+                    @endforeach -->
+                  </select>
+                </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="account_name">Account Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Account Currency <span class="text-danger">*</span></label>
+                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                        <option value="">Select a Currency</option>
+                        @foreach($Country as $cur) 
+                            <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
+                        @endforeach
+                      </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="account_id">Account ID</label>
+                    <input type="text" class="form-control" id="account_id" name="chart_account_id" placeholder="">
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="inputDescription">Description</label>
+                    <textarea id="inputDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder=""></textarea>
+                  </div>
+                </div>
+              </div>
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="add_btn">Save</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <!-- /.content -->
 </div>
-
-  
- 
- 
-
-  
   </div>
-
-                  </div>
+</div>
  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-const assets = @json($assets);
-const liabilities = @json($liabilitiesAndCreditCards);
-const income = @json($income);
-const equity = @json($equity);
-const expenses = @json($expenses);
+  $(document).ready(function() {
+    // Listen for when the modal is about to be shown
+    $('#addanaccountassets').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        // alert('hi');
+        // Find the dropdown and set its value
+        var dropdown = $(this).find('#accountTypeDropdownAssets');
+        dropdown.val(childId); // Set the value of the dropdown
 
-// Function to populate the dropdown with the data passed
-function populateDropdown(dropdownId, data) {
-    const dropdown = document.getElementById(dropdownId);
-    dropdown.innerHTML = ''; // Clear existing options
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
 
-    if (data.length === 0) {
-        const noOption = document.createElement('option');
-        noOption.text = 'No Account Types Available';
-        dropdown.add(noOption);
-    } else {
-        data.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.chart_menu_id;  // Ensure this field exists in your data
-            option.text = item.chart_menu_title;  // Ensure this field exists in your data
-            dropdown.add(option);
-        });
-    }
+    $('#addanaccountliabilities').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        // alert('hi');
+        // Find the dropdown and set its value
+        var dropdown = $(this).find('#accountTypeDropdownLiabilities');
+        dropdown.val(childId); // Set the value of the dropdown
 
-    // Debugging output to check if options are populated
-    console.log('Dropdown options for', dropdownId, ':', dropdown.options);
-}
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
 
-// Event listeners for tab clicks
-document.getElementById('assets-tab').addEventListener('click', () => populateDropdown('accountTypeDropdownAssets', assets));
-document.getElementById('liabilities-tab').addEventListener('click', () => populateDropdown('accountTypeDropdownLiabilities', liabilities));
-document.getElementById('income-tab').addEventListener('click', () => populateDropdown('accountTypeDropdownIncome', income));
-document.getElementById('equity-tab').addEventListener('click', () => populateDropdown('accountTypeDropdownEquity', equity));
-document.getElementById('expenses-tab').addEventListener('click', () => populateDropdown('accountTypeDropdownExpenses', expenses));
+    $('#addanaccountincome').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        // alert('hi');
+        // Find the dropdown and set its value
+        var dropdown = $(this).find('#accountTypeDropdownIncome');
+        dropdown.val(childId); // Set the value of the dropdown
 
-// Load the default tab on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Default to showing assets
-    populateDropdown('accountTypeDropdownAssets', assets);
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+
+    $('#addanaccountexpenses').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        // alert('hi');
+        // Find the dropdown and set its value
+        var dropdown = $(this).find('#accountTypeDropdownExpenses');
+        dropdown.val(childId); // Set the value of the dropdown
+
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+
+    $('#addanaccountequity').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        // alert('hi');
+        // Find the dropdown and set its value
+        var dropdown = $(this).find('#accountTypeDropdownEquity');
+        dropdown.val(childId); // Set the value of the dropdown
+
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+    
 });
 
-// Populate dropdown when modals are shown
-$('#addanaccountliabilities').on('shown.bs.modal', function () {
-    populateDropdown('accountTypeDropdownLiabilities', liabilities);
-});
+$(document).ready(function() {
+    // Listen for when the modal is about to be shown
+    $('.modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        
+        // Extract the specific modal ID to target the correct modal
+        var modalId = button.data('target');
+        
+        // Find the dropdown inside the modal with the correct ID
+        var dropdown = $(modalId).find('select[id^="accountTypeDropdownAssets_"]');
+        
+        // Set the value of the dropdown
+        dropdown.val(childId); 
 
-$('#addanaccountassets').on('shown.bs.modal', function () {
-    populateDropdown('accountTypeDropdownAssets', assets);
-});
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
 
-$('#addanaccountincome').on('shown.bs.modal', function () {
-    populateDropdown('accountTypeDropdownIncome', income);
-});
-$('#addanaccountexpenses').on('shown.bs.modal', function () {
-    populateDropdown('accountTypeDropdownExpenses', expenses);
-});
-$('#addanaccountequity').on('shown.bs.modal', function () {
-    populateDropdown('accountTypeDropdownEquity', equity);
-});
+    $('.modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        
+        // Extract the specific modal ID to target the correct modal
+        var modalId = button.data('target');
+        
+        // Find the dropdown inside the modal with the correct ID
+        var dropdown = $(modalId).find('select[id^="accountTypeDropdownLiabilities_"]');
+        
+        // Set the value of the dropdown
+        dropdown.val(childId); 
 
-</script>
-<!-- <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.edit-icon').forEach(button => {
-        button.addEventListener('click', function() {
-            const accountId = this.getAttribute('data-id');
-            fetch(`/chart-of-account/edit/${accountId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('editAccountId').value = data.id;
-                    document.getElementById('editAccountName').value = data.chart_acc_name;
-                    document.getElementById('editCurrencyId').value = data.currency_id;
-                    document.getElementById('editAccountIdField').value = data.chart_account_id;
-                    document.getElementById('editDescription').value = data.sale_acc_desc;
-                    document.getElementById('editArchiveAccount').checked = data.archive_account;
-                    // Set the form action to the update route
-                    document.querySelector('#editAccountForm').action = `/chart-of-account/update/${data.id}`;
-                    $('#editthisaccount').modal('show');
-                })
-                .catch(error => console.error('Error:', error));
-        });
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+
+    $('.modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        
+        // Extract the specific modal ID to target the correct modal
+        var modalId = button.data('target');
+        
+        // Find the dropdown inside the modal with the correct ID
+        var dropdown = $(modalId).find('select[id^="accountTypeDropdownIncome_"]');
+        
+        // Set the value of the dropdown
+        dropdown.val(childId); 
+
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+
+    $('.modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        
+        // Extract the specific modal ID to target the correct modal
+        var modalId = button.data('target');
+        
+        // Find the dropdown inside the modal with the correct ID
+        var dropdown = $(modalId).find('select[id^="accountTypeDropdownExpenses_"]');
+        
+        // Set the value of the dropdown
+        dropdown.val(childId); 
+
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
+    });
+
+    $('.modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var childId = button.data('child-id'); // Extract info from data-* attributes
+        
+        // Extract the specific modal ID to target the correct modal
+        var modalId = button.data('target');
+        
+        // Find the dropdown inside the modal with the correct ID
+        var dropdown = $(modalId).find('select[id^="accountTypeDropdownEquity_"]');
+        
+        // Set the value of the dropdown
+        dropdown.val(childId); 
+
+        // Optional: Trigger change event if you need to update other parts of the UI
+        dropdown.trigger('change');
     });
 });
 
-</script> -->
+</script>
 
 @endsection
 @endif

@@ -624,7 +624,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
             <div class="modal-content">
-                <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $estimates->sale_estim_id]) }}" id="delete-form-{{ $estimates->sale_estim_id }}">
+                <form id="delete-form-{{ $estimates->sale_estim_id }}" data-id="{{ $estimates->sale_estim_id }}">
                 @csrf
                 @method('DELETE')
                 <div class="modal-body pad-1 text-center">
@@ -633,7 +633,7 @@
                     <p class="company_details_text px-10">Delete Estimate #{{ $estimates->sale_estim_id }}</p>
                     <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
                     <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="delete_btn px-15">Delete</button>
+                    <button type="submit" class="delete_btn px-15" data-id="{{ $estimates->sale_estim_id }}">Delete</button>
                 </div>
             </div>
         </div>
@@ -847,6 +847,32 @@ function updateStatus(estimateId, status) {
         console.error('Error:', error);
     });
 }
+</script>
+<script>
+$(document).on('click', '.delete_btn', function() {
+    var invoiceId = $(this).data('id'); // Get the bill ID
+    var form = $('#delete-form-' + invoiceId);
+    var url = "{{ route('business.estimates.destroy', ':id') }}"; // Use the named route
+    url = url.replace(':id', invoiceId); // Replace with the actual ID
+
+    // Send DELETE request using AJAX
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: form.serialize(), // Serialize form data
+        success: function(response) {
+            if (response.success) {
+                // Redirect or update the UI dynamically
+                window.location.href = "{{ route('business.estimates.index') }}";
+            } else {
+                alert('An error occurred: ' + response.message);
+            }
+        },
+        error: function(xhr) {
+            alert('An error occurred while deleting the record.');
+        }
+    });
+});
 </script>
     @endsection
 @endif

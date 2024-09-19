@@ -248,37 +248,38 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::patch('/duplicate-invoice-store/{id}', [InvoicesController::class, 'duplicateStore'])->name('business.invoices.duplicateStore');
         Route::get('/invoice-list', [InvoicesController::class, 'index'])->name('business.invoices.index');
 
-    });
+        });
 
-    // chart of account..
+        // chart of account..
         Route::get('/chartofaccount', [ChartOfAccountController::class, 'index'])->name('business.chartofaccount.index');
         Route::post('/chart-of-account/store', [ChartOfAccountController::class, 'store'])->name('business.chartofaccount.store');
         Route::get('/chartofaccount/edit/{acc_type_id}', [ChartOfAccountController::class, 'edit'])->name('business.chartofaccount.edit');
         Route::patch('/chartofaccount/update/{account}', [ChartOfAccountController::class, 'update'])->name('business.chartofaccount.update');
         
-    // end
-    //recurring invoices
-    Route::get('/recurring-invoice-list', [RecurringInvoicesController::class, 'index'])->name('business.recurring_invoices.index');
-    Route::get('/create-recurring-invoice', [RecurringInvoicesController::class, 'create'])->name('business.recurring_invoices.create');
-    Route::post('/create-recurring-store', [RecurringInvoicesController::class, 'store'])->name('business.recurring_invoices.store');
-    Route::get('/edit-recurring-invoices/{id}', [RecurringInvoicesController::class, 'edit'])->name('business.recurring_invoices.edit');
-    Route::patch('/update-recurring-invoice/{reinvoices_id}', [RecurringInvoicesController::class, 'update'])->name('business.recurring_invoices.update');
-    Route::get('/view-recurring-invoice/{id}', [RecurringInvoicesController::class, 'view'])->name('business.recurring_invoices.view');
-    Route::get('/duplicate-recurring-invoice/{id}', [RecurringInvoicesController::class, 'duplicate'])->name('business.recurring_invoices.duplicate');
-    Route::patch('/duplicate-recurring-invoice-store/{id}', [RecurringInvoicesController::class, 'duplicateStore'])->name('business.recurring_invoices.duplicateStore');
+        //recurring invoices
+        Route::get('/recurring-invoice-list', [RecurringInvoicesController::class, 'index'])->name('business.recurring_invoices.index');
+        Route::get('/create-recurring-invoice', [RecurringInvoicesController::class, 'create'])->name('business.recurring_invoices.create');
+        Route::post('/create-recurring-store', [RecurringInvoicesController::class, 'store'])->name('business.recurring_invoices.store');
+        Route::get('/edit-recurring-invoices/{id}', [RecurringInvoicesController::class, 'edit'])->name('business.recurring_invoices.edit');
+        Route::patch('/update-recurring-invoice/{reinvoices_id}', [RecurringInvoicesController::class, 'update'])->name('business.recurring_invoices.update');
+        Route::get('/view-recurring-invoice/{id}', [RecurringInvoicesController::class, 'view'])->name('business.recurring_invoices.view');
+        Route::get('/duplicate-recurring-invoice/{id}', [RecurringInvoicesController::class, 'duplicate'])->name('business.recurring_invoices.duplicate');
+        Route::patch('/duplicate-recurring-invoice-store/{id}', [RecurringInvoicesController::class, 'duplicateStore'])->name('business.recurring_invoices.duplicateStore');
     
 
-    //bills
-    Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');
-    Route::get('/create-bill', [BillsController::class, 'create'])->name('business.bill.create');
-    Route::get('/bill/get-product-details/{id}', [BillsController::class, 'getProductDetails'])->name('business.bill.getProductDetails');
-    Route::post('/create-bill-store', [BillsController::class, 'store'])->name('business.bill.store');
-    Route::get('/edit-bill/{id}', [BillsController::class, 'edit'])->name('business.bill.edit');
-    Route::patch('/update-bill/{id}', [BillsController::class, 'update'])->name('business.bill.update');
-    Route::delete('/bill-destroy/{id}', [BillsController::class, 'destroy'])->name('business.bill.destroy');
-    Route::get('/view-bill/{id}', [BillsController::class, 'view'])->name('business.bill.view');
-    Route::get('/duplicate-bill/{id}', [BillsController::class, 'duplicate'])->name('business.bill.duplicate');
-    Route::patch('/duplicate-bill-store/{id}', [BillsController::class, 'duplicateStore'])->name('business.bill.duplicateStore');
+        //bills
+        Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');
+        Route::get('/create-bill', [BillsController::class, 'create'])->name('business.bill.create');
+        Route::get('/bill/get-product-details/{id}', [BillsController::class, 'getProductDetails'])->name('business.bill.getProductDetails');
+        Route::post('/create-bill-store', [BillsController::class, 'store'])->name('business.bill.store');
+        Route::get('/edit-bill/{id}', [BillsController::class, 'edit'])->name('business.bill.edit');
+        Route::patch('/update-bill/{id}', [BillsController::class, 'update'])->name('business.bill.update');
+        Route::delete('/bill-destroy/{id}', [BillsController::class, 'destroy'])->name('business.bill.destroy');
+        Route::get('/view-bill/{id}', [BillsController::class, 'view'])->name('business.bill.view');
+        Route::get('/duplicate-bill/{id}', [BillsController::class, 'duplicate'])->name('business.bill.duplicate');
+        Route::patch('/duplicate-bill-store/{id}', [BillsController::class, 'duplicateStore'])->name('business.bill.duplicateStore');
+        Route::get('/add-bill/{id}', [BillsController::class, 'create'])->name('business.bill.add');
+
 
 
 

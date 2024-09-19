@@ -184,7 +184,7 @@
                       @if (count($unpaidInvoices) > 0)
                       @foreach ($unpaidInvoices as $value)
                         <tr id="invoices-row-unpaid-{{ $value->sale_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
@@ -321,7 +321,7 @@
                       @if (count($draftInvoices) > 0)
                       @foreach ($draftInvoices as $value)
                         <tr id="invoices-row-draft-{{ $value->sale_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>
@@ -460,7 +460,7 @@
                       @if (count($allInvoices) > 0)
                       @foreach ($allInvoices as $value)
                         <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_inv_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_inv_final_amount }}</td>

@@ -253,7 +253,7 @@
             <td>
             <div>
               <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-              <option>Select Customer</option>
+              <option>Select Items</option>
               @foreach($products as $product)
           <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
           {{ $product->sale_product_name }}
@@ -1449,7 +1449,7 @@
       <td>
       <div>
         <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-        <option>Select Customer</option>
+        <option>Select Item</option>
         @foreach($products as $product)
         <option value="{{ $product->sale_product_id }}">{{ $product->sale_product_name }}</option>
     @endforeach

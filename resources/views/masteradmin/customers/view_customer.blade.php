@@ -11,6 +11,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -288,7 +290,7 @@
                       <div class="modal-content">
                       <form method="POST"
                       action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}"
-                      id="delete-form-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
+                      id="delete-form1-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
                       @csrf
                       @method('DELETE')
                       <div class="modal-body pad-1 text-center">
@@ -298,7 +300,7 @@
 
                         <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                         <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="delete_btn px-15"
+                        <button type="button" class="delete_btn1 px-15"
                         data-id="{{ $value->sale_inv_id }}">Delete</button>
                       </form>
                       </div>
@@ -561,7 +563,7 @@
                       <div class="modal-content">
                       <form method="POST"
                       action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}"
-                      id="delete-form-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
+                      id="delete-form2-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
                       @csrf
                       @method('DELETE')
                       <div class="modal-body pad-1 text-center">
@@ -571,7 +573,7 @@
 
                         <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                         <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="delete_btn px-15"
+                        <button type="button" class="delete_btn2 px-15"
                         data-id="{{ $value->sale_inv_id }}">Delete</button>
                       </form>
                       </div>
@@ -1152,21 +1154,19 @@
     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">
-        <form id="delete-plan-form"
-          action="{{ route('business.salescustomers.destroy', ['SalesCustomers' => $SalesCustomers->sale_cus_id]) }}"
-          method="POST">
-          @csrf
-          @method('DELETE')
-          <div class="modal-body pad-1 text-center">
-            <i class="fas fa-solid fa-trash delete_icon"></i>
-            <p class="company_business_name px-10"><b>Delete Customer</b></p>
-            <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
-            <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-
+       
+            <form id="delete-form-{{ $SalesCustomers->sale_cus_id }}" data-id="{{ $SalesCustomers->sale_cus_id }}" method="POST" action="{{ route('business.salescustomers.destroy', $SalesCustomers->sale_cus_id) }}">
             @csrf
             @method('DELETE')
-            <button type="submit" class="delete_btn px-15">Delete</button>
-          </div>
+          
+            <div class="modal-body pad-1 text-center">
+              <i class="fas fa-solid fa-trash delete_icon"></i>
+              <p class="company_business_name px-10"><b>Delete Customer</b></p>
+              <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+              <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="delete_btn px-15" data-id="{{ $SalesCustomers->sale_cus_id }}">Delete</button>
+            </div>
+          </form>
       </div>
     </div>
   </div>
@@ -1292,6 +1292,38 @@ $(document).ready(function() {
 
 });
 
+</script>
+<script>
+  $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+$(document).on('click', '.delete_btn', function() {
+    var invoiceId = $(this).data('id'); // Get the customer ID
+    var form = $('#delete-form-' + invoiceId);
+    var url = "{{ route('business.salescustomers.destroy', ':id') }}"; // Use the named route
+    url = url.replace(':id', invoiceId); // Replace with the actual ID
+
+    // Send DELETE request using AJAX
+    $.ajax({
+        url: url,
+        type: 'DELETE', // Use DELETE method
+        data: form.serialize(), // Serialize form data
+        success: function(response) {
+          window.location.href = "{{ route('business.salescustomers.index') }}";
+            // if (response.success) {
+            //     // Redirect or update the UI dynamically
+            //     window.location.href = "{{ route('business.salescustomers.index') }}";
+            // } else {
+            //     alert('An error occurred: ' + response.message);
+            // }
+        },
+        error: function(xhr) {
+            alert('An error occurred while deleting the record.');
+        }
+    });
+});
 </script>
 </body>
 

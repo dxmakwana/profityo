@@ -66,8 +66,10 @@ class BillsController extends Controller
         return view('masteradmin.bills.index', compact('allBill', 'user_id', 'vendor'));
     }
 
-    public function create(): View
+    public function create($id = null): View
     {
+        // dd($id);
+        $customer_id = $id;
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
 
@@ -101,10 +103,11 @@ class BillsController extends Controller
             $ship_state = States::where('country_id', $vendors->purchases_ship_country_id)->get();
         }
 
+        $selected_vendor = PurchasVendor::with(['state', 'country'])->where([ 'id' => $user->id , 'purchases_vendor_id' => $id])->first();
 
 
         // dd($businessDetails);
-        return view('masteradmin.bills.add', compact('salevendor','products','currencys','salestax','customer_states','ship_state','currency','vendors','ExpenseAccounts'));
+        return view('masteradmin.bills.add', compact('salevendor','products','currencys','salestax','customer_states','ship_state','currency','vendors','ExpenseAccounts','selected_vendor'));
     }
 
     public function getProductDetails($id)
@@ -155,10 +158,9 @@ class BillsController extends Controller
             'sale_status.required' => 'Please set the status of the bill.',
             'sale_bill_status.required' => 'Please set the bill status.',
             'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
-            'items.*.sale_expense_id.integer' => 'Each item must have a expense category selected.',
             'items.*.sale_bill_item_desc.required' => 'Please provide a description for each item.',
-            'items.*.sale_bill_item_qty.required' => 'Please enter the quantity for each item.',
-            'items.*.sale_bill_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_expense_id.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_bill_item_qty.required' => 'The quantity for each item must be at least 1.',
             'items.*.sale_bill_item_price.required' => 'Please enter the price for each item.',
             'items.*.sale_bill_item_price.min' => 'The price for each item must be at least 0.',
             'items.*.sale_bill_item_tax.required' => 'Please select the tax amount for each item.',
@@ -168,8 +170,10 @@ class BillsController extends Controller
 
         $bill = new Bills();
        
-        $bill->fill($request->only([
-            'sale_vendor_id', 'sale_bill_number','sale_bill_customer_ref', 'sale_bill_date', 'sale_bill_valid_date',  'sale_currency_id','sale_bill_sub_total', 'sale_bill_tax_amount','sale_bill_final_amount', 'sale_bill_note', 'sale_status', 'sale_bill_status'
+        $bill->fill(attributes: $request->only([
+            'sale_vendor_id', 'sale_bill_number','sale_bill_customer_ref', 'sale_bill_date', 
+            'sale_bill_valid_date',  'sale_currency_id','sale_bill_sub_total', 'sale_bill_tax_amount',
+            'sale_bill_final_amount', 'sale_bill_note', 'sale_status', 'sale_bill_status'
         ]));
         $user = Auth::guard('masteradmins')->user();
         $bill->sale_currency_id = $request->sale_currency_id;

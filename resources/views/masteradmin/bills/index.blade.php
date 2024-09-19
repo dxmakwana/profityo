@@ -107,7 +107,7 @@
                   @if (count($allBill) > 0)
                   @foreach ($allBill as $value)
                     <tr id="row-bill-{{ $value->sale_bill_id }}">
-                      <td>{{ $value->vendor->purchases_vendor_name }}</td>
+                      <td>{{ $value->vendor->purchases_vendor_name ?? ''}}</td>
                       <td>{{ $value->sale_bill_number }}</td>
                       <td>{{ \Carbon\Carbon::parse($value->sale_bill_date)->format('M d, Y') }}</td>
                       <td>{{ \Carbon\Carbon::parse($value->sale_bill_valid_date)->format('M d, Y') }}</td>

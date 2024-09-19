@@ -163,7 +163,7 @@
   <div class="modal fade" id="deletebill_{{ $bill->sale_bill_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ route('business.bill.destroy', ['id' => $bill->sale_bill_id]) }}" id="delete-form-{{ $bill->sale_bill_id }}" data-id="{{ $bill->sale_bill_id }}">
+          <form id="delete-form-{{ $bill->sale_bill_id }}" data-id="{{ $bill->sale_bill_id }}">
             @csrf
             @method('DELETE')
             <div class="modal-body pad-1 text-center">
@@ -171,12 +171,41 @@
                 <p class="company_business_name px-10"><b>Delete Bill</b></p>
                 <p class="company_details_text px-10">Delete Bill {{ $bill->sale_bill_id }}</p>
                 <p class="company_details_text">Are You Sure You Want to Delete This Bill?</p>
-                <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                <button type="button" class="delete_btn px-15" data-id="{{ $bill->sale_bill_id }}">Delete</button>
+                <button type="button" class="add_btn" data-dismiss="modal">Cancel</button>
+                <button type="button" class="delete_btn"  data-id="{{ $bill->sale_bill_id }}">Delete</button>
             </div>
             </form>
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+  $(document).on('click', '.delete_btn', function() {
+    var invoiceId = $(this).data('id'); // Get the bill ID
+    var form = $('#delete-form-' + invoiceId);
+    var url = "{{ route('business.bill.destroy', ':id') }}"; // Use the named route
+    url = url.replace(':id', invoiceId); // Replace with the actual ID
+
+    // Send DELETE request using AJAX
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: form.serialize(), // Serialize form data
+        success: function(response) {
+            if (response.success) {
+                // Redirect or update the UI dynamically
+                window.location.href = "{{ route('business.bill.index') }}";
+            } else {
+                alert('An error occurred: ' + response.message);
+            }
+        },
+        error: function(xhr) {
+            alert('An error occurred while deleting the record.');
+        }
+    });
+});
+</script>
 @endsection
 @endif

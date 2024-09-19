@@ -261,7 +261,7 @@
             </div>
             <div class="dropdown-divider"></div>
             <div class="col-md-12 text-center py-20">
-              <a href="#"><button class="add_btn_br px-10">Cancel</button></a>
+              <a href="{{ route('business.bill.index') }}" class="add_btn_br px-10">Cancel</a>
               <button class="add_btn px-10">Save</button>
             </div>
             <!-- /.row -->
@@ -453,7 +453,7 @@ $(document).ready(function () {
       formData[`items[${rowIndex}][sale_expense_id]`] = $(this).find('select[name="items[][sale_expense_id]"]').val();
       formData[`items[${rowIndex}][sale_bill_item_tax]`] = $(this).find('select[name="items[][sale_bill_item_tax]"]').val();
       formData[`items[${rowIndex}][sale_bill_item_price]`] = $(this).find('input[name="items[][sale_bill_item_price]"]').val();
-     
+      });
 
       formData['sale_vendor_id'] = $('select[name="sale_vendor_id"]').val();
       formData['sale_bill_number'] = $('input[name="sale_bill_number"]').val();
@@ -524,7 +524,7 @@ $(document).ready(function () {
       });
     });
     });
-  });
+
 
     function scrollToCenter($element) {
     // console.log('hiii');
@@ -545,7 +545,7 @@ $(document).ready(function () {
     }
 
   </script>
-    <script>
+  <script>
     document.addEventListener('DOMContentLoaded', function () {
 
         var fromInput = document.getElementById('from-datepicker-hidden');

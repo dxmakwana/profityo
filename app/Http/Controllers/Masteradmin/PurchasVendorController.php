@@ -12,7 +12,7 @@ use App\Models\PurchasVendor;
 use App\Models\Countries;
 use App\Models\States;
 use App\Models\PurchasVendorBankDetail;
-
+use App\Models\Bills;
 
 
 class PurchasVendorController extends Controller
@@ -206,7 +206,7 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
     $validatedData['purchases_contractor_type'] = $purchases_contractor_type; 
     
     // Update the vendor record with validated data
-    $PurchasVendoru->update($validatedData);
+    $PurchasVendoru->where('purchases_vendor_id', $purchases_vendor_id)->update($validatedData);
 
     // Redirect with success message
     return redirect()->route('business.purchasvendor.edit', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
@@ -225,15 +225,36 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
         return redirect()->route('business.purchasvendor.index')->with('purchases-vendor-delete', __('messages.masteradmin.purchases-vendor.delete_purchasesvendor_success'));
 
     }
-    public function show($purchases_vendor_id): View
+    public function show(Request $request,$purchases_vendor_id)
     {
         // Fetch the vendor details based on the ID
         $PurchasVendor = PurchasVendor::where('purchases_vendor_id', $purchases_vendor_id)->firstOrFail();
         $Country = Countries::all(); // Fetch all countries
         $States = States::all();
+
+        $query = Bills::where('sale_vendor_id', $purchases_vendor_id)->orderBy('created_at', 'desc');
+
+        $startDate = $request->input('start_date'); 
+        $endDate = $request->input('end_date');   
+       if ($startDate) {
+            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+        }
+    
+        if ($endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+        }
+
+
+        $filteredEstimates = $query->get();
+        $bills = $filteredEstimates;
+       
+        if ($request->ajax()) {
+          
+            return view('masteradmin.vendor.filtered_results', compact('PurchasVendor', 'Country', 'States','bills'))->render();
+        }
     
         // Pass the vendor details, countries, and states to the view
-        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States'));
+        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States','bills'));
     }
   
     public function addBankDetails(Request $request, $purchases_vendor_id)
