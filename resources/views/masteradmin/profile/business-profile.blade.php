@@ -58,7 +58,7 @@
                       <div class="row pad-5">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <x-input-label for="bus_company_name" :value="__('Business Name')" />
+                            <x-input-label for="bus_company_name" :value="__('Business Name')" /><span class="text-danger">*</span>
                             <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
                           </div>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <x-input-label for="country" :value="__('Country')" />
+                            <x-input-label for="country" :value="__('Country')" /><span class="text-danger">*</span>
                             <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
                               <option default>Select a Country...</option>
                               @foreach($countries as $country)
@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
-                            <x-input-label for="state" :value="__('Province/State')" />
+                            <x-input-label for="state" :value="__('Province/State')" /><span class="text-danger">*</span>
                             <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
                               <option default>Select a State...</option>
                               @foreach($states as $state)

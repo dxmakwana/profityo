@@ -15,7 +15,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item {{ request()->is($busadminRoutes.'/dashboard*') ? 'side_shape' : '' }}">
+          <li class="nav-item">
             <a href="{{ route('business.home') }}" class="nav-link {{ request()->is($busadminRoutes.'/dashboard*') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
@@ -37,7 +37,7 @@
             request()->is($busadminRoutes.'/edit_invoices/*')  || request()->is($busadminRoutes.'/view-invoice/*') || request()->is($busadminRoutes.'/duplicate-invoice/*') || request()->is($busadminRoutes.'/edit-invoice/*') || request()->is($busadminRoutes.'/duplicate-estimates/*') || request()->is($busadminRoutes.'/recurring-invoice-list*') || 
               request()->is($busadminRoutes.'/create-recurring-invoice*') || 
               request()->is($busadminRoutes.'/edit-recurring-invoices/*')  || request()->is($busadminRoutes.'/view-recurring-invoice/*') || request()->is($busadminRoutes.'/duplicate-recurring-invoice/*')
-                    ? 'menu-open side_shape' : '' }}">
+                    ? 'menu-open' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-credit-card"></i>
               <p>
@@ -128,7 +128,7 @@
                              request()->is($busadminRoutes.'/purchasesvendoredit/*') || request()->is($busadminRoutes.'/vendordetails/*')  ||  request()->is($busadminRoutes.'/bill-list*') || 
                              request()->is($busadminRoutes.'/create-bill*') || 
                              request()->is($busadminRoutes.'/edit-bill/*')   || request()->is($busadminRoutes.'/view-bill/*') || request()->is($busadminRoutes.'/duplicate-bill/*') || request()->is($busadminRoutes.'/add-bill/*')    
-                    ? 'menu-open side_shape' : '' }} ">
+                    ? 'menu-open' : '' }} ">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-shopping-cart"></i>
               <p>
@@ -419,7 +419,7 @@
            request()->is($busadminRoutes.'/userdetails*') || 
            request()->is($busadminRoutes.'/usercreate*') || 
            request()->is($busadminRoutes.'/useredit/*') 
-                    ? 'menu-open side_shape' : '' }}">
+                    ? 'menu-open' : '' }}">
             <a href="#" class="nav-link">
               <i class="nav-icon far fas fa-cog"></i>
               <p>

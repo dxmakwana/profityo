@@ -254,32 +254,54 @@ class EstimatesController extends Controller
             $estimateItem->save();
         }
 
+        // Retrieve session data
         $sessionData = session('form_data') ?? [];
 
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
 
-        // dd( $sessionssData);
-            foreach ($sessionData as $key => $value) {
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
                 $mname = str_replace('_', ' ', $key);
-
                 $menu = CustomizeMenu::where('mname', $mname)->first();
 
                 if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
+                    }
+
                     $data = [
-                        'sale_estim_id' => $estimate->id ?? null, 
-                        'id' => $user->id ?? NULL,
+                        'sale_estim_id' => $estimate->id ?? null,
+                        'id' => $user->id ?? null,
                         'mname' => $menu->mname,
-                        'mtitle' => $menu->mtitle,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
                         'mid' => $menu->cust_menu_id,
                         'is_access' => $value ? 1 : 0,
-                        'esti_cust_menu_title' => $value,
+                        'esti_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
                     ];
 
-                    $estimateMenu = new EstimateCustomizeMenu($data);
-                    $estimateMenu->save();
+                    // Update or create the record
+                    EstimateCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_estim_id' => $estimate->id ?? null],
+                        $data
+                    );
                 }
             }
+        }
 
-    
         // Clear the session data if necessary
         session()->forget('form_data');
 
@@ -338,10 +360,35 @@ class EstimatesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $estimatesCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
+        $estimatesCustomizeMenuIcon = EstimateCustomizeMenu::where('sale_estim_id', $id)
+        ->where('esti_cust_menu_title', 'on')
+        ->get(); // Convert collection to array
+
+        // dd($estimatesCustomizeMenuIcon);
+
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+        $estimateCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
+        // dd($estimateCustomizeMenu);
         // $states = States::get();
 
         // dd($estimates);
-        return view('masteradmin.estimates.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state'));
+        return view('masteradmin.estimates.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','estimatesCustomizeMenu','specificMenus','HideMenus', 'HideSettings', 'HideDescription','estimateCustomizeMenu','estimatesCustomizeMenuIcon'));
 
     }
 
@@ -401,6 +448,59 @@ class EstimatesController extends Controller
             $estimateItem->sale_estim_item_status = 1;
             $estimateItem->save();
         }
+
+         // Retrieve session data
+         $sessionData = session('form_data') ?? [];
+         EstimateCustomizeMenu::where('sale_estim_id', $estimates_id)->delete();
+
+         // Iterate through each item in session data
+         foreach ($sessionData as $key => $value) {
+             // Ignore _token and _method
+             if (in_array($key, ['_token', '_method'])) {
+                 continue;
+             }
+ 
+             // Check if the key has an "_other" counterpart
+             if (strpos($key, '_other') === false) {
+                 $mname = str_replace('_', ' ', $key);
+                 $menu = CustomizeMenu::where('mname', $mname)->first();
+ 
+                 if ($menu) {
+                     // Check if the _other counterpart exists in the session
+                     $otherKey = $key . '_other';
+                     $otherValue = $sessionData[$otherKey] ?? null;
+ 
+                     // Determine the mtitle value
+                     if ($otherValue) {
+                         // If there's an _other value, concatenate it with the main key value
+                         $mtitle = $value;
+                     } else {
+                         // Use the main key value if no _other value
+                         $mtitle = $value;
+                     }
+ 
+                     $data = [
+                         'sale_estim_id' => $estimates_id ?? null,
+                         'id' => $user->id ?? null,
+                         'mname' => $menu->mname,
+                         'mtitle' => $mtitle, // Set mtitle based on other_value if available
+                         'mid' => $menu->cust_menu_id,
+                         'is_access' => $value ? 1 : 0,
+                         'esti_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
+                     ];
+ 
+                     // Update or create the record
+                     EstimateCustomizeMenu::updateOrCreate(
+                         ['mname' => $menu->mname, 'sale_estim_id' => $estimate->id ?? null],
+                         $data
+                     );
+                 }
+             }
+         }
+ 
+         // Clear the session data if necessary
+         session()->forget('form_data');
+
 
         \MasterLogActivity::addToLog('Estimate is Edited.');
         session()->flash('estimate-edit', __('messages.masteradmin.estimate.edit_success'));
