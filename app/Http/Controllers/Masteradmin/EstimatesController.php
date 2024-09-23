@@ -433,6 +433,7 @@ class EstimatesController extends Controller
         $estimate->sale_estim_item_discount = $validatedData['sale_estim_item_discount'];
         $estimate->sale_currency_id = $validatedData['sale_currency_id'];
         $estimate->sale_total_days = $validatedData['sale_total_days'];
+        $estimate->sale_status = 'Draft';
         $estimate->where('sale_estim_id', $estimates_id)->update($validatedData);
 
         // dd(\DB::getQueryLog()); 
@@ -647,7 +648,7 @@ class EstimatesController extends Controller
     public function getMenuSessionData()
     {
         $sessionData = Session::get('form_data', []);
-        // dd($sessionData);
+        //dd($sessionData);
         return response()->json($sessionData);
     }
 
@@ -753,10 +754,30 @@ class EstimatesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+        $estimateCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
         // $states = States::get();
 
+        $estimatesCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
+      
+
         // dd($estimates);
-        return view('masteradmin.estimates.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId'));
+        return view('masteradmin.estimates.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId','HideMenus','estimateCustomizeMenu','estimatesCustomizeMenu','specificMenus','HideSettings','HideDescription'));
     }
 
     public function duplicateStore(Request $request)
@@ -817,31 +838,55 @@ class EstimatesController extends Controller
             $estimateItem->save();
         }
 
-        $sessionData = session('form_data', []);
+        // Retrieve session data
+        $sessionData = session('form_data') ?? [];
+        EstimateCustomizeMenu::where('sale_estim_id', $estimate->id)->delete();
 
-        // dd( $sessionssData);
-            foreach ($sessionData as $key => $value) {
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
+
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
                 $mname = str_replace('_', ' ', $key);
-
                 $menu = CustomizeMenu::where('mname', $mname)->first();
 
                 if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
+                    }
+
                     $data = [
-                        'sale_estim_id' => $estimate->id ?? null, 
-                        'id' => $user->id ?? NULL,
+                        'sale_estim_id' => $estimate->id ?? null,
+                        'id' => $user->id ?? null,
                         'mname' => $menu->mname,
-                        'mtitle' => $menu->mtitle,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
                         'mid' => $menu->cust_menu_id,
                         'is_access' => $value ? 1 : 0,
-                        'esti_cust_menu_title' => $value,
+                        'esti_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
                     ];
 
-                    $estimateMenu = new EstimateCustomizeMenu($data);
-                    $estimateMenu->save();
+                    // Update or create the record
+                    EstimateCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_estim_id' => $estimate->id ?? null],
+                        $data
+                    );
                 }
             }
+        }
 
-    
         // Clear the session data if necessary
         session()->forget('form_data');
 
@@ -1298,10 +1343,32 @@ class EstimatesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+        $estimateCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
+        // $states = States::get();
+
+        $estimatesCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
+    
+
         // $states = States::get();
 
         // dd($estimates);
-        return view('masteradmin.invoices.edit-invoice', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId'));
+        return view('masteradmin.invoices.edit-invoice', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId','specificMenus','HideMenus','HideSettings','HideDescription','estimateCustomizeMenu','estimatesCustomizeMenu'));
 
     }
 

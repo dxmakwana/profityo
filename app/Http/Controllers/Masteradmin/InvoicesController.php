@@ -106,31 +106,55 @@ class InvoicesController extends Controller
            
         }
 
-        $sessionData = session('form_data', []);
+        // Retrieve session data
+        $sessionData = session('form_data') ?? [];
+        InvoicesCustomizeMenu::where('sale_inv_id', $lastInsertedId)->delete();
 
-        // dd( $sessionssData);
-            foreach ($sessionData as $key => $value) {
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
+
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
                 $mname = str_replace('_', ' ', $key);
-
                 $menu = CustomizeMenu::where('mname', $mname)->first();
 
                 if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
+                    }
+
                     $data = [
-                        'sale_inv_id' => $lastInsertedId ?? null, 
-                        'id' => $user->id ?? NULL,
+                        'sale_inv_id' => $lastInsertedId ?? null,
+                        'id' => $user->id ?? null,
                         'mname' => $menu->mname,
-                        'mtitle' => $menu->mtitle,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
                         'mid' => $menu->cust_menu_id,
                         'is_access' => $value ? 1 : 0,
-                        'inv_cust_menu_title' => $value,
+                        'inv_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
                     ];
 
-                    $invoiceMenu = new InvoicesCustomizeMenu($data);
-                    $invoiceMenu->save();
+                    // Update or create the record
+                    InvoicesCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_inv_id' => $lastInsertedId ?? null],
+                        $data
+                    );
                 }
             }
+        }
 
-    
         // Clear the session data if necessary
         session()->forget('form_data');
 
@@ -240,10 +264,32 @@ class InvoicesController extends Controller
             $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
         }
 
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+        $invoiceCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
+        // $states = States::get();
+
+        $invoicesCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
+      
+        
         // $states = States::get();
 
         // dd($estimates);
-        return view('masteradmin.invoices.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state'));
+        return view('masteradmin.invoices.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','specificMenus','HideMenus','HideSettings','HideDescription','invoiceCustomizeMenu','invoicesCustomizeMenu'));
 
     }
 
@@ -318,6 +364,58 @@ class InvoicesController extends Controller
                     
             $invoiceItem->save();
         }
+
+        // Retrieve session data
+        $sessionData = session('form_data') ?? [];
+        InvoicesCustomizeMenu::where('sale_inv_id', $invoice_id)->delete();
+
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
+
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
+                $mname = str_replace('_', ' ', $key);
+                $menu = CustomizeMenu::where('mname', $mname)->first();
+
+                if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
+                    }
+
+                    $data = [
+                        'sale_inv_id' => $invoice_id ?? null,
+                        'id' => $user->id ?? null,
+                        'mname' => $menu->mname,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
+                        'mid' => $menu->cust_menu_id,
+                        'is_access' => $value ? 1 : 0,
+                        'inv_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
+                    ];
+
+                    // Update or create the record
+                    InvoicesCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_inv_id' => $invoice_id ?? null],
+                        $data
+                    );
+                }
+            }
+        }
+
+        // Clear the session data if necessary
+        session()->forget('form_data');
 
         \MasterLogActivity::addToLog('Invoice is Edited.');
         session()->flash('invoice-edit', __('messages.masteradmin.invoice.edit_success'));
@@ -463,35 +561,57 @@ class InvoicesController extends Controller
                
             }
     
-            // $sessionData = session('form_data', []);
+            // Retrieve session data
+        $sessionData = session('form_data') ?? [];
 
-            $sessionData = session('form_data') ?? [];
-    
-            // dd( $sessionssData);
-                foreach ($sessionData as $key => $value) {
-                    $mname = str_replace('_', ' ', $key);
-    
-                    $menu = CustomizeMenu::where('mname', $mname)->first();
-    
-                    if ($menu) {
-                        $data = [
-                            'sale_inv_id' => $lastInsertedId ?? null, 
-                            'id' => $user->id ?? NULL,
-                            'mname' => $menu->mname,
-                            'mtitle' => $menu->mtitle,
-                            'mid' => $menu->cust_menu_id,
-                            'is_access' => $value ? 1 : 0,
-                            'inv_cust_menu_title' => $value,
-                        ];
-    
-                        $invoiceMenu = new InvoicesCustomizeMenu($data);
-                        $invoiceMenu->save();
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
+
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
+                $mname = str_replace('_', ' ', $key);
+                $menu = CustomizeMenu::where('mname', $mname)->first();
+
+                if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
                     }
+
+                    $data = [
+                        'sale_inv_id' => $lastInsertedId ?? null,
+                        'id' => $user->id ?? null,
+                        'mname' => $menu->mname,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
+                        'mid' => $menu->cust_menu_id,
+                        'is_access' => $value ? 1 : 0,
+                        'inv_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
+                    ];
+
+                    // Update or create the record
+                    InvoicesCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_inv_id' => $lastInsertedId ?? null],
+                        $data
+                    );
                 }
-    
-        
-            // Clear the session data if necessary
-            session()->forget('form_data');
+            }
+        }
+
+        // Clear the session data if necessary
+        session()->forget('form_data');
+
           
             \MasterLogActivity::addToLog('Estimate is Added.');
     
@@ -875,8 +995,31 @@ class InvoicesController extends Controller
 
         // $states = States::get();
 
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+        $invoiceCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
+        // $states = States::get();
+
+        $invoicesCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
+      
+        
+
         // dd($estimates);
-        return view('masteradmin.invoices.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','newId'));
+        return view('masteradmin.invoices.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','newId','specificMenus','HideMenus','HideSettings','HideDescription','invoiceCustomizeMenu','invoicesCustomizeMenu'));
     }
 
     public function duplicateStore(Request $request)
@@ -955,33 +1098,58 @@ class InvoicesController extends Controller
                
             }
     
-            $sessionData = session('form_data', []);
-    
-            // dd( $sessionssData);
-                foreach ($sessionData as $key => $value) {
-                    $mname = str_replace('_', ' ', $key);
-    
-                    $menu = CustomizeMenu::where('mname', $mname)->first();
-    
-                    if ($menu) {
-                        $data = [
-                            'sale_inv_id' => $lastInsertedId ?? null, 
-                            'id' => $user->id ?? NULL,
-                            'mname' => $menu->mname,
-                            'mtitle' => $menu->mtitle,
-                            'mid' => $menu->cust_menu_id,
-                            'is_access' => $value ? 1 : 0,
-                            'inv_cust_menu_title' => $value,
-                        ];
-    
-                        $invoiceMenu = new InvoicesCustomizeMenu($data);
-                        $invoiceMenu->save();
+            // Retrieve session data
+        $sessionData = session('form_data') ?? [];
+        InvoicesCustomizeMenu::where('sale_inv_id', $lastInsertedId)->delete();
+
+        // Iterate through each item in session data
+        foreach ($sessionData as $key => $value) {
+            // Ignore _token and _method
+            if (in_array($key, ['_token', '_method'])) {
+                continue;
+            }
+
+            // Check if the key has an "_other" counterpart
+            if (strpos($key, '_other') === false) {
+                $mname = str_replace('_', ' ', $key);
+                $menu = CustomizeMenu::where('mname', $mname)->first();
+
+                if ($menu) {
+                    // Check if the _other counterpart exists in the session
+                    $otherKey = $key . '_other';
+                    $otherValue = $sessionData[$otherKey] ?? null;
+
+                    // Determine the mtitle value
+                    if ($otherValue) {
+                        // If there's an _other value, concatenate it with the main key value
+                        $mtitle = $value;
+                    } else {
+                        // Use the main key value if no _other value
+                        $mtitle = $value;
                     }
+
+                    $data = [
+                        'sale_inv_id' => $lastInsertedId ?? null,
+                        'id' => $user->id ?? null,
+                        'mname' => $menu->mname,
+                        'mtitle' => $mtitle, // Set mtitle based on other_value if available
+                        'mid' => $menu->cust_menu_id,
+                        'is_access' => $value ? 1 : 0,
+                        'inv_cust_menu_title' => $otherValue ?? $value, // Use _other value if available
+                    ];
+
+                    // Update or create the record
+                    InvoicesCustomizeMenu::updateOrCreate(
+                        ['mname' => $menu->mname, 'sale_inv_id' => $lastInsertedId ?? null],
+                        $data
+                    );
                 }
-    
-        
+            }
+        }
+
         // Clear the session data if necessary
         session()->forget('form_data');
+
       
         \MasterLogActivity::addToLog('Estimate is Duplicate.');
 

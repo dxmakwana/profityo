@@ -293,7 +293,7 @@
                                             <td class="text-center">{{ $item->sale_estim_item_qty }}</td>
                                             <td class="text-center">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $item->sale_estim_item_price }}</td>
                                             <!-- <td class="text-center">5%</td> -->
-                                            <td>{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
+                                            <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
                                             <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
                                             <td class="text-right">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $item->sale_estim_item_qty * $item->sale_estim_item_price ?? '0'}} </td>
                                         </tr>

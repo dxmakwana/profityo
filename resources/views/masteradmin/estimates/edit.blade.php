@@ -241,7 +241,7 @@
             <!-- <p class="within_day">Within 7 days</p> -->
             <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span>
               days</p>
-            <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+            <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
             <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
             </div>
           </div>
@@ -280,20 +280,20 @@
                 <?php      $hasData = true;?>
               @endif
             @endforeach -->
-@php
-    // Initialize $isChecked array
-    $isChecked = [];
+            @php
+                // Initialize $isChecked array
+                $isChecked1 = [];
 
-    // Populate $isChecked based on $HideMenus
-    foreach ($HideMenus as $hmenu) {
-        $isChecked[$hmenu->mname] = (old($hmenu->mname) || $estimateCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access);
-    }
-@endphp
+                // Populate $isChecked based on $HideMenus
+                foreach ($HideMenus as $hmenu) {
+                    $isChecked1[$hmenu->mname] = (old($hmenu->mname) || $estimateCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access);
+                }
+            @endphp
 
             @foreach($estimatesCustomizeMenu as $menu)
               @if($menu->is_access == 1 && $menu->esti_cust_menu_title !== "on")
                   @php
-                    // dd($isChecked);
+                    //dd($isChecked);
                       $headerText =  $menu->esti_cust_menu_title ?? ucfirst($menu->mname);
                       $mname = strtolower($menu->mname);  
                       //$hideIcon = strpos($mname, 'hide') !== false; 
@@ -308,31 +308,28 @@
                           $headerText = 'Amount';
                       }
 
-                      $isChecked = (old($menu->mname) || $estimateCustomizeMenu->where('mname', $menu->mname)->first()?->is_access);
-                      //dd($menu->mname, $isChecked);
-                      
-          
-                      //dd($currentChecked);
+                      $currentChecked = $isChecked1['hide ' . $mname] ?? false; 
+
                   @endphp
                 
                   @if(strpos($mname, 'item') !== false)
                       <th style="width: 30%;" id="itemsHeader">
                           {!! $headerText !!} 
-                          @if($isChecked)
+                          @if($currentChecked)
                               {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                           @endif
                       </th>
                     @elseif(strpos($mname, 'units') !== false)
                       <th id="unitsHeader">
                           {!! $headerText !!} 
-                          @if($isChecked)
+                          @if($currentChecked)
                             {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                          @endif
                       </th>
                   @elseif(strpos($mname, 'price') !== false)
                       <th id="priceHeader">
                           {!! $headerText !!} 
-                          @if($isChecked)
+                          @if($currentChecked)
                               {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                           @endif
                       </th>
@@ -340,7 +337,7 @@
                   @elseif(strpos($mname, 'amount') !== false)
                       <th id="amountHeader">
                           {!! $headerText !!} 
-                          @if($isChecked)
+                          @if($currentChecked)
                             {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                          @endif
                       </th>
@@ -2365,7 +2362,7 @@
 
         $('#itemsHeader').html(getHeaderTextWithIcon(
         data.Items_other || (data.Items === "Items (Default)" ? "Items" : data.Items),
-        data.hide_item_name
+        data.hide_items
         ));
         $('#unitsHeader').html(getHeaderTextWithIcon(
         data.Units_other || (data.Units === "Quantity (Default)" ? "Quantity" : data.Units),

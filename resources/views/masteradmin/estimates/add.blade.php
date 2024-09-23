@@ -1658,7 +1658,7 @@
       url: '{{ route('estimatemenus.menulist') }}',
       type: 'GET',
       success: function (data) {
-        // console.log(data);
+        console.log(data);
         // $('#itemsHeader').text(data.Items_other || data.Items || 'Items');
         // $('#unitsHeader').text(data.Units_other || data.Units || 'Units');
         // $('#priceHeader').text(data.Price_other || data.Price || 'Price');
@@ -1666,7 +1666,7 @@
 
         $('#itemsHeader').html(getHeaderTextWithIcon(
         data.Items_other || (data.Items === "Items (Default)" ? "Items" : data.Items),
-        data.hide_item_name
+        data.hide_item
         ));
         $('#unitsHeader').html(getHeaderTextWithIcon(
         data.Units_other || (data.Units === "Quantity (Default)" ? "Quantity" : data.Units),

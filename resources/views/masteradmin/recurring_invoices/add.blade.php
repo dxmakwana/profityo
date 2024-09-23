@@ -86,7 +86,7 @@
             <div class="col-md-7 float-sm-right">
             <input type="text" class="form-control text-right @error('sale_estim_title') is-invalid @enderror"
               name="sale_estim_title" id="estimatetitle" value="{{ old('sale_estim_title') }}"
-              placeholder="Estimate Title">
+              placeholder="Invoice Title">
             @error('sale_estim_title')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
@@ -97,7 +97,7 @@
 
             <input type="text" class="form-control text-right @error('sale_estim_summary') is-invalid @enderror"
               name="sale_estim_summary" id="estimatesummary" value="{{ old('sale_estim_summary') }}"
-              placeholder="Summary (e.g. project name, description of estimate)">
+              placeholder="Summary (e.g. project name, description of Invoice)">
             @error('sale_estim_summary')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
@@ -544,7 +544,7 @@
       @csrf
     @method('patch')
     <div class="modal-body">
-        <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This Estimate:</div>
+        <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This Invoice:</div>
         @foreach($specificMenus as $menu)
         <div class="colum_box">
           <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>

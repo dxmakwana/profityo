@@ -54,6 +54,7 @@
         </div>
         <!-- /.row -->
         <!-- Main row -->
+        <div id="filter_data">
           <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
             <ul class="nav nav-pills p-2 tab_box">
               <li class="nav-item"><a class="nav-link active" href="#activerecurringinvoice" data-toggle="tab">Active <span class="badge badge-toes">{{ count($activereInvoices) }}</span></a></li>
@@ -248,7 +249,7 @@
               <!-- /.tab-content -->
             </div><!-- /.card-body -->
           </div><!-- /.card-->
-          
+        </div>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
     </section>
@@ -263,5 +264,49 @@
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    var defaultSaleCusId = "";  
+  
+       
+        $('#sale_cus_id').val(defaultSaleCusId);
+        $('.filter-text').on('click', function() {
+                clearFilters();
+            });
+   
+    // Function to fetch filtered data
+    function fetchFilteredData() {
+        var formData = {
+            sale_cus_id: $('#sale_cus_id').val(),
+            _token: '{{ csrf_token() }}'
+        };
+       
+        // console.log(formData);
+        $.ajax({
+            url: '{{ route('business.recurring_invoices.index') }}',
+            type: 'GET',
+            data: formData,
+            success: function(response) {
+              // console.log(response);
+                $('#filter_data').html(response);
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr);
+                alert('An error occurred while fetching data.');
+            }
+        });
+    }
+    // Attach change event handlers to filter inputs
+    $('#sale_cus_id').on('change keyup', function(e) {
+      e.preventDefault(); 
+      fetchFilteredData();
+    });
+    function clearFilters() {
+          $('#sale_cus_id').val('').trigger('change');
+            fetchFilteredData(); // Example: Fetch data based on the cleared filters
+            }
+});
+</script>
 @endsection
 @endif

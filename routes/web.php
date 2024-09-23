@@ -265,7 +265,11 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/view-recurring-invoice/{id}', [RecurringInvoicesController::class, 'view'])->name('business.recurring_invoices.view');
         Route::get('/duplicate-recurring-invoice/{id}', [RecurringInvoicesController::class, 'duplicate'])->name('business.recurring_invoices.duplicate');
         Route::patch('/duplicate-recurring-invoice-store/{id}', [RecurringInvoicesController::class, 'duplicateStore'])->name('business.recurring_invoices.duplicateStore');
-    
+        Route::patch('/recurring-invoice-store/set_schedule/{id}', [RecurringInvoicesController::class, 'setScheduleStore'])->name('business.recurring_invoices.setScheduleStore');
+        Route::get('/recurring-invoice-store/invoice/{id}', [RecurringInvoicesController::class, 'recurringinvoiceStore'])->name('business.recurring_invoices.recurringinvoiceStore');
+        Route::patch('/reinvoice/menu/update', [RecurringInvoicesController::class, 'menuUpdate'])->name('reinvoicesmenus.update');
+        Route::get('/reinvoice/menu/list', [RecurringInvoicesController::class, 'getMenuSessionData'])->name('reinvoicesmenus.menulist');
+
 
         //bills
         Route::get('/bill-list', [BillsController::class, 'index'])->name('business.bill.index');

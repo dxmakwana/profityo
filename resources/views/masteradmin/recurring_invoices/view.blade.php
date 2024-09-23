@@ -678,17 +678,20 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        <?php //dd($reinvoicesschedule); ?>
+        <form action="{{ route('business.recurring_invoices.setScheduleStore', $reinvoices->sale_re_inv_id) }}" method="POST">
+        @csrf
+        @method('PATCH')
         <div class="modal-body">
-          <form>
             <div class="row pxy-15 px-10">
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Repeat this Invoice</label>
-                  <select id="repeat-invoice-select" class="form-control form-select">
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    <option>Monthly</option>
-                    <option>Yearly</option>
+                  <select id="repeat-invoice-select" name="repeat_inv_type" class="form-control form-select">
+                    <option value="Daily" {{ $reinvoicesschedule->repeat_inv_type ?? '' == 'Daily' ? 'selected' : '' }}>Daily</option>
+                    <option value="Weekly" {{ $reinvoicesschedule->repeat_inv_type ?? '' == 'Weekly' ? 'selected' : '' }}>Weekly</option>
+                    <option value="Monthly" {{ $reinvoicesschedule->repeat_inv_type ?? '' == 'Monthly' ? 'selected' : '' }}>Monthly</option>
+                    <option value="Yearly" {{ $reinvoicesschedule->repeat_inv_type ?? '' == 'Yearly' ? 'selected' : '' }}>Yearly</option>
                     <!-- <option>Custom</option> -->
                   </select>
                 </div>
@@ -696,72 +699,72 @@
               <div class="col-md-3" id="day-selection-row" style="display:none;">
                 <div class="form-group">
                 <label>every</label>
-                <select class="form-control form-select" id="day-select">
-                    <option value="1">Monday</option>
-                    <option value="2">Tuesday</option>
-                    <option value="3">Wednesday</option>
-                    <option value="4">Thursday</option>
-                    <option value="5">Friday</option>
-                    <option value="6">Saturday</option>
-                    <option value="0">Sunday</option>
+                <select class="form-control form-select" name="repeat_inv_day" id="day-select">
+                    <option value="1" {{ $reinvoicesschedule->repeat_inv_day ?? '' == '1' ? 'selected' : '' }}>Monday</option>
+                    <option value="2"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '2' ? 'selected' : '' }}>Tuesday</option>
+                    <option value="3"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '3' ? 'selected' : '' }}>Wednesday</option>
+                    <option value="4"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '4' ? 'selected' : '' }}>Thursday</option>
+                    <option value="5"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '5' ? 'selected' : '' }}>Friday</option>
+                    <option value="6"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '6' ? 'selected' : '' }}>Saturday</option>
+                    <option value="0"  {{ $reinvoicesschedule->repeat_inv_day ?? '' == '0' ? 'selected' : '' }}>Sunday</option>
                 </select>
                 </div>
               </div>
               <div class="col-md-3" id="month-selection-row" style="display:none;">
                 <div class="form-group">
                     <label>every</label>
-                    <select class="form-control form-select" id="month-select">
-                        <option value="0">January</option>
-                        <option value="1">February</option>
-                        <option value="2">March</option>
-                        <option value="3">April</option>
-                        <option value="4">May</option>
-                        <option value="5">June</option>
-                        <option value="6">July</option>
-                        <option value="7">August</option>
-                        <option value="8">September</option>
-                        <option value="9">October</option>
-                        <option value="10">November</option>
-                        <option value="11">December</option>
+                    <select class="form-control form-select" name="repeat_inv_month" id="month-select">
+                        <option value="0" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '0' ? 'selected' : '' }}>January</option>
+                        <option value="1" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '1' ? 'selected' : '' }}>February</option>
+                        <option value="2" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '2' ? 'selected' : '' }}>March</option>
+                        <option value="3" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '3' ? 'selected' : '' }}>April</option>
+                        <option value="4" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '4' ? 'selected' : '' }}>May</option>
+                        <option value="5" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '5' ? 'selected' : '' }}>June</option>
+                        <option value="6" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '6' ? 'selected' : '' }}>July</option>
+                        <option value="7" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '7' ? 'selected' : '' }}>August</option>
+                        <option value="8" {{ $reinvoicesschedule->repeat_inv_month?? ''  == '8' ? 'selected' : '' }}>September</option>
+                        <option value="9" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '9' ? 'selected' : '' }}>October</option>
+                        <option value="10" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '10' ? 'selected' : '' }}>November</option>
+                        <option value="11" {{ $reinvoicesschedule->repeat_inv_month ?? '' == '11' ? 'selected' : '' }}>December</option>
                     </select>
                 </div>
               </div>
               <div class="col-md-3" id="date-selection-row" style="display:none;">
                 <div class="form-group">
                 <label>on the</label>
-                <select class="form-control form-select" id="date-select">
-                    <option value="First">First</option>
-                    <option value="Last">Last</option>
-                    <option value="2nd">2nd</option>
-                    <option value="3rd">3rd</option>
-                    <option value="4th">4th</option>
-                    <option value="5th">5th</option>
-                    <option value="6th">6th</option>
-                    <option value="7th">7th</option>
-                    <option value="8th">8th</option>
-                    <option value="9th">9th</option>
-                    <option value="10th">10th</option>
-                    <option value="11th">11th</option>
-                    <option value="12th">12th</option>
-                    <option value="13th">13th</option>
-                    <option value="14th">14th</option>
-                    <option value="15th">15th</option>
-                    <option value="16th">16th</option>
-                    <option value="17th">17th</option>
-                    <option value="18th">18th</option>
-                    <option value="19th">19th</option>
-                    <option value="20th">20th</option>
-                    <option value="21st">21st</option>
-                    <option value="22nd">22nd</option>
-                    <option value="23rd">23rd</option>
-                    <option value="24th">24th</option>
-                    <option value="25th">25th</option>
-                    <option value="26th">26th</option>
-                    <option value="27th">27th</option>
-                    <option value="28th">28th</option>
-                    <option value="29th">29th</option>
-                    <option value="30th">30th</option>
-                    <option value="31st">31st</option>
+                <select class="form-control form-select" name="repeat_inv_date" id="date-select">
+                    <option value="First" {{ $reinvoicesschedule->repeat_inv_date ?? '' == 'First' ? 'selected' : '' }}>First</option>
+                    <option value="Last" {{ $reinvoicesschedule->repeat_inv_date ?? '' == 'Last' ? 'selected' : '' }}>Last</option>
+                    <option value="2nd" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '2nd' ? 'selected' : '' }}>2nd</option>
+                    <option value="3rd" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '3rd' ? 'selected' : '' }}>3rd</option>
+                    <option value="4th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '4th' ? 'selected' : '' }}>4th</option>
+                    <option value="5th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '5th' ? 'selected' : '' }}>5th</option>
+                    <option value="6th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '6th' ? 'selected' : '' }}>6th</option>
+                    <option value="7th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '7th' ? 'selected' : '' }}>7th</option>
+                    <option value="8th" {{ $reinvoicesschedule->repeat_inv_date ?? ''== '8th' ? 'selected' : '' }}>8th</option>
+                    <option value="9th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '9th' ? 'selected' : '' }}>9th</option>
+                    <option value="10th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '10th' ? 'selected' : '' }}>10th</option>
+                    <option value="11th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '11th' ? 'selected' : '' }}>11th</option>
+                    <option value="12th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '12th' ? 'selected' : '' }}>12th</option>
+                    <option value="13th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '13th' ? 'selected' : '' }}>13th</option>
+                    <option value="14th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '14th' ? 'selected' : '' }}>14th</option>
+                    <option value="15th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '15th' ? 'selected' : '' }}>15th</option>
+                    <option value="16th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '16th' ? 'selected' : '' }}>16th</option>
+                    <option value="17th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '17th' ? 'selected' : '' }}>17th</option>
+                    <option value="18th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '18th' ? 'selected' : '' }}>18th</option>
+                    <option value="19th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '19th' ? 'selected' : '' }}>19th</option>
+                    <option value="20th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '20th' ? 'selected' : '' }}>20th</option>
+                    <option value="21st" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '21st' ? 'selected' : '' }}>21st</option>
+                    <option value="22nd" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '22nd' ? 'selected' : '' }}>22nd</option>
+                    <option value="23rd" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '23rd' ? 'selected' : '' }}>23rd</option>
+                    <option value="24th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '24th' ? 'selected' : '' }}>24th</option>
+                    <option value="25th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '25th' ? 'selected' : '' }}>25th</option>
+                    <option value="26th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '26th' ? 'selected' : '' }}>26th</option>
+                    <option value="27th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '27th' ? 'selected' : '' }}>27th</option>
+                    <option value="28th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '28th' ? 'selected' : '' }}>28th</option>
+                    <option value="29th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '29th' ? 'selected' : '' }}>29th</option>
+                    <option value="30th" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '30th' ? 'selected' : '' }}>30th</option>
+                    <option value="31st" {{ $reinvoicesschedule->repeat_inv_date ?? '' == '31st' ? 'selected' : '' }}>31st</option>
                 </select>
                 <label>day of every month</label>
                 </div>
@@ -774,7 +777,7 @@
                 <div class="form-group">
                   <label>Create first invoice on</label>
                   <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                    <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date" />
+                    <x-flatpickr id="from-datepicker" name="invoice_date" placeholder="Select a date"/>
                     <div class="input-group-append">
                         <div class="input-group-text" id="from-calendar-icon">
                         <i class="fa fa-calendar-alt"></i>
@@ -786,41 +789,42 @@
               
               <div class="col-md-2">
                 <div class="form-group">
-                  <label>and end</label>
-                  <select class="form-control form-select">
-                    <option>After</option>
-                    <option>On</option>
-                    <option>Never</option>
-                  </select>
+                    <label>and end</label>
+                    <select class="form-control form-select" name="create_inv_type" id="end-type">
+                        <option value="after" {{ $reinvoicesschedule->create_inv_type ?? '' == 'after' ? 'selected' : '' }}>After</option>
+                        <option value="on" {{ $reinvoicesschedule->create_inv_type ?? '' == 'on' ? 'selected' : '' }}>On</option>
+                        <option value="never" {{ empty($reinvoicesschedule->create_inv_type) || ($reinvoicesschedule->create_inv_type ?? '') == 'never' ? 'selected' : '' }}>Never</option>
+                    </select>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-md-2">
+            <div class="col-md-2" id="after-input" style="display: none;">
                 <div class="form-group">
-                    <input type="number" class="form-control" name="invoice_number" id="invoice_number" value="1"><label>invoices</label>
+                    <input type="number" class="form-control" name="create_inv_number" id="invoice_number" value="1" value="{{ $reinvoicesschedule->create_inv_number ?? '' }}">
+                    <label>invoices</label>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-md-3">
+            <div class="col-md-3" id="on-datepicker" style="display: none;">
                 <div class="form-group">
-                <div class="input-group date" id="invoicedate" data-target-input="nearest">
-                    <x-flatpickr id="invoicedate-datepicker" name="invoicedate" placeholder="Select a date" />
-                    <div class="input-group-append">
-                        <div class="input-group-text" id="invoicedate-calendar-icon">
-                        <i class="fa fa-calendar-alt"></i>
+                    <div class="input-group date" id="invoicedate" data-target-input="nearest">
+                        <x-flatpickr id="invoicedate-datepicker" name="create_inv_date" placeholder="Select a date" />
+                        <div class="input-group-append">
+                            <div class="input-group-text" id="invoicedate-calendar-icon">
+                                <i class="fa fa-calendar-alt"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
-                </div>
-              </div>
+            </div>
 
             </div>
-          </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+          <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
           <button type="submit" class="add_btn">Save</button>
         </div>
+        </form>
       </div>
     </div>
     </div>
@@ -986,7 +990,7 @@
                     _token: '{{ csrf_token() }}' 
                 },
                 success: function(response) {
-                    alert('Estimate link sent to the customer successfully.');
+                    alert('Invoice link sent to the customer successfully.');
                     location.reload(); 
                 },
                 error: function(xhr) {
@@ -1054,7 +1058,23 @@
 //       fromdatepicker.setDate(nextDate);
 //     });
 // });
+    $('#end-type').change(function () {
+        var selectedValue = $(this).val();
+        
+        // Hide both fields initially
+        $('#after-input').hide();
+        $('#on-datepicker').hide();
 
+        // Show the appropriate field based on the selected value
+        if (selectedValue === 'after') {
+            $('#after-input').show();
+        } else if (selectedValue === 'on') {
+            $('#on-datepicker').show();
+        }
+    });
+
+    // Trigger change event on page load in case "After" or "On" is pre-selected
+    $('#end-type').trigger('change');
 
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize Flatpickr with today's date

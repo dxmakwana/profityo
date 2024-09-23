@@ -17,6 +17,10 @@ class InvoicesDetails extends Model
         parent::__construct($attributes);
 
         // Dynamically set the table name
+        $userDetails = session('user_details');
+        Auth::guard('masteradmins')->setUser($userDetails);
+        $user = Auth::guard('masteradmins')->user();
+        
         $user = Auth::guard('masteradmins')->user();
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_invoices_details');

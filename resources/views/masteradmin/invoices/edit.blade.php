@@ -240,7 +240,7 @@
                       <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
                       <!-- <p class="within_day">Within 7 days</p> -->
                       <p class="within_day">Within <span id="total-days">{{ $invoices->sale_total_days ?? '0' }}</span> days</p>
-                      <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+                      <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
                       <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
 
                     </div>
@@ -258,13 +258,91 @@
                 <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
                   <thead>
                   <tr>
-                    <th style="width: 400px;">Items</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <!-- <th>Discount</th> -->
+                    <?php
+                  // dd($estimatesCustomizeMenu);
+                        $hasData = false; // Flag to check if any data is displayed
+                       
+                      ?>
+
+                    @php
+                        // Initialize $isChecked array
+                        
+                        $isChecked1 = [];
+
+                        // Populate $isChecked based on $HideMenus
+                        foreach ($HideMenus as $hmenu) {
+                            $isChecked1[$hmenu->mname] = (old($hmenu->mname) || $invoiceCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access);
+                        }
+                    @endphp
+
+                    @foreach($invoicesCustomizeMenu as $menu)
+                      @if($menu->is_access == 1 && $menu->inv_cust_menu_title !== "on")
+                          @php
+                          $hasData = true;
+                            //dd($isChecked);
+                              $headerText =  $menu->inv_cust_menu_title ?? ucfirst($menu->mname);
+                              $mname = strtolower($menu->mname);  
+                              //$hideIcon = strpos($mname, 'hide') !== false; 
+                              $hideIcon = ''; 
+                              if ($headerText === 'Items (Default)' ) {
+                                  $headerText = 'Items';
+                              }elseif ($headerText === 'Quantity (Default)' ) {
+                                  $headerText = 'Quantity';
+                              }elseif ($headerText === 'Price (Default)' ) {
+                                  $headerText = 'Price';
+                              }elseif ($headerText === 'Amount (Default)' ) {
+                                  $headerText = 'Amount';
+                              }
+
+                              $currentChecked = $isChecked1['hide ' . $mname] ?? false; 
+
+                          @endphp
+                        
+                          @if(strpos($mname, 'item') !== false)
+                              <th style="width: 30%;" id="itemsHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                      {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                  @endif
+                              </th>
+                            @elseif(strpos($mname, 'units') !== false)
+                              <th id="unitsHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                @endif
+                              </th>
+                          @elseif(strpos($mname, 'price') !== false)
+                              <th id="priceHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                      {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                  @endif
+                              </th>
+                              <th>Tax</th> <!-- Always include Tax when price is available -->
+                          @elseif(strpos($mname, 'amount') !== false)
+                              <th id="amountHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                @endif
+                              </th>
+                              <th>Actions</th>
+                          @endif
+                      @endif
+                    @endforeach
+
+
+
+                    @if(!$hasData)
+                <!-- Default Headers -->
+                    <th style="width: 30%;" id="itemsHeader">Items</th>
+                    <th id="unitsHeader">Units</th>
+                    <th id="priceHeader">Price</th>
                     <th>Tax</th>
-                    <th class="text-right">Amount</th>
-                    <th>Actions</th>
+                    <th id="amountHeader">Amount</th>
+                    <th>Actions</th> <!-- New column for actions -->
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
@@ -565,230 +643,137 @@
 </div>
 
 
+
 <div class="modal fade" id="editcolum" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Customize this Invoice</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <h5 class="modal-title" id="exampleModalLongTitle">Customize this invoice</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
       </div>
-      <form method="post" action="" class="mt-6 space-y-6" enctype="multipart/form-data">
-        @csrf
-        @method('patch')
-        <div class="modal-body">
-          <div class="modal_sub_title" style="margin-top: 0;">Edit The Titles Of The Columns Of This
-            Invoice:</div>
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Items</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="item1" name="r1" checked>
-                  <label for="item1">Items (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="icheck-primary">
-                  <input type="radio" id="item2" name="r1">
-                  <label for="item2">Products</label>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="icheck-primary">
-                  <input type="radio" id="item3" name="r1">
-                  <label for="item3">Services</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="item4" name="r1">
-                  <label for="item4">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
+      <form method="post" id="estimateForm" action="{{ route('invoicesmenus.update') }}" class="mt-6 space-y-6"
+      enctype="multipart/form-data">
+      @csrf
+      @method('patch')
+      <div class="modal-body">
+    <div class="modal_sub_title" style="margin-top: 0;">Edit the titles of the columns of this invoice:</div>
+    
+    @foreach($specificMenus as $menu)
+        <div class="colum_box">
+            <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
 
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Units</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="quantity1" name="r2" checked>
-                  <label for="quantity1">Quantity (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="quantity2" name="r2">
-                  <label for="quantity2">Hours</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="quantity3" name="r2">
-                  <label for="quantity3">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Price</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="price1" name="r3" checked>
-                  <label for="price1">Price (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="price2" name="r3">
-                  <label for="price2">Rate</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="price3" name="r3">
-                  <label for="price3">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Discount</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="discount1" name="r4" checked>
-                  <label for="discount1">Discount (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="discount2" name="r4">
-                  <label for="discount2">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Tax</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="tax1" name="r5" checked>
-                  <label for="tax1">Tax (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="tax2" name="r5">
-                  <label for="tax2">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="colum_box">
-            <h2 class="edit-colum_title">Amount</h2>
-            <div class="row align-items-center justify-content-between">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="amount1" name="r6" checked>
-                  <label for="amount1">Amount (Default)</label>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="amount2" name="r6">
-                  <label for="amount2">Other</label>
-                  <input type="text" class="form-control mar_15" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="modal_sub_title px-15">Hide columns:</div>
-
-          <div class="colum_box">
-            <div class="row align-items-center">
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hideitem" name="r7">
-                  <label for="hideitem">Hide Item Name</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hideunit" name="r8">
-                  <label for="hideunit">Hide Units</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hideprice" name="r9">
-                  <label for="hideprice">Hide Price</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hidediscount" name="r10">
-                  <label for="hidediscount">Hide Discount</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hidetax" name="r11">
-                  <label for="hidetax">Hide Tax</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hideamount" name="r12">
-                  <label for="hideamount">Hide Amount</label>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="hidedescription" name="r13">
-                  <label for="hidedescription">Hide Item Description</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row pad-3">
-            <div class="col-md-12">
-              <div class="icheck-primary">
-                <input type="radio" id="apply1" name="r16">
-                <label for="apply1">Apply These Settings to Future Invoices.</label>
-                <p>These settings will apply to invoices and invoices. You can change these anytime from
-                  Invoice Customization settings.</p>
-              </div>
-            </div>
-          </div>
+            @if($menu->children->count() > 0)
+                <div class="row align-items-center justify-content-between">
+                    @foreach($menu->children as $child)
+                        @if($child->mtitle == 'Other')
+                            <div class="col-md-3">
+                                <div class="icheck-primary d-flex align-items-center">
+                                @php
+                                    $item = $invoiceCustomizeMenu->where('mname', $menu->mname)->first();
+                                    
+                                    $value = ' ';
+                                    // Check conditions for setting the $value
+                                    if($item)
+                                    {
+                                      
+                                        if ($item->mtitle == 'price other' || $item->mtitle == 'amount other' || $item->mtitle == 'item other' ||  $item->mtitle == 'units other') {
+                                            $value = $item->inv_cust_menu_title ?? '';
+                                            //dd($value);
+                                        } 
+                                      }
+                                @endphp
+                                   
+                                    <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" 
+                                        value="{{ $child->mname }}" 
+                                        {{ ($invoiceCustomizeMenu->where('mname', $menu->mname)->first()?->inv_cust_menu_title == $value ) ? 'checked' : '' }}>
+                                    
+                                    <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
 
 
+                                    <!-- Pre-fill text field -->
+                                  
+                                  <input type="text" class="form-control mar_15" placeholder="" 
+                                      name="{{ $menu->mtitle }}_other"
+                                      value="{{ $value }}">
+                                </div>
+                            </div>
+                        @else
+                            <div class="col-md-3">
+                                <div class="icheck-primary">
+                                    <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" 
+                                        value="{{ $child->mtitle }}" 
+                                        {{ (old($menu->mtitle) == $child->mtitle || $invoiceCustomizeMenu->where('mname', $menu->mname)->first()?->inv_cust_menu_title == $child->mtitle) ? 'checked' : '' }}>
+                                    
+                                    <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            @endif
         </div>
-        <div class="modal-footer">
-          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="add_btn">Save</button>
+    @endforeach
+
+    <div class="modal_sub_title px-15">Hide columns:</div>
+
+    <div class="colum_box">
+        <div class="row align-items-center">
+            @foreach($HideMenus as $hmenu)
+                <div class="col-md-3">
+                    <div class="icheck-primary">
+                        <!-- Pre-select checkbox -->
+                        <input type="checkbox" id="{{ $hmenu->mname }}" name="{{ $hmenu->mname }}" 
+                            {{ (old($hmenu->mname) || $invoiceCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access) ? 'checked' : '' }}>
+                        
+                        <label for="{{ $hmenu->mname }}">{{ $hmenu->mtitle }}</label>
+                        <p>{{ $hmenu->sub_title }}</p>
+                    </div>
+                </div>
+            @endforeach
+
+            @foreach($HideDescription as $dmenu)
+                <div class="col-md-12">
+                    <div class="icheck-primary">
+                        <!-- Pre-select checkbox -->
+                        <input type="checkbox" id="{{ $dmenu->mname }}" name="{{ $dmenu->mname }}" 
+                            {{ (old($dmenu->mname) || $invoiceCustomizeMenu->where('mname', $dmenu->mname)->first()?->is_access) ? 'checked' : '' }}>
+                        
+                        <label for="{{ $dmenu->mname }}">{{ $dmenu->mtitle }}</label>
+                        <p>{{ $dmenu->sub_title }}</p>
+                    </div>
+                </div>
+            @endforeach
         </div>
+    </div>
+
+    <div class="row pad-3">
+        <div class="col-md-12">
+            @foreach($HideSettings as $smenu)
+                <div class="icheck-primary">
+                    <!-- Pre-select checkbox -->
+                    <input type="checkbox" id="{{ $smenu->mname }}" name="{{ $smenu->mname }}" 
+                        {{ (old($smenu->mname) || $invoiceCustomizeMenu->where('mname', $smenu->mname)->first()?->is_access) ? 'checked' : '' }}>
+                    
+                    <label for="{{ $smenu->mname }}">{{ $smenu->mtitle }}</label>
+                    <p>{{ $smenu->sub_title }}</p>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    </div>
+
+      <div class="modal-footer">
+        <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
+        <button type="submit" class="add_btn">Save</button>
+      </div>
       </form>
     </div>
+    </div>
   </div>
-</div>
+
 
 <div class="modal fade" id="editcustor_modal_{{ $invoices->customer->sale_cus_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -2280,6 +2265,73 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     </script>
+ <script>
+    $(document).ready(function () {
+    $('#estimateForm').on('submit', function (e) {
+      e.preventDefault();
+      $.ajax({
+      url: $(this).attr('action'),
+      type: 'PATCH',
+      data: $(this).serialize(),
+      success: function (response) {
+        // console.log(response); 
 
+        if (response.success) {
+        updateTableHeaders();
+        $('#editcolum').modal('hide');
+        // alert(response.message);
+        } else {
+        alert('An unexpected error occurred.');
+        }
+      },
+      error: function (xhr) {
+        alert('An error occurred while updating the menu.');
+      }
+      });
+    });
+
+    function updateTableHeaders() {
+      $.ajax({
+      url: '{{ route('invoicesmenus.menulist') }}',
+      type: 'GET',
+      success: function (data) {
+        // console.log(data);
+        // $('#itemsHeader').text(data.Items_other || data.Items || 'Items');
+        // $('#unitsHeader').text(data.Units_other || data.Units || 'Units');
+        // $('#priceHeader').text(data.Price_other || data.Price || 'Price');
+        // $('#amountHeader').text(data.Amount_other || data.Amount || 'Amount');
+
+        $('#itemsHeader').html(getHeaderTextWithIcon(
+        data.Items_other || (data.Items === "Items (Default)" ? "Items" : data.Items),
+        data.hide_items
+        ));
+        $('#unitsHeader').html(getHeaderTextWithIcon(
+        data.Units_other || (data.Units === "Quantity (Default)" ? "Quantity" : data.Units),
+        data.hide_units
+        ));
+        $('#priceHeader').html(getHeaderTextWithIcon(
+        data.Price_other || (data.Price === "Price (Default)" ? "Price" : data.Price),
+        data.hide_price
+        ));
+        $('#amountHeader').html(getHeaderTextWithIcon(
+        data.Amount_other || (data.Amount === "Amount (Default)" ? "Amount" : data.Amount),
+        data.hide_amount
+        ));
+      },
+      error: function (xhr) {
+        console.error('Failed to retrieve session data.');
+      }
+      });
+    }
+
+    function getHeaderTextWithIcon(headerText, hideIcon) {
+      if (hideIcon === "on") {
+      return `${headerText} <i class="fa fa-eye-slash" aria-hidden="true"></i>`;
+      } else {
+      return headerText;
+      }
+    }
+    });
+  </script>
 @endsection
 @endif
