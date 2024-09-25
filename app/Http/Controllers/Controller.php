@@ -631,6 +631,20 @@ class Controller extends BaseController
                     $table->timestamps();
                 });
             }
+
+            //customer contact
+            if (!Schema::hasTable($storeId . '_py_sale_customer_contact')) {
+                Schema::create($storeId . '_py_sale_customer_contact', function (Blueprint $table) {
+                    $table->increments('cus_con_id');
+                    $table->integer('id')->nullable()->default(0);
+                    $table->integer('sale_cus_id')->nullable()->default(0);
+                    $table->string('cus_con_name')->nullable();
+                    $table->string('cus_con_email')->nullable();
+                    $table->string('cus_con_phone')->nullable();
+                    $table->tinyInteger('cus_con_status')->default(0)->nullable();
+                    $table->timestamps();
+                });
+            }
             
 
         }

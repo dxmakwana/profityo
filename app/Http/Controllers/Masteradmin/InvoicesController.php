@@ -24,6 +24,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\SentLog;
+use Illuminate\Validation\Rule;
 
 
 class InvoicesController extends Controller
@@ -33,11 +34,18 @@ class InvoicesController extends Controller
     {
         // dd($request);
         // dd($request->sale_currency_id);
+        $user = Auth::guard('masteradmins')->user();
+
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_invoices_details'; 
+
+
       $request->validate([
         'sale_estim_title' => 'nullable|string|max:255',
         'sale_estim_summary' => 'nullable|string',
         'sale_cus_id' => 'nullable|integer',
-        'sale_estim_number' => 'required|string|max:255',
+        'sale_estim_number' => 'required|string|max:255|unique:' . $tableName . ',sale_inv_number',
         'sale_estim_customer_ref' => 'nullable|string|max:255',
         'sale_estim_date' => 'required|date',
         'sale_estim_valid_date' => 'required|date',
@@ -55,7 +63,10 @@ class InvoicesController extends Controller
         'sale_estim_item_discount' => 'nullable|integer',
         'sale_total_days' => 'required|integer',
        
-        ]);
+      ],[
+        'sale_estim_number.required' => 'The invoice number is required.',
+        'sale_estim_number.unique' => 'An invoice with this number already exists. Invoice numbers must be unique.',
+      ]);
 
 
         $invoice = new InvoicesDetails();
@@ -297,12 +308,22 @@ class InvoicesController extends Controller
     {
         // dd($request);
         // \DB::enableQueryLog();
+        $user = Auth::guard('masteradmins')->user();
+
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_invoices_details'; 
 
         $validatedData = $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'nullable|integer',
-            'sale_estim_number' => 'required|string|max:255',
+            'sale_estim_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique($tableName, 'sale_inv_number')->ignore($invoice_id, 'sale_inv_id')
+            ],
             'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
@@ -319,9 +340,11 @@ class InvoicesController extends Controller
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
+        ],[
+            'sale_estim_number.required' => 'The invoice number is required.',
+            'sale_estim_number.unique' => 'An invoice with this number already exists. Invoice numbers must be unique.',
         ]);
 
-        $user = Auth::guard('masteradmins')->user();
 
         $invoice = InvoicesDetails::where([
             'sale_inv_id' => $invoice_id,
@@ -489,11 +512,17 @@ class InvoicesController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::guard('masteradmins')->user();
+
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_invoices_details'; 
+
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'nullable|integer',
-            'sale_estim_number' => 'required|string|max:255',
+            'sale_estim_number' => 'required|string|max:255|unique:' . $tableName . ',sale_inv_number',
             'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
@@ -511,6 +540,9 @@ class InvoicesController extends Controller
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
            
+            ],[
+                'sale_estim_number.required' => 'The invoice number is required.',
+                'sale_estim_number.unique' => 'An invoice with this number already exists. Invoice numbers must be unique.',
             ]);
     
     
@@ -1025,11 +1057,17 @@ class InvoicesController extends Controller
     public function duplicateStore(Request $request)
     {
         // dd($request->sale_currency_id);
+        $user = Auth::guard('masteradmins')->user();
+
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_invoices_details'; 
+
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'nullable|integer',
-            'sale_estim_number' => 'required|string|max:255',
+            'sale_estim_number' => 'required|string|max:255|unique:' . $tableName . ',sale_inv_number',
             'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
@@ -1047,6 +1085,9 @@ class InvoicesController extends Controller
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'nullable|integer',
            
+            ],[
+                'sale_estim_number.required' => 'The invoice number is required.',
+                'sale_estim_number.unique' => 'An invoice with this number already exists. Invoice numbers must be unique.',
             ]);
     
     
@@ -1182,16 +1223,13 @@ class InvoicesController extends Controller
         //     $query->whereDate('sale_inv_date', '<=', $request->end_date);
         // }
 
-        if ($startDate) {
-
-            $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
-
+        if ($startDate && !$endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+        } elseif ($startDate && $endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+                ->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
         }
-    
-        if ($endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_inv_valid_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
 
-        }
 
         if ($request->has('sale_inv_number') && $request->sale_inv_number) {
             $query->where('sale_inv_number', 'like', '%' . $request->sale_inv_number . '%');

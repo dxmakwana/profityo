@@ -31,6 +31,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
 use App\Models\InvoicesDetails;
 use App\Models\SentLog;
+use Illuminate\Validation\Rule;
 
 
 class EstimatesController extends Controller
@@ -42,9 +43,11 @@ class EstimatesController extends Controller
 
         $user = Auth::guard('masteradmins')->user();
         $user_id = $user->user_id;
-        // \DB::enableQueryLog();
+       
         $startDate = $request->input('start_date'); 
         $endDate = $request->input('end_date');   
+        //\DB::enableQueryLog();
+
         $query = Estimates::with('customer')->orderBy('created_at', 'desc');
 
         // if ($request->has('start_date') && $request->start_date) {
@@ -55,15 +58,12 @@ class EstimatesController extends Controller
         //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
         // }
 
-        if ($startDate) {
-
-            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
-
-        }
-    
-        if ($endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_estim_valid_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
-
+        // Check for start date and end date
+        if ($startDate && !$endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+        } elseif ($startDate && $endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+                ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
         }
 
         if ($request->has('sale_estim_number') && $request->sale_estim_number) {
@@ -86,7 +86,7 @@ class EstimatesController extends Controller
         $salecustomer = SalesCustomers::get();
     
         if ($request->ajax()) {
-            // dd(\DB::getQueryLog()); 
+           // dd(\DB::getQueryLog()); 
             // dd($allEstimates);
             return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
         }
@@ -172,11 +172,17 @@ class EstimatesController extends Controller
         // $sessionData = session('form_data');
         // dd($request);
         // dd($request->sale_currency_id);
+        $user = Auth::guard('masteradmins')->user();
+       
+        $dynamicId = $user->user_id; // This should be set dynamically based on your application logic
+
+        $tableName = $dynamicId . '_py_estimates_details'; // Construct the table name
+
       $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'required|integer',
-            'sale_estim_number' => 'required|string|max:255',
+            'sale_estim_number' => 'required|string|max:255|unique:' . $tableName . ',sale_estim_number',
             'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
@@ -204,6 +210,7 @@ class EstimatesController extends Controller
             'sale_cus_id.required' => 'Please select a customer.',
             'sale_cus_id.integer' => 'Please select a customer.',
             'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
             'sale_estim_date.required' => 'Please select the estimate date.',
             'sale_estim_valid_date.required' => 'Please select the valid until date.',
             'sale_estim_discount_type.required' => 'Please select a discount type.',
@@ -233,7 +240,7 @@ class EstimatesController extends Controller
             'sale_estim_final_amount', 'sale_estim_notes', 'sale_estim_footer_note',
             'sale_estim_image', 'sale_status', 'sale_estim_status'
         ]));
-        $user = Auth::guard('masteradmins')->user();
+      
         $estimate->sale_estim_item_discount = $request->sale_estim_item_discount;
         $estimate->sale_currency_id = $request->sale_currency_id;
         $estimate->sale_total_days = $request->sale_total_days;
@@ -241,6 +248,7 @@ class EstimatesController extends Controller
         $estimate->sale_status = 'Draft';
         // dd($estimate);
         $estimate->save();
+        
 
         foreach ($request->input('items') as $item) {
             $estimateItem = new EstimatesItems();
@@ -404,11 +412,20 @@ class EstimatesController extends Controller
             'id' => $user->id
         ])->firstOrFail();
 
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_estimates_details'; 
+
         $validatedData = $request->validate([
             'sale_estim_title' => 'required|string|max:255',
+            'sale_estim_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique($tableName, 'sale_estim_number')->ignore($estimates_id, 'sale_estim_id')
+            ],
             'sale_estim_summary' => 'required|string',
             'sale_cus_id' => 'nullable|integer',
-            'sale_estim_number' => 'required|string|max:255',
             'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
@@ -422,10 +439,12 @@ class EstimatesController extends Controller
             'sale_estim_notes' => 'nullable|string',
             'sale_estim_footer_note' => 'nullable|string',
             'sale_estim_image' => 'nullable|image',
-            'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
         
+        ],[
+            'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
         ]);
 
         // if()
@@ -433,7 +452,6 @@ class EstimatesController extends Controller
         $estimate->sale_estim_item_discount = $validatedData['sale_estim_item_discount'];
         $estimate->sale_currency_id = $validatedData['sale_currency_id'];
         $estimate->sale_total_days = $validatedData['sale_total_days'];
-        $estimate->sale_status = 'Draft';
         $estimate->where('sale_estim_id', $estimates_id)->update($validatedData);
 
         // dd(\DB::getQueryLog()); 
@@ -783,11 +801,18 @@ class EstimatesController extends Controller
     public function duplicateStore(Request $request)
     {
         // dd($request->sale_currency_id);
+
+        $user = Auth::guard('masteradmins')->user();
+
+        $dynamicId = $user->user_id; 
+
+        $tableName = $dynamicId . '_py_estimates_details'; 
+
       $request->validate([
         'sale_estim_title' => 'nullable|string|max:255',
         'sale_estim_summary' => 'nullable|string',
         'sale_cus_id' => 'nullable|integer',
-        'sale_estim_number' => 'required|string|max:255',
+        'sale_estim_number' => 'required|string|max:255|unique:' . $tableName . ',sale_estim_number',
         'sale_estim_customer_ref' => 'nullable|string|max:255',
         'sale_estim_date' => 'required|date',
         'sale_estim_valid_date' => 'required|date',
@@ -804,6 +829,9 @@ class EstimatesController extends Controller
         'sale_status' => 'required|integer',
         'sale_estim_item_discount' => 'nullable|integer',
         'sale_total_days' => 'required|integer',
+        ],[
+            'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
         ]);
 
 

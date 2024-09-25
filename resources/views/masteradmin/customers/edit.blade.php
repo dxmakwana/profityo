@@ -99,8 +99,45 @@
                   </div>
                 </div>
               </div>
+             
               <div class="col-md-12">
-              <button type="button" id="add_contact_btn" class="add_contactbtn"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
+              <button type="button" id="add" class="add_contactbtn"><i class="fas fa-plus add_plus_icon"></i>Add Contact</button>
+              </div>
+              <div class="col-md-12" id="dynamic_field">
+                @foreach($customerContact as $item)
+                <div class="item-row row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="contactname">Name</label>
+                      <div class="d-flex">
+                      <input type="text" class="form-control" id="contactname" name="items[][cus_con_name]" placeholder="Enter Name" value="{{ $item->cus_con_name ?? '' }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="contactemail">Email</label>
+                      <div class="d-flex">
+                      <input type="email" id="contactemail" class="form-control" name="items[][cus_con_email]" placeholder="Enter Email" value="{{ $item->cus_con_email ?? '' }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="contactphone">Phone Number</label>
+                      <div class="d-flex">
+                        <input type="text" name="items[][cus_con_phone]" class="form-control" aria-describedby="inputGroupPrepend" placeholder="Enter Phone" id="contactphone" value="{{ $item->cus_con_phone ?? '' }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <i class="fa fa-trash delete-item"> Remove Contact </i>
+                  </div>
+              
+                </div>
+                @endforeach
               </div>
               <div class="col-md-4">
                 <div class="form-group">
@@ -380,6 +417,66 @@
     });
 });
 </script>
+
+<script>
+  
+    $(document).ready(function () {
+    let rowCount = 1;
+    
+    $('#add').click(function () {
+      // alert('add');
+      rowCount++;
+      $('#dynamic_field').append(`
+       <div class="item-row row" id="row${rowCount}">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="contactname">Name</label>
+            <div class="d-flex">
+             <input type="text" class="form-control" id="contactname" name="items[][cus_con_name]" placeholder="Enter Name">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="contactemail">Email</label>
+            <div class="d-flex">
+             <input type="email" id="contactemail" class="form-control" name="items[][cus_con_email]" placeholder="Enter Email" >
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="contactphone">Phone Number</label>
+            <div class="d-flex">
+              <input type="text" name="items[][cus_con_phone]" class="form-control" aria-describedby="inputGroupPrepend" placeholder="Enter Phone" id="contactphone">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <i class="fa fa-trash delete-item" id="${rowCount}"> Remove Contact </i>
+        </div>
+      
+      </div>
+      `);
+
+    });
+
+    $(document).on('click', '.delete-item', function () {
+      
+      var rowId = $(this).attr("id");
+      $('#row' + rowId).remove();
+    });
+
+    $(document).on('click', '.delete-item', function () {
+      $(this).closest('.item-row').remove();
+    });
+
+    });
+
+
+  </script>
 
 @endsection
 @endif

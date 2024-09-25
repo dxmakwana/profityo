@@ -166,6 +166,15 @@
                             </div>
                         </div>
                     </div>
+                    @if(!empty($invoices->sale_inv_notes))
+                    <div class="margin-top">
+                            <p class="estimate_view_title ">Notes / Terms</p>
+                            <p>{{ $invoices->sale_inv_notes ?? '' }}</p>
+                    </div>
+                    @endif
+                    <div class="margin-top">
+                        <p class="text-center">{{ $invoices->sale_inv_footer_note ?? '' }}</p>
+                    </div>
                 </div>
                 <!-- /.card -->
 

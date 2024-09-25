@@ -12,6 +12,7 @@ use App\Models\States;
 use App\Models\SentLog;
 use App\Models\InvoicesDetails;
 use App\Models\EstimatesItems;
+use App\Models\CustomerContact;
 
 
 use Illuminate\Http\JsonResponse;
@@ -42,7 +43,7 @@ class SalesCustomersController extends Controller
     
     public function store(Request $request)
     {
-        // dd($request->all());
+         //dd($request->all());
         // Get the authenticated user
         $user = Auth::guard('masteradmins')->user();
 
@@ -85,7 +86,7 @@ class SalesCustomersController extends Controller
         $validatedData['sale_cus_status'] = 1;
 
         // Insert the data into the database
-        SalesCustomers::create([
+        $salesCustomer = SalesCustomers::create([
             'sale_cus_business_name' => $validatedData['sale_cus_business_name'],
             'sale_cus_first_name' => $validatedData['sale_cus_first_name'],
             'sale_cus_last_name' => $validatedData['sale_cus_last_name'],
@@ -114,6 +115,32 @@ class SalesCustomersController extends Controller
             'id' => $validatedData['id'], // Use the correct field name for user ID
             'sale_cus_status' => $validatedData['sale_cus_status'],
         ]);
+        
+        $rawItems = $request->input('items');
+        $groupedItems = [];
+        if (is_array($rawItems) && count($rawItems) > 0) {
+        for ($i = 0; $i < count($rawItems); $i += 3) {
+            $groupedItems[] = [
+                'cus_con_name' => $rawItems[$i]['cus_con_name'] ?? null,
+                'cus_con_email' => $rawItems[$i + 1]['cus_con_email'] ?? null,
+                'cus_con_phone' => $rawItems[$i + 2]['cus_con_phone'] ?? null,
+            ];
+        }
+        }else{
+            $groupedItems = [];
+        }
+
+        foreach ($groupedItems as $item) {
+            $customerContact = new CustomerContact();
+            
+            $customerContact->fill($item);
+
+            $customerContact->id = $user->id;
+            $customerContact->sale_cus_id = $salesCustomer->id; 
+            $customerContact->cus_con_status = 1;
+
+            $customerContact->save();
+        }
 
         return redirect()->route('business.salescustomers.index')->with(['sales-customers-add' => __('messages.masteradmin.sales-customers.send_success')]);
     }
@@ -137,10 +164,15 @@ class SalesCustomersController extends Controller
             $ship_state = States::where('country_id', $SalesCustomerse->sale_ship_country_id)->get();
         }
 
+        $customerContact = CustomerContact::where('sale_cus_id', $sale_cus_id)->get();
+
+        //dd($customerContact);
+        
+
         // dd($State);
         // $State = States::all();
         // dd(\DB::getQueryLog()); // Show results of log
-        return view('masteradmin.customers.edit', compact('SalesCustomerse','Country','State','ship_state'));
+        return view('masteradmin.customers.edit', compact('SalesCustomerse','Country','State','ship_state','customerContact'));
     }
 
     /**
@@ -192,6 +224,34 @@ class SalesCustomersController extends Controller
     // dd($validatedData);
         $SalesCustomersu->where('sale_cus_id', $sale_cus_id)->update($validatedData);
         
+        CustomerContact::where('sale_cus_id', $sale_cus_id)->delete();
+
+        $rawItems = $request->input('items');
+        $groupedItems = [];
+        if (is_array($rawItems) && count($rawItems) > 0) {
+        for ($i = 0; $i < count($rawItems); $i += 3) {
+            $groupedItems[] = [
+                'cus_con_name' => $rawItems[$i]['cus_con_name'] ?? null,
+                'cus_con_email' => $rawItems[$i + 1]['cus_con_email'] ?? null,
+                'cus_con_phone' => $rawItems[$i + 2]['cus_con_phone'] ?? null,
+            ];
+        }
+        }else{
+            $groupedItems = []; 
+        }
+        
+
+        foreach ($groupedItems as $item) {
+            $customerContact = new CustomerContact();
+            
+            $customerContact->fill($item);
+
+            $customerContact->id = $user->id;
+            $customerContact->sale_cus_id = $sale_cus_id; 
+            $customerContact->cus_con_status = 1;
+
+            $customerContact->save();
+        }
      
         return redirect()->route('business.salescustomers.edit', ['SalesCustomers' => $SalesCustomersu->sale_cus_id])
         ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));

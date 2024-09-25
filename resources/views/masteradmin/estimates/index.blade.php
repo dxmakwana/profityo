@@ -732,7 +732,7 @@ $(document).ready(function() {
     },
     error: function(xhr) {
         console.error('Error:', xhr);
-        alert('An error occurred while fetching data.');
+        //alert('An error occurred while fetching data.');
     }
 });
 
@@ -741,7 +741,7 @@ $(document).ready(function() {
 
 
     // Attach change event handlers to filter inputs
-    $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker, #sale_estim_number1').on('change keyup', function(e) {
+    $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker').on('change keyup', function(e) {
       e.preventDefault(); 
       fetchFilteredData();
     });
@@ -771,6 +771,7 @@ $(document).ready(function() {
 });
 
 </script>
+
 
 @endsection
 @endif

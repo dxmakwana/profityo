@@ -28,7 +28,7 @@
                     @if (count($activeEstimates) > 0)
                       @foreach ($activeEstimates as $value)
                         <tr id="estimate-row-approve-{{ $value->sale_estim_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? ''}} {{ $value->customer->sale_cus_last_name ?? ''}}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
@@ -145,7 +145,7 @@
                     @if (count($draftEstimates) > 0)
                       @foreach ($draftEstimates as $value)
                         <tr id="estimate-row-draft-{{ $value->sale_estim_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>
@@ -262,7 +262,7 @@
                     @if (count($allEstimates) > 0)
                       @foreach ($allEstimates as $value)
                         <tr id="estimate-row-{{ $value->sale_estim_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
                           <td>{{ $value->sale_estim_final_amount }}</td>

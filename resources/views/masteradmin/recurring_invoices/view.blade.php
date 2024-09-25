@@ -295,6 +295,15 @@
                             </div>
                         </div>
                     </div>
+                    @if(!empty($reinvoices->sale_re_inv_notes))
+                    <div class="margin-top">
+                            <p class="estimate_view_title ">Notes / Terms</p>
+                            <p>{{ $reinvoices->sale_re_inv_notes ?? '' }}</p>
+                    </div>
+                    @endif
+                    <div class="margin-top">
+                        <p class="text-center">{{ $reinvoices->sale_re_inv_footer_note ?? '' }}</p>
+                    </div>
                 </div>
                 <!-- /.card -->
 

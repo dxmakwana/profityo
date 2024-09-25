@@ -173,7 +173,7 @@
                       <span class="error-message" id="error_items_0_sale_expense_id" style="color: red;"></span>
                     </td>
                     <td><input type="number" class="form-control" name="items[][sale_bill_item_qty]"
-                      placeholder="Enter item Quantity">
+                      placeholder="Enter item Quantity" min="1">
                     <span class="error-message" id="error_items_0_sale_bill_item_qty" style="color: red;"></span>
                     </td>
                     <td>

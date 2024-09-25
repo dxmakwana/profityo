@@ -379,7 +379,7 @@
           </div>
         </td>
         <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]"
-          value="{{ $item->sale_estim_item_qty }}" placeholder="Enter item Quantity">
+          value="{{ $item->sale_estim_item_qty }}" min="1" placeholder="Enter item Quantity">
           <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
         </td>
         <td>
@@ -425,9 +425,9 @@
         </div>
         <div class="col-md-4">
           <div class="d-flex">
-          <input type="text" class="form-control form-controltext" name="sale_estim_item_discount"
+          <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
             aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}"
-            placeholder="Enter a discount value">
+            placeholder="Enter a discount value" min="1">
           <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
             name="sale_estim_discount_type">
             <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }}>

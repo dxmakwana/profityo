@@ -167,6 +167,15 @@
                             </div>
                         </div>
                     </div>
+                    @if(!empty($estimates->sale_estim_notes))
+                    <div class="col-md-12">
+                            <p class="estimate_view_title ">Notes / Terms</p>
+                            <p>{{ $estimates->sale_estim_notes ?? '' }}</p>
+                    </div>
+                    @endif
+                    <div class="col-md-12">
+                        <p class="text-center">{{ $estimates->sale_estim_footer_note ?? '' }}</p>
+                    </div>
                 </div>
                 <!-- /.card -->
 

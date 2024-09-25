@@ -39,13 +39,12 @@ class BillsController extends Controller
         // if ($request->has('end_date') && $request->end_date) {
         //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
         // }
-
-        if ($startDate) {
-            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
-        }
-    
-        if ($endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+       
+        if ($startDate && !$endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+        } elseif ($startDate && $endDate) {
+            $query->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+                ->whereRaw("STR_TO_DATE(sale_bill_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
         }
 
         if ($request->has('sale_vendor_id') && $request->sale_vendor_id) {
