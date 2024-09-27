@@ -163,7 +163,6 @@
 
                     @endforeach    
                     @else
-                        <tr class="odd"><td valign="top" colspan="7" class="dataTables_empty">No records found</td></tr>
                     @endif
                   </tbody>
                 </table>
@@ -314,7 +313,11 @@ $(document).ready(function() {
                 altInput: true,
                 dateFormat: "MM/DD/YYYY",
                 altFormat: "MM/DD/YYYY",
-                allowInput: true,
+                onChange: function(selectedDates, dateStr, instance) {
+                    
+                    fetchFilteredData();
+                    //alert('edate');
+                },
                 parseDate: (datestr, format) => {
                   return moment(datestr, format, true).toDate();
                 },
@@ -331,7 +334,11 @@ $(document).ready(function() {
               altInput: true,
               dateFormat: "MM/DD/YYYY",
               altFormat: "MM/DD/YYYY",
-              allowInput: true,
+              onChange: function(selectedDates, dateStr, instance) {
+        
+                  fetchFilteredData();
+                  
+              },
               parseDate: (datestr, format) => {
                 return moment(datestr, format, true).toDate();
               },
@@ -386,7 +393,7 @@ $(document).ready(function() {
 
 
     // Attach change event handlers to filter inputs
-    $('#sale_vendor_id, #from-datepicker, #to-datepicker').on('change keyup', function(e) {
+    $('#sale_vendor_id').on('change keyup', function(e) {
       e.preventDefault(); 
       fetchFilteredData();
     });
@@ -396,10 +403,35 @@ $(document).ready(function() {
     $('#sale_vendor_id').val('').trigger('change');
 
 
-    const fromDatePicker = flatpickr('#from-datepicker');
-    const toDatePicker = flatpickr('#to-datepicker');
-    fromDatePicker.clear(); // Clears the "from" datepicker
-    toDatePicker.clear();   // Clears the "to" datepicker
+    // Clear datepicker fields
+    const fromDatePicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+              return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+              return moment(date).format(format);
+          }
+        });
+        fromDatePicker.clear(); // Clears the "from" datepicker
+
+        const todatepicker = flatpickr("#to-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+              return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+              return moment(date).format(format);
+          }
+        });
+
+        todatepicker.clear(); // Clears the "to" datepicker
 
     // $('#from-datepicker').flatpickr().clear();  // Clear "from" datepicker
     // $('#to-datepicker').flatpickr().clear();    // Clear "to" datepicker

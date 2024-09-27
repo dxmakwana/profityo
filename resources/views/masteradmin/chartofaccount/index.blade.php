@@ -181,9 +181,7 @@
                                 @endforeach
                             @else
                                 <!-- Show a message if there are no child accounts -->
-                                <tr>
-                                    <td colspan="4">No accounts available for this category.</td>
-                                </tr>
+                                
                             @endif
                         </tbody>
                     </table>

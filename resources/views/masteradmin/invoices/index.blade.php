@@ -294,9 +294,7 @@
 
                       @endforeach
                     @else
-                      <tr>
-                        <th colspan="6">No Data found</th>
-                      </tr>
+                     
                     @endif
                       </tbody>
                     </table>
@@ -432,9 +430,7 @@
 
                       @endforeach
                     @else
-                      <tr>
-                        <th colspan="6">No Data found</th>
-                      </tr>
+                      
                     @endif
                       
                       </tbody>
@@ -572,9 +568,7 @@
 
                       @endforeach
                     @else
-                      <tr>
-                        <th colspan="6">No Data found</th>
-                      </tr>
+                      
                     @endif
                       </tbody>
                     </table>
@@ -831,7 +825,11 @@ $(document).ready(function() {
                 altInput: true,
                 dateFormat: "MM/DD/YYYY",
                 altFormat: "MM/DD/YYYY",
-                allowInput: true,
+                onChange: function(selectedDates, dateStr, instance) {
+        
+                      fetchFilteredData();
+                      //alert('edate');
+                  },
                 parseDate: (datestr, format) => {
                   return moment(datestr, format, true).toDate();
                 },
@@ -848,7 +846,12 @@ $(document).ready(function() {
               altInput: true,
               dateFormat: "MM/DD/YYYY",
               altFormat: "MM/DD/YYYY",
-              allowInput: true,
+              onChange: function(selectedDates, dateStr, instance) {
+        
+                  fetchFilteredData();
+                  
+                  //alert('edate');
+              },
               parseDate: (datestr, format) => {
                 return moment(datestr, format, true).toDate();
               },
@@ -859,6 +862,7 @@ $(document).ready(function() {
           document.getElementById('to-calendar-icon').addEventListener('click', function () {
             todatepicker.open(); 
           });
+
 
           $('.filter-text').on('click', function() {
                 clearFilters();
@@ -902,7 +906,7 @@ $(document).ready(function() {
     }
 
     // Attach change event handlers to filter inputs
-    $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker, #sale_inv_number1').on('change keyup', function(e) {
+    $('#sale_cus_id, #sale_status, #sale_inv_number1').on('change keyup', function(e) {
       e.preventDefault(); 
       fetchFilteredData();
     });
@@ -915,8 +919,36 @@ $(document).ready(function() {
     function clearFilters() {
           $('#sale_cus_id').val('').trigger('change');
 
-            $('#from-datepicker').val('');  // Reset datepicker
-            $('#to-datepicker').val('');  // Reset datepicker
+           // Clear datepicker fields
+        const fromDatePicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+              return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+              return moment(date).format(format);
+          }
+        });
+        fromDatePicker.clear(); // Clears the "from" datepicker
+
+        const todatepicker = flatpickr("#to-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+              return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+              return moment(date).format(format);
+          }
+        });
+
+        todatepicker.clear(); // Clears the "to" datepicker
+        
             $('#sale_inv_number').val('');  // Reset input field
             $('#sale_status').val('');  // Reset another dropdown/input field
 

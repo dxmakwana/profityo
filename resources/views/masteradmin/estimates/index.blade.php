@@ -245,11 +245,8 @@
                     </div>
 
                       @endforeach
-                    @else
-                      <tr>
-                        <th colspan="6">No Data found</th>
-                      </tr>
-                    @endif
+                      @else
+                      @endif
                   </tbody>
                 </table>
               </div>
@@ -365,9 +362,7 @@
 
                       @endforeach
                     @else
-                    <tr>
-                      <th colspan="6">No Data found</th>
-                    </tr>
+                    
                     @endif
                   </tbody>
                 </table>
@@ -484,9 +479,7 @@
 
                       @endforeach
                           @else
-                      <tr>
-                        <th colspan="6">No Data found</th>
-                      </tr>
+                      
                     @endif
                   </tbody>
                 </table>
@@ -512,7 +505,6 @@
 </aside>
 <!-- /.control-sidebar -->
 
-</div>
 <!-- ./wrapper -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
@@ -644,7 +636,7 @@ function updateBadgeCount(selector) {
 </script>
 
 <script>
-$(document).ready(function() {
+  $(document).ready(function() {
     var defaultStartDate = "";  
     var defaultEndDate = "";    
     var defaultSaleEstimNumber = ""; 
@@ -667,7 +659,11 @@ $(document).ready(function() {
                 altInput: true,
                 dateFormat: "MM/DD/YYYY",
                 altFormat: "MM/DD/YYYY",
-                allowInput: true,
+                onChange: function(selectedDates, dateStr, instance) {
+        
+                      fetchFilteredData();
+                      //alert('edate');
+                  },
                 parseDate: (datestr, format) => {
                   return moment(datestr, format, true).toDate();
                 },
@@ -684,7 +680,12 @@ $(document).ready(function() {
               altInput: true,
               dateFormat: "MM/DD/YYYY",
               altFormat: "MM/DD/YYYY",
-              allowInput: true,
+              onChange: function(selectedDates, dateStr, instance) {
+        
+                  fetchFilteredData();
+                  
+                  //alert('edate');
+              },
               parseDate: (datestr, format) => {
                 return moment(datestr, format, true).toDate();
               },
@@ -723,55 +724,80 @@ $(document).ready(function() {
 
 
         $.ajax({
-    url: '{{ route('business.estimates.index') }}',
-    type: 'GET',
-    data: formData,
-    success: function(response) {
-        $('#filter_data').html(response); // Update the results container with HTML content
-        
-    },
-    error: function(xhr) {
-        console.error('Error:', xhr);
-        //alert('An error occurred while fetching data.');
-    }
-});
+          url: '{{ route('business.estimates.index') }}',
+          type: 'GET',
+          data: formData,
+          success: function(response) {
+              $('#filter_data').html(response); // Update the results container with HTML content
+              
+          },
+          error: function(xhr) {
+              console.error('Error:', xhr);
+              //alert('An error occurred while fetching data.');
+          }
+        });
 
     }
 
-
-
-    // Attach change event handlers to filter inputs
-    $('#sale_cus_id, #sale_status, #from-datepicker, #to-datepicker').on('change keyup', function(e) {
+     // Attach change event handlers to filter inputs
+     $('#sale_cus_id, #sale_status').on('change keyup', function(e) {
       e.preventDefault(); 
       fetchFilteredData();
     });
 
+     // filter estimate number
     $('#sale_estim_number_submit').on('click', function(e) {
         e.preventDefault(); // Prevent default button behavior if inside a form
         fetchFilteredData();
     });
 
     function clearFilters() {
-    // Clear filters
-    $('#sale_cus_id').val('').trigger('change');
+      // Clear filters
+      $('#sale_cus_id').val('').trigger('change');
 
-    // Clear datepicker fields
-     $('#from-datepicker').val('');  // Reset datepicker
-     $('#to-datepicker').val('');  // Reset datepicker
+      // Clear datepicker fields
+      const fromDatePicker = flatpickr("#from-datepicker", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+        }
+      });
+      fromDatePicker.clear(); // Clears the "from" datepicker
 
-    // Reset other fields
-    $('#sale_estim_number').val('');  // Reset input field
-    $('#sale_status').val('');  // Reset dropdown field
+      const todatepicker = flatpickr("#to-datepicker", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+        }
+      });
 
-    // Trigger any additional functionality if needed
-    fetchFilteredData(); // Example: Fetch data based on the cleared filters
-}
+      todatepicker.clear(); // Clears the "to" datepicker
+
+
+      // Reset other fields
+      $('#sale_estim_number').val('');  // Reset input field
+      $('#sale_status').val('');  // Reset dropdown field
+
+      // Trigger any additional functionality if needed
+      fetchFilteredData(); // Example: Fetch data based on the cleared filters
+  }
 
 
 });
 
 </script>
-
 
 @endsection
 @endif

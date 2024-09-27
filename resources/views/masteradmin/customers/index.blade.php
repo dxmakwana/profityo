@@ -127,9 +127,7 @@
                     </div>
                   @endforeach
                       @else
-                    <tr>
-                      <th>No Data found</th>
-                    </tr>
+                    
                   @endif
                 </tbody>
               </table>

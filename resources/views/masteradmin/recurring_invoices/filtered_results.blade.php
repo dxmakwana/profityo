@@ -59,9 +59,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr>
-                        <th colspan="6">No Data found</th>
-                    </tr>
+                    
                     @endif
                     </tbody>
                 </table>
@@ -119,9 +117,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr>
-                        <th colspan="6">No Data found</th>
-                    </tr>
+                    
                     @endif
                     </tbody>
                 </table>
@@ -179,9 +175,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr>
-                        <th colspan="6">No Data found</th>
-                    </tr>
+                   
                     @endif
                     </tbody>
                 </table>
