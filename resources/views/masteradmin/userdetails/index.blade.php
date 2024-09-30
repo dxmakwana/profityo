@@ -70,6 +70,7 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>User Role</th>
+                    <th>Status</th>
                     <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                   </tr>
                 </thead>
@@ -81,6 +82,17 @@
                         <td>{{ $value->users_email  }}</td>
                         <td>{{ $value->users_phone  }}</td>
                         <td>{{ $value->userRole->role_name ?? config('global.default_user_role') }}</td>
+                        <td>
+                        <span class="status-text status_btn" data-id="{{ $value->users_id }}" style="cursor: pointer;">
+                          @if ($value->users_status == 1)
+                            <span class="converted_status">Active</span>
+                          @else
+                            <span class="overdue_status">Inactive</span>
+                          @endif
+                        </span>
+                      </td>
+
+                    
                         <td class="text-right">
                           @if(isset($access['update_users']) && $access['update_users']) 
                           <a href="{{ route('business.userdetail.edit',$value->users_id ) }}"><i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
@@ -89,6 +101,7 @@
                           <a data-toggle="modal" data-target="#delete-role-modal-{{ $value->users_id  }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                           @endif
                         </td>
+                      
                       </tr>
                      
                       <div class="modal fade" id="delete-role-modal-{{ $value->users_id  }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -128,6 +141,89 @@
     </section>
     <!-- /.content --> 
   </div>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script>
+$(document).on('click', '.toggle-status', function() {
+    var button = $(this);
+    var id = $( this ).data( 'id' );
+// alert(id);
+    $.ajax({
+        url: '/business/userrole/' + id + '/update-status', // Adjust the URL based on your routes
+        method: 'POST',
+        success: function(response) {
+            if (response.status === 'success') {
+                // Update button text and class based on new status
+                if (response.new_status == 1) {
+                    button.text('Deactivate').removeClass('btn-danger').addClass('btn-success');
+                } else {
+                    button.text('Activate').removeClass('btn-success').addClass('btn-danger');
+                }
+            }
+        },
+        error: function() {
+            alert('Failed to update status.');
+        }
+    });
+});
+</script> -->
+<!-- <script>
+    document.getElementById('status-text').addEventListener('click', function () {
+      const userId = this.getAttribute('data-id');
+alert(userId);
+      fetch(`{{ url('/business/userrole') }}/${userId}/update-status`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const statusText = document.getElementById('status-text');
+
+            // Update the status text and class based on the new status
+            if (data.new_status == 1) {
+              statusText.innerHTML = '<span class="converted_status">Active</span>';
+            } else {
+              statusText.innerHTML = '<span class="overdue_status">Inactive</span>';
+            }
+          }
+        });
+    });
+  </script> -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).on('click', '.status-text', function () {
+      var userId = $(this).data('id'); // Get user ID from data attribute
+
+      $.ajax({
+        url: 'userrole/' + userId + '/update-status',
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+          if (response.status === 'success') {
+            var statusText = $('span[data-id="' + userId + '"]');
+
+            // Update the status text and class based on the new status
+            if (response.new_status == 1) {
+              statusText.html('<span class="converted_status">Active</span>');
+            } else {
+              statusText.html('<span class="overdue_status">Inactive</span>');
+            }
+          } else {
+            alert('Failed to update status.');
+          }
+        },
+        error: function() {
+          alert('Error updating status.');
+        }
+      });
+    });
+  </script>
   <!-- /.content-wrapper -->
 @endsection
 @endif

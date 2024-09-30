@@ -204,9 +204,7 @@ class UserRoleController extends Controller
         return redirect()->route('business.role.userrole', ['userrole' => $role_id])
         ->with('user-role', __('messages.masteradmin.user-role.roll_user_access_success'));
     }
-
-
-    // end by dxx...
+   
     
 
     

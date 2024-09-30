@@ -96,6 +96,7 @@ class EstimatesController extends Controller
 
     public function create(): View
     {
+        
         $user = Auth::guard('masteradmins')->user();
         // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
@@ -232,7 +233,7 @@ class EstimatesController extends Controller
             'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
         ]);
 
-
+      
         $estimate = new Estimates();
         $estimate->fill($request->only([
             'sale_estim_title', 'sale_estim_summary', 'sale_cus_id', 'sale_estim_number',
@@ -323,6 +324,19 @@ class EstimatesController extends Controller
         ]);
 
     }
+   
+
+    // Method to show the preview page
+    public function preview(Request $request)
+    {
+    //    dd($request);
+        // Collect the request data
+        $previewData = $request->all();
+        // dd($previewData);
+        // Pass the collected data to the preview view
+        return view('masteradmin.estimates.preview', compact('previewData'));
+    }
+    
 
     public function edit($id, Request $request): View
     {

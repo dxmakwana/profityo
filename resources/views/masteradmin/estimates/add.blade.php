@@ -393,7 +393,7 @@
 
     <div class="row py-20">
       <div class="col-md-12 text-center">
-      <a href="#"><button class="add_btn_br">Preview</button></a>
+      <a href="{{ route('business.estimates.preview') }}" class="add_btn_br">Preview</a>
       <a href="#"><button class="add_btn">Save & Continue</button></a>
       </div>
     </div><!-- /.col -->

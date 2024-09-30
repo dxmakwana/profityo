@@ -143,7 +143,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::delete('roledestroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
         Route::get('userrole/{userrole}', [UserRoleController::class, 'userrole'])->name('business.role.userrole');
         Route::put('updaterole/{userrole}', [UserRoleController::class, 'updaterole'])->name('business.role.updaterole');
-                        
+               
         //saletax
         Route::get('/salestax', [SalesTaxController::class, 'index'])->name('business.salestax.index');
         Route::get('/taxcreate', [SalesTaxController::class, 'create'])->name('business.salestax.create');
@@ -160,7 +160,9 @@ Route::group(['prefix' => $busadminRoute], function () {
         
         Route::patch('/userupdate/{userdetail}', [UserController::class, 'update'])->name('business.userdetail.update');
         Route::delete('/userdestroy/{userdetail}', [UserController::class, 'destroy'])->name('business.userdetail.destroy');
-        
+// Route for updating user role status
+Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatus'])->name('business.userrole.updateStatus');
+
         //salesCustomer...
         Route::get('/salescustomers', [SalesCustomersController::class, 'index'])->name('business.salescustomers.index');
         Route::get('/customercreate', [SalesCustomersController::class, 'create'])->name('business.salescustomers.create');
@@ -191,6 +193,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/estimate/send/{id}/{slug}', [EstimatesController::class, 'send'])
         ->name('business.estimate.send');
 
+        Route::get('/preview-estimates', [EstimatesController::class, 'preview'])->name('business.estimates.preview');
         Route::get('/estimate/send/views/{id}/{slug}', [EstimatesController::class, 'authsendView'])
         ->name('business.estimate.sendviews');
         
