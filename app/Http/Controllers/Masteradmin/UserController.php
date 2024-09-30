@@ -289,7 +289,30 @@ class UserController extends Controller
     {
         return Str::transliterate(Str::lower($this->string('user_email')).'|'.$this->ip()); // changed to 'user_email'
     }
+    public function updateStatus($users_id)
+    {
+        // Fetch the logged-in user
+        $user = Auth::guard('masteradmins')->user();
+    
+        // Set the table dynamically based on the logged-in user's ID
+        $masteruser = new MasterUserDetails();
+        $masteruser->setTableForUniqueId($user->user_id);
+        
+        // Fetch the user detail by the provided $users_id and logged-in user's ID
+        $userdetailu = $masteruser->where(['users_id' => $users_id, 'id' => $user->id])->firstOrFail();
+    
+        // Toggle the status (if 1, set to 0; if 0, set to 1)
+        $newStatus = $userdetailu->users_status == 1 ? 0 : 1;
+    
+        // Update the status
+        $userdetailu->update(['users_status' => $newStatus]);
+    
+        // Return JSON response with the updated status
+        return response()->json(['status' => 'success', 'new_status' => $newStatus]);
+    }
+    
 
+    // end by dxx...
 
     
     
