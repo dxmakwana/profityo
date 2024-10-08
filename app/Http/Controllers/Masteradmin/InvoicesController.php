@@ -1251,7 +1251,7 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::get();
 
         if ($request->ajax()) {
-            // dd(\DB::getQueryLog()); 
+            // dd(\DB::getQueryLog());  
             // dd($allEstimates);
             return view('masteradmin.invoices.filtered_results', compact('unpaidInvoices', 'draftInvoices', 'allInvoices', 'user_id', 'salecustomer'))->render();
         }
