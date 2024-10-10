@@ -92,6 +92,14 @@ return [
             'edit_success' => 'Bill updated successfully.',
         ],
 
+        'employee' => [
+            'send_success'  => 'Employee created successfully!',
+            'edit_success' => 'Employee updated successfully.',
+            'delete_success' => 'Employee deleted successfully.',
+            'leave_success'  => 'Employee created successfully!',
+            
+        ],
+
     ]
     
 ];

@@ -24,7 +24,7 @@ use App\Http\Controllers\Masteradmin\SalesProductController;
 use App\Http\Controllers\Masteradmin\PurchasProductController;
 use App\Http\Controllers\Masteradmin\PurchasVendorController;
 use App\Http\Controllers\Masteradmin\InvoicesController;
-
+use App\Http\Controllers\Masteradmin\EmployeesController;
 use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
 use App\Http\Controllers\Masteradmin\BillsController;
@@ -229,7 +229,29 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
         Route::post('/purchasvendor/addBankDetails/{PurchasesVendor}', [PurchasVendorController::class, 'addBankDetails'])->name('business.purchasvendor.addBankDetails');
         Route::get('vendorgetstates/{country_id}', [PurchasVendorController::class, 'vendorStates'])->name('get.states');
         Route::get('/purchasesvendorviewBankDetails/{purchases_vendor_id}', [PurchasVendorController::class, 'viewBankDetails'])->name('business.purchasvendor.viewBankDetails');
+            // payroll employee...
 
+            Route::get('/employee', [EmployeesController::class, 'index'])->name('business.employee.index');
+            Route::get('/employeecreate', [EmployeesController::class, 'create'])->name('business.employee.create');
+            Route::post('/employeestore', [EmployeesController::class, 'store'])->name('business.employee.store');
+            // Route::get('/employeeedit', [EmployeesController::class, 'edit'])->name('business.employee.edit');
+            Route::get('/employeeedit/{employee}', [EmployeesController::class, 'edit'])->name('business.employee.edit');
+            Route::Patch('employees/{emp_id}', [EmployeesController::class, 'update'])->name('business.employee.update');
+            Route::Patch('/employees/{id}/compensation', [EmployeesController::class, 'storeCompensation'])->name('employees.storeCompensation');
+            Route::post('/employees/{emp_id}/taxdetails', [EmployeesController::class, 'storeTaxDetails'])->name('employees.storeTaxDetails');
+// routes/web.php
+
+Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 'storeOffboarding'])
+    ->name('employee.offboarding.store');
+// routes/web.php
+
+// routes/web.php
+Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 'storeLeaveData'])
+    ->name('employee.offboarding.leave');
+    Route::delete('employee/{id}', [EmployeesController::class, 'destroy'])->name('business.employee.destroy');
+
+
+           
 
         //invoice
         Route::get('/edit-invoice/{id}', [EstimatesController::class, 'viewInvoice'])->name('business.estimates.viewInvoice');

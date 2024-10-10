@@ -13,6 +13,9 @@ use App\Models\SentLog;
 use App\Models\InvoicesDetails;
 use App\Models\EstimatesItems;
 use App\Models\CustomerContact;
+use App\Models\InvoicesItems;
+
+use Carbon\Carbon;
 
 
 use Illuminate\Http\JsonResponse;
@@ -258,115 +261,123 @@ class SalesCustomersController extends Controller
     }
 
 
-
-// public function show($sale_cus_id): View
-// {
-//     $user = Auth::guard('masteradmins')->user();
-//     $user_id = $user->user_id;
-
-//     // Fetch the vendor details based on the ID
-//     $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
-//     $Country = Countries::all(); // Fetch all countries
-//     $States = States::all();
-
-//     // Fetch SentLog data with related invoice or estimate details
-//     $sentLogs = SentLog::where('user_id', $user->id)->
-//     where('cust_id', $sale_cus_id)
-//     ->orderBy('created_at', 'desc')
-//     ->with(['estimate', 'invoice']) // Eager load the related estimates and invoices
-//     ->get();
-// // dd( $sentLogs);
-//     // Unpaid Invoices
-//     $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
-//         ->where('sale_cus_id', $sale_cus_id)
-//         ->with('customer')
-//         ->orderBy('created_at', 'desc')
-//         ->get();
-    
-//     // All Invoices related to customer
-//     $allInvoices = InvoicesDetails::where('sale_cus_id', $sale_cus_id)
-//         ->with('customer')
-//         ->orderBy('created_at', 'desc')
-//         ->get();
-
-//     // Pass the fetched data to the view
-//     return view('masteradmin.customers.view_customer', compact(
-//         'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs'
-//     ));
-// }
-
 public function show($sale_cus_id, Request $request): View
 {
+    // dd($request->all());
     $user = Auth::guard('masteradmins')->user();
     $user_id = $user->user_id;
+    $startDate = $request->input('start_date'); 
+    $endDate = $request->input('end_date');
 
-    // Fetch the vendor details based on the ID
+    $start_date_active = $request->input('start_date_active'); 
+    $end_date_active = $request->input('end_date_active');
+    
+    // Fetch the customer details
     $SalesCustomers = SalesCustomers::where('sale_cus_id', $sale_cus_id)->firstOrFail();
-    $Country = Countries::all(); // Fetch all countries
+    $Country = Countries::all(); 
     $States = States::all();
 
-    // Get status filter from request (if provided)
-    $status = $request->input('status');
+    // Fetch status filter from request for activity tab (if provided)
+    $activityStatus = $request->input('activity_status');
 
-    // Fetch SentLog data with related invoice or estimate details
-    $sentLogsQuery = SentLog::where('user_id', $user->id)
+    // Query for SentLog data (Activity data)
+    $activityLogsQuery = SentLog::where('user_id', $user->id)
         ->where('cust_id', $sale_cus_id)
-        ->with(['estimate', 'invoice']) // Eager load the related estimates and invoices
+        ->with(['estimate', 'invoice']) 
         ->orderBy('created_at', 'desc');
 
-    // Apply status filter if provided
-    if ($status) {
-        $sentLogsQuery->where('status', $status);
-    }
+        // if ($start_date_active && !$end_date_active) {
+        //     $activityLogsQuery->whereRaw("STR_TO_DATE(created_at, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$start_date_active]);
+        // } elseif ($start_date_active && $end_date_active) {
+        //     $activityLogsQuery->whereRaw("STR_TO_DATE(created_at, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$start_date_active])
+        //         ->whereRaw("STR_TO_DATE(created_at, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$end_date_active]);
+        // }
+        if ($start_date_active && !$end_date_active) {
+            $activityLogsQuery->whereRaw("DATE(created_at) = ?", [Carbon::createFromFormat('m/d/Y', $start_date_active)->format('Y-m-d')]);
+        } elseif ($start_date_active && $end_date_active) {
+            $activityLogsQuery->whereRaw("DATE(created_at) >= ?", [Carbon::createFromFormat('m/d/Y', $start_date_active)->format('Y-m-d')])
+                ->whereRaw("DATE(created_at) <= ?", [Carbon::createFromFormat('m/d/Y', $end_date_active)->format('Y-m-d')]);
+        }
+        
+        // Additional filters for invoices
+        if ($request->has('log_msg') && $request->log_msg) {
+            $activityLogsQuery->where('log_msg', 'like', '%' . $request->log_msg . '%');
+        }
 
-    $sentLogs = $sentLogsQuery->get();
+    $sentLogs = $activityLogsQuery->get();
 
-    // Unpaid Invoices
+    // Existing logic for invoices
     $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
         ->where('sale_cus_id', $sale_cus_id)
         ->with('customer')
         ->orderBy('created_at', 'desc')
         ->get();
     
-
-    // All Invoices related to customer
-    // $allInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
-    // ->where('sale_cus_id', $sale_cus_id)
-    //     ->with('customer')
-    //     ->orderBy('created_at', 'desc')
-    //     ->get();
-
     $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
-
-
-    if ($request->has('start_date') && $request->start_date) {
-        $query->whereDate('sale_inv_date', '>=', $request->start_date);
+    
+    if ($startDate && !$endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+    } elseif ($startDate && $endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+            ->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
     }
 
-    if ($request->has('end_date') && $request->end_date) {
-        $query->whereDate('sale_inv_date', '<=', $request->end_date);
-    }
-
+    // Additional filters for invoices
     if ($request->has('sale_inv_number') && $request->sale_inv_number) {
         $query->where('sale_inv_number', 'like', '%' . $request->sale_inv_number . '%');
     }
-
-
 
     if ($request->has('sale_status') && $request->sale_status) {
         $query->where('sale_status', $request->sale_status);
     }
 
     $filteredInvoices = $query->get();
-
     $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue']);
+    $invoicesItems = InvoicesItems::where('sale_inv_id', $sale_cus_id)->with('invoices_product', 'item_tax')->get();
+    // Handle AJAX request for activities
+    if ($request->ajax()) {
+        // Check if the request is for the activity tab
+        if ($request->has('activity_filter')) {
+            return view('masteradmin.customers.filtered_activity_results', compact('sentLogs', 'user_id'));
+        } else {
+            return view('masteradmin.customers.filtered_results', compact('unpaidInvoices', 'allInvoices', 'user_id'));
+        }
+    }
 
     // Pass the fetched data to the view
     return view('masteradmin.customers.view_customer', compact(
-        'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'status'
+        'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'sentLogs', 'activityStatus'
     ));
 }
 
+
+private function getActivityLogs($user_id, $sale_cus_id, Request $request)
+{
+    // $status = $request->input('status'); // Activity log status
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    $sentLogsQuery = SentLog::where('user_id', $user_id)
+        ->where('cust_id', $sale_cus_id)
+        ->with(['estimate', 'invoice']) // Eager load related estimates and invoices
+        ->orderBy('created_at', 'desc');
+
+    // Apply status filter if provided
+    // if ($status) {
+    //     $sentLogsQuery->where('status', $status);
+    // }
+
+    // Apply date filters
+    if ($startDate && !$endDate) {
+        $sentLogsQuery->whereRaw("DATE(created_at) = ?", [$startDate]);
+    } elseif ($startDate && $endDate) {
+        $sentLogsQuery->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+
+    // Return the filtered sent logs
+    return $sentLogsQuery->get();
+}
 
 
 

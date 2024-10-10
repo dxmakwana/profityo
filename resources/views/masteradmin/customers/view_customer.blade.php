@@ -309,9 +309,7 @@
 
             @endforeach
             @else
-        <tr>
-          <th colspan="6">No Data found</th>
-        </tr>
+
       @endif
                       </tbody>
                     </table>
@@ -387,7 +385,7 @@
                 <div class="col-lg-12 pad-4">
                   <div class="row justify-content-between">
                     <div class="col-md-3 px-10">
-                      <select class="form-control form-select" style="width: 100%;" name="sale_status" id="sale_status_customer">
+                      <select class="form-control form-select" style="width: 100%;" name="sale_status" id="sale_status">
                         <option value="">All statuses</option>
                         <option value="Draft">Draft</option>
                         <option value="Unsent">Unsent</option>
@@ -399,27 +397,28 @@
                       </select>
                     </div>
                     <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
-                      <div class="input-group date" >
-                        <x-flatpickr id="from-datepicker" placeholder="From"/>
+                      <div class="input-group date">
+                        <x-flatpickr id="from-datepicker" placeholder="From" />
                         <div class="input-group-append">
                           <span class="input-group-text" id="from-calendar-icon">
-                              <i class="fa fa-calendar-alt"></i>
+                            <i class="fa fa-calendar-alt"></i>
                           </span>
                         </div>
-                      </div>
-                      <div class="input-group date" >
-                        <x-flatpickr id="to-datepicker" placeholder="To" />
-                        <div class="input-group-append">
-                          <span class="input-group-text" id="to-calendar-icon">
+                        <div class="input-group date">
+                          <x-flatpickr id="to-datepicker" placeholder="To" />
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="to-calendar-icon">
                               <i class="fa fa-calendar-alt"></i>
-                          </span>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                     <div class="col-md-3 px-10">
                       <div class="input-group">
-                        <input type="search" class="form-control" placeholder="Enter Invoice #">
-                        <div class="input-group-append">
+                        <input type="search" class="form-control" name="sale_inv_number" placeholder="Enter Invoice #"
+                          id="sale_inv_number">
+                        <div class="input-group-append" id="sale_inv_number_submit">
                           <button type="submit" class="btn btn-default">
                             <i class="fa fa-search"></i>
                           </button>
@@ -440,24 +439,25 @@
                   </div>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body1">
-                  <div class="col-md-12 table-responsive pad_table">
-                    <table id="example4" class="table table-hover text-nowrap">
-                      <thead>
-                        <tr>
-                          <th>Customer</th>
-                          <th>Number</th>
-                          <th>Date</th>
-                          <th>Due</th>
-                          <th>Amount Due</th>
-                          <th>Status</th>
-                          <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @if (count($allInvoices) > 0)
-                        @foreach ($allInvoices as $value)
-                    <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
+                <div id="filter_data">
+                  <div class="card-body1">
+                    <div class="col-md-12 table-responsive pad_table">
+                      <table id="example4" class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Customer</th>
+                            <th>Number</th>
+                            <th>Date</th>
+                            <th>Due</th>
+                            <th>Amount Due</th>
+                            <th>Status</th>
+                            <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @if (count($allInvoices) > 0)
+                          @foreach ($allInvoices as $value)
+                      <tr id="invoices-row-all-{{ $value->sale_inv_id }}">
                       <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}
                       </td>
                       <td>{{ $value->sale_inv_number }}</td>
@@ -485,36 +485,36 @@
                       <td>
                       <ul class="navbar-nav ml-auto float-sm-right">
                       <li class="nav-item dropdown d-flex align-items-center">
-                      @php
-            $nextStatus = '';
-            if ($value->sale_status == 'Draft') {
-            $nextStatus = 'Approve';
-            } elseif ($value->sale_status == 'Unsent') {
-            $nextStatus = 'Send';
-            } elseif ($value->sale_status == 'Sent') {
-            $nextStatus = 'Record Payment';
-            } elseif ($value->sale_status == 'Partlal') {
-            $nextStatus = 'Record Payment';
-            } elseif ($value->sale_status == 'Paid') {
-            $nextStatus = 'View';
-            }
-            @endphp
+                        @php
+              $nextStatus = '';
+              if ($value->sale_status == 'Draft') {
+              $nextStatus = 'Approve';
+              } elseif ($value->sale_status == 'Unsent') {
+              $nextStatus = 'Send';
+              } elseif ($value->sale_status == 'Sent') {
+              $nextStatus = 'Record Payment';
+              } elseif ($value->sale_status == 'Partlal') {
+              $nextStatus = 'Record Payment';
+              } elseif ($value->sale_status == 'Paid') {
+              $nextStatus = 'View';
+              }
+              @endphp
 
-                      @if($nextStatus == 'Record Payment')
+                        @if($nextStatus == 'Record Payment')
               <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup">
               Record Payment
               </a>
 
             @else
-          <a href="javascript:void(0);"
-          onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')">
-          {{ $nextStatus }}
-          </a>
-        @endif
-                      <a class="nav-link user_nav" data-toggle="dropdown" href="#">
+        <a href="javascript:void(0);"
+        onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')">
+        {{ $nextStatus }}
+        </a>
+      @endif
+                        <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                         <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
                         <a href="{{ route('business.invoices.view', $value->sale_inv_id) }}"
                         class="dropdown-item">
                         <i class="fas fa-regular fa-eye mr-2"></i> View
@@ -550,23 +550,23 @@
               <i class="fas fa-solid fa-trash mr-2"></i> Delete
               </a>
             @endif
-                      </div>
+                        </div>
                       </li>
                       </ul>
                       </td>
 
-                    </tr>
+                      </tr>
 
-                    <div class="modal fade" id="deleteinvoiceall-{{ $value->sale_inv_id }}" tabindex="-1"
+                      <div class="modal fade" id="deleteinvoiceall-{{ $value->sale_inv_id }}" tabindex="-1"
                       role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                       <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                       <div class="modal-content">
                       <form method="POST"
-                      action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}"
-                      id="delete-form2-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
-                      @csrf
-                      @method('DELETE')
-                      <div class="modal-body pad-1 text-center">
+                        action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}"
+                        id="delete-form2-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
+                        @csrf
+                        @method('DELETE')
+                        <div class="modal-body pad-1 text-center">
                         <i class="fas fa-solid fa-trash delete_icon"></i>
                         <p class="company_business_name px-10"><b>Delete invoice</b></p>
                         <p class="company_details_text">Are You Sure You Want to Delete This invoice?</p>
@@ -578,21 +578,21 @@
                       </form>
                       </div>
                       </div>
+                      </div>
+
+
+              @endforeach
+              @else
+
+        @endif
+                        </tbody>
+                      </table>
                     </div>
-
-
-            @endforeach
-            @else
-        <tr>
-          <th colspan="6">No Data found</th>
-        </tr>
-      @endif
-                      </tbody>
-                    </table>
                   </div>
                 </div>
               </div>
             </div>
+
             <!-- /.tab-pane -->
             <div class="tab-pane" id="customeractivity">
               <div class="card">
@@ -608,114 +608,117 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-3 px-10">
                       <div class="input-group">
-                        <input type="search" class="form-control" placeholder="Search by Description">
-                        <div class="input-group-append">
+                        <input type="search" class="form-control" name="log_msg" placeholder="Enter Description #"
+                          id="log_msg">
+                        <div class="input-group-append" id="log_msg_submit">
                           <button type="submit" class="btn btn-default">
                             <i class="fa fa-search"></i>
                           </button>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-3 d-flex">
-                      <div class="input-group date" id="fromdate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" placeholder="From"
-                          data-target="#fromdate" />
-                        <div class="input-group-append" data-target="#fromdate" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                    <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
+                      <div class="input-group date">
+                        <x-flatpickr id="from-datepicker-active" placeholder="From" />
+                        <div class="input-group-append">
+                          <span class="input-group-text" id="from-calendar-icon-active">
+                            <i class="fa fa-calendar-alt"></i>
+                          </span>
                         </div>
-                      </div>
-                      <div class="input-group date" id="todate" data-target-input="nearest">
-                        <input type="text" class="form-control datetimepicker-input" placeholder="To"
-                          data-target="#todate" />
-                        <div class="input-group-append" data-target="#todate" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                        <div class="input-group date">
+                          <x-flatpickr id="to-datepicker-active" placeholder="To" />
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="to-calendar-icon-active">
+                              <i class="fa fa-calendar-alt"></i>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
 
-              <div class="card">
-                <div class="card-body2">
-                  <div class="row">
-                    <div class="col-md-12" id="accordion">
-                      @foreach($sentLogs as $log)
-              <a class="d-block w-100" data-toggle="collapse" href="#collapseOne-{{ $loop->index }}">
-              <div class="card-header accordion-button">
-                <div class="row align-items-center">
-                <div class="col-auto">
-                  <p class="mb-0">{{ $log->created_at->format('M d') }}</p>
-                </div>
-                <div class="col-auto align-items-center d-flex">
-                  <img src="{{url('public/dist/img/send.svg')}}" class="send_icon">
-                  <p class="invoiceid_text mar_15 mb-0">{{ $log->log_msg }}</p>
-                </div>
-                <div class="col-auto">
-                  <button class="status_btn mar_15">Sent</button>
-                </div>
-                </div>
-              </div>
-              </a>
+                <div class="card">
+                  <div class="card-body2">
+                    <div class="row">
+                      <div class="col-md-12" id="accordion">
+                        <div id="filter_data_activity">
+                        @foreach($sentLogs as $log)
+                          <a class="d-block w-100" data-toggle="collapse" href="#collapseOne-{{ $loop->index }}">
+                            <div class="card-header accordion-button">
+                            <div class="row align-items-center">
+                              <div class="col-auto">
+                              <p class="mb-0">{{ $log->created_at->format('M d') }}</p>
+                              </div>
+                              <div class="col-auto align-items-center d-flex">
+                              <img src="{{url('public/dist/img/send.svg')}}" class="send_icon">
+                              <p class="invoiceid_text mar_15 mb-0">{{ $log->log_msg }}</p>
+                              </div>
+                              <div class="col-auto">
+                              <button class="status_btn mar_15">Sent</button>
+                              </div>
+                            </div>
+                            </div>
+                          </a>
 
-              <div id="collapseOne-{{ $loop->index }}" class="collapse" data-parent="#accordion">
-              <div class="card-body">
-                <div class="row justify-content-between">
-                <div class="col-auto">
-                  <table class="table estimate_detail_table">
-                  @if($log->log_type == 1 && $log->estimate)
-            <tr>
-            <td><strong>Date</strong></td>
-            <td>{{ $log->estimate->sale_estim_date }}</td>
-            </tr>
-            <tr>
-            <td><strong>Due Date</strong></td>
-            <td>{{ $log->estimate->sale_estim_valid_date }}</td>
-            </tr>
-            <tr>
-            <td><strong>P.O/S.O</strong></td>
-            <td>{{ $log->estimate->sale_estim_customer_ref }}</td>
-            </tr>
-            <tr>
-            <td><strong>Items</strong></td>
-            <td>{{ $log->estimate->sale_estim_date }}</td>
-            </tr>
-            <tr>
-            <td><strong>Total</strong></td>
-            <td>{{ $log->estimate->total_amount }}</td>
-            </tr>
-          @elseif($log->log_type == 2 && $log->invoice)
-        <tr>
-        <td><strong>Date</strong></td>
-        <td>{{ $log->invoice->sale_inv_date }}</td>
-        </tr>
-        <tr>
-        <td><strong>Due Date</strong></td>
-        <td>{{ $log->invoice->sale_inv_valid_date }}</td>
-        </tr>
-        <tr>
-        <td><strong>P.O/S.O</strong></td>
-        <td>{{ $log->invoice->sale_inv_customer_ref }}</td>
-        </tr>
-        <tr>
-        <td><strong>Items</strong></td>
-        <td>{{ $log->invoice->item ?? 'n/a' }}</td>
-        </tr>
-        <tr>
-        <td><strong>Total</strong></td>
-        <td>{{ $log->invoice->total_amount ?? 'n/a' }}</td>
-        </tr>
-      @else
-      <tr>
-      <td colspan="2">No related data found.</td>
-      </tr>
-    @endif
+                                    <div id="collapseOne-{{ $loop->index }}" class="collapse" data-parent="#accordion">
+                                      <div class="card-body">
+                                      <div class="row justify-content-between">
+                                        <div class="col-auto">
+                                        <table class="table estimate_detail_table">
+                                          @if($log->log_type == 1 && $log->estimate)
+                                  <tr>
+                                  <td><strong>Date</strong></td>
+                                  <td>{{ $log->estimate->sale_estim_date }}</td>
+                                  </tr>
+                                  <tr>
+                                  <td><strong>Due Date</strong></td>
+                                  <td>{{ $log->estimate->sale_estim_valid_date }}</td>
+                                  </tr>
+                                  <tr>
+                                  <td><strong>P.O/S.O</strong></td>
+                                  <td>{{ $log->estimate->sale_estim_customer_ref }}</td>
+                                  </tr>
+                                  <tr>
+                                  <td><strong>Items</strong></td>
+                                  <td>{{ $log->estimate->sale_estim_date }}</td>
+                                  </tr>
+                                  <tr>
+                                  <td><strong>Total</strong></td>
+                                  <td>{{ $log->estimate->sale_estim_final_amount }}</td>
+                                  </tr>
+                                @elseif($log->log_type == 2 && $log->invoice)
+                            <tr>
+                            <td><strong>Date</strong></td>
+                            <td>{{ $log->invoice->sale_inv_date }}</td>
+                            </tr>
+                            <tr>
+                            <td><strong>Due Date</strong></td>
+                            <td>{{ $log->invoice->sale_inv_valid_date }}</td>
+                            </tr>
+                            <tr>
+                            <td><strong>P.O/S.O</strong></td>
+                            <td>{{ $log->invoice->sale_inv_customer_ref }}</td>
+                            </tr>
+                            <tr>
+                            <td><strong>Items</strong></td>
+                            <td>{{ $log->allInvoices->sale_inv_item_qty ?? 'n/a' }}</td>
+                            </tr>
+                            <tr>
+                            <td><strong>Total</strong></td>
+                            <td>{{ $log->invoice->sale_inv_final_amount ?? 'n/a' }}</td>
+                            </tr>
+                          @else
+                          <tr>
+                          <td colspan="2">No related data found.</td>
+                          </tr>
+                        @endif
                   </table>
-                </div>
-                <div class="col-auto">
+                  </div>
+                  <div class="col-auto">
                   <a href="#"><button class="add_btn_br">View related events</button></a>
 
                   @if($log->log_type == 1)
@@ -726,20 +729,21 @@
         <button class="add_btn">View Invoice</button>
         </a>
       @endif
+                  </div>
                 </div>
                 </div>
-              </div>
               </div>
             @endforeach
+            </div>
 
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
 
 
-              <!-- <div class="col-md-12" id="accordion">
+                <!-- <div class="col-md-12" id="accordion">
                       <a class="d-block w-100" data-toggle="collapse" href="#collapsetwo">
                         <div class="card-header accordion-button">
                           <div class="row align-items-center">
@@ -784,11 +788,11 @@
                               </table>
                             </div> -->
 
+              </div>
             </div>
           </div>
         </div>
     </div>
-  </div>
   </div>
   </div>
   </div>
@@ -1154,19 +1158,20 @@
     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
       <div class="modal-content">
-       
-            <form id="delete-form-{{ $SalesCustomers->sale_cus_id }}" data-id="{{ $SalesCustomers->sale_cus_id }}" method="POST" action="{{ route('business.salescustomers.destroy', $SalesCustomers->sale_cus_id) }}">
-            @csrf
-            @method('DELETE')
-          
-            <div class="modal-body pad-1 text-center">
-              <i class="fas fa-solid fa-trash delete_icon"></i>
-              <p class="company_business_name px-10"><b>Delete Customer</b></p>
-              <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
-              <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-              <button type="submit" class="delete_btn px-15" data-id="{{ $SalesCustomers->sale_cus_id }}">Delete</button>
-            </div>
-          </form>
+
+        <form id="delete-form-{{ $SalesCustomers->sale_cus_id }}" data-id="{{ $SalesCustomers->sale_cus_id }}"
+          method="POST" action="{{ route('business.salescustomers.destroy', $SalesCustomers->sale_cus_id) }}">
+          @csrf
+          @method('DELETE')
+
+          <div class="modal-body pad-1 text-center">
+            <i class="fas fa-solid fa-trash delete_icon"></i>
+            <p class="company_business_name px-10"><b>Delete Customer</b></p>
+            <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+            <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="delete_btn px-15" data-id="{{ $SalesCustomers->sale_cus_id }}">Delete</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -1174,73 +1179,114 @@
   <!-- ./wrapper -->
   @include('masteradmin.layouts.footerlink')
 
-<script>
-  
 
-// <script>
-$(document).ready(function() {
-  // alert('hii');
-    var defaultStartDate = "";  
-    var defaultEndDate = "";    
-    var defaultSaleEstimNumber = ""; 
-    var defaultSaleStatus = "";  
+  <script>
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    $(document).on('click', '.delete_btn', function () {
+      var invoiceId = $(this).data('id'); // Get the customer ID
+      var form = $('#delete-form-' + invoiceId);
+      var url = "{{ route('business.salescustomers.destroy', ':id') }}"; // Use the named route
+      url = url.replace(':id', invoiceId); // Replace with the actual ID
 
-  
-        $('#from-datepicker').val(defaultStartDate);
-   
-        $('#to-datepicker').val(defaultEndDate);
+      // Send DELETE request using AJAX
+      $.ajax({
+        url: url,
+        type: 'DELETE', // Use DELETE method
+        data: form.serialize(), // Serialize form data
+        success: function (response) {
+          window.location.href = "{{ route('business.salescustomers.index') }}";
+          // if (response.success) {
+          //     // Redirect or update the UI dynamically
+          //     window.location.href = "{{ route('business.salescustomers.index') }}";
+          // } else {
+          //     alert('An error occurred: ' + response.message);
+          // }
+        },
+        error: function (xhr) {
+          alert('An error occurred while deleting the record.');
+        }
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      var defaultStartDate = "";
+      var defaultEndDate = "";
+      var defaultSaleEstimNumber = "";
+      var defaultSaleStatus = "";
 
-        $('#sale_inv_number').val(defaultSaleEstimNumber);
+
+      $('#from-datepicker').val(defaultStartDate);
+
+      $('#to-datepicker').val(defaultEndDate);
+
+      $('#sale_inv_number').val(defaultSaleEstimNumber);
 
 
-        $('#sale_status').val(defaultSaleStatus);
+      $('#sale_status').val(defaultSaleStatus);
 
-        var fromdatepicker = flatpickr("#from-datepicker", {
-                altInput: true,
-                dateFormat: "YYYY-MM-DD",
-                altFormat: "DD/MM/YYYY",
-                allowInput: true,
-                parseDate: (datestr, format) => {
-                  return moment(datestr, format, true).toDate();
-                },
-                formatDate: (date, format, locale) => {
-                  return moment(date).format(format);
-                }
-            });
-            document.getElementById('from-calendar-icon').addEventListener('click', function () {
-              fromdatepicker.open(); 
-            });
+      var fromdatepicker = flatpickr("#from-datepicker", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        onChange: function (selectedDates, dateStr, instance) {
 
-          var todatepicker = flatpickr("#to-datepicker", {
-              altInput: true,
-              dateFormat: "YYYY-MM-DD",
-              altFormat: "DD/MM/YYYY",
-              allowInput: true,
-              parseDate: (datestr, format) => {
-                return moment(datestr, format, true).toDate();
-              },
-              formatDate: (date, format, locale) => {
-                return moment(date).format(format);
-              }
-          });
-          document.getElementById('to-calendar-icon').addEventListener('click', function () {
-            todatepicker.open(); 
-          });
+          fetchFilteredData();
+          //alert('edate');
+        },
+        parseDate: (datestr, format) => {
+          return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+          return moment(date).format(format);
+        }
+      });
+      document.getElementById('from-calendar-icon').addEventListener('click', function () {
+        fromdatepicker.open();
+      });
 
-          $('.filter-text').on('click', function() {
-                clearFilters();
-            });
+      var todatepicker = flatpickr("#to-datepicker", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        onChange: function (selectedDates, dateStr, instance) {
 
-            
-   
-    // Function to fetch filtered data
-    function fetchFilteredData() {
+          fetchFilteredData();
+
+          //alert('edate');
+        },
+        parseDate: (datestr, format) => {
+          return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+          return moment(date).format(format);
+        }
+      });
+      document.getElementById('to-calendar-icon').addEventListener('click', function () {
+        todatepicker.open();
+      });
+
+
+      $('.filter-text').on('click', function () {
+        clearFilters();
+      });
+
+
+
+      // Function to fetch filtered data
+      function fetchFilteredData() {
         var formData = {
-            start_date: $('#from-datepicker').val(),
-            end_date: $('#to-datepicker').val(),
-            sale_inv_number: $('#sale_inv_number').val(),
-            sale_status: $('#sale_status').val(),
-            _token: '{{ csrf_token() }}'
+          start_date: $('#from-datepicker').val(),
+          end_date: $('#to-datepicker').val(),
+          sale_inv_number: $('#sale_inv_number').val(),
+          sale_status: $('#sale_status').val(),
+          _token: '{{ csrf_token() }}'
         };
 
 
@@ -1253,78 +1299,229 @@ $(document).ready(function() {
 
 
         $.ajax({
-            url: '{{ route('business.invoices.index') }}', // Define the route for filtering
-            type: 'GET',
-            data: formData,
-            success: function(response) {
-              // console.log(response);
-                $('#filter_data').html(response); // Update the results container with the filtered data
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr);
-                alert('An error occurred while fetching data.');
-            }
+          url: "{{ route('business.customerdetails.show', ['sale_cus_id' => $SalesCustomers->sale_cus_id]) }}",
+          type: 'GET',
+          data: formData,
+          success: function (response) {
+            // console.log(response);
+            $('#filter_data').html(response); // Update the results container with the filtered data
+          },
+          error: function (xhr) {
+            console.error('Error:', xhr);
+            alert('An error occurred while fetching data.');
+          }
         });
-    }
+      }
 
-    // Attach change event handlers to filter inputs
-    $(' #sale_status_customer, #from-datepicker, #to-datepicker, #sale_inv_number1').on('change keyup', function(e) {
-      // alert('hii');
-        e.preventDefault(); 
+      // Attach change event handlers to filter inputs
+      $(' #sale_status, #sale_inv_number1').on('change keyup', function (e) {
+        e.preventDefault();
         fetchFilteredData();
-    });
+      });
 
-    $('#sale_inv_number_submit').on('click', function(e) {
+      $('#sale_inv_number_submit').on('click', function (e) {
         e.preventDefault(); // Prevent default button behavior if inside a form
         fetchFilteredData();
+      });
+
+      function clearFilters() {
+
+        // Clear datepicker fields
+        const fromDatePicker = flatpickr("#from-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+          }
+        });
+        fromDatePicker.clear(); // Clears the "from" datepicker
+
+        const todatepicker = flatpickr("#to-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+          }
+        });
+
+        todatepicker.clear(); // Clears the "to" datepicker
+
+        $('#sale_inv_number').val('');  // Reset input field
+        $('#sale_status').val('');  // Reset another dropdown/input field
+
+        // Trigger any additional functionality if needed
+        fetchFilteredData(); // Example: Fetch data based on the cleared filters
+      }
+
     });
 
-    function clearFilters() {
+  </script>
+  <!-- activity -->
+  <script>
+    $(document).ready(function () {
+      var defaultStartDate = "";
+      var defaultEndDate = "";
+      var defaultSaleEstimNumber = "";
+      // var defaultSaleStatus = "";
 
-            $('#from-datepicker').val('');  // Reset datepicker
-            $('#to-datepicker').val('');  // Reset datepicker
-            $('#sale_inv_number').val('');  // Reset input field
-            $('#sale_status_customer').val('');  // Reset another dropdown/input field
 
-            // Trigger any additional functionality if needed
-            fetchFilteredData(); // Example: Fetch data based on the cleared filters
-            }
+      $('#from-datepicker-active').val(defaultStartDate);
 
-});
+      $('#to-datepicker-active').val(defaultEndDate);
 
-</script>
-<script>
-  $.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-$(document).on('click', '.delete_btn', function() {
-    var invoiceId = $(this).data('id'); // Get the customer ID
-    var form = $('#delete-form-' + invoiceId);
-    var url = "{{ route('business.salescustomers.destroy', ':id') }}"; // Use the named route
-    url = url.replace(':id', invoiceId); // Replace with the actual ID
+      $('#log_msg').val(defaultSaleEstimNumber);
 
-    // Send DELETE request using AJAX
-    $.ajax({
-        url: url,
-        type: 'DELETE', // Use DELETE method
-        data: form.serialize(), // Serialize form data
-        success: function(response) {
-          window.location.href = "{{ route('business.salescustomers.index') }}";
-            // if (response.success) {
-            //     // Redirect or update the UI dynamically
-            //     window.location.href = "{{ route('business.salescustomers.index') }}";
-            // } else {
-            //     alert('An error occurred: ' + response.message);
-            // }
+
+      // $('#sale_status').val(defaultSaleStatus);
+
+      var fromdatepicker = flatpickr("#from-datepicker-active", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        onChange: function (selectedDates, dateStr, instance) {
+
+          fetchFilteredData();
+          //alert('edate');
         },
-        error: function(xhr) {
-            alert('An error occurred while deleting the record.');
+        parseDate: (datestr, format) => {
+          return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+          return moment(date).format(format);
         }
+      });
+      document.getElementById('from-calendar-icon-active').addEventListener('click', function () {
+        fromdatepicker.open();
+      });
+
+      var todatepicker = flatpickr("#to-datepicker-active", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        onChange: function (selectedDates, dateStr, instance) {
+
+          fetchFilteredData();
+
+          //alert('edate');
+        },
+        parseDate: (datestr, format) => {
+          return moment(datestr, format, true).toDate();
+        },
+        formatDate: (date, format, locale) => {
+          return moment(date).format(format);
+        }
+      });
+      document.getElementById('to-calendar-icon-active').addEventListener('click', function () {
+        todatepicker.open();
+      });
+
+
+      $('.filter-text').on('click', function () {
+        clearFilters();
+      });
+
+
+
+      // Function to fetch filtered data
+      function fetchFilteredData() {
+        var formData = {
+          start_date_active: $('#from-datepicker-active').val(),
+          end_date_active: $('#to-datepicker-active').val(),
+          log_msg: $('#log_msg').val(),
+         activity_filter: 'activity_filter',
+          _token: '{{ csrf_token() }}'
+        };
+
+
+
+        // alert(start_date);
+        // alert(end_date);
+        // alert(sale_cus_id);
+        // alert(sale_estim_number);
+        // console.log('Form Data:', formData); // Debug: Log form data to console
+
+
+        $.ajax({
+          url: "{{ route('business.customerdetails.show', ['sale_cus_id' => $SalesCustomers->sale_cus_id]) }}",
+          type: 'GET',
+          data: formData,
+          success: function (response) {
+            // console.log(response);
+            $('#filter_data_activity').html(response); // Update the results container with the filtered data
+          },
+          error: function (xhr) {
+            console.error('Error:', xhr);
+            alert('An error occurred while fetching data.');
+          }
+        });
+      }
+
+      // // Attach change event handlers to filter inputs
+      // $(' #sale_status, #sale_inv_number1').on('change keyup', function (e) {
+      //   e.preventDefault();
+      //   fetchFilteredData();
+      // });
+
+      $('#log_msg_submit').on('click', function (e) {
+        e.preventDefault(); // Prevent default button behavior if inside a form
+        fetchFilteredData();
+      });
+
+      function clearFilters() {
+
+        // Clear datepicker fields
+        const fromDatePicker = flatpickr("#from-datepicker-active", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+          }
+        });
+        fromDatePicker.clear(); // Clears the "from" datepicker
+
+        const todatepicker = flatpickr("#to-datepicker-active", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "MM/DD/YYYY",
+          altFormat: "MM/DD/YYYY",
+          parseDate: (datestr, format) => {
+            return moment(datestr, format, true).toDate();
+          },
+          formatDate: (date, format, locale) => {
+            return moment(date).format(format);
+          }
+        });
+
+        todatepicker.clear(); // Clears the "to" datepicker
+
+        $('#log_msg').val('');  // Reset input field
+        // $('#sale_status').val('');  // Reset another dropdown/input field
+
+        // Trigger any additional functionality if needed
+        fetchFilteredData(); // Example: Fetch data based on the cleared filters
+      }
+
     });
-});
-</script>
+
+  </script>
+  <!-- end -->
 </body>
 
 </html>

@@ -268,7 +268,7 @@
             <ul class="nav nav-treeview">
               @if(isset($access['employees']) && $access['employees']) 
               <li class="nav-item">
-                <a href="employees-list.html" class="nav-link">
+                <a href="{{ route('business.employee.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Employees</p>
                 </a>
