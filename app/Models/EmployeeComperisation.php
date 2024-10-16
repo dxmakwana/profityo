@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class EmployeeComperisation extends Model
 {
     use HasFactory;
-    protected $fillable = ['emp_id','id','emp_comp_salary_amount','emp_comp_salary_type','emp_comp_effective_date','emp_comp_status'];
+    protected $fillable = ['emp_id','id','emp_comp_salary_amount','emp_comp_salary_type','emp_comp_effective_date','emp_comp_status','average_hours_per_week'];
    
     public function __construct(array $attributes = [])
     {

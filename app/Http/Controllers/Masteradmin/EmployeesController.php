@@ -7,6 +7,7 @@ use App\Models\Countries;
 use App\Models\States;
 use App\Models\Employees;
 use App\Models\EmployeeTaxDetails;
+use Carbon\Carbon;
 
 use App\Models\EmployeeComperisation;
 use App\Models\EmployeeStartOffboarding;
@@ -44,8 +45,17 @@ class EmployeesController extends Controller
             'city_name' => 'nullable|string|max:255',
             'state_id' => 'nullable|numeric',
             'zipcode' => 'nullable|string|max:255',
-            'emp_dob' => 'required|string|max:255',
-            'emp_email' => 'nullable|email|max:255',
+            'emp_dob' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $dob = Carbon::parse($value);
+                    $age = $dob->diffInYears(Carbon::now());
+                    if ($age < 10) {
+                        $fail('The employee must be at least 10 years old.');
+                    }
+                },
+            ],            'emp_email' => 'nullable|email|max:255',
             // 'emp_middle_initial' => 'nullable|string|max:255',
             'emp_doh' => 'required|string|max:255',
             'emp_work_location' => 'required|string|max:255',
@@ -98,8 +108,12 @@ class EmployeesController extends Controller
     // Fetch countries and states for dropdowns
     $Country = Countries::all(); 
     $State = States::all(); 
+    $taxDetails=EmployeeTaxDetails::where('emp_tax_id', 1)->first();
+    $EmployeeComperisation = EmployeeComperisation::where('emp_id' , $id)->first();
+    $EmployeeComperisationLIST = EmployeeComperisation::where('emp_id' , $id)->get();
 
-    return view('masteradmin.payroll_employee.edit', compact('employee', 'Country', 'State'));
+    // dd($EmployeeComperisation);
+    return view('masteradmin.payroll_employee.edit', compact('employee', 'Country', 'State','taxDetails','EmployeeComperisation','EmployeeComperisationLIST'));
 }
 public function update(Request $request, $id)
 {
@@ -155,14 +169,11 @@ public function update(Request $request, $id)
 }
 
 
-
-
 public function storeCompensation(Request $request, $id)
 {
-    ///dd($request->all());
     // Get the authenticated user
     $user = Auth::guard('masteradmins')->user();
-    
+
     // Find the employee using the provided emp_id and ensure the correct table prefix
     $employee = Employees::where('emp_id', $id)->firstOrFail(); // Using $id directly
 
@@ -170,30 +181,120 @@ public function storeCompensation(Request $request, $id)
     $request->validate([
         'emp_comp_salary_amount' => 'required|numeric',
         'emp_comp_salary_type' => 'required|string',
-        'effective_date' => 'required|string', // Uncomment if needed
+        'emp_comp_effective_date' => 'required|string',
+        'average_hours_per_week' => 'nullable|numeric',  // Optional if salary type is not 'Hourly'
     ], [
         'emp_comp_salary_amount.required' => 'The salary amount is required.',
         'emp_comp_salary_type.required' => 'Please select a salary type.',
-        'effective_date.required' => 'Please provide an effective date.',
+        'emp_comp_effective_date.required' => 'Please provide an effective date.',
     ]);
 
-    // Insert the compensation data into the EmployeeComperisation model
-   $dx = EmployeeComperisation::create([
+    // Create a new compensation record (always inserts a new record)
+    EmployeeComperisation::create([
         'emp_id' => $id,  // Store the emp_id directly
         'id' => $user->id,  // Assuming you're storing the user ID
         'emp_comp_salary_amount' => $request->emp_comp_salary_amount,
+        'average_hours_per_week' => $request->average_hours_per_week,
         'emp_comp_salary_type' => $request->emp_comp_salary_type,
-        'emp_comp_effective_date' => $request->emp_comp_effective_date, // Uncomment if needed
+        'emp_comp_effective_date' => $request->emp_comp_effective_date, // Ensure this is correct
         'emp_comp_status' => 1,  // Set to active or any status you prefer
     ]);
 
-    // dd($dx);
+    \MasterLogActivity::addToLog('Employee compensation is saved.');
 
     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
 }
 
+// public function storeCompensation(Request $request, $id)
+// {
+// // dd($request->all());
+//     // Get the authenticated user
+//     $user = Auth::guard('masteradmins')->user();
+    
+//     // Find the employee using the provided emp_id and ensure the correct table prefix
+//     $employee = Employees::where('emp_id', $id)->firstOrFail(); // Using $id directly
+
+//     // Validate compensation form fields
+//     $request->validate([
+//         'emp_comp_salary_amount' => 'required|numeric',
+//         'emp_comp_salary_type' => 'required|string',
+//           'effective_date' => 'required|string',
+//           'average_hours_per_week' => 'required|numeric',  // Uncomment if needed
+//     ], [
+//         'emp_comp_salary_amount.required' => 'The salary amount is required.',
+//         'emp_comp_salary_type.required' => 'Please select a salary type.',
+//         'effective_date.required' => 'Please provide an effective date.',
+//     ]);
+
+//     // Insert the compensation data into the EmployeeComperisation model
+//    $dx = EmployeeComperisation::create([
+//         'emp_id' => $id,  // Store the emp_id directly
+//         'id' => $user->id,  // Assuming you're storing the user ID
+//         'emp_comp_salary_amount' => $request->emp_comp_salary_amount,
+//         'average_hours_per_week' => $request->average_hours_per_week,
+//         'emp_comp_salary_type' => $request->emp_comp_salary_type,
+//         'emp_comp_effective_date' => $request->emp_comp_effective_date, // Uncomment if needed
+//         'emp_comp_status' => 1,  // Set to active or any status you prefer
+//     ]);
+
+//     // dd( $dx);
+//     \MasterLogActivity::addToLog('employee is saved.');
+
+//     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
+// }
+
+// public function storeTaxDetails(Request $request, $emp_id)
+// {
+//     $user = Auth::guard('masteradmins')->user();
+
+//     // Validate the form data
+//     $request->validate([
+//         'emp_tax_deductions' => 'required|numeric',
+//         'emp_tax_dependent_amount' => 'required|numeric',
+//         'emp_tax_filing_status' => 'required|string',
+//         'emp_tax_nra_amount' => 'required|numeric',
+//         'emp_tax_other_income' => 'required|numeric',
+//         'emp_tax_job' => 'required|string',
+//         'emp_tax_california_total_allowances' => 'required|numeric',
+//         'emp_tax_california_filing_status' => 'required|string',
+
+//         // Add other validation rules for tax details
+//     ]);
+   
+//     // Prepare data for insertion
+//     $taxDetails = [
+//         // 'emp_id' => $id,  // Store the emp_id directly
+//         'id' => $user->id,
+//         'emp_id' => $emp_id,  // Employee ID
+//         'emp_tax_deductions' => $request->emp_tax_deductions,
+//         'emp_tax_dependent_amount' => $request->emp_tax_dependent_amount,
+//         'emp_tax_filing_status' => $request->emp_tax_filing_status,
+//         'emp_tax_nra_amount' => $request->emp_tax_nra_amount,
+//         'emp_tax_other_income'=> $request->emp_tax_other_income,
+//         'emp_tax_job'=> $request->emp_tax_job,
+//         'emp_tax_california_state_tax'=> $request->emp_tax_california_state_tax,
+//         'emp_tax_california_filing_status'=> $request->emp_tax_california_filing_status,
+//         'emp_tax_california_total_allowances'=> $request->emp_tax_california_total_allowances,
+//         'emp_tax_non_resident_emp'=> $request->emp_tax_non_resident_emp,
+//         'emp_tax_california_state'=> $request->emp_tax_california_state,
+//         'emp_tax_california_sdi'=> $request->emp_tax_california_sdi,
+//         // Add other tax fields here
+//         'emp_tax_status' => 1,  // Set tax status to active or any other status
+//     ];
+
+//     // Insert the tax details into the dynamic table
+//     EmployeeTaxDetails::create($taxDetails);
+//      \MasterLogActivity::addToLog('employee is saved.');
+
+//     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
+// }
+// app/Http/Controllers/Masteradmin/EmployeesController.php
+
+
+
 public function storeTaxDetails(Request $request, $emp_id)
 {
+    // DD();
     $user = Auth::guard('masteradmins')->user();
 
     // Validate the form data
@@ -203,40 +304,45 @@ public function storeTaxDetails(Request $request, $emp_id)
         'emp_tax_filing_status' => 'required|string',
         'emp_tax_nra_amount' => 'required|numeric',
         'emp_tax_other_income' => 'required|numeric',
-        'emp_tax_job' => 'required|numeric',
+        'emp_tax_job' => 'required|string',
         'emp_tax_california_total_allowances' => 'required|numeric',
         'emp_tax_california_filing_status' => 'required|string',
-
-        // Add other validation rules for tax details
+        // Add other validation rules as needed
     ]);
-   
-    // Prepare data for insertion
-    $taxDetails = [
-        // 'emp_id' => $id,  // Store the emp_id directly
+
+    // Check if tax details exist for this employee
+    $taxDetails = EmployeeTaxDetails::where('emp_id', $emp_id)->first();
+    // dd($taxDetails);
+    // Prepare data
+    $data = [
         'id' => $user->id,
-        'emp_id' => $emp_id,  // Employee ID
+        'emp_id' => $emp_id,
         'emp_tax_deductions' => $request->emp_tax_deductions,
         'emp_tax_dependent_amount' => $request->emp_tax_dependent_amount,
         'emp_tax_filing_status' => $request->emp_tax_filing_status,
         'emp_tax_nra_amount' => $request->emp_tax_nra_amount,
-        'emp_tax_other_income'=> $request->emp_tax_other_income,
-        'emp_tax_job'=> $request->emp_tax_job,
-        'emp_tax_california_state_tax'=> $request->emp_tax_california_state_tax,
-        'emp_tax_california_filing_status'=> $request->emp_tax_california_filing_status,
-        'emp_tax_california_total_allowances'=> $request->emp_tax_california_total_allowances,
-        'emp_tax_non_resident_emp'=> $request->emp_tax_non_resident_emp,
-        'emp_tax_california_state'=> $request->emp_tax_california_state,
-        'emp_tax_california_sdi'=> $request->emp_tax_california_sdi,
-        // Add other tax fields here
-        'emp_tax_status' => 1,  // Set tax status to active or any other status
+        'emp_tax_other_income' => $request->emp_tax_other_income,
+        'emp_tax_job' => $request->emp_tax_job,
+        'emp_tax_california_state_tax' => $request->emp_tax_california_state_tax,
+        'emp_tax_california_filing_status' => $request->emp_tax_california_filing_status,
+        'emp_tax_california_total_allowances' => $request->emp_tax_california_total_allowances,
+        'emp_tax_non_resident_emp' => $request->emp_tax_non_resident_emp ?? 0, // default to 0 if not checked
+        'emp_tax_california_state' => $request->emp_tax_california_state ?? 0,
+        'emp_tax_california_sdi' => $request->emp_tax_california_sdi ?? 0,
+        'emp_tax_status' => 1,  // Assuming 1 means active
     ];
 
-    // Insert the tax details into the dynamic table
-    EmployeeTaxDetails::create($taxDetails);
+    // If tax details exist, update; otherwise, create
+    if ($taxDetails) {
+        $taxDetails->update($data);
+    } else {
+        EmployeeTaxDetails::create($data);
+    }
 
     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
 }
-// app/Http/Controllers/Masteradmin/EmployeesController.php
+
+
 
 public function storeOffboarding(Request $request, $emp_id)
 {

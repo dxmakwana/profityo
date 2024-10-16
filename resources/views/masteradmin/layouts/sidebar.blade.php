@@ -255,9 +255,12 @@
           
              )
 
-          <li class="nav-item">
+          <li class="nav-item {{  request()->is($busadminRoutes.'/employee*') || 
+                             request()->is($busadminRoutes.'/employeecreate*') || 
+                             request()->is($busadminRoutes.'/employeeedit/*')    
+                    ? 'menu-open' : '' }} ">
             
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" >
               <i class="nav-icon fas fa-file-invoice-dollar"></i>
               <p>
                 Payroll
@@ -268,10 +271,19 @@
             <ul class="nav nav-treeview">
               @if(isset($access['employees']) && $access['employees']) 
               <li class="nav-item">
-                <a href="{{ route('business.employee.index') }}" class="nav-link">
+                
+                <!-- <a href="{{ route('business.employee.index') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Employees</p>
+                </a> -->
+                <a href="{{ route('business.employee.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/employee*') || 
+                             request()->is($busadminRoutes.'/employeecreate*') || 
+                             request()->is($busadminRoutes.'/employeeedit/*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Employees</p>
                 </a>
+              <!-- </li> -->
               </li>
               @endif
               @if(isset($access['timesheets']) && $access['timesheets']) 
