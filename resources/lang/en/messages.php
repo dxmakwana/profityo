@@ -96,7 +96,7 @@ return [
             'send_success'  => 'Employee created successfully!',
             'edit_success' => 'Employee updated successfully.',
             'delete_success' => 'Employee deleted successfully.',
-            'leave_success'  => 'Employee created successfully!',
+            'leave_success'  => 'Place On Leave created successfully!',
             
         ],
 

@@ -31,7 +31,7 @@
     <!-- Main content -->
     <section class="content px-10">
     <div class="container-fluid">
-   
+
       <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
       <ul class="nav nav-pills p-2 tab_box">
         <li class="nav-item"><a class="nav-link active" href="#personalinformation" data-toggle="tab">Personal
@@ -117,17 +117,17 @@
 
             <!-- <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
-        <x-flatpickr 
-        id="from-datepicker" 
-        name="emp_dob" 
-        placeholder="Select a date" 
-        value="{{ old('emp_dob', $employee->emp_dob) }}"
-        />
-        <div class="input-group-append">
-        <div class="input-group-text" id="from-calendar-icon">
-        <i class="fa fa-calendar-alt"></i>
-        </div>
-        </div>
+      <x-flatpickr 
+      id="from-datepicker" 
+      name="emp_dob" 
+      placeholder="Select a date" 
+      value="{{ old('emp_dob', $employee->emp_dob) }}"
+      />
+      <div class="input-group-append">
+      <div class="input-group-text" id="from-calendar-icon">
+      <i class="fa fa-calendar-alt"></i>
+      </div>
+      </div>
       </div> -->
             <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
@@ -150,17 +150,17 @@
             </div>
           </div>
           <!-- <div class="col-md-4">
-        <div class="form-group">
-          <label>Date of Birth <span class="text-danger">*</span></label>
-          <div class="input-group date" id="employeedob" data-target-input="nearest">
-           <input type="text" class="form-control" id="emp_dob" name="emp_dob" 
+      <div class="form-group">
+        <label>Date of Birth <span class="text-danger">*</span></label>
+        <div class="input-group date" id="employeedob" data-target-input="nearest">
+         <input type="text" class="form-control" id="emp_dob" name="emp_dob" 
        value="{{ old('emp_dob', $employee->emp_dob) }}">
-          <div class="input-group-append" data-target="#employeedob" data-toggle="datetimepicker">
-          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-          </div>
-          </div>
+        <div class="input-group-append" data-target="#employeedob" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
         </div>
-        </div> -->
+        </div>
+      </div>
+      </div> -->
           <div class="col-md-4">
             <div class="form-group">
             <label for="employeeemail">Email</label>
@@ -189,8 +189,8 @@
             <label>Wage Type <span class="text-danger">*</span></label>
             <select name="emp_wage_type" class="form-control">
               <option value="">Select</option>
-              <option value="Per Hour" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Per Hour') ? 'selected' : '' }}>Per Hour</option>
-              <option value="annually" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'annually') ? 'selected' : '' }}>Annually</option>
+              <option value="Hourly" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Hourly') ? 'selected' : '' }}>Hourly</option>
+              <option value="Annual" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Annual') ? 'selected' : '' }}>Annual</option>
             </select>
             </div>
           </div>
@@ -216,6 +216,76 @@
       </div>
       <!-- /.tab-pane -->
       <!-- <div class="tab-pane" id="compensation">
+      <div class="card px-20">
+      <div class="card-header">
+        <h3 class="card-title">Compensation</h3>
+      </div>
+      <div class="card-body">
+        <div class="row align-items-center justify-content-between">
+        <div class="col-auto d-flex">
+        <p id="Salary" class="font_18 mb-0">${{$employee->emp_wage_amount}}/{{$employee->emp_wage_type}}</p>
+        <button id="toggleBtn" onclick="toggleSalary()" class="hide_show_btn">Hide</button>
+        </div>
+
+
+
+        <div class="col-auto">
+        <button id="edit_salary" class="reminder_btn">Change Salary</button>
+        </div>
+        </div>
+
+        <div class="editsalarybox mt-3">
+        <form action="{{ route('employees.storeCompensation', $employee->emp_id) }}" method="POST">
+        @csrf
+        @method('Patch')
+        <input type="hidden" name="emp_id" value="{{ $employee->emp_id }}">
+        <div class="row mt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+          <label for="emp_comp_salary_amount">Salary Amount <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" id="salaryamount" name="emp_comp_salary_amount"
+          placeholder="0.00">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+          <label for="emp_comp_salary_type">Salary Type <span class="text-danger">*</span></label>
+          <select class="form-control" id="emp_comp_salary_type" name="emp_comp_salary_type">
+          <option value="">Select</option>
+          <option value="Hourly">Hourly</option>
+          <option value="Annual">Annual</option>
+          </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+          <label for="emp_comp_effective_date">Effective Date <span class="text-danger">*</span></label>
+
+          <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+
+          <x-flatpickr id="d-datepicker" name="emp_comp_effective_date" placeholder="Select a date" />
+          <div class="input-group-append">
+          <div class="input-group-text" id="d-calendar-icon">
+            <i class="fa fa-calendar-alt"></i>
+          </div>
+          </div>
+          </div>
+
+          </div>
+        </div>
+        </div>
+        <div class="row py-20 px-10">
+        <div class="col-md-12 text-center">
+          <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
+          <button type="submit" class="add_btn">Save</button>
+        </div>
+        </div>
+        </form>
+        </div>
+      </div>
+      </div>
+      </div> -->
+      <div class="tab-pane" id="compensation">
         <div class="card px-20">
         <div class="card-header">
           <h3 class="card-title">Compensation</h3>
@@ -223,393 +293,422 @@
         <div class="card-body">
           <div class="row align-items-center justify-content-between">
           <div class="col-auto d-flex">
-            <p id="Salary" class="font_18 mb-0">${{$employee->emp_wage_amount}}/{{$employee->emp_wage_type}}</p>
+            <p id="Salary" class="font_18 mb-0">
+            ${{$employee->emp_wage_amount}}/{{$employee->emp_wage_type}}
+            </p>
             <button id="toggleBtn" onclick="toggleSalary()" class="hide_show_btn">Hide</button>
           </div>
-
-
-
           <div class="col-auto">
-            <button id="edit_salary" class="reminder_btn">Change Salary</button>
+            <button id="edit_salary" class="reminder_btn" onclick="toggleSalaryForm()">Change Salary</button>
           </div>
           </div>
 
-          <div class="editsalarybox mt-3">
+          <!-- Form is hidden by default -->
+          <div class="editsalarybox mt-3" style="display: none;">
           <form action="{{ route('employees.storeCompensation', $employee->emp_id) }}" method="POST">
-            @csrf
-            @method('Patch')
-            <input type="hidden" name="emp_id" value="{{ $employee->emp_id }}">
-            <div class="row mt-3">
-            <div class="col-md-4">
-              <div class="form-group">
-              <label for="emp_comp_salary_amount">Salary Amount <span class="text-danger">*</span></label>
-              <input type="number" class="form-control" id="salaryamount" name="emp_comp_salary_amount"
-                placeholder="0.00">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-              <label for="emp_comp_salary_type">Salary Type <span class="text-danger">*</span></label>
-              <select class="form-control" id="emp_comp_salary_type" name="emp_comp_salary_type">
-                <option value="">Select</option>
-                <option value="Hourly">Hourly</option>
-                <option value="Annual">Annual</option>
-              </select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-              <label for="emp_comp_effective_date">Effective Date <span class="text-danger">*</span></label>
-            
-              <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                        @csrf
+                        @method('Patch')
+                        <input type="hidden" name="emp_id" value="{{ $employee->emp_id }}">
 
-                <x-flatpickr id="d-datepicker" name="emp_comp_effective_date" placeholder="Select a date" />
-                <div class="input-group-append">
-                <div class="input-group-text" id="d-calendar-icon">
-                  <i class="fa fa-calendar-alt"></i>
-                </div>
-                </div>
-              </div>
-
-              </div>
-            </div>
-            </div>
-            <div class="row py-20 px-10">
-            <div class="col-md-12 text-center">
-              <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
-              <button type="submit" class="add_btn">Save</button>
-            </div>
-            </div>
-          </form>
-          </div>
-        </div>
-        </div>
-      </div> -->
-      <div class="tab-pane" id="compensation">
-    <div class="card px-20">
-        <div class="card-header">
-            <h3 class="card-title">Compensation</h3>
-        </div>
-        <div class="card-body">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-auto d-flex">
-                    <p id="Salary" class="font_18 mb-0">
-                        ${{$employee->emp_wage_amount}}/{{$employee->emp_wage_type}}
-                    </p>
-                </div>
-                <div class="col-auto">
-                    <button id="edit_salary" class="reminder_btn" onclick="toggleSalaryForm()">Change Salary</button>
-                </div>
-            </div>
-
-            <!-- Form is hidden by default -->
-            <div class="editsalarybox mt-3" style="display: none;">
-                <form action="{{ route('employees.storeCompensation', $employee->emp_id) }}" method="POST">
-                    @csrf
-                    @method('Patch')
-                    <input type="hidden" name="emp_id" value="{{ $employee->emp_id }}">
-
-                    <div class="row mt-3">
+                        <div class="row mt-3">
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="emp_comp_salary_amount">Salary Amount <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control @error('emp_comp_salary_amount') is-invalid @enderror" id="salaryamount" name="emp_comp_salary_amount" placeholder="0.00">
-                                @error('emp_comp_salary_amount')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                              </div>
+                          <div class="form-group">
+                          <label for="emp_comp_salary_amount">Salary Amount <span class="text-danger">*</span></label>
+                          <input type="number" class="form-control @error('emp_comp_salary_amount') is-invalid @enderror"
+                            id="salaryamount" name="emp_comp_salary_amount" placeholder="0.00"    value="{{ old('emp_comp_salary_amount', $EmployeeComperisation->emp_comp_salary_amount ?? '') }}">
+                          @error('emp_comp_salary_amount')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                          </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="emp_comp_salary_type">Salary Type <span class="text-danger">*</span></label>
-                                <select class="form-control @error('emp_comp_salary_type') is-invalid @enderror" id="emp_comp_salary_type" name="emp_comp_salary_type">
-                                    <option value="">Select</option>
-                                    <option value="Hourly">Hourly</option>
-                                    <option value="Annual">Annual</option>
-                                </select>
-                                @error('emp_comp_salary_type')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
+                          <div class="form-group">
+                          <label for="emp_comp_salary_type">Salary Type <span class="text-danger">*</span></label>
+                          <select class="form-control @error('emp_comp_salary_type') is-invalid @enderror"
+                            id="emp_comp_salary_type" name="emp_comp_salary_type">
+                            <option value="">Select</option>
+                            <option value="Hourly"  {{ old('emp_comp_salary_type', $EmployeeComperisation->emp_comp_salary_type ?? '') == 'Hourly' ? 'selected' : '' }}>Hourly</option>
+                            <option value="Annual"  {{ old('emp_comp_salary_type', $EmployeeComperisation->emp_comp_salary_type ?? '') == 'Annual' ? 'selected' : '' }}>Annual</option>
+                          </select>
+                          @error('emp_comp_salary_type')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group @error('emp_comp_effective_date') is-invalid @enderror">
+                          <label for="emp_comp_effective_date">Effective Date </label>
+                          <!-- <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                            <x-flatpickr id="d-datepicker" name="emp_comp_effective_date" placeholder="Select a date" />
+                            <div class="input-group-append">
+                            <div class="input-group-text" id="d-calendar-icon">
+                              <i class="fa fa-calendar-alt"></i>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group @error('emp_comp_effective_date') is-invalid @enderror">
-                                <label for="emp_comp_effective_date">Effective Date </label>
-                                <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                                    <x-flatpickr id="d-datepicker" name="emp_comp_effective_date" placeholder="Select a date" />
-                                    <div class="input-group-append">
-                                        <div class="input-group-text" id="d-calendar-icon">
-                                            <i class="fa fa-calendar-alt"></i>
-                                        </div>
-                                    </div>
-                                    @error('emp_comp_effective_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                                </div>
                             </div>
-                        </div>
-                    </div>
+                            @error('emp_comp_effective_date')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                          </div>
+                          </div>
+                        </div> -->
+                        <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
-                    <div class="row py-20 px-10">
-                        <div class="col-md-12 text-center">
-                            <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
-                            <button type="submit" class="add_btn">Save</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+<input type="hidden" id="effective-datepicker-hidden" value="{{ $EmployeeComperisation->emp_comp_effective_date }}" />
+
+@php
+$saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effective_date)->format('m/d/Y');
+@endphp
+
+<x-flatpickr id="effective-datepicker" name="emp_comp_effective_date" placeholder="Select a date"
+:value="$saleEstimDate" />
+<div class="input-group-append">
+<div class="input-group-text" id="effective-calendar-icon">
+  <i class="fa fa-calendar-alt"></i>
+</div>
+</div>
+<span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
+</div>
+
+</div>
 </div>
 
 
+                        <div class="col-md-4" id="hours_per_week" style="display: none;">
+                          <div class="form-group">
+                          <label for="average_hours_per_week">Average Hours Per Week</label>
+                          <input type="number" class="form-control @error('average_hours_per_week') is-invalid @enderror"
+                            id="average_hours_per_week" name="average_hours_per_week" value="{{ old('average_hours_per_week', $EmployeeComperisation->average_hours_per_week ?? '') }}" placeholder="0.00">
+                          @error('average_hours_per_week')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
 
-      <!-- Tax Details Tab -->
+                          </div>
+                          Salaried employees work for 44, 40 or 37.5 hours per week.
 
-      <!-- /.tab-pane -->
-      <div class="tab-pane" id="taxdetails">
-        <div class="card px-20">
-        <!-- card -->
-        <form action="{{ route('employees.storeTaxDetails', $employee->emp_id) }}" method="POST">
-          @csrf
+                        </div>
+                        <!-- </div> -->
+                        </div>
+
+                        <div class="row py-20 px-10">
+                        <div class="col-md-12 text-center">
+                          <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
+                          <button type="submit" class="add_btn">Save</button>
+                        </div>
+                        </div>
+          </form>
+          </div>
+          <div class="card px-20">
+        <div class="card-body1">
+        <div class="tab-content">
+          <!-- Active Employees Tab -->
+          <div class="tab-pane active" id="activeemployee">
+          <div class="col-md-12 table-responsive pad_table">
+            <table id="example1" class="table table-hover text-nowrap">
+            <thead>
+              <tr>
+              <th>Ammount</th>
+              <th>Effective Date</th>
+              <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                         @foreach($EmployeeComperisationLIST->where('emp_comp_status', 1) as $employee)
+                                            <tr>
+                                                <td>{{ $employee->emp_comp_salary_amount }}</td>
+                                                <td>{{ $employee->emp_comp_effective_date}}</td>
+                                                <td class="text-right">
+                                                    <a href="{{ route('business.employee.edit', $employee->emp_id) }}">
+                                                        <i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+            </tbody>
+            </table>
+          </div>
+          </div>
+
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+          <!-- Tax Details Tab -->
+
+          <!-- /.tab-pane -->
           <div class="tab-pane" id="taxdetails">
           <div class="card px-20">
             <!-- card -->
+            <form action="{{ route('employees.storeTaxDetails', $employee->emp_id) }}" method="POST">
+            @csrf
+            <div class="tab-pane" id="taxdetails">
+              <div class="card px-20">
+              <!-- card -->
+              <div class="card-header">
+                <h3 class="card-title">Federal Tax Details</h3>
+              </div>
+              <div class="card-body2">
+                <div class="row pad-5">
+                <div class="col-md-4">
+                  <div class="form-group @error('emp_tax_deductions') is-invalid @enderror">
+                  <label>Deductions <span class="text-danger">*</span></label>
+                  <div class="d-flex">
+                    <input type="number" name="emp_tax_deductions" class="form-control form-controltext"
+                    placeholder="0.00"
+                    value="{{ old('emp_tax_deductions', $taxDetails->emp_tax_deductions ?? '') }}">
+
+                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                  </div>
+                  @error('emp_tax_deductions')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group @error('emp_tax_dependent_amount') is-invalid @enderror">
+                  <label>Dependent Amount <span class="text-danger">*</span></label>
+                  <div class="d-flex">
+                    <input type="number" name="emp_tax_dependent_amount"
+                    value="{{ old('emp_tax_deductions', $taxDetails->emp_tax_deductions ?? '') }}"
+                    class="form-control form-controltext" placeholder="0.00">
+
+                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                  </div>
+                  @error('emp_tax_dependent_amount')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group ">
+                  <label>Filing Status <span class="text-danger">*</span></label>
+                  <select name="emp_tax_filing_status"
+                    class="form-control @error('emp_tax_filing_status') is-invalid @enderror">
+                    <option value="">Select</option>
+                    <option value="Single or Married filing separately" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Single or Married filing separately' ? 'selected' : '' }}>Single or Married filing separately</option>
+                    <option value="Married filing jointly or Qualifying surviving spouse" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Married filing jointly or Qualifying surviving spouse' ? 'selected' : '' }}>Married filing
+                    jointly or Qualifying surviving spouse</option>
+                    <option value="Head of household" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Head of household' ? 'selected' : '' }}>
+                    Head of household</option>
+                    <option value="Nonresident Alien" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Nonresident Alien' ? 'selected' : '' }}>
+                    Nonresident Alien</option>
+                  </select>
+
+                  @error('emp_tax_filing_status')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group @error('emp_tax_nra_amount') is-invalid @enderror">
+                  <label>NRA Exemption Amount <span class="text-danger">*</span></label>
+                  <div class="d-flex">
+                    <input type="number" name="emp_tax_nra_amount"
+                    value="{{ old('emp_tax_nra_amount', $taxDetails->emp_tax_nra_amount ?? '') }}"
+                    class="form-control form-controltext" placeholder="0.00">
+
+                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                  </div>
+                  @error('emp_tax_nra_amount')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group @error('emp_tax_other_income') is-invalid @enderror">
+                  <label>Other Income <span class="text-danger">*</span></label>
+                  <div class="d-flex">
+                    <input type="number" name="emp_tax_other_income"
+                    value="{{ old('emp_tax_other_income', $taxDetails->emp_tax_other_income ?? '') }}"
+                    class="form-control form-controltext" placeholder="0.00">
+
+                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                  </div>
+                  @error('emp_tax_other_income')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group @error('emp_tax_job') is-invalid @enderror">
+                  <label>Multiple Jobs <span class="text-danger">*</span></label>
+
+                  <select name="emp_tax_job"
+                    class="form-control @error('emp_tax_job') is-invalid @enderror">
+                    <option value="">Select</option>
+                    <option value="Yes" {{ old('emp_tax_job', $taxDetails->emp_tax_job ?? '') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                    <option value="No" {{ old('emp_tax_job', $taxDetails->emp_tax_job ?? '') == 'No' ? 'selected' : '' }}>No</option>
+                    <!-- <option value="Head of household" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Head of household' ? 'selected' : '' }}>Head of household</option> -->
+                    <!-- <option value="Nonresident Alien" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Nonresident Alien' ? 'selected' : '' }}>Nonresident Alien</option> -->
+                  </select>
+
+                  @error('emp_tax_job')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                </div>
+                <div class="modal_sub_title">State Tax Details</div>
+                <div class="row pad-5">
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>Additional California State Tax to be withheld per pay period</label>
+                  <div class="d-flex">
+                    <input type="number" name="emp_tax_california_state_tax"
+                    value="{{ old('emp_tax_california_state_tax', $taxDetails->emp_tax_california_state_tax ?? '') }}"
+                    class="form-control form-controltext" placeholder="">
+                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                  </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>Filing Status <span class="text-danger">*</span></label>
+                  <select name="emp_tax_filing_status"
+                    class="form-control @error('emp_tax_filing_status') is-invalid @enderror">
+                    <option value="">Select</option>
+                    <option value="Single or Married filing separately" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Single or Married filing separately' ? 'selected' : '' }}>Single or Married filing separately</option>
+                    <option value="Married filing jointly or Qualifying surviving spouse" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Married filing jointly or Qualifying surviving spouse' ? 'selected' : '' }}>Married filing
+                    jointly or Qualifying surviving spouse</option>
+                    <option value="Head of household" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Head of household' ? 'selected' : '' }}>
+                    Head of household</option>
+                    <option value="Nonresident Alien" {{ old('emp_tax_filing_status', $taxDetails->emp_tax_filing_status ?? '') == 'Nonresident Alien' ? 'selected' : '' }}>
+                    Nonresident Alien</option>
+                  </select>
+
+                  @error('emp_tax_california_filing_status')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>Total Allowances (California) <span class="text-danger">*</span></label>
+                  <input type="number" name="emp_tax_california_total_allowances"
+                    value="{{ old('emp_tax_california_total_allowances', $taxDetails->emp_tax_california_total_allowances ?? '') }}"
+                    class="form-control @error('emp_tax_california_total_allowances') is-invalid @enderror"
+                    placeholder="0.00">
+                  @error('emp_tax_california_total_allowances')
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>Non-resident Employee</label>
+                  <div class="form-check">
+                    <!-- <input name="emp_tax_non_resident_emp"  value="{{ old('emp_tax_non_resident_emp', $taxDetails->emp_tax_non_resident_emp ?? '') }}" class="form-check-input" type="checkbox"> -->
+                    <input name="emp_tax_non_resident_emp" class="form-check-input" type="checkbox" {{ old('emp_tax_non_resident_emp', $taxDetails->emp_tax_non_resident_emp ?? false) ? 'checked' : '' }}>
+                    <!-- <input name="emp_tax_california_state" class="form-check-input" type="checkbox" {{ old('emp_tax_california_state', $taxDetails->emp_tax_california_state ?? false) ? 'checked' : '' }}> -->
+                    <!-- <input name="emp_tax_california_sdi" class="form-check-input" type="checkbox" {{ old('emp_tax_california_sdi', $taxDetails->emp_tax_california_sdi ?? false) ? 'checked' : '' }}> -->
+
+                    <label class="form-check-label">Employee Has a Nonresident Certificate on File</label>
+                  </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>California State Tax</label>
+                  <div class="form-check">
+                    <input name="emp_tax_california_state" class="form-check-input" type="checkbox" {{ old('emp_tax_california_state', $taxDetails->emp_tax_california_state ?? false) ? 'checked' : '' }}>
+                    <label class="form-check-label">Employee is Exempt</label>
+                  </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                  <label>California SDI</label>
+                  <div class="form-check">
+                    <input name="emp_tax_california_sdi" class="form-check-input" type="checkbox" {{ old('emp_tax_california_sdi', $taxDetails->emp_tax_california_sdi ?? false) ? 'checked' : '' }}>
+
+                    <label class="form-check-label">Employee is Exempt</label>
+                  </div>
+                  </div>
+                </div>
+                </div>
+                <div class="row py-20 px-10">
+                <div class="col-md-12 text-center">
+                  <a href="{{ route('business.employee.index') }}" type="button"
+                  class="add_btn_br">Cancel</a>
+                  <button type="submit" class="add_btn">Save</button>
+                </div>
+                </div>
+              </div>
+              <!-- /.card -->
+              </div>
+            </div>
+            </form>
+          </div>
+          </div>
+
+
+
+          <div class="tab-pane" id="employmentstatus">
+          <div class="card px-20">
             <div class="card-header">
-            <h3 class="card-title">Federal Tax Details</h3>
+            <h3 class="card-title">Status : <span>{{ $employee->emp_status == 1 ? 'Active' : '' }}</span></h3>
+            </div>
+            <div class="card-body">
+            <div class="row align-items-center justify-content-between">
+              <div class="col-auto d-flex">
+              <p class="mb-0 mr-2 font_18">Active Since :</p>
+              <p class="mb-0 font_18">{{$employee->created_at}}</p>
+              </div>
+              <div class="col-auto d-flex">
+              <p class="mb-0 mr-2 font_18">Wage Type :</p>
+              <p class="mb-0 font_18">{{$employee->emp_wage_type}}</p>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="card px-20">
+            <div class="card-header">
+            <h3 class="card-title">Status : <span>{{ $employee->emp_status == 1 ? 'Active' : '' }}</span></h3>
             </div>
             <div class="card-body2">
-            <div class="row pad-5">
-              <div class="col-md-4">
-              <div class="form-group @error('emp_tax_deductions') is-invalid @enderror">
-                <label>Deductions <span class="text-danger">*</span></label>
-                <div class="d-flex">
-                <input type="number" name="emp_tax_deductions" class="form-control form-controltext"
-                  placeholder="0.00">
-               
-                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                </div>
-                @error('emp_tax_deductions')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
+            <div class="card-box">
+              <div class="row align-items-center justify-content-between">
+              <div class="col-auto">
+                <p class="mb-0 font_18">For Employee Resignations or Dismissals</p>
               </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group @error('emp_tax_dependent_amount') is-invalid @enderror">
-                <label>Dependent Amount <span class="text-danger">*</span></label>
-                <div class="d-flex">
-                <input type="number" name="emp_tax_dependent_amount" class="form-control form-controltext"
-                  placeholder="0.00">
-               
-                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                </div>
-                @error('emp_tax_dependent_amount')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group ">
-                <label>Filing Status <span class="text-danger">*</span></label>
-                <select name="emp_tax_filing_status" class="form-control @error('emp_tax_filing_status') is-invalid @enderror">
-                <option value="">Select</option>
-                <option value="Single or Married filing separately">Single or Married filing separately
-                </option>
-                <option value="Married filing jointly or Qualifying surviving spouse">Married filing jointly
-                  or Qualifying surviving spouse</option>
-                <option value="Head of household">Head of household</option>
-                <option value="Nonresident Alien">Nonresident Alien</option>
-                </select>
-                @error('emp_tax_filing_status')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group @error('emp_tax_nra_amount') is-invalid @enderror">
-                <label>NRA Exemption Amount <span class="text-danger">*</span></label>
-                <div class="d-flex">
-                <input type="number" name="emp_tax_nra_amount" class="form-control form-controltext"
-                  placeholder="0.00">
-                 
-                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                </div>
-                @error('emp_tax_nra_amount')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group @error('emp_tax_other_income') is-invalid @enderror">
-                <label>Other Income <span class="text-danger">*</span></label>
-                <div class="d-flex">
-                <input type="number" name="emp_tax_other_income" class="form-control form-controltext"
-                  placeholder="0.00">
-                 
-                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                </div>
-                @error('emp_tax_other_income')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group @error('emp_tax_job') is-invalid @enderror">
-                <label>Multiple Jobs <span class="text-danger">*</span></label>
-                <select name="emp_tax_job" class="form-control">
-                <option value="">Select</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                </select>
-                @error('emp_tax_job')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
+              <div class="col-auto">
+                <button class="add_btn" data-toggle="modal" data-target="#startoffboarding">Start
+                Offboarding</button>
               </div>
               </div>
             </div>
-            <div class="modal_sub_title">State Tax Details</div>
-            <div class="row pad-5">
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>Additional California State Tax to be withheld per pay period</label>
-                <div class="d-flex">
-                <input type="number" name="emp_tax_california_state_tax"
-                  class="form-control form-controltext" placeholder="">
-                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                </div>
+            <div class="card-box">
+              <div class="row align-items-center justify-content-between">
+              <div class="col-auto">
+                <p class="mb-0 font_18">For Employees You're Taking Off Active Payroll</p>
               </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>Filing Status <span class="text-danger">*</span></label>
-                <select name="emp_tax_california_filing_status" class="form-control @error('emp_tax_california_filing_status') is-invalid @enderror">
-                <option value="">Select</option>
-                <option value="Single/Married (two or more incomes)">Single/Married (two or more incomes)
-                </option>
-                <option value="Married (one income)">Married (one income)</option>
-                <option value="Head of household">Head of household</option>
-                </select>
-                @error('emp_tax_california_filing_status')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>Total Allowances (California) <span class="text-danger">*</span></label>
-                <input type="number" name="emp_tax_california_total_allowances" class="form-control @error('emp_tax_california_total_allowances') is-invalid @enderror"
-                placeholder="0.00">
-                @error('emp_tax_california_total_allowances')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>Non-resident Employee</label>
-                <div class="form-check">
-                <input name="emp_tax_non_resident_emp" class="form-check-input" type="checkbox">
-                <label class="form-check-label">Employee Has a Nonresident Certificate on File</label>
-                </div>
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>California State Tax</label>
-                <div class="form-check">
-                <input name="emp_tax_california_state" class="form-check-input" type="checkbox">
-                <label class="form-check-label">Employee is Exempt</label>
-                </div>
-              </div>
-              </div>
-              <div class="col-md-4">
-              <div class="form-group">
-                <label>California SDI</label>
-                <div class="form-check">
-                <input name="emp_tax_california_sdi" class="form-check-input" type="checkbox">
-                <label class="form-check-label">Employee is Exempt</label>
-                </div>
+              <div class="col-auto">
+                <button class="add_btn" data-toggle="modal" data-target="#placeonleave">Place On
+                Leave</button>
               </div>
               </div>
             </div>
-            <div class="row py-20 px-10">
-              <div class="col-md-12 text-center">
-              <a href="{{ route('business.employee.index') }}" type="button" class="add_btn_br">Cancel</a>
-              <button type="submit" class="add_btn">Save</button>
-              </div>
-            </div>
-            </div>
-            <!-- /.card -->
-          </div>
-          </div>
-        </form>
-        </div>
-      </div>
+            <div class="card-box">
+              <div class="row align-items-center justify-content-between">
 
-
-     
-      <div class="tab-pane" id="employmentstatus">
-        <div class="card px-20">
-        <div class="card-header">
-          <h3 class="card-title">Status : <span>{{ $employee->emp_status == 1 ? 'Active' : '' }}</span></h3>
-        </div>
-        <div class="card-body">
-          <div class="row align-items-center justify-content-between">
-          <div class="col-auto d-flex">
-            <p class="mb-0 mr-2 font_18">Active Since :</p>
-            <p class="mb-0 font_18">{{$employee->created_at}}</p>
-          </div>
-          <div class="col-auto d-flex">
-            <p class="mb-0 mr-2 font_18">Wage Type :</p>
-            <p class="mb-0 font_18">{{$employee->emp_wage_type}}</p>
-          </div>
-          </div>
-        </div>
-        </div>
-        <div class="card px-20">
-        <div class="card-header">
-          <h3 class="card-title">Status : <span>{{ $employee->emp_status == 1 ? 'Active' : '' }}</span></h3>
-        </div>
-        <div class="card-body2">
-          <div class="card-box">
-          <div class="row align-items-center justify-content-between">
-            <div class="col-auto">
-            <p class="mb-0 font_18">For Employee Resignations or Dismissals</p>
+              <div class="col-auto">
+                <p class="mb-0 font_18">Only For Employees Who Have Not Worked Hours Yet</p>
+              </div>
+              <div class="col-auto">
+                <button class="delete_btn" data-toggle="modal"
+                data-target="#deleteemployee-{{ $employee->emp_id }}">Delete</button>
+              </div>
+              </div>
             </div>
-            <div class="col-auto">
-            <button class="add_btn" data-toggle="modal" data-target="#startoffboarding">Start
-              Offboarding</button>
             </div>
           </div>
           </div>
-          <div class="card-box">
-          <div class="row align-items-center justify-content-between">
-            <div class="col-auto">
-            <p class="mb-0 font_18">For Employees You're Taking Off Active Payroll</p>
-            </div>
-            <div class="col-auto">
-            <button class="add_btn" data-toggle="modal" data-target="#placeonleave">Place On Leave</button>
-            </div>
-          </div>
-          </div>
-          <div class="card-box">
-          <div class="row align-items-center justify-content-between">
-         
-            <div class="col-auto">
-            <p class="mb-0 font_18">Only For Employees Who Have Not Worked Hours Yet</p>
-            </div>
-            <div class="col-auto">
-            <button class="delete_btn" data-toggle="modal" data-target="#deleteemployee-{{ $employee->emp_id }}">Delete</button>
-            </div>
-          </div>
-          </div>
+          <!-- /.tab-pane -->
         </div>
-        </div>
-      </div>
-      <!-- /.tab-pane -->
-      </div>
-      <!-- /.tab-content -->
-    </div><!-- /.container-fluid -->
+        <!-- /.tab-content -->
+        </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
@@ -631,8 +730,8 @@
       </button>
       </div>
       <div class="modal-body">
-      <form action="{{ route('employee.offboarding.store',$employee->emp_id) }}" method="POST">
-      @csrf
+      <form action="{{ route('employee.offboarding.store', $employee->emp_id) }}" method="POST">
+        @csrf
         <div class="row pxy-15 px-10">
         <div class="col-md-12">
           <div class="form-group">
@@ -647,80 +746,80 @@
           </div>
         </div>
         <!-- <div class="col-md-6">
-          <div class="form-group">
-          <label for="vendor">Last Day Of Work <span class="text-danger">*</span></label>
-          <div class="input-group date" id="lastdate" data-target-input="nearest">
-            <input type="text" name="emp_off_last_work_date" class="form-control datetimepicker-input" placeholder="" data-target="#lastdate">
-            <!-- <input type="date" name="emp_off_last_work_date" class="form-control" required> --
+        <div class="form-group">
+        <label for="vendor">Last Day Of Work <span class="text-danger">*</span></label>
+        <div class="input-group date" id="lastdate" data-target-input="nearest">
+        <input type="text" name="emp_off_last_work_date" class="form-control datetimepicker-input" placeholder="" data-target="#lastdate">
+        <!-- <input type="date" name="emp_off_last_work_date" class="form-control" required> --
 
-            <div class="input-group-append" data-target="#lastdate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
-          </div>
-          </div>
-        </div> -->
+        <div class="input-group-append" data-target="#lastdate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+        </div>
+        </div>
+        </div>
+      </div> -->
         <div class="col-md-6">
-              <div class="form-group @error('emp_off_last_work_date') is-invalid @enderror">
-              <label for="vendor">Last Day Of Work <span class="text-danger">*</span></label>
-            
-              <div class="input-group date" id="lastdate" data-target-input="nearest">
+          <div class="form-group @error('emp_off_last_work_date') is-invalid @enderror">
+          <label for="vendor">Last Day Of Work <span class="text-danger">*</span></label>
 
-                <x-flatpickr id="d-datepicker" name="emp_off_last_work_date" placeholder="Select a date" />
-                <div class="input-group-append">
-                <div class="input-group-text" id="d-calendar-icon">
-                  <i class="fa fa-calendar-alt"></i>
-                </div>
-                </div>
-                @error('emp_off_last_work_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-             
-              </div>
+          <div class="input-group date" id="lastdate" data-target-input="nearest">
+
+            <x-flatpickr id="d-datepicker" name="emp_off_last_work_date" placeholder="Select a date" />
+            <div class="input-group-append">
+            <div class="input-group-text" id="d-calendar-icon">
+              <i class="fa fa-calendar-alt"></i>
             </div>
-            <!-- </div> -->
-        <!-- <div class="col-md-6">
-          <div class="form-group">
-          <label for="vendor">Date Of Notice <span class="text-danger">*</span></label>
-          <div class="input-group date" id="noticedate" data-target-input="nearest">
-            <input type="text" name="emp_off_notice_date" class="form-control datetimepicker-input" placeholder="" data-target="#noticedate">
-            <div class="input-group-append" data-target="#noticedate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
             </div>
+            @error('emp_off_last_work_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
           </div>
+
           </div>
         </div>
-        </div> -->
-      
-      <!-- </div> -->
-      <div class="col-md-6">
-              <div class="form-group @error('emp_off_notice_date') is-invalid @enderror">
-              <label for="vendor">Date Of Notice <span class="text-danger">*</span></label>
-            
-              <div class="input-group date" id="noticedate" data-target-input="nearest">
-
-                <x-flatpickr id="d-datepicker" name="emp_off_notice_date" placeholder="Select a date" />
-                <div class="input-group-append">
-                <div class="input-group-text" id="d-calendar-icon">
-                  <i class="fa fa-calendar-alt"></i>
-                </div>
-                </div>
-                @error('emp_off_notice_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              </div>
-             
-              </div>
-            </div>
-            </div>
-      <div class="modal-footer">
-      <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-      <button type="submit" class="add_btn">Save</button>
+        <!-- </div> -->
+        <!-- <div class="col-md-6">
+        <div class="form-group">
+        <label for="vendor">Date Of Notice <span class="text-danger">*</span></label>
+        <div class="input-group date" id="noticedate" data-target-input="nearest">
+        <input type="text" name="emp_off_notice_date" class="form-control datetimepicker-input" placeholder="" data-target="#noticedate">
+        <div class="input-group-append" data-target="#noticedate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+        </div>
+        </div>
+        </div>
       </div>
+      </div> -->
+
+        <!-- </div> -->
+        <div class="col-md-6">
+          <div class="form-group @error('emp_off_notice_date') is-invalid @enderror">
+          <label for="vendor">Date Of Notice <span class="text-danger">*</span></label>
+
+          <div class="input-group date" id="noticedate" data-target-input="nearest">
+
+            <x-flatpickr id="d-datepicker" name="emp_off_notice_date" placeholder="Select a date" />
+            <div class="input-group-append">
+            <div class="input-group-text" id="d-calendar-icon">
+              <i class="fa fa-calendar-alt"></i>
+            </div>
+            </div>
+            @error('emp_off_notice_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
+          </div>
+
+          </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="add_btn">Save</button>
+        </div>
       </form>
+      </div>
     </div>
     </div>
-  </div>
   </div>
   <!-- <div class="modal fade" id="placeonleave" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
@@ -729,43 +828,43 @@
       <div class="modal-header">
       <h5 class="modal-title" id="exampleModalLongTitle">Place On Leave</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+      <span aria-hidden="true">&times;</span>
       </button>
       </div>
       <div class="modal-body">
       <form>
-        <div class="row pxy-15 px-10">
-        <div class="col-md-6">
-          <div class="form-group">
-          <label for="vendor">Start Date <span class="text-danger">*</span></label>
-          <div class="input-group date" id="leavestartdate" data-target-input="nearest">
-            <input type="text" class="form-control datetimepicker-input" placeholder=""
-            data-target="#leavestartdate">
-            <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
-          </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-          <label for="vendor">End Date <span class="text-danger">*</span></label>
-          <div class="input-group date" id="leaveenddate" data-target-input="nearest">
-            <input type="text" class="form-control datetimepicker-input" placeholder=""
-            data-target="#leaveenddate">
-            <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
-          </div>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <div class="form-group">
-          <label>Description</label>
-          <textarea class="form-control" rows="3" placeholder=""></textarea>
-          </div>
+      <div class="row pxy-15 px-10">
+      <div class="col-md-6">
+        <div class="form-group">
+        <label for="vendor">Start Date <span class="text-danger">*</span></label>
+        <div class="input-group date" id="leavestartdate" data-target-input="nearest">
+        <input type="text" class="form-control datetimepicker-input" placeholder=""
+        data-target="#leavestartdate">
+        <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
         </div>
         </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+        <label for="vendor">End Date <span class="text-danger">*</span></label>
+        <div class="input-group date" id="leaveenddate" data-target-input="nearest">
+        <input type="text" class="form-control datetimepicker-input" placeholder=""
+        data-target="#leaveenddate">
+        <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+        </div>
+        </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-control" rows="3" placeholder=""></textarea>
+        </div>
+      </div>
+      </div>
       </form>
       </div>
       <div class="modal-footer">
@@ -774,9 +873,9 @@
       </div>
     </div>
     </div>
-  </div> -->
- <!-- Updated modal form -->
-<div class="modal fade" id="placeonleave" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    </div> -->
+  <!-- Updated modal form -->
+  <div class="modal fade" id="placeonleave" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -795,46 +894,46 @@
           <div class="form-group">
           <!-- <label for="leavestartdate">Start Date <span class="text-danger">*</span></label> -->
           <label for="vendor">Start Date <span class="text-danger">*</span></label>
-            
-            <div class="input-group date" id="emp_lev_start_date" data-target-input="nearest">
 
-              <x-flatpickr id="d-datepicker" name="emp_lev_start_date" placeholder="Select a date" />
-              <div class="input-group-append">
-              <div class="input-group-text" id="d-calendar-icon">
-                <i class="fa fa-calendar-alt"></i>
-              </div>
-              </div>
+          <div class="input-group date" id="emp_lev_start_date" data-target-input="nearest">
+
+            <x-flatpickr id="d-datepicker" name="emp_lev_start_date" placeholder="Select a date" />
+            <div class="input-group-append">
+            <div class="input-group-text" id="d-calendar-icon">
+              <i class="fa fa-calendar-alt"></i>
             </div>
+            </div>
+          </div>
           <!-- <div class="input-group date" id="leavestartdate" data-target-input="nearest">
-            <input type="text" name="emp_lev_start_date" class="form-control datetimepicker-input"
-              placeholder="Start Date" data-target="#leavestartdate">
-            <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
-          </div> -->
+        <input type="text" name="emp_lev_start_date" class="form-control datetimepicker-input"
+          placeholder="Start Date" data-target="#leavestartdate">
+        <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+        </div>
+        </div> -->
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
           <!-- <label for="leaveenddate">End Date <span class="text-danger">*</span></label> -->
           <label for="vendor">End Date <span class="text-danger">*</span></label>
-            
-            <div class="input-group date" id="emp_lev_end_date" data-target-input="nearest">
 
-              <x-flatpickr id="d-datepicker" name="emp_lev_end_date" placeholder="Select a date" />
-              <div class="input-group-append">
-              <div class="input-group-text" id="d-calendar-icon">
-                <i class="fa fa-calendar-alt"></i>
-              </div>
-              </div>
+          <div class="input-group date" id="emp_lev_end_date" data-target-input="nearest">
+
+            <x-flatpickr id="d-datepicker" name="emp_lev_end_date" placeholder="Select a date" />
+            <div class="input-group-append">
+            <div class="input-group-text" id="d-calendar-icon">
+              <i class="fa fa-calendar-alt"></i>
             </div>
+            </div>
+          </div>
           <!-- <div class="input-group date" id="leaveenddate" data-target-input="nearest">
-            <input type="text" name="emp_lev_end_date" class="form-control datetimepicker-input"
-              placeholder="End Date" data-target="#leaveenddate">
-            <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
-            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div>
-          </div> -->
+        <input type="text" name="emp_lev_end_date" class="form-control datetimepicker-input"
+          placeholder="End Date" data-target="#leaveenddate">
+        <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
+        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+        </div>
+        </div> -->
           </div>
         </div>
         <div class="col-md-12">
@@ -844,7 +943,7 @@
           </div>
         </div>
         </div>
-     
+
       </div>
       <div class="modal-footer">
       <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
@@ -855,32 +954,33 @@
     </div>
   </div>
 
- 
- 
- 
- 
-  <div class="modal fade" id="deleteemployee-{{ $employee->emp_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body pad-1 text-center">
-                <i class="fas fa-solid fa-trash delete_icon"></i>
-                <p class="company_business_name px-10"><b>Delete Employee</b></p>
-                <p class="company_details_text px-10">
-                    Are You Sure You Want To Delete This Employee? The Information You Have
-                    Set Up Will Be Deleted Immediately And You Won't Be Able To Undo This.
-                </p>
 
-                <!-- Delete Form -->
-                <form action="{{ route('business.employee.destroy', $employee->emp_id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="delete_btn px-15">Delete</button>
-                </form>
-            </div>
-        </div>
+
+
+
+  <div class="modal fade" id="deleteemployee-{{ $employee->emp_id }}" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body pad-1 text-center">
+      <i class="fas fa-solid fa-trash delete_icon"></i>
+      <p class="company_business_name px-10"><b>Delete Employee</b></p>
+      <p class="company_details_text px-10">
+        Are You Sure You Want To Delete This Employee? The Information You Have
+        Set Up Will Be Deleted Immediately And You Won't Be Able To Undo This.
+      </p>
+
+      <!-- Delete Form -->
+      <form action="{{ route('business.employee.destroy', $employee->emp_id) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="delete_btn px-15">Delete</button>
+      </form>
+      </div>
     </div>
-</div>
+    </div>
+  </div>
 
   </div>
   <!-- ./wrapper -->
@@ -922,7 +1022,7 @@
       fromdatepicker.open();
     });
 
-
+    
 
 
 
@@ -941,8 +1041,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
     var fromInput = document.getElementById('from-datepicker-hidden');
+    var effective = document.getElementById('effective-datepicker-hidden');
     // var toInput = document.getElementById('to-datepicker-hidden');
-
+// alert(effective);
     // console.log('From Input Value:', fromInput ? fromInput.value : 'No value');
     // console.log('To Input Value:', toInput ? toInput.value : 'No value');
 
@@ -955,6 +1056,13 @@
       allowInput: true,
       defaultDate: fromInput.value || null,
       });
+
+    
+    // var toInput = document.getElementById('to-datepicker-hidden');
+ 
+    // console.log('From Input Value:', fromInput ? fromInput.value : 'No value');
+    // console.log('To Input Value:', toInput ? toInput.value : 'No value');
+
 
       // var todatepicker = flatpickr("#to-datepicker", {
       //   locale: 'en',
@@ -969,6 +1077,7 @@
       fromdatepicker.open();
       });
 
+    
       // document.getElementById('to-calendar-icon').addEventListener('click', function() {
       //     todatepicker.open(); 
       // });
@@ -977,18 +1086,48 @@
     } else {
       console.error('Hidden input elements not found or have no value');
     }
+
+    if (effective) {
+      var effectivedatepicker = flatpickr("#effective-datepicker", {
+      locale: 'en',
+      altInput: true,
+      dateFormat: "m/d/Y",
+      altFormat: "m/d/Y",
+      allowInput: true,
+      defaultDate: effective.value || null,
+      });
+
+      document.getElementById('effective-calendar-icon').addEventListener('click', function () {
+        effectivedatepicker.open();
+      });
+
+    }
+
     });
 
 
   </script>
-<script>
+  <script>
     function toggleSalaryForm() {
-        var form = document.querySelector('.editsalarybox');
-        var isHidden = form.style.display === 'none';
-        
-        // Toggle display
-        form.style.display = isHidden ? 'block' : 'none';
+    var form = document.querySelector('.editsalarybox');
+    var isHidden = form.style.display === 'none';
+
+    // Toggle display
+    form.style.display = isHidden ? 'block' : 'none';
     }
-</script>
+  </script>
+  <script>
+    document.getElementById('emp_comp_salary_type').addEventListener('change', function () {
+    var salaryType = this.value;
+    var hoursField = document.getElementById('hours_per_week');
+
+    if (salaryType === 'Annual') {
+      hoursField.style.display = 'block';  // Show the hours per week field
+    } else {
+      hoursField.style.display = 'none';   // Hide the hours per week field
+    }
+    });
+  </script>
+
   @endsection
 @endif

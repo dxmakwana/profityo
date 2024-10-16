@@ -665,6 +665,7 @@ if (!Schema::hasTable($storeId . 'py_employee_comperisation')) {
         $table->integer('id')->nullable()->default(0);
         $table->integer('users_id')->nullable()->default(0);
         $table->string('emp_comp_salary_amount')->nullable();
+        $table->string('average_hours_per_week	')->nullable();
         $table->string('emp_comp_salary_type')->nullable();
         $table->string('emp_comp_effective_date')->nullable();
         $table->tinyInteger('emp_comp_status')->default(0)->nullable();
