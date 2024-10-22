@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -315,6 +316,7 @@ class Controller extends BaseController
                     $table->integer('type_id')->nullable()->default(0);
                     $table->integer('acc_type_id')->nullable()->default(0);
                     $table->string('chart_acc_name')->nullable();
+                    $table->string('amount')->nullable();
                     $table->integer('currency_id')->nullable()->default(0);
                     $table->string('chart_account_id')->nullable();
                     $table->string('sale_acc_desc')->nullable();
@@ -730,6 +732,26 @@ if (!Schema::hasTable($storeId . 'py_employee_place_leave')) {
 }
 
 // 
+if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
+    Schema::create($storeId . '_py_record_a_payment', function (Blueprint $table) {
+        $table->increments('record_payment_id');
+        $table->integer('id')->nullable()->default(0);
+        $table->integer('invoice_id')->nullable()->default(0);
+        $table->string('payment_method')->nullable()->default(0);
+        $table->string('payment_account')->nullable();
+        $table->string('payment_date')->nullable();
+        $table->string('payment_amount')->nullable();
+        $table->string('notes')->nullable();
+        $table->tinyInteger('status')->default(0)->nullable();
+        $table->timestamps();
+    });
+}
+		
+
+
+
+
+
 
 
 
@@ -767,6 +789,22 @@ if (!Schema::hasTable($storeId . 'py_employee_place_leave')) {
             return response()->json(['message' => 'Table created or modified successfully.']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+
+    function formatDueDays($dueDate)
+    {
+        $dueDate = Carbon::parse($dueDate); // Parse the due date
+        $currentDate = Carbon::now(); // Get today's date
+        $dueDays = $dueDate->diffInDays($currentDate, false); // Difference in days
+
+        // Format the message
+        if ($dueDate->isPast()) {
+            return $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
+        } else {
+            return $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
         }
     }
 

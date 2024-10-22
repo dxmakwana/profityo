@@ -1,4 +1,4 @@
-    @extends('masteradmin.layouts.app')
+@extends('masteradmin.layouts.app')
     <title>Profityo | View Invoice</title>
     @if(isset($access['view_invoices']) && $access['view_invoices'] == 1)
     @section('content')
@@ -50,8 +50,8 @@
                 <div class="card" id="card-header">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
-                                <!-- <div class="form-group">
+                            <!-- <div class="col-md-3">
+                                <div class="form-group">
                                     <label>Status</label>
                                     <form id="estimateForm" method="POST" action="{{ route('business.invoices.statusStore', $invoices->sale_inv_id) }}">
                                     @csrf
@@ -65,8 +65,8 @@
                                         <option value="Mark as sent" {{ $invoices->sale_status === 'Mark as sent' ? 'selected' : '' }}>Mark as sent</option>
                                     </select>
                                     </form>
-                                </div> -->
-                            </div>
+                                </div>
+                            </div> -->
                             <!-- /.col -->
                             <div class="col-md-3">
                                 <div class="form-group dropdown" id="customerInfo">
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
                             <!-- /.col -->
-                            <div class="col-md-6">
+                            <div class="col-md-9">
                                 <div class="row justify-content-end">
                                     <div class="col-auto">
                                         <label>Amount Due</label>

@@ -7,6 +7,7 @@ body{
 .content-wrapper {
   background-color: #fff;
   min-height: auto !important;
+  height: auto;
 }
 .card-header{
   padding: .75rem 1rem;
@@ -125,7 +126,7 @@ body{
   font-size: 16px;
 }
 .nav-sidebar .nav-treeview>.nav-item>.nav-link>.nav-icon{
-  vertical-align: top;
+  vertical-align: middle;
   height: auto;
   background: transparent;
   box-shadow: none;
@@ -435,6 +436,7 @@ label:not(.form-check-label):not(.custom-file-label){
 .filter-text{
   font-size: 16px;
   color: #053A51;
+  cursor: pointer;
 }
 .fa-circle-xmark::before{
   content: "\f057";
@@ -695,7 +697,7 @@ label {
   margin: 0 auto;
   padding: 15px;
   text-align: center;
-  width: max-content;
+  width: 100%;
   float: inline-start;
 }
 .within_day{
@@ -730,6 +732,8 @@ label {
   border: none;
   border-radius: 5px 5px 0px 0px;
   margin: 0px 15px 0px 10px;
+  display: inline-block;
+  cursor: pointer;
 }
 .editcolum_btn{
   position: relative;
@@ -741,6 +745,16 @@ label {
   font-weight: 500;
   border: none;
   border-radius: 5px 5px 0px 0px;
+  display: inline-block;
+  cursor: pointer;
+}
+.editcolum_btn:hover{
+  background: #053A51;
+  color: #fff;
+}
+.additem_btn:hover{
+  background: #37B663;
+  color: #fff;
 }
 .subtotal_box{
   position: relative;
@@ -975,7 +989,7 @@ label {
 }
 .in_contact_title{
   position: relative;
-  font-size: 18px;
+  font-size: 16px;
   color: #242424;
   font-weight: 600;
   margin-bottom: 0;
@@ -983,7 +997,7 @@ label {
 }
 .in_contact_total{
   position: relative;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   margin-bottom: 0;
   line-height: normal;
@@ -1645,6 +1659,35 @@ form {
 }
 
 /*--------------------------------------------------------------
+# 21-10-2024
+--------------------------------------------------------------*/
+
+.flatpickr-day.today{
+  border: none;
+  background: #37B663;
+  color: #fff;
+}
+.flatpickr-weekdays .flatpickr-weekdaycontainer{
+  background: #37B663;
+  padding: 10px 0px;
+}
+span.flatpickr-weekday{
+  color: #fff;
+}
+.form-control:disabled, .form-control[readonly]{
+  background-color: transparent;
+  opacity: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.img-box{
+  position: relative;
+  max-width: 200px;
+  width: 100%;
+}
+
+
+/*--------------------------------------------------------------
 # Responsive Css
 --------------------------------------------------------------*/
 
@@ -1729,6 +1772,10 @@ form {
     font-size: 14px;
   }
   .add_btn{
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .delete_btn{
     padding: 8px 12px;
     font-size: 14px;
   }
@@ -1862,6 +1909,10 @@ form {
     font-size: 14px;
   }
   .add_btn{
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .delete_btn{
     padding: 8px 12px;
     font-size: 14px;
   }
@@ -2027,6 +2078,10 @@ form {
     padding: 8px 12px;
     font-size: 14px;
   }
+  .delete_btn{
+    padding: 8px 12px;
+    font-size: 14px;
+  }
   .add_btn_br{
     padding: 8px 12px;
     font-size: 14px;
@@ -2173,6 +2228,10 @@ form {
     font-size: 14px;
   }
   .add_btn{
+    padding: 8px;
+    font-size: 14px;
+  }
+  .delete_btn{
     padding: 8px;
     font-size: 14px;
   }

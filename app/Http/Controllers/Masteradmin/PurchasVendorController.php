@@ -13,6 +13,8 @@ use App\Models\Countries;
 use App\Models\States;
 use App\Models\PurchasVendorBankDetail;
 use App\Models\Bills;
+use App\Models\ChartAccount;
+use App\Models\RecordPayment;
 
 
 class PurchasVendorController extends Controller
@@ -252,9 +254,9 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
           
             return view('masteradmin.vendor.filtered_results', compact('PurchasVendor', 'Country', 'States','bills'))->render();
         }
-    
+        $accounts = ChartAccount::select('chart_acc_name')->get();
         // Pass the vendor details, countries, and states to the view
-        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States','bills'));
+        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States','bills','accounts'));
     }
   
     public function addBankDetails(Request $request, $purchases_vendor_id)
@@ -300,5 +302,69 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
         $PurchasVendorbank = PurchasVendorBankDetail::where('purchases_vendor_id', $purchases_vendor_id)->with('vendor')->firstOrFail();
         return view('masteradmin.vendor.viewBankDetails', compact('PurchasVendorbank'));
     }
+
+
+
+    public function paymentstore(Request $request, $id)
+    {
+        // Validate the form data
+        $user = Auth::guard('masteradmins')->user();
+        
+        $validatedData = $request->validate([
+            'payment_date' => 'required|date',
+            'payment_amount' => 'required|numeric',
+            'payment_method' => 'required|string',
+            'payment_account' => 'required|string',
+            'notes' => 'required|string',
+        ]);
+    
+        // Create a new payment record
+        RecordPayment::create([
+            'id' => $user->id,
+            'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+            'payment_date' => $validatedData['payment_date'],
+            'payment_amount' => $validatedData['payment_amount'],
+            'payment_method' => $validatedData['payment_method'],
+            'payment_account' => $validatedData['payment_account'],
+            'notes' => $validatedData['notes'],
+        ]);
+    
+        // Fetch the relevant invoice by ID and update the sale_bill_due_amount
+        $invoice = Bills::where('sale_bill_id',$id)->first();
+        $invammount=0;
+        if ($invoice) {
+            // Deduct the payment amount from the sale_bill_due_amount
+           $invammount = $invoice->sale_bill_due_amount -= $validatedData['payment_amount'];
+    
+            // Ensure sale_bill_due_amount doesn't go below 0
+            if ($invoice->sale_bill_due_amount < 0) {
+               
+                $invammount= $invoice->sale_bill_due_amount = 0;
+            }
+    
+            // Save the updated invoice
+            $invoice->where('sale_bill_id', $id)->update(['sale_bill_due_amount' => $invammount]);
+        }
+    
+        // Fetch the relevant Chart of Account record by the payment account
+        $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
+        $chart_amount = 0;
+        if ($chartOfAccount) {
+            // Check if the amount is null or has a value, then update accordingly
+            if (is_null($chartOfAccount->amount)) {
+                $chart_amount = $chartOfAccount->amount = $validatedData['payment_amount'];
+            } else {
+              $chart_amount =  $chartOfAccount->amount += $validatedData['payment_amount'];
+         }
+    
+            // Save the updated amount to the chart of account record
+            $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+        }
+    
+        // Redirect or return a response
+        return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+    }
+
+    
 }
 

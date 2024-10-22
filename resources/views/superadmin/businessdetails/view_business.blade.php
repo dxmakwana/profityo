@@ -91,7 +91,7 @@
                           <tr>
                             <td><strong>User Status :</strong></td>
                             <td>
-                              <span class="status_btn" id="status-text" data-id="{{ $user->id }}"
+                              <span id="status-text" data-id="{{ $user->id }}"
                                 style="cursor: pointer;">
                                 @if ($user->user_status == 1)
                                         <span class="status_btn converted_status">Active</span>

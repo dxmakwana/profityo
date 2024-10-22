@@ -1,4 +1,4 @@
-  @extends('masteradmin.layouts.app')
+@extends('masteradmin.layouts.app')
   <title>Profityo | Add Estimates</title>
   @if(isset($access['add_estimates']) && $access['add_estimates'] == 1)
   @section('content')
@@ -49,7 +49,7 @@
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
         <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-        class="elevation-2" target="_blank">
+        class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
         <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
@@ -132,95 +132,90 @@
       <!-- /.card-header -->
       <div class="card-body2">
         <div class="row justify-content-between pad-3">
-        <div class="col-md-3">
-          <div class="add_customer_box">
-          <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
-          <span class="add_customer_text">Add Customer</span>
-          </div>
-          <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
-          <div class="add_customer_list" style="display: none;">
-          <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
-            style="width: 100%;">
-            <option>Select Customer</option>
-            @foreach($salecustomer as $customer)
-        <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-        {{ $customer->sale_cus_business_name }}
-        </option>
-      @endforeach
-          </select>
-
-          <div id="customerInfo">
-
-          </div>
-          </div>
-
-        </div>
-
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-        <div class="row">
-          <div class="col-md-3">
-          <div class="form-group">
-            <label for="estimatenumber">Estimate Number</label>
-            <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
-            <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label for="estimatecustomerref">Customer Ref</label>
-            <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
-            placeholder="">
-            <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label>Date</label>
-            <div class="input-group date" id="estimatedate" data-target-input="nearest">
-            <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-          data-target="#estimatedate" />
-        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div> -->
-            <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date" />
-            <div class="input-group-append">
-              <div class="input-group-text" id="from-calendar-icon">
-              <i class="fa fa-calendar-alt"></i>
+          <div class="col-lg-3 col-md-12">
+            <div class="add_customer_box">
+              <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
+              <span class="add_customer_text">Add Customer</span>
+            </div>
+            <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+            <div class="add_customer_list" style="display: none;">
+              <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
+                      style="width: 100%;">
+                      <option>Select Customer</option>
+                      @foreach($salecustomer as $customer)
+                  <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                  {{ $customer->sale_cus_business_name }}
+                  </option>
+                @endforeach
+              </select>
+              <div id="customerInfo">
               </div>
             </div>
-            </div>
-            <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
           </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label>Valid Until</label>
-            <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-            <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
-          data-target="#estimatevaliddate" name="sale_estim_valid_date" />
-        <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div> -->
-            <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date" />
-            <div class="input-group-append">
-              <div class="input-group-text" id="to-calendar-icon">
-              <i class="fa fa-calendar-alt"></i>
+          <!-- /.col -->
+          <div class="col-lg-9 col-md-12">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="estimatenumber">Estimate Number</label>
+                  <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
+                  <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="estimatecustomerref">Customer Ref</label>
+                  <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
+                  placeholder="">
+                  <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Date</label>
+                  <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                      data-target="#estimatedate" />
+                    <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                    </div> -->
+                    <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date" />
+                    <div class="input-group-append">
+                      <div class="input-group-text" id="from-calendar-icon">
+                      <i class="fa fa-calendar-alt"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Valid Until</label>
+                  <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                        <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
+                      data-target="#estimatevaliddate" name="sale_estim_valid_date" />
+                    <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                    </div> -->
+                      <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date" />
+                      <div class="input-group-append">
+                        <div class="input-group-text" id="to-calendar-icon">
+                        <i class="fa fa-calendar-alt"></i>
+                        </div>
+                      </div>
+                  </div>
+                  <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
+                  <!-- <p class="within_day">Within 7 days</p> -->
+                  <p class="within_day">Within <span id="total-days">0</span> days</p>
+                  <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+                  <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+                </div>
               </div>
             </div>
-            </div>
-            <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
-            <!-- <p class="within_day">Within 7 days</p> -->
-            <p class="within_day">Within <span id="total-days">0</span> days</p>
-            <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
-            <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
-
           </div>
-          </div>
+          <!-- /.col -->
         </div>
-        </div>
-        <!-- /.col -->
       </div>
       <div class="row px-10">
         <div class="col-md-12 text-right">
@@ -295,60 +290,60 @@
       <input type="hidden" name="sale_estim_discount_total" value="0">
       <input type="hidden" name="sale_estim_tax_amount" value="0">
       <input type="hidden" name="sale_estim_final_amount" value="0">
-      <div class="row">
+      <div class="row pad-2">
         <div class="col-md-4">
-        <div class="d-flex">
-          <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
-          aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
-        </div>
+          <div class="d-flex">
+            <input type="text" class="form-control" name="sale_estim_discount_desc"
+            aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
+          </div>
         </div>
         <div class="col-md-4">
-        <div class="d-flex">
-          <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
-          placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
-          <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
-          name="sale_estim_discount_type">
-          <option value="1">{{ $currency->currency_symbol }}</option>
-          <option value="2">%</option>
-          </select>
-        </div>
+          <div class="d-flex">
+            <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
+            placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
+            <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
+            name="sale_estim_discount_type">
+            <option value="1">{{ $currency->currency_symbol }}</option>
+            <option value="2">%</option>
+            </select>
+          </div>
         </div>
       </div>
 
 
       <div class="row justify-content-end">
         <div class="col-md-4 subtotal_box">
-        <div class="table-responsive">
-          <table class="table total_table">
-          <tr>
-            <td style="width:50%">Sub Total :</td>
-            <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <td>Discount :</td>
-            <td id="discount">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <td>Tax :</td>
-            <td id="tax">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2"
-            required>
-            @foreach($currencys as $curr)
-        <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-        <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
-          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-        </option>
-      @endforeach
-            </select>
+          <div class="table-responsive">
+            <table class="table total_table">
+            <tr>
+              <td style="width:50%">Sub Total :</td>
+              <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <td>Discount :</td>
+              <td id="discount">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <td>Tax :</td>
+              <td id="tax">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2"
+                      required>
+                      @foreach($currencys as $curr)
+                  <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                  <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
+                    {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+                  </option>
+                @endforeach
+              </select>
 
-            <td>Total:</td>
-            <td id="total">$0.00</td>
-          </tr>
-          </table>
+              <td>Total:</td>
+              <td id="total">$0.00</td>
+            </tr>
+            </table>
 
-        </div>
+          </div>
         </div>
       </div>
       <div class="dropdown-divider"></div>
