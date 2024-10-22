@@ -173,6 +173,7 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
         Route::get('getstates/{country_id}', [SalesCustomersController::class, 'getstates'])->name('get.states');
         Route::get('/get-customer-info', [SalesCustomersController::class, 'getCustomerInfo'])->name('business.salescustomers.getCustomerInfo');
         Route::get('/customerdetails/{sale_cus_id}', [SalesCustomersController::class, 'show'])->name('business.customerdetails.show');
+        Route::post('/pay/store/{sale_cus_id}', [SalesCustomersController::class, 'paymentstore'])->name('business.customerdetails.paymentsstore');
 
         //estimates
         Route::get('/estimates-list', [EstimatesController::class, 'index'])->name('business.estimates.index');
@@ -272,6 +273,7 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
         Route::get('/duplicate-invoice/{id}', [InvoicesController::class, 'duplicate'])->name('business.invoices.duplicate');
         Route::patch('/duplicate-invoice-store/{id}', [InvoicesController::class, 'duplicateStore'])->name('business.invoices.duplicateStore');
         Route::get('/invoice-list', [InvoicesController::class, 'index'])->name('business.invoices.index');
+        Route::post('/payments/store/{id}', [InvoicesController::class, 'paymentstore'])->name('business.payments.paymentstore');
 
         });
 
@@ -308,6 +310,7 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
         Route::get('/duplicate-bill/{id}', [BillsController::class, 'duplicate'])->name('business.bill.duplicate');
         Route::patch('/duplicate-bill-store/{id}', [BillsController::class, 'duplicateStore'])->name('business.bill.duplicateStore');
         Route::get('/add-bill/{id}', [BillsController::class, 'create'])->name('business.bill.add');
+        Route::post('/paybill/store/{id}', [BillsController::class, 'paymentstore'])->name('business.bill.paymentsbillstore');
 
 
 

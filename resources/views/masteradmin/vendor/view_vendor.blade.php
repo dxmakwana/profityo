@@ -128,6 +128,7 @@
                     <th>Date</th>
                     <th>Due Date</th>
                     <th>Amount Due</th>
+                    <th>Due Day</th>
                     <th>Status</th>
                     <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                   </tr>
@@ -142,11 +143,151 @@
                       <td>{{ \Carbon\Carbon::parse($value->sale_bill_date)->format('M d, Y') }}</td>
                       <td>{{ \Carbon\Carbon::parse($value->sale_bill_valid_date)->format('M d, Y') }}</td>
                       <td>{{ $value->sale_bill_due_amount }}</td>
+                      <td>
+            @php
+          // Calculate the due date
+          $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
+          $currentDate = \Carbon\Carbon::now();
+          $daysDifference = $dueDate->diffInDays($currentDate, false);
+
+          if ($daysDifference == 0) {
+          $dueMessage = 'Today'; // Message for today
+          $dueMessageColor = 'black'; // Set default color
+          } elseif ($daysDifference < 0) {
+          $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+          $dueMessageColor = 'black'; // Set default color
+
+          } else {
+          $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
+          $dueMessageColor = 'red'; // Overdue color
+          }
+      @endphp
+            <span style="color: {{ $dueMessageColor }};">
+            {{ $dueMessage }}
+            </span>
+            </td>
                       <td><span class="status_btn Paid_status">{{ $value->sale_status }}</span></td>
                       <td>
                         <ul class="navbar-nav ml-auto float-right">
                           <li class="nav-item dropdown d-flex align-items-center">
-                            <a class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record a payment</a>
+                            <!-- <a class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record a payment</a> -->
+                            <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup2{{ $value->sale_bill_id }}" >
+                                Record Payment
+                                </a>
+                                <div class="modal fade" id="recordpaymentpopup2{{ $value->sale_bill_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title" id="exampleModalLongTitle">Record A Manual Payment</h5>
+                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                    <form method="POST" action="{{ route('business.bill.paymentsbillstore', $value->sale_bill_id ) }}">
+                                                @csrf
+                                                <input type="hidden" name="invoice_id" value="{{ $value->sale_bill_id }}">
+
+                                                <div class="row pxy-15 px-10">
+                                                    <div class="col-md-12">
+                                                        <p>Record a Payment you've Already Received, Such As Cash, Check, or Bank Payment.</p>
+                                                    </div>
+                                                    <!-- <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Date</label>
+                                                            <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                                                                <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
+                                                                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                                                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="col-md-3">
+                                                      <div class="form-group">
+                                                        <label>Date</label>
+                                                        <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                                                        <input type="hidden" id="from-datepickerp-hidden" value="{{ $value->sale_bill_valid_date }}" />
+                                                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                                                          data-target="#estimatedate" />
+                                                        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                                                          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                                                        </div> -->
+                                                          <x-flatpickr 
+                                                                id="from-datepickerp" 
+                                                                name="payment_date" 
+                                                                placeholder="Select a date" 
+                                                                value="{{ old('payment_date', $value->sale_bill_valid_date) }}"
+                                                            />
+                                                          <div class="input-group-append">
+                                                            <div class="input-group-text" id="from-calendar-iconp">
+                                                                <i class="fa fa-calendar-alt"></i>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                        <span class="error-message" id="error_payment_date" style="color: red;"></span>
+                                                      </div>
+                                                      </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Amount</label>
+                                                            <div class="d-flex">
+                                                                <select class="form-select amount_currency_input" name="payment_amount" >
+                                                                    <option>$</option>
+                                                                    <option>€</option>
+                                                                    <option>(CFA)</option>
+                                                                    <option>£</option>
+                                                                </select>
+                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_bill_final_amount }}" aria-describedby="inputGroupPrepend">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Method</label>
+                                                            <select class="form-control form-select" name="payment_method">
+                                                                <option>Select a Payment Method...</option>
+                                                                <option value="Bank Payment">Bank Payment</option>
+                                                                <option value="Cash">Cash</option>
+                                                                <option value="Check">Check</option>
+                                                                <option value="Credit Card">Credit Card</option>
+                                                                <option value="PayPal">PayPal</option>
+                                                                <option value="Other Payment Method">Other Payment Method</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label>Account <span class="text-danger">*</span></label>
+                                                        <select class="form-control form-select" name="payment_account" placeholder="Enter your text here">
+                                                            <option>Select a Payment Account...</option>
+                                                            @foreach($accounts as $account)
+                                                                <option>{{ $account->chart_acc_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.</p>
+                                                   </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="recordpaymentmemonotes">Memo / Notes</label>
+                                                            <textarea id="recordpaymentmemonotes" class="form-control" name="notes" rows="3" placeholder="Enter your text here"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="add_btn">Save</button>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+
+
+
                             <a class="nav-link user_nav" data-toggle="dropdown" href="#">
                               <span class="action_btn"><i class="fas fa-solid fa-chevron-down"></i></span>
                             </a>
@@ -233,7 +374,7 @@
               </div>
               </div>
               </div>
-  <div class="modal fade" id="recordpaymentpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <!-- <div class="modal fade" id="recordpaymentpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -303,7 +444,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 <!-- ./wrapper -->
 

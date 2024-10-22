@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="row report_row justify-content-between">
                                     @foreach ($reports as $report)
-                                        <div class="col-auto">
+                                        <div class="col-auto mb-2">
                                             <div class="form-check">
                                                 <label class="form-check-label" for="chk_{{ $report->mname }}">{{ $report->mtitle }}</label>
                                                 <input class="form-check-input child-checkbox report-child-checkbox" type="checkbox" {{ $report->is_access ? 'checked' : '' }} name="{{ $report->mname }}" id="chk_{{ $report->mname }}" value="1">

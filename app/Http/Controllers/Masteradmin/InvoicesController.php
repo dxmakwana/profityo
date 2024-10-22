@@ -24,7 +24,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\QueryException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\SentLog;
+use App\Models\ChartAccount;
+use Carbon\Carbon;
+
 use Illuminate\Validation\Rule;
+use App\Models\RecordPayment;
 
 
 class InvoicesController extends Controller
@@ -93,6 +97,8 @@ class InvoicesController extends Controller
             'sale_total_days' => $request->sale_total_days,
             'sale_inv_status' => 1,
             'id' => $user->id,
+            'sale_inv_due_amount' => $request->sale_estim_final_amount, 
+
         ]);
         
         $invoice->save();
@@ -367,7 +373,8 @@ class InvoicesController extends Controller
             'sale_inv_notes' => $request->sale_estim_notes,
             'sale_inv_footer_note' => $request->sale_estim_footer_note,
             'sale_inv_item_discount' => $request->sale_estim_item_discount,
-            'sale_total_days' => $request->sale_total_days
+            'sale_total_days' => $request->sale_total_days,
+            'sale_inv_due_amount' => $request->sale_estim_final_amount 
         ]);
         
         InvoicesItems::where('sale_inv_id', $invoice_id)->delete();
@@ -548,6 +555,21 @@ class InvoicesController extends Controller
     
             $invoice = new InvoicesDetails();
             $user = Auth::guard('masteradmins')->user();
+// Calculate the due days
+$dueDate = Carbon::parse($request->sale_estim_valid_date); // Due date from the request
+$currentDate = Carbon::now(); // Today's date
+$dueDays = $dueDate->diffInDays($currentDate, false); // The second argument 'false' ensures negative values if overdue
+if ($dueDate->isPast()) {
+    // If the due date is in the past
+    $dueMessage = $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
+} else {
+    // If the due date is in the future or today
+    $dueMessage = $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
+}
+
+// Format the combined string for `sale_inv_due_days`
+$dueString = "$dueDays|$dueMessage";
+
             $invoice->fill([
                 'sale_inv_title' => $request->sale_estim_title,
                 'sale_inv_summary' => $request->sale_estim_summary,
@@ -570,6 +592,9 @@ class InvoicesController extends Controller
                 'sale_inv_item_discount' => $request->sale_estim_item_discount,
                 'sale_inv_status' => 1,
                 'id' => $user->id,
+                'sale_inv_due_amount' => $request->sale_estim_final_amount, 
+                'sale_inv_due_days' => abs($dueDays), // Store the absolute value of due days without a negative sign
+               'sale_inv_due_message' => $dueString, // Store the friendly due message
             ]);
             
             $invoice->save();
@@ -1115,6 +1140,7 @@ class InvoicesController extends Controller
                 'sale_total_days' => $request->sale_total_days,
                 'sale_inv_status' => 1,
                 'id' => $user->id,
+                'sale_inv_due_amount' => $request->sale_estim_final_amount, 
             ]);
             
             $invoice->save();
@@ -1214,7 +1240,25 @@ class InvoicesController extends Controller
 
         $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
 
+        $filteredInvoices = $query->get();
 
+        // foreach ($filteredInvoices as $invoice) {
+        //     $dueDate = Carbon::parse($invoice->sale_inv_valid_date);
+        //     // dd($invoice->sale_inv_valid_date);
+
+        //     $currentDate = Carbon::now();
+        //     $daysDifference = $dueDate->diffInDays($currentDate, false);
+           
+        //     // Add the calculated value to the invoice for display
+        //     $dueMessageColorS =  $invoice->dueMessage = $daysDifference < 0 ? abs($daysDifference) . ' Days ago' : 'Due in ' . $daysDifference . ' Days';
+        //     if ($daysDifference < 0) {
+        //         $dueMessage =  $invoice->dueMessageColor = 'red';  // Set color for overdue dates
+        //     } else {
+        //         $dueMessage= $invoice->dueMessageColor = 'black'; // Set default color
+        //     }
+           
+        // }
+        // dd(            $invoice->dueMessage);
         // if ($request->has('start_date') && $request->start_date) {
         //     $query->whereDate('sale_inv_date', '>=', $request->start_date);
         // }
@@ -1242,14 +1286,16 @@ class InvoicesController extends Controller
         if ($request->has('sale_status') && $request->sale_status) {
             $query->where('sale_status', $request->sale_status);
         }
+        $accounts = ChartAccount::select('chart_acc_name')->get();
+
 
         $filteredInvoices = $query->get();
 
-        $unpaidInvoices = $filteredInvoices->whereIn('sale_status', ['Unsent', 'Sent', 'Partlal','Overdue']);
+        $unpaidInvoices = $filteredInvoices->whereIn('sale_status', ['Unsent', 'Sent', 'Partial','Overdue']);
         $draftInvoices = $filteredInvoices->where('sale_status', 'Draft');
         $allInvoices = $filteredInvoices;
         $salecustomer = SalesCustomers::get();
-
+      
         if ($request->ajax()) {
             // dd(\DB::getQueryLog());  
             // dd($allEstimates);
@@ -1257,7 +1303,7 @@ class InvoicesController extends Controller
         }
       
         // dd($allEstimates);
-        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer'));
+        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer','accounts'));
 
     }
 
@@ -1288,10 +1334,10 @@ class InvoicesController extends Controller
     // }
 
 
-    public function statusStore(Request $request, $id)
+    public function statusStore(Request $request , $id)
     {
         $user = Auth::guard('masteradmins')->user();
-
+        // $user_id = $user->user_id;
         // Fetch the invoice record for the authenticated user and provided ID
         $invoices = InvoicesDetails::where([
             'sale_inv_id' => $id,
@@ -1349,5 +1395,87 @@ class InvoicesController extends Controller
         return response()->json($response);
     }
 
+
+
+
+    public function paymentstore(Request $request, $id)
+    {
+        // Validate the form data
+        $user = Auth::guard('masteradmins')->user();
+        
+        $validatedData = $request->validate([
+            'payment_date' => 'required|date',
+            'payment_amount' => 'required|numeric',
+            'payment_method' => 'required|string',
+            'payment_account' => 'required|string',
+            'notes' => 'required|string',
+        ]);
+    
+        // Create a new payment record
+        RecordPayment::create([
+            'id' => $user->id,
+            'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+            'payment_date' => $validatedData['payment_date'],
+            'payment_amount' => $validatedData['payment_amount'],
+            'payment_method' => $validatedData['payment_method'],
+            'payment_account' => $validatedData['payment_account'],
+            'notes' => $validatedData['notes'],
+        ]);
+    
+        // Fetch the relevant invoice by ID
+        $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
+        if ($invoice) {
+            // Deduct the payment amount from the sale_inv_due_amount
+            $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
+
+            // Determine the status and the excess amount if the payment is more than the due amount
+            if ($invammount < 0) {
+                // If the payment exceeds the due amount
+                $excessAmount = abs($invammount); // Calculate the excess amount
+                $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+                $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+            } elseif ($invammount == 0) {
+                // Fully paid
+                $excessAmount = 0; // No excess amount
+                $status =  $invoice->sale_status = 'Paid';
+                $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+            } else {
+                // Partially paid
+                $excessAmount = 0; // No excess amount
+                $status = $invoice->sale_status = 'Partial';
+                $invoice->sale_inv_due_amount = $invammount; // Update due amount
+            }
+            //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
+            //     $status =  $invoice->sale_status = 'Over Paid';
+            // }
+    
+            // Save the updated invoice
+            $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
+        }
+
+
+ // Calculate the new due amount after the payment
+ 
+
+
+
+
+
+
+
+
+
+    
+        // Fetch the relevant Chart of Account record by the payment account
+        $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
+        if ($chartOfAccount) {
+            // Update the chart account amount
+            $chart_amount =   $chartOfAccount->amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
+            $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+        }
+    
+        // Redirect or return a response
+        return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+    }
     
 }

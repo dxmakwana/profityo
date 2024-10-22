@@ -49,7 +49,7 @@
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
         <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-        class="elevation-2" target="_blank">
+        class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
         <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
@@ -131,80 +131,77 @@
       <div class="card card-default">
       <!-- /.card-header -->
       <div class="card-body2">
-        <div class="row justify-content-between pad-3">
-        <div class="col-md-3">
-          <div class="add_customer_box">
-          <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
-          <span class="add_customer_text">Add Customer</span>
+      <div class="row justify-content-between pad-3">
+          <div class="col-lg-3 col-md-12">
+            <div class="add_customer_box">
+              <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
+              <span class="add_customer_text">Add Customer</span>
+            </div>
+            <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+            <div class="add_customer_list" style="display: none;">
+              <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
+                      style="width: 100%;">
+                      <option>Select Customer</option>
+                      @foreach($salecustomer as $customer)
+                  <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                  {{ $customer->sale_cus_business_name }}
+                  </option>
+                @endforeach
+              </select>
+              <div id="customerInfo">
+              </div>
+            </div>
           </div>
-          <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
-          <div class="add_customer_list" style="display: none;">
-          <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
-            style="width: 100%;">
-            <option>Select Customer</option>
-            @foreach($salecustomer as $customer)
-        <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-        {{ $customer->sale_cus_business_name }}
-        </option>
-      @endforeach
-          </select>
-
-          <div id="customerInfo">
-
+          <!-- /.col -->
+          <div class="col-lg-9 col-md-12">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="estimatenumber">Invoice Number</label>
+                  <label for="estimatenumber">Auto-generated</label>
+                  <input type="number" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}" Disabled>
+                  <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="estimatecustomerref">P.O./S.O. Number</label>
+                  <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
+                  placeholder="">
+                  <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Invoice Date</label>
+                  <label>Auto-generated</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Payment Due</label>
+                  <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                    <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
+                      data-target="#estimatevaliddate" name="sale_estim_valid_date" />
+                    <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                    </div> -->
+                    <select name="sale_re_inv_payment_due_id" id="sale_re_inv_payment_due_id" class="form-control select2" style="width: 100%;">
+                        <option default>On Receipt</option>
+                        <option value="7">Within 7 Days</option>
+                        <option value="14">Within 14 Days</option>
+                        <option value="30">Within 30 Days</option>
+                        <option value="45">Within 45 Days</option>
+                        <option value="60">Within 60 Days</option>
+                        <option value="90">Within 90 Days</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          </div>
-
+          <!-- /.col -->
         </div>
-
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-        <div class="row">
-          <div class="col-md-3">
-          <div class="form-group">
-            <label for="estimatenumber">Invoice Number</label>
-            <label for="estimatenumber">Auto-generated</label>
-            <input type="hidden" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
-            <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label for="estimatecustomerref">P.O./S.O. Number</label>
-            <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
-            placeholder="">
-            <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label>Invoice Date</label>
-            <label>Auto-generated</label>
-          </div>
-          </div>
-          <div class="col-md-3">
-          <div class="form-group">
-            <label>Payment Due</label>
-            <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-            <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
-              data-target="#estimatevaliddate" name="sale_estim_valid_date" />
-            <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-              <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-            </div> -->
-            <select name="sale_re_inv_payment_due_id" id="sale_re_inv_payment_due_id" class="form-control select2" style="width: 100%;">
-                <option default>On Receipt</option>
-                <option value="7">Within 7 Days</option>
-                <option value="14">Within 14 Days</option>
-                <option value="30">Within 30 Days</option>
-                <option value="45">Within 45 Days</option>
-                <option value="60">Within 60 Days</option>
-                <option value="90">Within 90 Days</option>
-            </select>
-          </div>
-          </div>
-        </div>
-        </div>
-        <!-- /.col -->
       </div>
       <div class="row px-10">
         <div class="col-md-12 text-right">
@@ -279,23 +276,23 @@
       <input type="hidden" name="sale_estim_discount_total" value="0">
       <input type="hidden" name="sale_estim_tax_amount" value="0">
       <input type="hidden" name="sale_estim_final_amount" value="0">
-      <div class="row">
+      <div class="row pad-2">
         <div class="col-md-4">
-        <div class="d-flex">
-          <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
-          aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
-        </div>
+          <div class="d-flex">
+            <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
+            aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
+          </div>
         </div>
         <div class="col-md-4">
-        <div class="d-flex">
-          <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
-          placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
-          <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
-          name="sale_estim_discount_type">
-          <option value="1">{{ $currency->currency_symbol }}</option>
-          <option value="2">%</option>
-          </select>
-        </div>
+          <div class="d-flex">
+            <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
+            placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
+            <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
+            name="sale_estim_discount_type">
+            <option value="1">{{ $currency->currency_symbol }}</option>
+            <option value="2">%</option>
+            </select>
+          </div>
         </div>
       </div>
 
