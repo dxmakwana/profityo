@@ -1477,18 +1477,22 @@ $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
             // Save the updated invoice
             $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
         }
+        // \DB::enableQueryLog();
+
+        $chartOfAccount = ChartAccount::where('chart_acc_id', $validatedData['payment_account'])->first();
+        // dd(\DB::getQueryLog()); 
 
 
- // Calculate the new due amount after the payment
-        // Fetch the relevant Chart of Account record by the payment account
-        $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
-        if ($chartOfAccount) {
-            // Update the chart account amount
-            $chart_amount =   $chartOfAccount->amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
-            $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
-        }
-    
-        // Redirect or return a response
+        // dd($chartOfAccount);
+            if ($chartOfAccount) {
+               
+                // Update the chart account amount
+                $chart_amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
+
+                $chartOfAccount->where('chart_acc_id', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+            }
+        
+ 
         return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
     }
     

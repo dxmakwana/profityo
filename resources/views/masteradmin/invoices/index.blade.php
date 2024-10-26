@@ -796,7 +796,7 @@
                                     case 'Sent':
                                         $nextStatusColor = ''; // Sent status class (if needed)
                                         break;
-                                    case 'Partlal':
+                                    case 'Partial':
                                         $nextStatusColor = 'partial_status'; // Class for partial payments
                                         break;
                                     case 'Paid':
