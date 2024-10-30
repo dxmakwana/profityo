@@ -229,7 +229,7 @@
                                                             </div>
                                                         </div>
                                                     </div> -->
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-6">
                                                       <div class="form-group">
                                                         <label>Date</label>
                                                         <div class="input-group date" id="estimatedate" data-target-input="nearest">
@@ -258,14 +258,16 @@
                                                         <div class="form-group">
                                                             <label>Amount</label>
                                                             <div class="d-flex">
-                                                                <select class="form-select amount_currency_input" name="payment_amount" >
+                                                                <input type="text" name="payment_amount" class="form-control" value="{{ $value->sale_bill_due_amount }}" aria-describedby="inputGroupPrepend">
+                                                                <div class="input-group-append">
+                                                                  <select class="form-select input-group-text amount_input" name="payment_amount" >
                                                                     <option>$</option>
                                                                     <option>€</option>
                                                                     <option>(CFA)</option>
                                                                     <option>£</option>
-                                                                </select>
-                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_bill_due_amount }}" aria-describedby="inputGroupPrepend">
-                                                            </div>
+                                                                  </select>
+                                                                </div>
+                                                              </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">

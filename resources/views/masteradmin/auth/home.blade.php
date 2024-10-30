@@ -127,7 +127,7 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <section class="col-lg-6">
+          <div class="col-lg-6">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Account Balance</h3>
@@ -209,66 +209,74 @@
               </div>
               <!-- /.card-body -->
             </div>
-             <!-- /Latest Income -->
-             <div class="card">
-              <div class="card-header">
-                <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Latest Expense</h3>
+            <!-- /Latest Income -->
+            <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Latest Expense</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+              <div class="col-md-12 table-responsive pad_table"></div>
+                <table class="table table-hover text-nowrap dashboard_table">
+                  <thead>
+                    <tr>
+                      <th>DATE</th>
+                      <th>CUSTOMER</th>
+                      <th class="text-right">AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Jan 28, 2023</td>
+                      <td>Lamar Mitchell</td>
+                      <td class="text-right">$100.00</td>
+                    </tr>
+                    <tr>
+                      <td>Jan 20, 2023</td>
+                      <td>Nina Aguirre</td>
+                      <td class="text-right">$100.00</td>
+                    </tr>
+                    <tr>
+                      <td>Jan 14, 2023</td>
+                      <td>Lee Winters</td>
+                      <td class="text-right">$75.00</td>
+                    </tr>
+                    <tr>
+                      <td>Jan 10, 2023</td>
+                      <td>Whoopi Burks</td>
+                      <td class="text-right">$250.00</td>
+                    </tr>
+                    <tr>
+                      <td>Jan 08, 2023</td>
+                      <td>Candace Pugh</td>
+                      <td class="text-right">$4000.00</td>
+                    </tr>
+                    <tr>
+                      <td>Jan 08, 2023</td>
+                      <td>Candace Pugh</td>
+                      <td class="text-right">$4000.00</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <!-- /.card-header -->
-              <div class="card-body table-responsive p-0">
-                <div class="col-md-12 table-responsive pad_table"></div>
-                  <table class="table table-hover text-nowrap dashboard_table">
-                    <thead>
-                      <tr>
-                        <th>DATE</th>
-                        <th>CUSTOMER</th>
-                        <th class="text-right">AMOUNT</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Jan 28, 2023</td>
-                        <td>Lamar Mitchell</td>
-                        <td class="text-right">$100.00</td>
-                      </tr>
-                      <tr>
-                        <td>Jan 20, 2023</td>
-                        <td>Nina Aguirre</td>
-                        <td class="text-right">$100.00</td>
-                      </tr>
-                      <tr>
-                        <td>Jan 14, 2023</td>
-                        <td>Lee Winters</td>
-                        <td class="text-right">$75.00</td>
-                      </tr>
-                      <tr>
-                        <td>Jan 10, 2023</td>
-                        <td>Whoopi Burks</td>
-                        <td class="text-right">$250.00</td>
-                      </tr>
-                      <tr>
-                        <td>Jan 08, 2023</td>
-                        <td>Candace Pugh</td>
-                        <td class="text-right">$4000.00</td>
-                      </tr>
-                      <tr>
-                        <td>Jan 08, 2023</td>
-                        <td>Candace Pugh</td>
-                        <td class="text-right">$4000.00</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <!-- /.card-body -->
-                  <!-- /Latest Income -->
-             <div class="card">
+            </div>
+            <!-- /.card-body -->
+            <!-- /Latest Income -->
+          </div>
+          <!-- /.Left col -->
+          <div class="col-lg-6 connectedSortable">
+          </div>
+          <!-- right col -->
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Recent Invoices</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
-                <div class="col-md-12 table-responsive pad_table"></div>
+                <div class="col-md-12 table-responsive pad_table">
                   <table class="table table-hover text-nowrap dashboard_table">
                     <thead>
                       <tr>
@@ -276,7 +284,7 @@
                         <th>Customer</th>
                         <th>Issue Date</th>
                         <th>Due Date</th>
-                        <th class="text-right">Amount</th>
+                        <th>Amount</th>
                         <th>Status</th>
                       </tr>
                     </thead>
@@ -287,7 +295,7 @@
                         <td>{{ $invoice->customer->sale_cus_first_name ?? 'N/A' }}</td>  <!-- Assuming customer_name is a field in InvoicesDetails -->
                         <td>{{ $invoice->sale_inv_date->format('M d, Y') }}</td> <!-- Format the date as needed -->
                         <td>{{ $invoice->sale_inv_valid_date->format('M d, Y') }}</td>
-                        <td class="text-right">${{ number_format($invoice->sale_inv_final_amount, 2) }}</td>
+                        <td>${{ number_format($invoice->sale_inv_final_amount, 2) }}</td>
                         <td>@php
           $nextStatus = '';
           $nextStatusColor = '';
@@ -302,7 +310,7 @@
           } elseif ($invoice->sale_status == 'Paid') {
           $nextStatusColor = 'Paid_status';
           }
-      @endphp
+        @endphp
             <span class="status_btn {{ $nextStatusColor }}">{{ $invoice->sale_status }}</span>
             </td>
                     </tr>
@@ -310,54 +318,50 @@
                       
                     </tbody>
                   </table>
-                  
                 </div>
-                <div class="statistics-tabs">
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'weekly')">Invoices Weekly Statistics</button>
-        <button class="tablinks" onclick="openTab(event, 'monthly')">Invoices Monthly Statistics</button>
-    </div>
-
-    <!-- Weekly Stats -->
-    <div id="weekly" class="tabcontent">
-        <div class="col-md-4">
-            <div class="statistics-card">
-                <h6>Invoices Weekly Statistics</h6>
-                <ul class="stats-list">
-                    <li>Total Invoice Generated <span>{{ $totalWeeklyInvoicesGenerated }}</span></li>
-                    <li>Total Paid <span>${{ number_format($totalWeeklyPaid, 2) }}</span></li>
-                    <li>Total Due <span>${{ number_format($totalWeeklyDue, 2) }}</span></li>
-                </ul>
+              </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Monthly Stats -->
-    <div id="monthly" class="tabcontent" style="display:none;">
-        <div class="col-md-4">
-            <div class="statistics-card">
-                <h6>Invoices Monthly Statistics</h6>
-                <ul class="stats-list">
-                    <li>Total Invoice Generated <span>{{ $totalMonthlyInvoicesGenerated }}</span></li>
-                    <li>Total Paid <span>${{ number_format($totalMonthlyPaid, 2) }}</span></li>
-                    <li>Total Due <span>${{ number_format($totalMonthlyDue, 2) }}</span></li>
-                </ul>
+          </div>
+          <div class="col-lg-4">
+          <div class="card">
+            <div class="statistics-tabs">
+              <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'weekly')">Invoices Weekly Statistics</button>
+                <button class="tablinks" onclick="openTab(event, 'monthly')">Invoices Monthly Statistics</button>
+              </div>
+              <!-- Weekly Stats -->
+              <div id="weekly" class="tabcontent">
+                  <div class="col-md-12">
+                    <ul class="stats-list">
+                        <li>Total Invoice Generated <span>{{ $totalWeeklyInvoicesGenerated }}</span></li>
+                        <li>Total Paid <span>${{ number_format($totalWeeklyPaid, 2) }}</span></li>
+                        <li>Total Due <span>${{ number_format($totalWeeklyDue, 2) }}</span></li>
+                    </ul>
+                  </div>
+              </div>
+              <!-- Monthly Stats -->
+              <div id="monthly" class="tabcontent" style="display:none;">
+                <div class="col-md-12">
+                  <ul class="stats-list">
+                      <li>Total Invoice Generated <span>{{ $totalMonthlyInvoicesGenerated }}</span></li>
+                      <li>Total Paid <span>${{ number_format($totalMonthlyPaid, 2) }}</span></li>
+                      <li>Total Due <span>${{ number_format($totalMonthlyDue, 2) }}</span></li>
+                  </ul>
+                </div>
+              </div>
             </div>
+          </div>
+          </div>
         </div>
-    </div>
-</div>
-
-
-       
-              <!-- /.card-body -->
-                 <!-- /Latest bill -->
-             <div class="card">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Recent Bill</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
-                <div class="col-md-12 table-responsive pad_table"></div>
+                <div class="col-md-12 table-responsive pad_table">
                   <table class="table table-hover text-nowrap dashboard_table">
                     <thead>
                       <tr>
@@ -365,7 +369,7 @@
                         <th>vendor</th>
                         <th>Issue Date</th>
                         <th>Due Date</th>
-                        <th class="text-right">Amount</th>
+                        <th>Amount</th>
                         <th>Status</th>
                       </tr>
                     </thead>
@@ -376,22 +380,22 @@
                         <td>{{ $bills->vendor->purchases_vendor_name ?? 'N/A' }}</td>  <!-- Assuming customer_name is a field in billoicesDetails -->
                         <td>{{ $bills->sale_bill_date->format('M d, Y') }}</td> <!-- Format the date as needed -->
                         <td>{{ $bills->sale_bill_valid_date->format('M d, Y') }}</td>
-                        <td class="text-right">${{ number_format($bills->sale_bill_final_amount, 2) }}</td>
+                        <td>${{ number_format($bills->sale_bill_final_amount, 2) }}</td>
                         <td>@php
-          $nextStatus = '';
-          $nextStatusColor = '';
-          if ($bills->sale_status == 'Draft') {
-          $nextStatusColor = '';
-          } elseif ($bills->sale_status == 'Unsent') {
-          $nextStatusColor = '';
-          } elseif ($bills->sale_status == 'Sent') {
-          $nextStatusColor = '';
-          } elseif ($bills->sale_status == 'Partial') {
-          $nextStatusColor = 'overdue_status';
-          } elseif ($bills->sale_status == 'Paid') {
-          $nextStatusColor = 'Paid_status';
-          }
-      @endphp
+            $nextStatus = '';
+            $nextStatusColor = '';
+            if ($bills->sale_status == 'Draft') {
+            $nextStatusColor = '';
+            } elseif ($bills->sale_status == 'Unsent') {
+            $nextStatusColor = '';
+            } elseif ($bills->sale_status == 'Sent') {
+            $nextStatusColor = '';
+            } elseif ($bills->sale_status == 'Partial') {
+            $nextStatusColor = 'overdue_status';
+            } elseif ($bills->sale_status == 'Paid') {
+            $nextStatusColor = 'Paid_status';
+            }
+            @endphp
             <span class="status_btn {{ $nextStatusColor }}">{{ $bills->sale_status }}</span>
             </td>
                     </tr>
@@ -403,12 +407,9 @@
               </div>
               <!-- /.card-body -->
             </div>
-             <!-- /Latest Expense -->
-          </section>
-          <!-- /.Left col -->
-          <section class="col-lg-6 connectedSortable">
-          </section>
-          <!-- right col -->
+          </div>
+          <div class="col-lg-4">
+          </div>
         </div>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
@@ -422,7 +423,6 @@
     <!-- Control sidebar content goes here -->
   </aside>
   <!-- /.control-sidebar -->
-</div>
 <!-- ./wrapper -->
 <p>{{ session('showModal') }}</p>
 @if (session()->has('showModal'))
