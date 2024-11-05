@@ -40,7 +40,7 @@ class RecurringInvoicesController extends Controller
         $endDate = $request->input('end_date');   
         // \DB::enableQueryLog();
 
-        $query = RecurringInvoices::with('customer')->orderBy('created_at', 'desc');
+        $query = RecurringInvoices::with(['customer', 'currency'])->orderBy('created_at', 'desc');
 
 
         // if ($request->has('start_date') && $request->start_date) {
@@ -62,7 +62,8 @@ class RecurringInvoicesController extends Controller
         $allreInvoices = $filteredreInvoices;
         $salecustomer = SalesCustomers::get();
         
-        
+        $currencys = Countries::get();
+
         if ($request->ajax()) {
             // dd(\DB::getQueryLog()); 
             // dd($allEstimates);
@@ -70,7 +71,7 @@ class RecurringInvoicesController extends Controller
         }
       
         // dd($allEstimates);
-        return view('masteradmin.recurring_invoices.index', compact('activereInvoices', 'draftreInvoices', 'allreInvoices','user_id','salecustomer'));
+        return view('masteradmin.recurring_invoices.index', compact('activereInvoices', 'draftreInvoices', 'allreInvoices','user_id','salecustomer','currencys'));
 
     }
 

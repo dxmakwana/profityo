@@ -1238,7 +1238,7 @@ $dueString = "$dueDays|$dueMessage";
         $endDate = $request->input('end_date');   
         // \DB::enableQueryLog();
 
-        $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
+        $query = InvoicesDetails::with(['customer', 'currency'])->orderBy('created_at', 'desc');
 
         $filteredInvoices = $query->get();
 
@@ -1321,6 +1321,9 @@ $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
 
     // dd($overdueTotal);
 // dd($totalDueNext30Days);
+$currencys = Countries::get();
+// $currency = $currencys->firstWhere(sale_currency_id);
+
         if ($request->ajax()) {
             // dd(\DB::getQueryLog());  
             // dd($allEstimates);
@@ -1328,7 +1331,7 @@ $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
         }
       
         // dd($allEstimates);
-        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer','accounts','totalDueNext30Days','overdueTotal','paymethod'));
+        return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer','accounts','totalDueNext30Days','overdueTotal','paymethod','currencys'));
 
     }
 

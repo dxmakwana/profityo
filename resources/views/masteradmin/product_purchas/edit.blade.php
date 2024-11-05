@@ -75,7 +75,7 @@
                       value="{{ $PurchasProducte->purchases_product_price }}">
                     <select
                       class="form-select form-selectcurrency @error('purchases_product_currency_id') is-invalid @enderror"
-                      name="purchases_product_currency_id" style="width: 100%;">
+                      name="purchases_product_currency_id">
                       <!-- <option value="">Select a Currency</option> -->
                       @foreach($Country as $curr)
               <option value="{{ $curr->id }}" @if($curr->id == $PurchasProducte->purchases_product_currency_id) selected

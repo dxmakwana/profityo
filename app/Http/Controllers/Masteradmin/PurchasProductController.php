@@ -15,8 +15,10 @@ class PurchasProductController extends Controller
     //
     public function index(): View
     {
-        $PurchasProduct = PurchasProduct::with('tax')->get();
-        return view('masteradmin.product_purchas.index')->with('PurchasProduct', $PurchasProduct);
+        $PurchasProduct = PurchasProduct::with(['tax', 'currency'])->get();
+        $currencys = Countries::get();
+
+        return view('masteradmin.product_purchas.index')->with('PurchasProduct', $PurchasProduct)->with('currencys', $currencys);
     }
 
     public function create(): View

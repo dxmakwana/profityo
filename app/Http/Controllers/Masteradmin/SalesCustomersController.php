@@ -317,7 +317,7 @@ public function show($sale_cus_id, Request $request): View
         ->orderBy('created_at', 'desc')
         ->get();
     
-    $query = InvoicesDetails::with('customer')->orderBy('created_at', 'desc');
+    $query = InvoicesDetails::with(['customer', 'currency'])->orderBy('created_at', 'desc');
     
     if ($startDate && !$endDate) {
         $query->whereRaw("STR_TO_DATE(sale_inv_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
@@ -368,7 +368,7 @@ $totalDueNext30Days = $invoicesDueNext30Days->sum('sale_inv_due_amount');
 
 
   $last12Months = Carbon::now()->subMonths(12);
-
+  $currencys = Countries::get();
 // Fetch total paid amount within the last 12 months
 $totalPaidLast12Months = InvoicesDetails::where('sale_inv_due_amount', '=', 0) // Fully paid invoices
     ->where('sale_inv_valid_date', '>=', $last12Months) // From last 12 months
@@ -376,7 +376,7 @@ $totalPaidLast12Months = InvoicesDetails::where('sale_inv_due_amount', '=', 0) /
     // Pass the fetched data to the view
     return view('masteradmin.customers.view_customer', compact(
         'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'sentLogs', 'activityStatus'
-    ,'accounts','totalDueNext30Days','paymethod','overdueTotal','totalUnpaid','totalPaidLast12Months'));
+    ,'accounts','totalDueNext30Days','paymethod','overdueTotal','totalUnpaid','totalPaidLast12Months','currencys'));
 }
 
 

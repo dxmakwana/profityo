@@ -325,7 +325,7 @@
       // alert('add');
       rowCount++;
       $('#dynamic_field').append(`
-       <div class="item-row row" id="row${rowCount}">
+       <div class="item-row row align-items-end" id="row${rowCount}">
         <div class="col-md-3">
           <div class="form-group">
             <label for="contactname">Name</label>
@@ -353,7 +353,9 @@
           </div>
         </div>
         <div class="col-md-3">
-          <i class="fa fa-trash delete-item" id="${rowCount}"> Remove Contact </i>
+          <div class="form-group">
+            <button type="button" id="${rowCount}" class="remove_contact_btn delete-item"><i class="fa fa-trash add_plus_icon"></i>Remove Contact</button>
+          </div>
         </div>
       
       </div>

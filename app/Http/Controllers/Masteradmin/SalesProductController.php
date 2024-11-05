@@ -20,8 +20,12 @@ class SalesProductController extends Controller
 {
     public function index(): View
     {
-        $SalesProduct = SalesProduct::with('tax')->get();
-        return view('masteradmin.product.index')->with('SalesProduct', $SalesProduct);
+        $SalesProduct = SalesProduct::with(['tax','currency'])->get();
+        $currencys = Countries::get();
+        return view('masteradmin.product.index')
+        ->with('SalesProduct', $SalesProduct)
+        ->with('currencys', $currencys);
+    
     }
 
     public function create(): View

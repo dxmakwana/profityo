@@ -73,7 +73,7 @@
               <tr>
               <td>{{ $value->purchases_product_name }}</td>
               <td>{{ $value->purchases_product_desc }}</td>
-              <td>{{ $value->purchases_product_price }}</td>
+              <td>{{ $currencys->firstWhere('id', $value->purchases_product_currency_id)->currency_symbol ?? '' }}{{ $value->purchases_product_price }}</td>
               <td><strong>{{ $value->tax->tax_abbreviation }} ({{ $value->tax->tax_rate }}%)</strong> - {{ $value->tax->tax_name }}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">

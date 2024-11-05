@@ -204,8 +204,8 @@
             {{ $value->customer->sale_cus_last_name ?? '' }}</td>
             <td>{{ $value->sale_inv_number }}</td>
             <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
-            <td>{{ $value->sale_inv_final_amount }}</td>
-            <td>{{ $value->sale_inv_due_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
             <td>
             @php
           // Calculate the due date
@@ -217,7 +217,7 @@
           $dueMessage = 'Today'; // Message for today
           $dueMessageColor = 'black'; // Set default color
           } elseif ($daysDifference < 0) {
-          $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+          $dueMessage = 'Due in ' .abs($daysDifference) . ' Days'; // Upcoming message
           $dueMessageColor = 'black'; // Set default color
 
           } else {
@@ -391,17 +391,19 @@
           <div class="form-group">
           <label>Amount</label>
           <div class="d-flex">
-          <select class="form-select amount_currency_input" name="payment_amount">
-          <option>$</option>
-          <option>€</option>
-          <option>(CFA)</option>
-          <option>£</option>
-          </select>
-          <input type="text" name="payment_amount"
-          class="form-control amount_input"
-          value="{{ $value->sale_inv_due_amount }}"
-          aria-describedby="inputGroupPrepend">
-          </div>
+    <!-- Display the selected currency symbol -->
+    <span class="form-control" style="width: 20%;">
+        @if ($value->sale_currency_id)
+            {{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}
+        @else
+            {{ 'Currency not set' }} <!-- Fallback if currency_id is not set -->
+        @endif
+    </span>
+
+    <input type="text" name="payment_amount" class="form-control amount_input" 
+           value="{{ $value->sale_inv_due_amount }}" aria-describedby="inputGroupPrepend">
+</div>
+
           </div>
           </div>
           <div class="col-md-6">
@@ -554,7 +556,7 @@
             {{ $value->customer->sale_cus_last_name ?? '' }}</td>
             <td>{{ $value->sale_inv_number }}</td>
             <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
-            <td>{{ $value->sale_inv_final_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
             <!-- <td>
             @php
           // Calculate the due date
@@ -579,7 +581,7 @@
             {{ $dueMessage }}
             </span>
             </td> -->
-            <td>{{ $value->sale_inv_final_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
             <td>@php
           $nextStatus = '';
           $nextStatusColor = '';
@@ -732,7 +734,7 @@
             {{ $value->customer->sale_cus_last_name ?? '' }}</td>
             <td>{{ $value->sale_inv_number }}</td>
             <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
-            <td>{{ $value->sale_inv_final_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
             <!-- <td>
             @php
           // Calculate the due date
@@ -757,7 +759,7 @@
             {{ $dueMessage }}
             </span>
             </td> -->
-            <td>{{ $value->sale_inv_due_amount }}</td>
+            <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
             <td>
                         @php
                             // Fetch the current due amount and original amount for this specific record
@@ -956,12 +958,19 @@
           <div class="form-group">
           <label>Amount</label>
           <div class="d-flex">
-          <select class="form-select amount_currency_input" name="payment_amount">
+          <!-- <select class="form-select amount_currency_input" name="payment_amount">
           <option>$</option>
           <option>€</option>
           <option>(CFA)</option>
           <option>£</option>
-          </select>
+          </select> -->
+          <span class="form-control" style="width: 20%;">
+        @if ($value->sale_currency_id)
+            {{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}
+        @else
+            {{ 'Currency not set' }} <!-- Fallback if currency_id is not set -->
+        @endif
+    </span>
           <input type="text" name="payment_amount"
           class="form-control amount_input"
           value="{{ $value->sale_inv_due_amount }}"
@@ -1079,12 +1088,13 @@
           <div class="form-group">
           <label>Amount</label>
           <div class="d-flex">
-          <select class="form-select amount_currency_input" name="payment_amount">
-          <option>$</option>
-          <option>€</option>
-          <option>(CFA)</option>
-          <option>£</option>
-          </select>
+          <span class="form-control" style="width: 20%;">
+        @if ($value->sale_currency_id)
+            {{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}
+        @else
+            {{ 'Currency not set' }} <!-- Fallback if currency_id is not set -->
+        @endif
+    </span>
           <input type="text" name="payment_amount"
           class="form-control amount_input"
           value="{{ $value->sale_inv_due_amount }}"

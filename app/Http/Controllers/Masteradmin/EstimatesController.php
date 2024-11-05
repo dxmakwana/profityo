@@ -48,7 +48,7 @@ class EstimatesController extends Controller
         $endDate = $request->input('end_date');   
         //\DB::enableQueryLog();
 
-        $query = Estimates::with('customer')->orderBy('created_at', 'desc');
+        $query = Estimates::with(['customer', 'currency'])->orderBy('created_at', 'desc');
 
         // if ($request->has('start_date') && $request->start_date) {
         //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
@@ -84,14 +84,14 @@ class EstimatesController extends Controller
         $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
         $allEstimates = $filteredEstimates;
         $salecustomer = SalesCustomers::get();
-    
+        $currencys = Countries::get();
         if ($request->ajax()) {
            // dd(\DB::getQueryLog()); 
             // dd($allEstimates);
             return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
         }
 
-        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'));
+        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer','currencys'));
     }
 
     public function create(): View

@@ -404,7 +404,7 @@
 
                             @if($businessDetails && $businessDetails->bus_image)
 
-                            <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                            <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
 
                             class="elevation-2 img-box" target="_blank">
 
@@ -642,9 +642,9 @@
 
                                     <tr>
 
-                                        <td>Total:</td>
+                                        <td><strong>Total:</strong></td>
 
-                                        <td>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</td>
+                                        <td><strong>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</strong></td>
 
                                     </tr>
 

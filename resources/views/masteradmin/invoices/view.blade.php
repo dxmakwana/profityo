@@ -188,7 +188,7 @@
                             <div class="col-md-3 ">
                                 <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
                                 @if($businessDetails && $businessDetails->bus_image)
-                                <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                 class="elevation-2 img-box" target="_blank">
                                 @endif
                             </div>
@@ -307,8 +307,8 @@
                                             <td>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_tax_amount }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Total:</td>
-                                            <td>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</td>
+                                            <td><strong>Total:</strong></td>
+                                            <td><strong>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</strong></td>
                                         </tr>
                                     </table>
                                 </div>

@@ -141,13 +141,13 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label for="currency">Business Currency </label>
-                            <h4 for="currency">
+                            <h5 for="currency">
                             @if ($currency)
-                              <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+                              <h5 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h5>
                             @else
-                              <h4 for="currency">No currency information available</h4>
+                              <h5 for="currency">No currency information available</h5>
                             @endif
-                            </h4>
+                            </h5>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -157,7 +157,7 @@
                               <input type="file" name="image" accept="image/*" class="add_btn fileinput-button">
                               <span>Please upload a valid image file. Size of image should not be more than 2MB.</span>
                               @if ($BusinessDetails->bus_image ?? '')
-                                <a href="{{ url(env('IMAGE_URL').'masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
+                                <a href="{{ url(env('IMAGE_URL').'storage/app/masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
                                     <div title="{{ $BusinessDetails->bus_image }}" class="ptm pbm">{{ $BusinessDetails->bus_image }}</div>
                                 </a>
                               @endif

@@ -156,7 +156,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
@@ -272,7 +272,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
@@ -389,7 +389,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">

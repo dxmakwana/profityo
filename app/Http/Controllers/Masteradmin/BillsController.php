@@ -31,7 +31,7 @@ class BillsController extends Controller
         // \DB::enableQueryLog();
         $startDate = $request->input('start_date'); 
         $endDate = $request->input('end_date');   
-        $query = Bills::with('vendor')->orderBy('sale_bill_id', 'desc');
+        $query = Bills::with(['vendor','currency'])->orderBy('sale_bill_id', 'desc');
 
         // if ($request->has('start_date') && $request->start_date) {
         //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
@@ -58,7 +58,7 @@ class BillsController extends Controller
         $vendor = PurchasVendor::get();
         $accounts = ChartAccount::select('chart_acc_id', 'chart_acc_name')->get();
         $paymethod = PaymentMethod::select('m_id', 'method_name')->get();
-
+        $currencys = Countries::get();
         
         if ($request->ajax()) {
             // dd(\DB::getQueryLog()); 
@@ -66,7 +66,7 @@ class BillsController extends Controller
             return view('masteradmin.bills.filtered_results', compact('allBill', 'user_id', 'vendor'))->render();
         }
         
-        return view('masteradmin.bills.index', compact('allBill', 'user_id', 'vendor','accounts','paymethod'));
+        return view('masteradmin.bills.index', compact('allBill', 'user_id', 'vendor','accounts','paymethod','currencys'));
     }
 
     public function create($id = null): View

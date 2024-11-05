@@ -88,7 +88,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">
@@ -146,7 +146,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">
@@ -204,7 +204,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">

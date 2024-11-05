@@ -24,6 +24,8 @@ class PurchasVendorController extends Controller
     public function index(): View
     {
         $PurchasVendor = PurchasVendor::with('tax','bankDetails')->get();
+       
+
         return view('masteradmin.vendor.index')->with('PurchasVendor', $PurchasVendor);
     }
 
@@ -257,8 +259,9 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
         }
         $accounts = ChartAccount::select('chart_acc_id', 'chart_acc_name')->get();
         $paymethod = PaymentMethod::select('m_id', 'method_name')->get();
+        $currencys = Countries::get();
         // Pass the vendor details, countries, and states to the view
-        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States','bills','accounts','paymethod'));
+        return view('masteradmin.vendor.view_vendor', compact('PurchasVendor', 'Country', 'States','bills','accounts','paymethod','currencys'));
     }
   
     public function addBankDetails(Request $request, $purchases_vendor_id)
