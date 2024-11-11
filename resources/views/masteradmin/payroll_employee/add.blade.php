@@ -107,10 +107,10 @@
                     <i class="fa fa-calendar-alt"></i>
                 </div>
               </div>
-              @error('emp_dob')
+            </div>
+            @error('emp_dob')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
-            </div>
             </div>
           </div>
           <div class="col-md-4">
@@ -138,10 +138,11 @@
                     <i class="fa fa-calendar-alt"></i>
                 </div>
               </div>
-              @error('emp_doh')
+              
+            </div>
+            @error('emp_doh')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
-            </div>
 
             </div>
           </div>

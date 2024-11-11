@@ -36,8 +36,7 @@ class InvoicesController extends Controller
     //
     public function invoiceStore(Request $request)
     {
-        // dd($request);
-        // dd($request->sale_currency_id);
+        
         $user = Auth::guard('masteradmins')->user();
 
         $dynamicId = $user->user_id; 
@@ -103,7 +102,7 @@ class InvoicesController extends Controller
         
         $invoice->save();
         $lastInsertedId = $invoice->id;
-        // dd($lastInsertedId);
+        
         
 
         foreach ($request->input('items') as $item) {
@@ -187,9 +186,9 @@ class InvoicesController extends Controller
     public function view($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+        
         $user_id = $user->user_id;
-        // dd($user_id);
+        
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -207,19 +206,19 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
+        
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
+      
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
+       
 
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
         $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->with('invoices_product', 'item_tax')->get();
-        // dd($estimatesItems);
+      
         $customer_states = collect();
         if ($customers && $customers->sale_bill_country_id) {
             $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
@@ -232,7 +231,7 @@ class InvoicesController extends Controller
 
         // $states = States::get();
 
-        // dd($estimates);
+        
         return view('masteradmin.invoices.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','user_id'));
 
     }
@@ -240,7 +239,6 @@ class InvoicesController extends Controller
     public function edit($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -258,14 +256,12 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
+       
 
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
@@ -305,15 +301,14 @@ class InvoicesController extends Controller
         
         // $states = States::get();
 
-        // dd($estimates);
+       
         return view('masteradmin.invoices.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','specificMenus','HideMenus','HideSettings','HideDescription','invoiceCustomizeMenu','invoicesCustomizeMenu'));
 
     }
 
     public function update(Request $request, $invoice_id)
     {
-        // dd($request);
-        // \DB::enableQueryLog();
+       
         $user = Auth::guard('masteradmins')->user();
 
         $dynamicId = $user->user_id; 
@@ -460,7 +455,6 @@ class InvoicesController extends Controller
     public function create(): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -478,7 +472,6 @@ class InvoicesController extends Controller
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
         
         $salestax = SalesTax::all();
 
@@ -513,7 +506,6 @@ class InvoicesController extends Controller
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
         $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
-        // dd($businessDetails);
         return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId'));
     }
 
@@ -555,20 +547,20 @@ class InvoicesController extends Controller
     
             $invoice = new InvoicesDetails();
             $user = Auth::guard('masteradmins')->user();
-// Calculate the due days
-$dueDate = Carbon::parse($request->sale_estim_valid_date); // Due date from the request
-$currentDate = Carbon::now(); // Today's date
-$dueDays = $dueDate->diffInDays($currentDate, false); // The second argument 'false' ensures negative values if overdue
-if ($dueDate->isPast()) {
-    // If the due date is in the past
-    $dueMessage = $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
-} else {
-    // If the due date is in the future or today
-    $dueMessage = $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
-}
+                // Calculate the due days
+                $dueDate = Carbon::parse($request->sale_estim_valid_date); // Due date from the request
+                $currentDate = Carbon::now(); // Today's date
+                $dueDays = $dueDate->diffInDays($currentDate, false); // The second argument 'false' ensures negative values if overdue
+                if ($dueDate->isPast()) {
+                    // If the due date is in the past
+                    $dueMessage = $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
+                } else {
+                    // If the due date is in the future or today
+                    $dueMessage = $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
+                }
 
-// Format the combined string for `sale_inv_due_days`
-$dueString = "$dueDays|$dueMessage";
+                // Format the combined string for `sale_inv_due_days`
+                $dueString = "$dueDays|$dueMessage";
 
             $invoice->fill([
                 'sale_inv_title' => $request->sale_estim_title,
@@ -593,13 +585,12 @@ $dueString = "$dueDays|$dueMessage";
                 'sale_inv_status' => 1,
                 'id' => $user->id,
                 'sale_inv_due_amount' => $request->sale_estim_final_amount, 
-                'sale_inv_due_days' => abs($dueDays), // Store the absolute value of due days without a negative sign
+                // 'sale_inv_due_days' => abs($dueDays), // Store the absolute value of due days without a negative sign
                'sale_inv_due_message' => $dueString, // Store the friendly due message
             ]);
-            
             $invoice->save();
             $lastInsertedId = $invoice->id;
-            // dd($lastInsertedId);
+           
     
             foreach ($request->input('items') as $item) {
                 $invoiceItem = new InvoicesItems();
@@ -681,7 +672,6 @@ $dueString = "$dueDays|$dueMessage";
 
     public function menuUpdate(Request $request) 
     {   
-        // dd($request->all());
         Session::put('form_data', $request->all());
 
         return response()->json([
@@ -694,7 +684,6 @@ $dueString = "$dueDays|$dueMessage";
     public function getMenuSessionData()
     {
         $sessionData = Session::get('form_data', []);
-        // dd($sessionData);
         return response()->json($sessionData);
     }
 
@@ -723,7 +712,7 @@ $dueString = "$dueDays|$dueMessage";
         $invoiceViewUrl = route('business.invoices.sendview', [$shortEncodedEstimateId, $shortEncodedUserID]);
 
 
-        // dd($estimateViewUrl);
+       
 
         $customer = SalesCustomers::where('sale_cus_id', $invoice->sale_cus_id)->first();
         if (!$customer || empty($customer->sale_cus_email)) {
@@ -767,7 +756,6 @@ $dueString = "$dueDays|$dueMessage";
     
             $decryptedEstimateId = Crypt::decryptString($base64EstimateId);
             $decryptedUserID = Crypt::decryptString($base64UserID);
-            // dd($decryptedUserID);
             
             $tableName = $decryptedUserID . '_py_business_details';
             
@@ -872,7 +860,6 @@ $dueString = "$dueDays|$dueMessage";
     public function authsendView(Request $request, $id, $slug)
     {
         try {
-            // dd('hiii');
             $id1= $id;
             $slug1 = $slug;
     
@@ -880,7 +867,6 @@ $dueString = "$dueDays|$dueMessage";
     
             $decryptedEstimateId = $id;
             $decryptedUserID = $slug;
-            // dd($decryptedUserID);
 
             
             $tableName = $decryptedUserID . '_py_business_details';
@@ -1004,7 +990,6 @@ $dueString = "$dueDays|$dueMessage";
     public function duplicate($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -1022,21 +1007,17 @@ $dueString = "$dueDays|$dueMessage";
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
 
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
         $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
-        // dd($newId);
 
         $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->get();
 
@@ -1069,19 +1050,16 @@ $dueString = "$dueDays|$dueMessage";
         ->get();
 
         $invoiceCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
-        // $states = States::get();
 
         $invoicesCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
       
         
 
-        // dd($estimates);
         return view('masteradmin.invoices.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','newId','specificMenus','HideMenus','HideSettings','HideDescription','invoiceCustomizeMenu','invoicesCustomizeMenu'));
     }
 
     public function duplicateStore(Request $request)
     {
-        // dd($request->sale_currency_id);
         $user = Auth::guard('masteradmins')->user();
 
         $dynamicId = $user->user_id; 
@@ -1145,7 +1123,6 @@ $dueString = "$dueDays|$dueMessage";
             
             $invoice->save();
             $lastInsertedId = $invoice->id;
-            // dd($lastInsertedId);
             
     
             foreach ($request->input('items') as $item) {
@@ -1229,16 +1206,13 @@ $dueString = "$dueDays|$dueMessage";
     public function index(Request $request)
     {
         //
-        // dd('hii');
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
         $user_id = $user->user_id;
 
         $startDate = $request->input('start_date'); 
         $endDate = $request->input('end_date');   
-        // \DB::enableQueryLog();
 
-        $query = InvoicesDetails::with(['customer', 'currency'])->orderBy('created_at', 'desc');
+        $query = InvoicesDetails::with('customer','currency')->orderBy('created_at', 'desc');
 
         $filteredInvoices = $query->get();
 
@@ -1300,12 +1274,11 @@ $dueString = "$dueDays|$dueMessage";
         $today = Carbon::now()->format('m/d/Y'); // MM/DD/YYYY format
         $next30Days = Carbon::now()->addDays(30)->format('m/d/Y'); // MM/DD/YYYY format
 
-    // Output the formatted dates
-    // dd(['today' => $today, 'next30Days' => $next30Days]);
+    
 
     $invoicesDueNext30Days = InvoicesDetails::whereBetween('sale_inv_valid_date', [$today, $next30Days])->get();
 
-    // dd($invoicesDueNext30Days); // Check if records are fetched
+   
 
     $totalDueNext30Days = $invoicesDueNext30Days->sum('sale_inv_due_amount');
 
@@ -1315,52 +1288,23 @@ $dueString = "$dueDays|$dueMessage";
    $overdueTotal = InvoicesDetails::where('sale_inv_valid_date', '<', $today) // Due date in the past
    ->where('sale_inv_due_amount', '>', 0)  // Only unpaid invoices
    ->sum('sale_inv_due_amount'); // Sum the overdue amounts
-// dd($overdueTotal); 
+ 
 // Fetch unpaid invoices to display in the table
 $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
 
-    // dd($overdueTotal);
-// dd($totalDueNext30Days);
+   
 $currencys = Countries::get();
 // $currency = $currencys->firstWhere(sale_currency_id);
 
         if ($request->ajax()) {
-            // dd(\DB::getQueryLog());  
-            // dd($allEstimates);
+          
             return view('masteradmin.invoices.filtered_results', compact('unpaidInvoices', 'draftInvoices', 'allInvoices', 'user_id', 'salecustomer'))->render();
         }
       
-        // dd($allEstimates);
+      
         return view('masteradmin.invoices.index', compact('unpaidInvoices', 'draftInvoices', 'allInvoices','user_id','salecustomer','accounts','totalDueNext30Days','overdueTotal','paymethod','currencys'));
 
     }
-
-    // public function statusStore(Request $request, $id)
-    // {
-    //     $user = Auth::guard('masteradmins')->user();
-
-    //     $incoice = InvoicesDetails::where([
-    //         'sale_inv_id' => $id,
-    //         'id' => $user->id
-    //     ])->firstOrFail();
-
-    //     $validated = $request->validate([
-    //         'sale_status' => 'required|string|max:255',
-    //     ]);
-
-    //     $incoice->where('sale_inv_id', $id)->update($validated);
-
-    //     $response = ['success' => true, 'message' => 'Invoice saved successfully!'];
-    //     if ($validated['sale_status'] === 'View') {
-    //         $response['redirect_url'] = route('business.invoices.view', [ $incoice->sale_inv_id]); 
-    //     }else
-    //     if ($validated['sale_status'] === 'Sent') {
-    //         $response['redirect_url'] = route('business.invoices.send', [ $incoice->sale_inv_id, $user->user_id]); 
-    //     }
-
-    //     return response()->json($response);
-    // }
-
 
     public function statusStore(Request $request , $id)
     {
@@ -1386,7 +1330,7 @@ $currencys = Countries::get();
 
     $nextStatus = $statusMap[$currentStatus] ?? null;
 
-    // dd($nextStatus); // 
+ 
 
         if ($nextStatus) {
 
@@ -1426,79 +1370,147 @@ $currencys = Countries::get();
 
 
 
-    public function paymentstore(Request $request, $id)
-    {
-        // Validate the form data
-        $user = Auth::guard('masteradmins')->user();
+    // public function paymentstore(Request $request, $id)
+    // {
+    //     // Validate the form data
+    //     $user = Auth::guard('masteradmins')->user();
         
-        $validatedData = $request->validate([
-            'payment_date' => 'required|date',
-            'payment_amount' => 'required|numeric',
-            'payment_method' => 'required|string',
-            'payment_account' => 'required|string',
-            'notes' => 'required|string',
-        ]);
+    //     $validatedData = $request->validate([
+    //         'payment_date' => 'required|date',
+    //         'payment_amount' => 'required|numeric',
+    //         'payment_method' => 'required|string',
+    //         'payment_account' => 'required|string',
+    //         'notes' => 'required|string',
+    //     ]);
     
-        // Create a new payment record
-        RecordPayment::create([
-            'id' => $user->id,
-            'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
-            'payment_date' => $validatedData['payment_date'],
-            'payment_amount' => $validatedData['payment_amount'],
-            'payment_method' => $validatedData['payment_method'],
-            'payment_account' => $validatedData['payment_account'],
-            'notes' => $validatedData['notes'],
-        ]);
+    //     // Create a new payment record
+    //     RecordPayment::create([
+    //         'id' => $user->id,
+    //         'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+    //         'payment_date' => $validatedData['payment_date'],
+    //         'payment_amount' => $validatedData['payment_amount'],
+    //         'payment_method' => $validatedData['payment_method'],
+    //         'payment_account' => $validatedData['payment_account'],
+    //         'notes' => $validatedData['notes'],
+    //     ]);
     
-        // Fetch the relevant invoice by ID
-        $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
-        if ($invoice) {
-            // Deduct the payment amount from the sale_inv_due_amount
-            $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
+    //     // Fetch the relevant invoice by ID
+    //     $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
+    //     if ($invoice) {
+    //         // Deduct the payment amount from the sale_inv_due_amount
+    //         $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
+    //         $excessAmount = 0;
 
-            // Determine the status and the excess amount if the payment is more than the due amount
-            if ($invammount < 0) {
-                // If the payment exceeds the due amount
-                $excessAmount = abs($invammount); // Calculate the excess amount
-                $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
-                $invoice->sale_inv_due_amount = 0; // Set due amount to zero
-            } elseif ($invammount == 0) {
-                // Fully paid
-                $excessAmount = 0; // No excess amount
-                $status =  $invoice->sale_status = 'Paid';
-                $invoice->sale_inv_due_amount = 0; // Set due amount to zero
-            } else {
-                // Partially paid
-                $excessAmount = 0; // No excess amount
-                $status = $invoice->sale_status = 'Partial';
-                $invoice->sale_inv_due_amount = $invammount; // Update due amount
-            }
-            //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
-            //     $status =  $invoice->sale_status = 'Over Paid';
-            // }
+    //         // Determine the status and the excess amount if the payment is more than the due amount
+    //         if ($invammount < 0) {
+    //             // If the payment exceeds the due amount
+    //             $excessAmount = abs($invammount); // Calculate the excess amount
+    //             $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+    //             $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+    //         } elseif ($invammount == 0) {
+    //             // Fully paid
+    //             $excessAmount = 0; // No excess amount
+    //             $status =  $invoice->sale_status = 'Paid';
+    //             $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+    //         } else {
+    //             // Partially paid
+    //             $excessAmount = 0; // No excess amount
+    //             $status = $invoice->sale_status = 'Partial';
+    //             $invoice->sale_inv_due_amount = $invammount; // Update due amount
+    //         }
+    //         //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
+    //         //     $status =  $invoice->sale_status = 'Over Paid';
+    //         // }
     
-            // Save the updated invoice
-            $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
-        }
-        // \DB::enableQueryLog();
+    //         // Save the updated invoice
+    //         $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
+    //     }
+    //     // \DB::enableQueryLog();
 
-        $chartOfAccount = ChartAccount::where('chart_acc_id', $validatedData['payment_account'])->first();
-        // dd(\DB::getQueryLog()); 
+    //     $chartOfAccount = ChartAccount::where('chart_acc_id', $validatedData['payment_account'])->first();
+    //     // dd(\DB::getQueryLog()); 
 
 
-        // dd($chartOfAccount);
-            if ($chartOfAccount) {
+    //     // dd($chartOfAccount);
+    //         if ($chartOfAccount) {
                
-                // Update the chart account amount
-                $chart_amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
+    //             // Update the chart account amount
+    //             $chart_amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
 
-                $chartOfAccount->where('chart_acc_id', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
-            }
+    //             $chartOfAccount->where('chart_acc_id', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+    //         }
         
  
-        return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
-    }
-    
+    //     return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+    // }
+    public function paymentstore(Request $request, $id)
+        {
+            // Validate the form data
+            $user = Auth::guard('masteradmins')->user();
+            
+            $validatedData = $request->validate([
+                'payment_date' => 'required|date',
+                'payment_amount' => 'required|numeric',
+                'payment_method' => 'required|string',
+                'payment_account' => 'required|string',
+                'notes' => 'required|string',
+            ]);
+        
+            // Create a new payment record
+            RecordPayment::create([
+                'id' => $user->id,
+                'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+                'payment_date' => $validatedData['payment_date'],
+                'payment_amount' => $validatedData['payment_amount'],
+                'payment_method' => $validatedData['payment_method'],
+                'payment_account' => $validatedData['payment_account'],
+                'notes' => $validatedData['notes'],
+            ]);
+        
+            // Fetch the relevant invoice by ID
+            $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
+            if ($invoice) {
+                // Calculate the new due amount after payment
+                $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
+                $excessAmount = 0;
+
+                // Determine the status and the excess amount if the payment is more than the due amount
+                if ($invammount < 0) {
+                    // If the payment exceeds the due amount
+                    $excessAmount = abs($invammount); // Calculate the excess amount (absolute value)
+                    $status = $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+                    $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+                } elseif ($invammount == 0) {
+                    // Fully paid
+                    $excessAmount = 0; // No excess amount
+                    $status = $invoice->sale_status = 'Paid';
+                    $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+                } else {
+                    // Partially paid
+                    $excessAmount = 0; // No excess amount
+                    $status = $invoice->sale_status = 'Partial';
+                    $invoice->sale_inv_due_amount = abs($invammount); // Update due amount (absolute value)
+                }
+
+                // Save the updated invoice with absolute due amount and status
+                $invoice->where('sale_inv_id', $id)->update([
+                    'sale_inv_due_amount' => abs($invammount),  // Use absolute value to store in database
+                    'sale_status' => $status
+                ]);
+            }
+            // Fetch the chart of account associated with the payment account
+            $chartOfAccount = ChartAccount::where('chart_acc_id', $validatedData['payment_account'])->first();
+            if ($chartOfAccount) {
+                // Update the chart account amount with absolute value
+                $chart_amount = ($chartOfAccount->amount ?? 0) + abs($validatedData['payment_amount']); // Ensure positive amount
+                $chartOfAccount->where('chart_acc_id', $validatedData['payment_account'])->update([
+                    'amount' => $chart_amount
+                ]);
+            }
+        
+            return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+        }
+
 
 // public function paymentstore(Request $request, $id)
 // {

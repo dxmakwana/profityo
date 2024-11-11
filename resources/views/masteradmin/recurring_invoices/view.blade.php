@@ -690,7 +690,7 @@
         @csrf
         @method('PATCH')
         <div class="modal-body">
-            <div class="row pxy-15 px-10">
+            <div class="row pxy-15">
               <div class="col-md-4">
                 <div class="form-group">
                   <label>Repeat this Invoice</label>
@@ -779,7 +779,7 @@
               
             </div>
            
-            <div class="row pxy-15 px-10">
+            <div class="row pxy-15">
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Create first invoice on</label>

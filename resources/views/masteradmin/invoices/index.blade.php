@@ -115,7 +115,7 @@
       <div class="row">
         <div class="col-lg-3 col-1024 col-md-6 px-10">
         <select id="sale_cus_id" class="form-control select2" style="width: 100%;" name="sale_cus_id">
-          <option value="" default>All customers</option>
+          <option value="" default>All Customers</option>
           @foreach($salecustomer as $value)
         <option value="{{ $value->sale_cus_id }}">{{ $value->sale_cus_business_name }} </option>
       @endforeach
@@ -123,7 +123,7 @@
         </div>
         <div class="col-lg-2 col-1024 col-md-6 px-10">
         <select class="form-control form-select" style="width: 100%;" name="sale_status" id="sale_status">
-          <option value="">All statuses</option>
+          <option value="">All Statuses</option>
           <option value="Draft">Draft</option>
           <option value="Unsent">Unsent</option>
           <option value="Sent">Sent</option>
@@ -180,7 +180,7 @@
         <div class="card-body1">
         <div class="tab-content">
           <div class="tab-pane active" id="unpaidinvoice">
-          <div class="col-md-12 table-responsive pad_table">
+          <div class="col-md-12 pad_table">
             <table id="example1" class="table table-hover text-nowrap">
             <thead>
               <tr>
@@ -534,7 +534,7 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="draftinvoice">
-          <div class="col-md-12 table-responsive pad_table">
+          <div class="col-md-12 pad_table">
             <table id="example5" class="table table-hover text-nowrap">
             <thead>
               <tr>
@@ -712,7 +712,7 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="allinvoice">
-          <div class="col-md-12 table-responsive pad_table">
+          <div class="col-md-12 pad_table">
             <table id="example4" class="table table-hover text-nowrap">
             <thead>
               <tr>

@@ -62,7 +62,7 @@
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                   class="elevation-2 img-box" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -168,7 +168,7 @@
               
               <!-- /.col -->
               <div class="col-md-9">
-                <div class="row">
+                <div class="row in-number-row">
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="estimatenumber">Invoice number</label>
@@ -265,14 +265,14 @@
                                     @endif
                                 </th>
                               @elseif(strpos($mname, 'units') !== false)
-                                <th id="unitsHeader">
+                                <th style="width: 15%;" id="unitsHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                       {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                                   @endif
                                 </th>
                             @elseif(strpos($mname, 'price') !== false)
-                                <th id="priceHeader">
+                                <th style="width: 15%;" id="priceHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                         {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
@@ -280,13 +280,13 @@
                                 </th>
                                 <th>Tax</th> <!-- Always include Tax when price is available -->
                             @elseif(strpos($mname, 'amount') !== false)
-                                <th id="amountHeader">
+                                <th class="text-right" id="amountHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                       {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                                   @endif
                                 </th>
-                                <th>Actions</th>
+                                <th class="text-right">Actions</th>
                             @endif
                         @endif
                       @endforeach
@@ -296,11 +296,11 @@
                       @if(!$hasData)
                   <!-- Default Headers -->
                       <th style="width: 30%;" id="itemsHeader">Items</th>
-                      <th id="unitsHeader">Units</th>
-                      <th id="priceHeader">Price</th>
+                      <th style="width: 15%;" id="unitsHeader">Units</th>
+                      <th style="width: 15%;" id="priceHeader">Price</th>
                       <th>Tax</th>
-                      <th id="amountHeader">Amount</th>
-                      <th>Actions</th> <!-- New column for actions -->
+                      <th class="text-right"id="amountHeader">Amount</th>
+                      <th class="text-right">Actions</th> <!-- New column for actions -->
                       @endif
                     </tr>
                   </thead>
@@ -342,9 +342,18 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <div class="px-10"></div>
+                            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                                @foreach($salestax as $salesTax)
+                                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                                        {{ $salesTax->tax_id == $item->sale_re_inv_item_tax ? 'selected' : '' }}>
+                                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                                    </option>
+                                @endforeach
+                            </select>
                         </td>
                         <td class="text-right item-price">{{ number_format($item->sale_re_inv_item_price * $item->sale_re_inv_item_qty, 2) }}</td>
-                        <td><i class="fa fa-trash delete-item"></i></td>
+                        <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
                     </tr>
                   @endforeach
 
@@ -353,15 +362,16 @@
               </div>
               <!-- /.col -->
             </div>
-            <hr />
+            <br />
             <input type="hidden" name="sale_estim_sub_total" value="{{ $reinvoices->sale_re_inv_sub_total }}">
             <input type="hidden" name="sale_estim_discount_total" value="{{ $reinvoices->sale_re_inv_discount_total }}">
             <input type="hidden" name="sale_estim_tax_amount" value="{{ $reinvoices->sale_re_inv_tax_amount }}">
             <input type="hidden" name="sale_estim_final_amount" value="{{ $reinvoices->sale_re_inv_final_amount }}">
             <div class="row pad-2">
               <div class="col-md-4">
-                  <div class="d-flex">
-                  <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $reinvoices->sale_re_inv_discount_desc }}" placeholder="Description (optional)">
+                  <div class="d-flex align-items-center">
+                    <label style="margin-right: 10px;">Discount</label>
+                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $reinvoices->sale_re_inv_discount_desc }}" placeholder="Discount Description">
                   </div>
               </div>
               <div class="col-md-4">
@@ -378,7 +388,7 @@
                   <div class="table-responsive">
                   <table class="table total_table">
                       <tr>
-                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" required>
+                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" required>
                         @foreach($currencys as $curr)
                           <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
                           <option value="{{ $curr->id }}" {{ $curr->id == $reinvoices->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
@@ -580,13 +590,13 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="currency">Business Currency </label>
-                <h4 for="currency">
+                <h6 for="currency">
                   @if ($currency)
-            <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+            <h6 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h6>
           @else
-        <h4 for="currency">No currency information available</h4>
+        <h6 for="currency">No currency information available</h6>
       @endif
-                </h4>
+                </h6>
               </div>
             </div>
           </div>
@@ -1752,14 +1762,20 @@
                     </div>
                 </td>
                 <td>
-                    <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                        @foreach($salestax as $salesTax)
-              <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-            @endforeach
-                    </select>
+                  <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                      @foreach($salestax as $salesTax)
+                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+                    @endforeach
+                  </select>
+                  <div class="px-10"></div>
+                  <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                      @foreach($salestax as $salesTax)
+                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+                    @endforeach
+                  </select>
                 </td>
                 <td class="text-right item-price">0.00</td>
-                <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+                <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item" id="${rowCount}"></i></td>
             </tr>
         `);
 

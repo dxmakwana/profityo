@@ -53,12 +53,12 @@
                     </option>
                     @endforeach
                   </select>
-                  <p>{{ $selected_vendor->purchases_vendor_name ?? '' }}</p>
-                  <p>{{ $selected_vendor->purchases_vendor_address1 ?? '' }}</p>
-                  <p>{{ $selected_vendor->purchases_vendor_address2 ?? '' }}</p>
-                  <p>{{ $selected_vendor->purchases_vendor_city_name ?? '' }} {{ $selected_vendor->state->name ?? '' }} {{ $selected_vendor->purchases_vendor_zipcode ?? '' }}</p>
-                  <p>{{ $selected_vendor->country->name ?? '' }}</p>
-                  <p>{{ $selected_vendor->purchases_vendor_email ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->purchases_vendor_name ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->purchases_vendor_address1 ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->purchases_vendor_address2 ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->purchases_vendor_city_name ?? '' }} {{ $selected_vendor->state->name ?? '' }} {{ $selected_vendor->purchases_vendor_zipcode ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->country->name ?? '' }}</p>
+                  <p class="mb-0">{{ $selected_vendor->purchases_vendor_email ?? '' }}</p>
                 </div>
               </div>
               <div class="col-md-4">
@@ -133,13 +133,13 @@
                 <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
                   <thead>
                   <tr>
-                    <th style="width: 300px;">Items</th>
-                    <th style="width: 300px;">Expense Category</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <th style="width: 22%;">Items</th>
+                    <th style="width: 22%;">Expense Category</th>
+                    <th style="width: 15%;">Quantity</th>
+                    <th style="width: 15%;">Price</th>
                     <th>Tax</th>
                     <th class="text-right">Amount</th>
-                    <th>Action</th>
+                    <th class="text-right">Action</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -186,16 +186,24 @@
                     </td>
 
                     <td>
-                    <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
-                      @foreach($salestax as $salesTax)
-                        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                        </option>
-                      @endforeach
-                    </select>
+                      <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+                        @foreach($salestax as $salesTax)
+                          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                          </option>
+                        @endforeach
+                      </select>
+                      <div class="px-10"></div>
+                      <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+                        @foreach($salestax as $salesTax)
+                          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                          </option>
+                        @endforeach
+                      </select>
                     </td>
                     <td class="text-right item-price">0.00</td>
-                    <td><i class="fa fa-trash delete-item"></i></td>
+                    <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
                   </tr>
 
                   </tbody>
@@ -203,7 +211,6 @@
               </div>
               <!-- /.col -->
             </div>
-            <hr />
             <input type="hidden" name="sale_bill_sub_total" value="0">
             <input type="hidden" name="sale_bill_tax_amount" value="0">
             <input type="hidden" name="sale_bill_final_amount" value="0">
@@ -383,14 +390,20 @@ $(document).ready(function () {
       </div>
       </td>
       <td>
-      <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
-      @foreach($salestax as $salesTax)
-      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-    @endforeach
-      </select>
+        <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+        @foreach($salestax as $salesTax)
+        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+      @endforeach
+        </select>
+        <div class="px-10"></div>
+        <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+        @foreach($salestax as $salesTax)
+        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+      @endforeach
+        </select>
       </td>
       <td class="text-right item-price">0.00</td>
-      <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+      <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item" id="${rowCount}"></i></td>
       </tr>
       `);
 

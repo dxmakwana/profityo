@@ -154,7 +154,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editArchiveAccount">Archive Account</label>
-                                                  <div class="form-check">
+                                                  <div class="form-check d-flex align-items-baseline">
                                                     <input class="form-check-input" type="checkbox" id="editArchiveAccount" name="archive_account" value=1
                                                     @if($account->archive_account == 1) checked @endif>
                                                     <label class="form-check-label" for="editArchiveAccount">

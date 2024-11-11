@@ -38,7 +38,7 @@
 @endif
           <!-- <span class="d-block dropdown-toggle" >{{ Auth::guard('masteradmins')->user()->users_name}} </span> -->
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-right">
             <x-dropdown-link :href="route('business.profile.edit')">
                 <i class="fas fa-user mr-2"></i> {{ __('Profile') }}
             </x-dropdown-link>

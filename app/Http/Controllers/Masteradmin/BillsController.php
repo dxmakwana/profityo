@@ -576,74 +576,142 @@ class BillsController extends Controller
     // }
 
     // 
-    public function paymentstore(Request $request, $id)
-    {
-        // Validate the form data
-        $user = Auth::guard('masteradmins')->user();
+//     public function paymentstore(Request $request, $id)
+//     {
+//         // Validate the form data
+//         $user = Auth::guard('masteradmins')->user();
         
-        $validatedData = $request->validate([
-            'payment_date' => 'required|date',
-            'payment_amount' => 'required|numeric',
-            'payment_method' => 'required|string',
-            'payment_account' => 'required|string',
-            'notes' => 'required|string',
-        ]);
+//         $validatedData = $request->validate([
+//             'payment_date' => 'required|date',
+//             'payment_amount' => 'required|numeric',
+//             'payment_method' => 'required|string',
+//             'payment_account' => 'required|string',
+//             'notes' => 'required|string',
+//         ]);
     
-        // Create a new payment record
-        RecordPayment::create([
-            'id' => $user->id,
-            'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
-            'payment_date' => $validatedData['payment_date'],
-            'payment_amount' => $validatedData['payment_amount'],
-            'payment_method' => $validatedData['payment_method'],
-            'payment_account' => $validatedData['payment_account'],
-            'notes' => $validatedData['notes'],
-        ]);
+//         // Create a new payment record
+//         RecordPayment::create([
+//             'id' => $user->id,
+//             'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+//             'payment_date' => $validatedData['payment_date'],
+//             'payment_amount' => $validatedData['payment_amount'],
+//             'payment_method' => $validatedData['payment_method'],
+//             'payment_account' => $validatedData['payment_account'],
+//             'notes' => $validatedData['notes'],
+//         ]);
     
-        // Fetch the relevant invoice by ID
-        $invoice = Bills::where('sale_bill_id', $id)->first();
-        if ($invoice) {
-            // Deduct the payment amount from the sale_inv_due_amount
-            $invammount = $invoice->sale_bill_due_amount - $validatedData['payment_amount'];
+//         // Fetch the relevant invoice by ID
+//         $invoice = Bills::where('sale_bill_id', $id)->first();
+//         if ($invoice) {
+//             // Deduct the payment amount from the sale_inv_due_amount
+//             $invammount = $invoice->sale_bill_due_amount - $validatedData['payment_amount'];
 
-            // Determine the status and the excess amount if the payment is more than the due amount
-            if ($invammount < 0) {
-                // If the payment exceeds the due amount
-                $excessAmount = abs($invammount); // Calculate the excess amount
-                $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
-                $invoice->sale_bill_due_amount = 0; // Set due amount to zero
-            } elseif ($invammount == 0) {
-                // Fully paid
-                $excessAmount = 0; // No excess amount
-                $status =  $invoice->sale_status = 'Paid';
-                $invoice->sale_bill_due_amount = 0; // Set due amount to zero
-            } else {
-                // Partially paid
-                $excessAmount = 0; // No excess amount
-                $status = $invoice->sale_status = 'Partial';
-                $invoice->sale_bill_due_amount = $invammount; // Update due amount
-            }
-            //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
-            //     $status =  $invoice->sale_status = 'Over Paid';
-            // }
+//             // Determine the status and the excess amount if the payment is more than the due amount
+//             if ($invammount < 0) {
+//                 // If the payment exceeds the due amount
+//                 $excessAmount = abs($invammount); // Calculate the excess amount
+//                 $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+//                 $invoice->sale_bill_due_amount = 0; // Set due amount to zero
+//             } elseif ($invammount == 0) {
+//                 // Fully paid
+//                 $excessAmount = 0; // No excess amount
+//                 $status =  $invoice->sale_status = 'Paid';
+//                 $invoice->sale_bill_due_amount = 0; // Set due amount to zero
+//             } else {
+//                 // Partially paid
+//                 $excessAmount = 0; // No excess amount
+//                 $status = $invoice->sale_status = 'Partial';
+//                 $invoice->sale_bill_due_amount = $invammount; // Update due amount
+//             }
+//             //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
+//             //     $status =  $invoice->sale_status = 'Over Paid';
+//             // }
     
-            // Save the updated invoice
-            $invoice->where('sale_bill_id', $id)->update(['sale_bill_due_amount' => $invammount ,'sale_status'=>$status]);
+//             // Save the updated invoice
+//             $invoice->where('sale_bill_id', $id)->update(['sale_bill_due_amount' => $invammount ,'sale_status'=>$status]);
+//         }
+
+
+//  // Calculate the new due amount after the payment
+//         // Fetch the relevant Chart of Account record by the payment account
+//         $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
+//         if ($chartOfAccount) {
+//             // Update the chart account amount
+//             $chart_amount =   $chartOfAccount->amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
+//             $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+//         }
+    
+//         // Redirect or return a response
+//         return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+//     }
+public function paymentstore(Request $request, $id)
+{
+    // Validate the form data
+    $user = Auth::guard('masteradmins')->user();
+    
+    $validatedData = $request->validate([
+        'payment_date' => 'required|date',
+        'payment_amount' => 'required|numeric',
+        'payment_method' => 'required|string',
+        'payment_account' => 'required|string',
+        'notes' => 'required|string',
+    ]);
+
+    // Create a new payment record
+    RecordPayment::create([
+        'id' => $user->id,
+        'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+        'payment_date' => $validatedData['payment_date'],
+        'payment_amount' => $validatedData['payment_amount'],
+        'payment_method' => $validatedData['payment_method'],
+        'payment_account' => $validatedData['payment_account'],
+        'notes' => $validatedData['notes'],
+    ]);
+
+    // Fetch the relevant invoice by ID
+    $invoice = Bills::where('sale_bill_id', $id)->first();
+    if ($invoice) {
+        // Calculate the new due amount after payment
+        $invammount = $invoice->sale_bill_due_amount - $validatedData['payment_amount'];
+
+        // Determine the status and the excess amount if the payment is more than the due amount
+        if ($invammount < 0) {
+            // If the payment exceeds the due amount
+            $excessAmount = abs($invammount); // Calculate the excess amount (absolute value)
+            $status = $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+            $invoice->sale_bill_due_amount = 0; // Set due amount to zero
+        } elseif ($invammount == 0) {
+            // Fully paid
+            $excessAmount = 0; // No excess amount
+            $status = $invoice->sale_status = 'Paid';
+            $invoice->sale_bill_due_amount = 0; // Set due amount to zero
+        } else {
+            // Partially paid
+            $excessAmount = 0; // No excess amount
+            $status = $invoice->sale_status = 'Partial';
+            $invoice->sale_bill_due_amount = abs($invammount); // Ensure the due amount is positive
         }
 
-
- // Calculate the new due amount after the payment
-        // Fetch the relevant Chart of Account record by the payment account
-        $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
-        if ($chartOfAccount) {
-            // Update the chart account amount
-            $chart_amount =   $chartOfAccount->amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
-            $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
-        }
-    
-        // Redirect or return a response
-        return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+        // Save the updated invoice with the absolute due amount and status
+        $invoice->where('sale_bill_id', $id)->update([
+            'sale_bill_due_amount' => abs($invammount), // Store the due amount as positive
+            'sale_status' => $status
+        ]);
     }
+
+    // Fetch the relevant Chart of Account record by the payment account
+    $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
+    if ($chartOfAccount) {
+        // Update the chart account amount (use absolute value for payment amount)
+        $chart_amount = ($chartOfAccount->amount ?? 0) + abs($validatedData['payment_amount']); // Ensure the amount is positive
+        $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update([
+            'amount' => $chart_amount
+        ]);
+    }
+
+    // Redirect or return a response
+    return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+}
 
 
 

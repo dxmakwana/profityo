@@ -230,11 +230,11 @@
             <thead>
             <tr>
               <th style="width: 30%;" id="itemsHeader">Items</th>
-              <th id="unitsHeader">Units</th>
-              <th id="priceHeader">Price</th>
+              <th style="width: 15%;" id="unitsHeader">Units</th>
+              <th style="width: 15%;" id="priceHeader">Price</th>
               <th>Tax</th>
-              <th id="amountHeader">Amount</th>
-              <th>Actions</th> <!-- New column for actions -->
+              <th id="amountHeader" class="text-right">Amount</th>
+              <th class="text-right">Actions</th> <!-- New column for actions -->
             </tr>
             </thead>
             <tbody>
@@ -277,9 +277,17 @@
                   </option>
                 @endforeach
               </select>
+              <div class="px-10"></div>
+              <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                @foreach($salestax as $salesTax)
+                  <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                  {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                  </option>
+                @endforeach
+              </select>
               </td>
-              <td class="text-right item-price">0.00</td>
-              <td><i class="fa fa-trash delete-item"></i></td>
+              <td class="item-price text-right">0.00</td>
+              <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
             </tr>
 
             </tbody>
@@ -287,14 +295,15 @@
           </div>
           <!-- /.col -->
         </div>
-        <hr />
+        <br />
         <input type="hidden" name="sale_estim_sub_total" value="0">
         <input type="hidden" name="sale_estim_discount_total" value="0">
         <input type="hidden" name="sale_estim_tax_amount" value="0">
         <input type="hidden" name="sale_estim_final_amount" value="0">
         <div class="row pad-2">
           <div class="col-md-4">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
+              <label style="margin-right: 10px;">Discount</label>
               <input type="text" class="form-control" name="sale_estim_discount_desc"
               aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
             </div>
@@ -326,7 +335,7 @@
                 <td id="tax">{{ $currency->currency_symbol }}0.00</td>
               </tr>
               <tr>
-                <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2"
+                <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2" style="width: 100%;"
                         required>
                         @foreach($currencys as $curr)
                     <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
@@ -1491,9 +1500,17 @@
       <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
     @endforeach
       </select>
+      <div class="px-10"></div>
+      <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+        @foreach($salestax as $salesTax)
+          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+          </option>
+        @endforeach
+      </select>
       </td>
       <td class="text-right item-price">0.00</td>
-      <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+      <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item" id="${rowCount}"></i></td>
       </tr>
       `);
 

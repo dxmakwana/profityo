@@ -353,10 +353,10 @@
                         </div> -->
                         <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
-<input type="hidden" id="effective-datepicker-hidden" value="{{ $EmployeeComperisation->emp_comp_effective_date }}" />
+<input type="hidden" id="effective-datepicker-hidden" value="{{ $EmployeeComperisation->emp_comp_effective_date ?? ''}}" />
 
 @php
-$saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effective_date)->format('m/d/Y');
+$saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effective_date ?? '')->format('m/d/Y');
 @endphp
 
 <x-flatpickr id="effective-datepicker" name="emp_comp_effective_date" placeholder="Select a date"

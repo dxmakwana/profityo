@@ -66,7 +66,7 @@
             <div class="card-body1">
               <div class="tab-content">
                 <div class="tab-pane active" id="activerecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example1" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
@@ -124,7 +124,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="draftrecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example5" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
@@ -182,7 +182,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="allrecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example4" class="table table-hover text-nowrap">
                       <thead>
                         <tr>

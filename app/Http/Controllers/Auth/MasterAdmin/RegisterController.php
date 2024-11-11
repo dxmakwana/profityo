@@ -30,6 +30,7 @@ class RegisterController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+      
         $request->validate([
             'user_first_name' => ['required', 'string', 'max:255'],
             'user_phone' => ['required', 'string', 'max:255'],
@@ -46,7 +47,7 @@ class RegisterController extends Controller
             'user_password.required' => 'The Password field is required.',
         ]);
 
-        $plan = Plan::where('sp_id', '15')->firstOrFail();
+        $plan = Plan::where('sp_id', '20')->firstOrFail();
 
         $startDate = Carbon::now();
         $months = $plan->sp_month;
