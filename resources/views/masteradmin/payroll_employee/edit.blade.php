@@ -182,6 +182,8 @@
           </option>
         @endforeach
             </select>
+            <span class="error-message" id="error_emp_work_location" style="color: red;"></span>
+
             </div>
           </div>
           <div class="col-md-4">
@@ -192,6 +194,8 @@
               <option value="Hourly" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Hourly') ? 'selected' : '' }}>Hourly</option>
               <option value="Annual" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Annual') ? 'selected' : '' }}>Annual</option>
             </select>
+            <span class="error-message" id="error_emp_wage_type" style="color: red;"></span>
+
             </div>
           </div>
 
@@ -200,6 +204,8 @@
             <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="emp_wage_amount" name="emp_wage_amount"
               value="{{ old('emp_wage_amount', $employee->emp_wage_amount) }}" placeholder="Enter Wage Amount">
+              <span class="error-message" id="error_emp_wage_amount" style="color: red;"></span>
+
             </div>
           </div>
           </div>
@@ -770,11 +776,11 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
               <i class="fa fa-calendar-alt"></i>
             </div>
             </div>
-            @error('emp_off_last_work_date')
+          
+          </div>
+          @error('emp_off_last_work_date')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
-          </div>
-
           </div>
         </div>
         <!-- </div> -->
@@ -804,11 +810,11 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
               <i class="fa fa-calendar-alt"></i>
             </div>
             </div>
-            @error('emp_off_notice_date')
+          
+          </div>
+          @error('emp_off_notice_date')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
-          </div>
-
           </div>
         </div>
         </div>
@@ -904,13 +910,9 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
             </div>
             </div>
           </div>
-          <!-- <div class="input-group date" id="leavestartdate" data-target-input="nearest">
-        <input type="text" name="emp_lev_start_date" class="form-control datetimepicker-input"
-          placeholder="Start Date" data-target="#leavestartdate">
-        <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div>
-        </div> -->
+          @error('emp_lev_start_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
           </div>
         </div>
         <div class="col-md-6">
@@ -927,13 +929,9 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
             </div>
             </div>
           </div>
-          <!-- <div class="input-group date" id="leaveenddate" data-target-input="nearest">
-        <input type="text" name="emp_lev_end_date" class="form-control datetimepicker-input"
-          placeholder="End Date" data-target="#leaveenddate">
-        <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div>
-        </div> -->
+          @error('emp_lev_end_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
           </div>
         </div>
         <div class="col-md-12">

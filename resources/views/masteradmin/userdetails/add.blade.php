@@ -57,7 +57,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="users_phone">Phone</label>
+                                    <label for="users_phone">Phone<span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('users_phone') is-invalid @enderror" id="taxnumber"
                                            name="users_phone" placeholder="Phone" value="{{ old('users_phone') }}">
                                     @error('users_phone')
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>User Role</label>
+                                    <label>User Role<span class="text-danger">*</span></label>
                                     <select class="form-control from-select select2 {{ $errors->has('role_id') ? 'is-invalid' : '' }}" name="role_id" style="width: 100%;">
                                         <option>Select User Role</option>
                                         @foreach($roles as $role)

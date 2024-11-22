@@ -119,28 +119,21 @@ class ProfilesController extends Controller
         // Perform validation
         $validatedData = $request->validate([
             'bus_company_name' => 'required|string|max:255',
-            'bus_address1' => 'required|string|max:255',
-            'bus_address2' => 'required|string|max:255',
+            'bus_address1' => 'nullable|string|max:255',
+            'bus_address2' => 'nullable|string|max:255',
             'country_id' => 'required|integer',
             'state_id' => 'required|integer',
-            'city_name' => 'required|string|max:255',
-            'zipcode' => 'required|string|max:10',
-            'bus_phone' => 'required|string|max:15',
+            'city_name' => 'nullable|string|max:255',
+            'zipcode' => 'nullable|string|max:10',
+            'bus_phone' => 'nullable|string|max:15',
             'bus_mobile' => 'nullable|string|max:15',
             'bus_website' => 'nullable|url|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
-            'bus_company_name.required' => 'The Company name field is required.',
-            'bus_address1.required' => 'The address1 field is required.',
-            'bus_address2.required' => 'The address2 field is required.',
-            'country_id.required' => 'The country field is required',
-            'state_id.required' => 'The state field is required',
-            'city_name.required' => 'The city name field is required',
-            'zipcode.required' => 'The zipcode field is required',
-            'bus_phone.required' => 'The phone field is required.',
-            'bus_mobile.string' => 'The mobile field is required.',
-            'bus_website.string' => 'The website field is required.',
-            'image.image' => 'The image field is required.',
+            'bus_company_name.required' => 'Please enter business name.',
+            'country_id.integer' => 'Please enter country name.',
+            'state_id.integer' => 'Please enter state name',
+       
         ]);
     
         // Handle Image Upload
@@ -191,29 +184,22 @@ class ProfilesController extends Controller
         }
 
         $validatedData = $request->validate([
-            'bus_company_name' => 'required|string|max:255',
-            'bus_address1' => 'required|string|max:255',
-            'bus_address2' => 'required|string|max:255',
+          'bus_company_name' => 'required|string|max:255',
+            'bus_address1' => 'nullable|string|max:255',
+            'bus_address2' => 'nullable|string|max:255',
             'country_id' => 'required|integer',
             'state_id' => 'required|integer',
-            'city_name' => 'required|string|max:255',
-            'zipcode' => 'required|string|max:10',
-            'bus_phone' => 'required|string|max:15',
+            'city_name' => 'nullable|string|max:255',
+            'zipcode' => 'nullable|string|max:10',
+            'bus_phone' => 'nullable|string|max:15',
             'bus_mobile' => 'nullable|string|max:15',
             'bus_website' => 'nullable|url|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
-            'bus_company_name.required' => 'The Company name field is required.',
-            'bus_address1.required' => 'The address1 field is required.',
-            'bus_address2.required' => 'The address2 field is required.',
-            'country_id.required' => 'The country field is required',
-            'state_id.required' => 'The state field is required',
-            'city_name.required' => 'The city name field is required',
-            'zipcode.required' => 'The zipcode field is required',
-            'bus_phone.required' => 'The phone field is required.',
-            'bus_mobile.string' => 'The mobile field is required.',
-            'bus_website.string' => 'The website field is required.',
-            'image.image' => 'The image field is required.',
+            'bus_company_name.required' => 'Please enter business name.',
+            'country_id.integer' => 'Please enter country name.',
+            'state_id.integer' => 'Please enter state name',
+       
         ]);
 
         $imageFilename = $this->handleImageUpload($request, $BusinessDetails->bus_image ?? null, 'masteradmin/business_profile');

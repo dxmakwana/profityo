@@ -102,7 +102,7 @@
                     @foreach($SalesTax as $salesTax)
             <option value="{{ $salesTax->tax_id }}" @if($salesTax->tax_id == $PurchasProducte->purchases_product_tax)
         selected @endif>
-              {{ $salesTax->tax_name }}
+              {{ $salesTax->tax_name }}({{ $salesTax->tax_rate }}%)
             </option>
           @endforeach
                   </select>

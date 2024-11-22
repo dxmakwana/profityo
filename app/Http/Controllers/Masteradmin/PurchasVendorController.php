@@ -72,7 +72,7 @@ class PurchasVendorController extends Controller
         'purchases_vendor_currency_id' => 'nullable|string|max:255',
         'type' => 'required|string|in:Vendor,1099-NEC Contractor',
     ], [
-        'purchases_vendor_name.required' => 'The name field is required.',
+        'purchases_vendor_name.required' => 'Please enter name.',
         'type.required' => 'The vendor type field is required.',
         // 'type.in' => 'The selected vendor type is invalid.',
     ]);      
@@ -201,6 +201,10 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
         'purchases_vendor_currency_id' => 'nullable|string|max:255',
         // 'purchases_contractor_type' => 'required|string|in:Individual,Business',
         // 'type' => 'required|string|in:Vendor,1099-NEC Contractor', // Add validation for type
+    ],[
+        'purchases_vendor_name.required' => 'Please enter name',
+        'type.required' => 'The vendor type field is required.',
+        // 'type.in' => 'The selected vendor type is invalid.',
     ]);
     // dd($validatedData);    // Capture the selected radio button value
     $type = $request->input('type'); 

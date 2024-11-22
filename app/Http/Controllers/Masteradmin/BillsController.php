@@ -135,7 +135,7 @@ class BillsController extends Controller
             'sale_bill_customer_ref' => 'nullable|string|max:255',
             'sale_bill_date' => 'required|date',
             'sale_bill_valid_date' => 'required|date',
-            'sale_currency_id' => 'nullable|numeric',
+            'sale_currency_id' => 'required|numeric',
             'sale_bill_sub_total' => 'required|numeric',
             'sale_bill_tax_amount' => 'required|numeric',
             'sale_bill_final_amount' => 'required|numeric',
@@ -149,8 +149,8 @@ class BillsController extends Controller
             'items.*.sale_bill_item_price' => 'required|numeric|min:0',
             'items.*.sale_bill_item_tax' => 'required|integer',
         ], [
-            'sale_vendor_id.required' => 'Please select a vendor.',
             'sale_vendor_id.integer' => 'Please select a vendor.',
+            'sale_currency_id.required' => 'Please select a currency.',
             'sale_bill_number.required' => 'The bill number is required.',
             'sale_bill_date.required' => 'Please select the bill date.',
             'sale_bill_valid_date.required' => 'Please select the valid until date.',
@@ -160,13 +160,15 @@ class BillsController extends Controller
             'sale_bill_image.image' => 'The file uploaded must be a valid image.',
             'sale_status.required' => 'Please set the status of the bill.',
             'sale_bill_status.required' => 'Please set the bill status.',
-            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_expense_id.integer' => 'Each item must have a expense category selected.',
             'items.*.sale_bill_item_desc.required' => 'Please provide a description for each item.',
-            'items.*.sale_expense_id.required' => 'Please enter the quantity for each item.',
-            'items.*.sale_bill_item_qty.required' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_bill_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_bill_item_qty.min' => 'The quantity for each item must be at least 1.',
             'items.*.sale_bill_item_price.required' => 'Please enter the price for each item.',
             'items.*.sale_bill_item_price.min' => 'The price for each item must be at least 0.',
             'items.*.sale_bill_item_tax.required' => 'Please select the tax amount for each item.',
+           
         ]);
         // \DB::enableQueryLog();
 
@@ -443,7 +445,7 @@ class BillsController extends Controller
             'sale_bill_customer_ref' => 'nullable|string|max:255',
             'sale_bill_date' => 'required|date',
             'sale_bill_valid_date' => 'required|date',
-            'sale_currency_id' => 'nullable|numeric',
+            'sale_currency_id' => 'required|numeric',
             'sale_bill_sub_total' => 'required|numeric',
             'sale_bill_tax_amount' => 'required|numeric',
             'sale_bill_final_amount' => 'required|numeric',
@@ -457,8 +459,8 @@ class BillsController extends Controller
             'items.*.sale_bill_item_price' => 'required|numeric|min:0',
             'items.*.sale_bill_item_tax' => 'required|integer',
         ], [
-            'sale_vendor_id.required' => 'Please select a vendor.',
             'sale_vendor_id.integer' => 'Please select a vendor.',
+            'sale_currency_id.required' => 'Please select a currency.',
             'sale_bill_number.required' => 'The bill number is required.',
             'sale_bill_date.required' => 'Please select the bill date.',
             'sale_bill_valid_date.required' => 'Please select the valid until date.',
@@ -468,7 +470,7 @@ class BillsController extends Controller
             'sale_bill_image.image' => 'The file uploaded must be a valid image.',
             'sale_status.required' => 'Please set the status of the bill.',
             'sale_bill_status.required' => 'Please set the bill status.',
-            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
             'items.*.sale_expense_id.integer' => 'Each item must have a expense category selected.',
             'items.*.sale_bill_item_desc.required' => 'Please provide a description for each item.',
             'items.*.sale_bill_item_qty.required' => 'Please enter the quantity for each item.',
@@ -476,6 +478,7 @@ class BillsController extends Controller
             'items.*.sale_bill_item_price.required' => 'Please enter the price for each item.',
             'items.*.sale_bill_item_price.min' => 'The price for each item must be at least 0.',
             'items.*.sale_bill_item_tax.required' => 'Please select the tax amount for each item.',
+           
         ]);
         // \DB::enableQueryLog();
 

@@ -63,10 +63,15 @@ class EmployeesController extends Controller
             'emp_wage_amount' => 'required|string|max:255',
             'emp_status' => 'nullable|string|max:255',
         ],[
-            'emp_first_name.required' => 'The first name field is required.',
-            'emp_last_name.required' => 'The last name field is required.',
-            'emp_social_security_number.required' => 'The social security number field is required.',
-            'emp_wage_amount.required' => 'The wage amount field is required.',
+            'emp_first_name.required' => 'Please enter first name.',
+            'emp_last_name.required' => 'Please enter last name.',
+            'emp_social_security_number.required' => 'Please enter social security number.',
+            'emp_wage_amount.required' => 'Please enter wage amount.',
+            'emp_dob.required' => 'Please enter date of birth.',
+            'emp_doh.required' => 'Please enter doh.',
+            'emp_work_location.required' => 'Please enter work location.',
+            'emp_wage_type.required' => 'Please enter wage type.',
+
         ]);
     
         // Prepare the data for insertion
@@ -128,17 +133,27 @@ public function update(Request $request, $id)
     $validatedData = $request->validate([
         'emp_first_name' => 'required|string|max:255',
         'emp_last_name' => 'nullable|string|max:255',
-        'emp_social_security_number' => 'nullable|string|max:255',
+        'emp_social_security_number' => 'required|string|max:255',
         'emp_hopy_address' => 'nullable|string|max:255',
         'city_name' => 'nullable|string|max:255',
         'state_id' => 'nullable|numeric',
         'zipcode' => 'nullable|string|max:255',
-        'emp_dob' => 'nullable|string|max:255',
+        'emp_dob' => 'required|string|max:255',
         'emp_email' => 'nullable|email|max:255',
-        'emp_doh' => 'nullable|string|max:255',
-        'emp_work_location' => 'nullable|string|max:255',
-        'emp_wage_type' => 'nullable|string|max:255',
+        'emp_doh' => 'required|string|max:255',
+        'emp_work_location' => 'required|string|max:255',
+        'emp_wage_type' => 'required|string|max:255',
         'emp_wage_amount' => 'nullable|string|max:255',
+    ],[
+        'emp_first_name.required' => 'Please enter first name.',
+        'emp_last_name.required' => 'Please enter last name.',
+        'emp_social_security_number.required' => 'Please enter social security number.',
+        'emp_wage_amount.required' => 'Please enter wage amount.',
+        'emp_dob.required' => 'Please enter date of birth.',
+        'emp_doh.required' => 'Please enter doh.',
+        'emp_work_location.required' => 'Please enter work location.',
+        'emp_wage_type.required' => 'Please enter wage type.',
+
     ]);
 
     // Find the employee record by ID in the dynamic table
@@ -184,9 +199,9 @@ public function storeCompensation(Request $request, $id)
         'emp_comp_effective_date' => 'required|string',
         'average_hours_per_week' => 'nullable|numeric',  // Optional if salary type is not 'Hourly'
     ], [
-        'emp_comp_salary_amount.required' => 'The salary amount is required.',
+        'emp_comp_salary_amount.required' => 'Please enter salary amount.',
         'emp_comp_salary_type.required' => 'Please select a salary type.',
-        'emp_comp_effective_date.required' => 'Please provide an effective date.',
+        'emp_comp_effective_date.required' => 'Please enter an effective date.',
     ]);
 
     // Create a new compensation record (always inserts a new record)
@@ -308,6 +323,16 @@ public function storeTaxDetails(Request $request, $emp_id)
         'emp_tax_california_total_allowances' => 'required|numeric',
         'emp_tax_california_filing_status' => 'required|string',
         // Add other validation rules as needed
+    ],[
+        'emp_tax_deductions.required' => 'Please enter tax deductions.',
+        'emp_tax_dependent_amount.required' => 'Please enter dependent amount.',
+        'emp_tax_filing_status.required' => 'Please enter filing status.',
+        'emp_tax_nra_amount.required' => 'Please enter nra amount.',
+        'emp_tax_other_income.required' => 'Please enter other income.',
+        'emp_tax_job.required' => 'Please enter tax job.',
+        'emp_tax_california_filing_status.required' => 'Please enter california filing status.',
+        'emp_tax_california_total_allowances.required' => 'Please enter total allowances.',
+
     ]);
 
     // Check if tax details exist for this employee
@@ -354,7 +379,11 @@ public function storeOffboarding(Request $request, $emp_id)
     $request->validate([
         'emp_off_ending' => 'required|string',
         'emp_off_last_work_date' => 'required|date',
-        'emp_off_notice_date' => 'nullable|date',
+        'emp_off_notice_date' => 'required|date',
+    ],[
+        'emp_off_last_work_date.required' => 'Please enter last work date.',
+        'emp_off_notice_date.required' => 'Please enter notice date.',
+      
     ]);
 
     // Prepare the data for insertion
@@ -382,6 +411,12 @@ public function storeLeaveData(Request $request, $emp_id)
     // Validation and data insertion as described in your code
     $request->validate([
         'emp_lev_desc' => 'nullable|string',
+        'emp_lev_start_date' => 'required|date',
+        'emp_lev_end_date' => 'required|date',
+    ],[
+        'emp_lev_start_date.required' => 'Please enter start date.',
+        'emp_lev_end_date.required' => 'Please enter end date.',
+      
     ]);
 
     $user = Auth::guard('masteradmins')->user();

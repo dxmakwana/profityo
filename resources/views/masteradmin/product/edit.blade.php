@@ -97,7 +97,7 @@
                   <label>Tax</label>
                   <select class="form-control from-select select2 @error('sale_product_tax') is-invalid @enderror"
                     name="sale_product_tax" style="width: 100%;">
-                    <option value="">Select a Currency</option>
+                    <option value="">Select Tax</option>
                     @foreach($SalesTax as $salesTax)
             <option value="{{ $salesTax->tax_id }}" @if($salesTax->tax_id == $SalesProducte->sale_product_tax)
         selected @endif>

@@ -172,7 +172,7 @@
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="estimatenumber">Invoice number</label>
-                      <label for="estimatenumber">Auto-generated</label>
+                      <label for="estimatenumber">Auto-generated<span class="text-danger">*</span></label>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -184,15 +184,16 @@
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
-                      <label>Invoice Date</label>
-                      <label>Auto-generated</label>
+                      <label>
+                         Date</label>
+                      <label>Auto-generated<span class="text-danger">*</span></label>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
-                      <label>Payment Due</label>
+                      <label>Payment Due<span class="text-danger">*</span></label>
                       <select name="sale_re_inv_payment_due_id" id="sale_re_inv_payment_due_id" class="form-control select2" style="width: 100%;">
-                        <option value="" {{ $reinvoices->sale_re_inv_payment_due_id == null ? 'selected' : '' }}>On Receipt</option>
+                        <option value=""  {{ $reinvoices->sale_re_inv_payment_due_id == null ? 'selected' : '' }}>On Receipt</option>
                         <option value="7" {{ $reinvoices->sale_re_inv_payment_due_id == 7 ? 'selected' : '' }}>Within 7 Days</option>
                         <option value="14" {{ $reinvoices->sale_re_inv_payment_due_id == 14 ? 'selected' : '' }}>Within 14 Days</option>
                         <option value="30" {{ $reinvoices->sale_re_inv_payment_due_id == 30 ? 'selected' : '' }}>Within 30 Days</option>
@@ -295,9 +296,9 @@
 
                       @if(!$hasData)
                   <!-- Default Headers -->
-                      <th style="width: 30%;" id="itemsHeader">Items</th>
-                      <th style="width: 15%;" id="unitsHeader">Units</th>
-                      <th style="width: 15%;" id="priceHeader">Price</th>
+                      <th style="width: 30%;" id="itemsHeader">Items<span class="text-danger">*</span></th>
+                      <th style="width: 15%;" id="unitsHeader">Units<span class="text-danger">*</span></th>
+                      <th style="width: 15%;" id="priceHeader">Price<span class="text-danger">*</span></th>
                       <th>Tax</th>
                       <th class="text-right"id="amountHeader">Amount</th>
                       <th class="text-right">Actions</th> <!-- New column for actions -->
@@ -490,12 +491,14 @@
           <div class="row pxy-15 px-10">
             <div class="col-md-12">
               <div class="form-group">
-                <x-input-label for="company-business" :value="__('Company/Business')"> <span
-                    class="text-danger">*</span></x-input-label>
-                <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
-                  name="bus_company_name" required autofocus autocomplete="bus_company_name"
-                  :value="old('bus_company_name', $businessDetails->bus_company_name)" />
-                <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
+              <x-input-label for="company-business" :value="__('Company/Business')" />
+              <span class="text-danger">*</span>
+              <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
+                            name="bus_company_name"  autofocus autocomplete="bus_company_name"
+                            :value="old('bus_company_name', $businessDetails->bus_company_name)" />
+              <!-- Error message span -->
+              <span id="companyNameError" class="text-danger mt-2" style="display:none;">Please enter company name.</span>
+              <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
               </div>
             </div>
           </div>
@@ -1692,7 +1695,7 @@
 
       if (selectedProductId) {
         $.ajax({
-          url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+          url: '{{ route('business.estimates.getProductDetails', '') }}/' + selectedProductId,
           method: 'GET',
           success: function (response) {
             $row.find('input[name="items[][sale_estim_item_price]"]').val(response.sale_product_price);
@@ -2225,6 +2228,34 @@ $(document).ready(function() {
     }
     });
   </script>
+  <script>
+$(document).ready(function() {
+    // Form submit event
+    $('#editBusinessForm').on('submit', function(e) {
+        var companyField = $('#bus_company_name');
+        var errorField = $('#companyNameError');
+
+        // Check if the company name field is empty
+        if (companyField.val().trim() === "") {
+            errorField.show(); // Show the error message
+            companyField.addClass("is-invalid"); // Add invalid class to highlight the field
+            e.preventDefault(); // Prevent form submission
+        } else {
+            errorField.hide(); // Hide the error message if input is valid
+            companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
+        }
+    });
+
+    // Hide error message when the user starts typing
+    $('#bus_company_name').on('input', function() {
+        var errorField = $('#companyNameError');
+        if ($(this).val().trim() !== "") {
+            errorField.hide(); // Hide the error message if the field is no longer empty
+            $(this).removeClass("is-invalid"); // Remove the invalid class
+        }
+    });
+});
+</script>
 
 
 @endsection

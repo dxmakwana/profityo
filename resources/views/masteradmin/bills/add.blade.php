@@ -59,6 +59,7 @@
                   <p class="mb-0">{{ $selected_vendor->purchases_vendor_city_name ?? '' }} {{ $selected_vendor->state->name ?? '' }} {{ $selected_vendor->purchases_vendor_zipcode ?? '' }}</p>
                   <p class="mb-0">{{ $selected_vendor->country->name ?? '' }}</p>
                   <p class="mb-0">{{ $selected_vendor->purchases_vendor_email ?? '' }}</p>
+                  <span class="error-message" id="error_sale_vendor_id" style="color: red;"></span> 
                 </div>
               </div>
               <div class="col-md-4">
@@ -86,7 +87,7 @@
                   <input type="number" name="sale_bill_number" id="sale_bill_number" class="form-control" id="billnumber" placeholder="Enter Bill #">
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-4"> 
                 <div class="form-group">
                   <label for="vendor">Currency <span class="text-danger">*</span></label>
                   <select class="form-control select2" id="sale_currency_id" name="sale_currency_id"style="width: 100%;" required>
@@ -97,6 +98,7 @@
                         </option>
                     @endforeach
                   </select>
+                  <span class="error-message" id="error_sale_currency_id" style="color: red;"></span> 
                 </div>
               </div>
               <div class="col-md-4">
@@ -133,10 +135,10 @@
                 <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
                   <thead>
                   <tr>
-                    <th style="width: 22%;">Items</th>
-                    <th style="width: 22%;">Expense Category</th>
-                    <th style="width: 15%;">Quantity</th>
-                    <th style="width: 15%;">Price</th>
+                    <th style="width: 22%;">Items<span class="text-danger">*</span></th>
+                    <th style="width: 22%;">Expense Category<span class="text-danger">*</span></th>
+                    <th style="width: 15%;">Quantity<span class="text-danger">*</span></th>
+                    <th style="width: 15%;">Price<span class="text-danger">*</span></th>
                     <th>Tax</th>
                     <th class="text-right">Amount</th>
                     <th class="text-right">Action</th>

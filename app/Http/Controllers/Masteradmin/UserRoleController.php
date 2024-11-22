@@ -32,7 +32,7 @@ class UserRoleController extends Controller
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
         ], [
-            'role_name.required' => 'The role name field is required.',
+            'role_name.required' => 'Please enter role name.',
         ]);
 
         $validatedData['id'] = $user->id;
@@ -61,7 +61,7 @@ class UserRoleController extends Controller
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
         ], [
-            'role_name.required' => 'The role name field is required.',
+            'role_name.required' => 'Please enter role name.',
         ]);
 
         // Update the plan attributes based on validated data
