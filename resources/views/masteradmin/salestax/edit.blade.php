@@ -16,8 +16,8 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
-            <a href="#"><button class="add_btn">Save</button></a>
+          <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
+          <button type="submit" form="items-form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -44,7 +44,7 @@
           <h3 class="card-title">New Sales Taxes</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST" action="{{ route('business.salestax.update', ['SalesTax' => $SalesTaxe->tax_id]) }}">
+        <form id="items-form" method="POST" action="{{ route('business.salestax.update', ['SalesTax' => $SalesTaxe->tax_id]) }}">
           @csrf
           @method('Patch')
           <div class="card-body2">

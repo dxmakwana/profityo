@@ -37,6 +37,7 @@ class RegisterController extends Controller
             'user_business_name' => ['required', 'string', 'max:255'],
             'user_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.MasterUser::class],
             'user_password' => ['required', 'string', '', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
+            'password_confirmation' => ['required', 'string', '', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
         ],[
             'user_first_name.required' => 'The First Name field is required.',
             'user_phone.required' => 'The Phone field is required.',
@@ -45,6 +46,7 @@ class RegisterController extends Controller
             'user_email.email' => 'The Email must be a valid email address.',
             'user_email.unique' => 'The Email has already been taken.',
             'user_password.required' => 'The Password field is required.',
+             'password_confirmation.required' => 'The Confirm Password field is required.'
         ]);
 
         $plan = Plan::where('sp_id', '20')->firstOrFail();

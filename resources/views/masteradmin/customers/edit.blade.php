@@ -17,7 +17,7 @@
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
                         <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
-                        <a href="#"><button class="add_btn">Save</button></a>
+                        <button type="submit" form="cust-Form" class="add_btn">Save</button>
                     </ol>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <h3 class="card-title">Basic Information</h3>
           </div>
           <!-- /.card-header -->
-          <form method="POST" action="{{ route('business.salescustomers.update', ['SalesCustomers' => $SalesCustomerse->sale_cus_id]) }}">
+          <form id="cust-Form" method="POST" action="{{ route('business.salescustomers.update', ['SalesCustomers' => $SalesCustomerse->sale_cus_id]) }}">
           @csrf
           @method('Patch')
           <div class="card-body2">

@@ -17,8 +17,8 @@
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
                         <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
-                        <a href="#"><button class="add_btn">Save</button></a>
-                    </ol>
+                        <button type="submit" form="cust-Form" class="add_btn">Save</button>
+                        </ol>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
             <h3 class="card-title">Basic Information</h3>
           </div>
           <!-- /.card-header -->
-       <form method="POST" action="{{ route('business.salescustomers.store') }}">
+       <form id="cust-Form" method="POST" action="{{ route('business.salescustomers.store') }}">
           @csrf
           <div class="card-body2">
             <div class="row pad-5">

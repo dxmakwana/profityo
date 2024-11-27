@@ -21,7 +21,7 @@
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
         <a href="{{ route('business.employee.index') }}"><button class="add_btn_br">Cancel</button></a>
-        <a href="#"><button class="add_btn">Save</button></a>
+        <button type="submit" form="items-form" class="add_btn">Save</button>
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
@@ -50,7 +50,7 @@
         <class="card-body2">
           <div class="row pad-5">
           <div class="col-md-4">
-            <form action="{{ route('business.employee.update', $employee->emp_id) }}" method="POST">
+            <form id="items-form" action="{{ route('business.employee.update', $employee->emp_id) }}" method="POST">
             @csrf
             @method('Patch')
             <div class="form-group">

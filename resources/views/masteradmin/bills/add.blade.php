@@ -20,8 +20,8 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-              <a href="#"><button class="add_btn_br">cancel</button></a>
-              <a href="#"><button class="add_btn">Save</button></a>
+            <a href="{{route('business.bill.index')}}"><button class="add_btn_br">Cancel</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->

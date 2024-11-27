@@ -19,8 +19,8 @@
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.salesproduct.index')}}" class="add_btn_br">Cancel</a>
-            <a href="#"><button class="add_btn">Save</button></a>
-          </ol>
+            <button type="submit" form="pro-Form" class="add_btn">Save</button>
+            </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -35,7 +35,7 @@
           <h3 class="card-title">Create New Product Or Service</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST" action="{{ route('business.salesproduct.store') }}">
+        <form id="pro-Form" method="POST" action="{{ route('business.salesproduct.store') }}">
           @csrf
           <div class="card-body">
             <p>Products and services that you buy from vendors are used as items on Bills to record those purchases, and

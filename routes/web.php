@@ -198,7 +198,8 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
         Route::get('/preview-estimates', [EstimatesController::class, 'preview'])->name('business.estimates.preview');
         Route::get('/estimate/send/views/{id}/{slug}', [EstimatesController::class, 'authsendView'])
         ->name('business.estimate.sendviews');
-        
+        Route::get('/get-tax-names', [EstimatesController::class, 'getTaxNames']);
+
 
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');

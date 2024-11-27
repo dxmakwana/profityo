@@ -21,7 +21,7 @@
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
             <a class="add_btn_br">Preview</a>
-            <a href="#"><button class="add_btn">Save & Continue</button></a>
+            <button type="submit" form="items-form-invoice" class="add_btn">Save & Continue</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -52,7 +52,7 @@
             </button>
           </div>
         </div>
-        <form id="items-form" action="{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}"
+        <form id="items-form-invoice" action="{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}"
         method="POST">
           @csrf
           @method('Patch')
@@ -1845,7 +1845,7 @@
       }
     });
 
-    $('#items-form').on('submit', function (e) {
+    $('#items-form-invoice').on('submit', function (e) {
       e.preventDefault();
 
       let formData = {};

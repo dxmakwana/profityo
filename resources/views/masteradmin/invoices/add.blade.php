@@ -20,7 +20,8 @@
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
         <a href="#"><button class="add_btn_br">Preview</button></a>
-        <a href="#"><button class="add_btn">Save & Continue</button></a>
+        <button type="submit" form="items-form-invoice" class="add_btn">Save & Continue</button>
+
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
@@ -40,7 +41,7 @@
         </button>
         </div>
       </div>
-      <form id="items-form" action="{{ route('business.invoices.store') }}" method="POST">
+      <form id="items-form-invoice" action="{{ route('business.invoices.store') }}" method="POST">
         @csrf
         <!-- /.card-header -->
         <div class="card-body">
@@ -1512,7 +1513,7 @@
       }
     });
 
-    $('#items-form').on('submit', function (e) {
+    $('#items-form-invoice').on('submit', function (e) {
       e.preventDefault();
 
       let formData = {};

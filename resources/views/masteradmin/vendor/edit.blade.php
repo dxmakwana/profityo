@@ -19,7 +19,7 @@
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
-              <a href="#"><button class="add_btn">Save</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -47,7 +47,7 @@
           </div>
          
           <!-- /.card-header -->
-          <form method="POST"
+          <form id="items-form" method="POST"
           action="{{ route('business.purchasvendor.update', ['PurchasesVendor' => $PurchasVendore->purchases_vendor_id]) }}">
           @csrf
           @method('Patch')
