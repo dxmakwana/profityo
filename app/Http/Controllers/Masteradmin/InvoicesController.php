@@ -1285,6 +1285,7 @@ class InvoicesController extends Controller
     public function index(Request $request)
     {
         //
+        // dd($request->all());
         $user = Auth::guard('masteradmins')->user();
         $user_id = $user->user_id;
 
@@ -1293,7 +1294,7 @@ class InvoicesController extends Controller
 
         $query = InvoicesDetails::with('customer','currency')->orderBy('created_at', 'desc');
 
-        $filteredInvoices = $query->get();
+      
 
         // foreach ($filteredInvoices as $invoice) {
         //     $dueDate = Carbon::parse($invoice->sale_inv_valid_date);
@@ -1363,14 +1364,18 @@ class InvoicesController extends Controller
 
         //    $today = Carbon::now()->format('m/d/Y');
 
-   // Fetch overdue invoices and calculate the sum of overdue amounts
+   // Fetch overdue invoices and calculate the sum of overdue amounts 
    $overdueTotal = InvoicesDetails::where('sale_inv_valid_date', '<', $today) // Due date in the past
    ->where('sale_inv_due_amount', '>', 0)  // Only unpaid invoices
    ->sum('sale_inv_due_amount'); // Sum the overdue amounts
  
 // Fetch unpaid invoices to display in the table
-$unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
-
+// $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
+// Separate unpaid, draft, and all invoices
+$unpaidInvoices = $filteredInvoices->filter(function ($invoice) {
+    return $invoice->sale_inv_due_amount > 0 &&
+           in_array($invoice->sale_status, ['Unsent', 'Sent', 'Partial', 'Overdue']);
+});
    
 $currencys = Countries::get();
 // $currency = $currencys->firstWhere(sale_currency_id);
@@ -1385,55 +1390,122 @@ $currencys = Countries::get();
 
     }
 
-    public function statusStore(Request $request , $id)
+    // public function statusStore(Request $request , $id)
+    // {
+    //     $user = Auth::guard('masteradmins')->user();
+    //     // $user_id = $user->user_id;
+    //     // Fetch the invoice record for the authenticated user and provided ID
+    //     $invoices = InvoicesDetails::where([
+    //         'sale_inv_id' => $id,
+    //         'id' => $user->id
+    //     ])->firstOrFail();
+
+    //     // Define the status transition map
+    //     $statusMap = [
+    //         'Draft' => 'Unsent', // Clicking "Approve" changes "Draft" to "Saved"
+    //         'Unsent' => 'Send', // Clicking "Send" changes "Saved" to "Sent"
+    //         'Sent' => 'Record Payment', // Clicking "Convert to Invoice" changes "Sent" to "Converted"
+    //         'Partlal' => 'Record Payment', // Clicking "Duplicate" changes "Converted" to "Duplicate"
+    //         'Paid' => 'View', 
+    //     ];
+    
+
+    // $currentStatus = $invoices->sale_status;
+
+    // $nextStatus = $statusMap[$currentStatus] ?? null;
+
+ 
+
+    //     if ($nextStatus) {
+
+        
+    //         $invoices->where('sale_inv_id', $id)->update(['sale_status' => $nextStatus]);
+         
+
+    //         $response = [
+    //             'success' => true,
+    //             'message' => "Invoice status updated to $nextStatus successfully!"
+    //         ];
+           
+    //         switch ($nextStatus) {
+               
+    //             case 'Send':
+    //                 $response['redirect_url'] = route('business.invoices.send', [$invoices->sale_inv_id, $user->user_id]);
+    //                 break;
+
+    //             case 'View':
+    //                 $response['redirect_url'] = route('business.invoices.view', [$invoices->sale_inv_id]);
+    //                 break;
+              
+    //             default:
+    //                 $response['redirect_url'] = route('business.invoices.index'); // Assuming you have an index route
+    //                 break;
+    //         }
+    //     } else {
+    //         $response = [
+    //             'success' => false,
+    //             'message' => 'No further status updates available!',
+    //         ];
+    //     }
+
+    //     return response()->json($response);
+    // }
+
+
+    public function statusStore(Request $request, $id)
     {
         $user = Auth::guard('masteradmins')->user();
-        // $user_id = $user->user_id;
-        // Fetch the invoice record for the authenticated user and provided ID
+    
+        // Fetch the invoice record
         $invoices = InvoicesDetails::where([
             'sale_inv_id' => $id,
             'id' => $user->id
         ])->firstOrFail();
-
+    
         // Define the status transition map
         $statusMap = [
-            'Draft' => 'Unsent', // Clicking "Approve" changes "Draft" to "Saved"
-            'Unsent' => 'Send', // Clicking "Send" changes "Saved" to "Sent"
-            'Sent' => 'Record Payment', // Clicking "Convert to Invoice" changes "Sent" to "Converted"
-            'Partlal' => 'Record Payment', // Clicking "Duplicate" changes "Converted" to "Duplicate"
-            'Paid' => 'View', 
+            'Draft' => 'Unsent',
+            'Unsent' => 'Send',
+            'Sent' => 'Record Payment',
+            'Partial' => 'Record Payment',
+            'Paid' => 'View',
         ];
     
-
-    $currentStatus = $invoices->sale_status;
-
-    $nextStatus = $statusMap[$currentStatus] ?? null;
-
- 
-
+        $currentStatus = $invoices->sale_status;
+    
+        // If the status is "Paid," no update is needed; redirect to "View"
+        if ($currentStatus === 'Paid') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Redirecting to view page.',
+                'redirect_url' => route('business.invoices.view', [$invoices->sale_inv_id]),
+            ]);
+        }
+    
+        // Get the next status
+        $nextStatus = $statusMap[$currentStatus] ?? null;
+    
         if ($nextStatus) {
-
-        
+            // Update the status in the database
             $invoices->where('sale_inv_id', $id)->update(['sale_status' => $nextStatus]);
-         
-
+    
             $response = [
                 'success' => true,
-                'message' => "Invoice status updated to $nextStatus successfully!"
+                'message' => "Invoice status updated to $nextStatus successfully!",
             ];
-           
+    
+            // Define redirection based on the new status
             switch ($nextStatus) {
-               
                 case 'Send':
                     $response['redirect_url'] = route('business.invoices.send', [$invoices->sale_inv_id, $user->user_id]);
                     break;
-
+    
                 case 'View':
                     $response['redirect_url'] = route('business.invoices.view', [$invoices->sale_inv_id]);
                     break;
-              
+    
                 default:
-                    $response['redirect_url'] = route('business.invoices.index'); // Assuming you have an index route
+                    $response['redirect_url'] = route('business.invoices.index');
                     break;
             }
         } else {
@@ -1442,12 +1514,10 @@ $currencys = Countries::get();
                 'message' => 'No further status updates available!',
             ];
         }
-
+    
         return response()->json($response);
     }
-
-
-
+    
 
     // public function paymentstore(Request $request, $id)
     // {

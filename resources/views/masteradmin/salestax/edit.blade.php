@@ -55,8 +55,8 @@
                   <input type="text" class="form-control @error('tax_name') is-invalid @enderror" id=taxname
                     name="tax_name" placeholder="Tax Name" value="{{ $SalesTaxe->tax_name }}">
                   @error('tax_name')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
+                   <div class="invalid-feedback">{{ $message }}</div>
+                 @enderror
                 </div>
               </div>
               <div class="col-md-4">
@@ -66,8 +66,8 @@
                     id="textabbreviation" name="tax_abbreviation" placeholder="Abbreviation"
                     value="{{ $SalesTaxe->tax_abbreviation }}">
                   @error('tax_abbreviation')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
+              <div class="invalid-feedback">{{ $message }}</div>
+             @enderror
                 </div>
               </div>
               <div class="col-md-4">
@@ -76,8 +76,8 @@
                   <input type="number" class="form-control  @error('tax_number') is-invalid @enderror" id="taxnumber"
                     name="tax_number" placeholder="Your Tax Number" value="{{ $SalesTaxe->tax_number }}">
                   @error('tax_number')
-            <div class="invalid-feedback">{{ $message }}</div>
-          @enderror
+              <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
                 </div>
               </div>
               <div class="col-md-4">

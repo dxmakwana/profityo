@@ -217,11 +217,11 @@
           $dueMessage = 'Today'; // Message for today
           $dueMessageColor = 'black'; // Set default color
           } elseif ($daysDifference < 0) {
-          $dueMessage = 'Due in ' .abs($daysDifference) . ' Days'; // Upcoming message
+          $dueMessage = 'Due in ' .abs($daysDifference - 1) . ' Days'; // Upcoming message
           $dueMessageColor = 'black'; // Set default color
 
           } else {
-          $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
+          $dueMessage = abs($daysDifference - 1) . ' Days ago'; // Overdue message
           $dueMessageColor = 'red'; // Overdue color
           }
       @endphp
@@ -229,6 +229,9 @@
             {{ $dueMessage }}
             </span>
             </td>
+           
+            
+
             <td>
                         @php
                             // Fetch the current due amount and original amount for this specific record
@@ -309,7 +312,7 @@
             <td>
             <ul class="navbar-nav ml-auto float-sm-right">
             <li class="nav-item dropdown d-flex align-items-center">
-            @php
+            <!-- @php
           $nextStatus = '';
           if ($value->sale_status == 'Draft') {
           $nextStatus = 'Approve';
@@ -322,7 +325,37 @@
           } elseif ($value->sale_status == 'Paid') {
           $nextStatus = 'View';
           }
-      @endphp
+      @endphp -->
+      @php
+    $nextStatus = '';
+    $actionUrl = '#';
+
+    if ($value->sale_status == 'Draft') {
+        $nextStatus = 'Approve';
+    } elseif ($value->sale_status == 'Unsent') {
+        $nextStatus = 'Send';
+    } elseif ($value->sale_status == 'Sent') {
+        $nextStatus = 'Record Payment';
+    } elseif ($value->sale_status == 'Partial') {
+        $nextStatus = 'Record Payment';
+    } elseif ($value->sale_status == 'Paid') {
+        $nextStatus = 'View';
+        $actionUrl = route('business.invoices.view', $value->sale_inv_id); // View route
+    }
+@endphp
+
+<!-- <td>
+    @if($nextStatus == 'View')
+        <a href="{{ $actionUrl }}" class="btn btn-primary">
+            {{ $nextStatus }}
+        </a>
+    @else
+        <button class="btn btn-secondary" disabled>
+            {{ $nextStatus }}
+        </button>
+    @endif
+</td> -->
+
 
             @if($nextStatus == 'Record Payment')
         <a href="javascript:void(0);" data-toggle="modal"
