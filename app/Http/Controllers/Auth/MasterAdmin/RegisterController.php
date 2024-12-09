@@ -46,7 +46,7 @@ class RegisterController extends Controller
             'user_email.email' => 'The Email must be a valid email address.',
             'user_email.unique' => 'The Email has already been taken.',
             'user_password.required' => 'The Password field is required.',
-             'password_confirmation.required' => 'The Confirm Password field is required.'
+            'password_confirmation.required' => 'The Confirm Password field is required.'
         ]);
 
         $plan = Plan::where('sp_id', '20')->firstOrFail();
@@ -70,7 +70,8 @@ class RegisterController extends Controller
             'state_id' => 0,
             'user_city_name' => '',
             'user_pincode' => '',
-            'isActive' => 1
+            'isActive' => 1,
+            'user_status' => 1
         ]);
 
         // Generate the unique buss_unique_id

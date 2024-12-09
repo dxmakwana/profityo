@@ -1,5 +1,5 @@
 <!-- Main Sidebar Container -->
-<?php //dd($access); ?>
+<!-- <?php //dd($access); ?> -->
 @php($busadminRoutes = config('global.businessAdminURL'))
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -479,7 +479,7 @@
                 </a>
               </li>
               @endif
-              @if(isset($access['roles']) && $access['roles']) 
+              @if(isset($access['salestax']) && $access['salestax']) 
               <li class="nav-item">
                 <a href="{{ route('business.salestax.index') }}" class="nav-link {{
                  request()->is($busadminRoutes.'/salestax*') || 

@@ -409,9 +409,11 @@
     </div>
     <!-- /.card --
     
+   
+   
+    <!-- /.content -->
     </form>
     </section>
-    <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
@@ -439,6 +441,7 @@
           <div class="form-group">
           <x-input-label for="company-business" :value="__('Company/Business')" />
               <span class="text-danger">*</span>
+             
               <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
                             name="bus_company_name"  autofocus autocomplete="bus_company_name"
                             :value="old('bus_company_name', $businessDetails->bus_company_name)" />
@@ -485,7 +488,7 @@
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="country" :value="__('Country')" />
-          <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
+          <select class="form-control from-select select2" style="width: 100%;" id="country" name="country_id" required>
             <option default>Select a Country...</option>
             @foreach($countries as $country)
         <option value="{{ $country->id }}" {{ old('country_id', $businessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
@@ -497,7 +500,7 @@
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="state" :value="__('Province/State')" />
-          <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
+          <select class="form-control from-select select2" style="width: 100%;" id="state" name="state_id" required>
             <option default>Select a State...</option>
             @foreach($states as $state)
         <option value="{{ $state->id }}" {{ $state->id == old('state_id', $businessDetails->state_id) ? 'selected' : '' }}>
@@ -580,7 +583,7 @@
           <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
           @if($menu->children->count() > 0)
           <div class="row align-items-center justify-content-between">
-            @foreach($menu->children as $child)
+            <!-- @foreach($menu->children as $child)
               @if($child->mtitle == 'Other')
               <div class="col-md-3">
                 <div class="icheck-primary d-flex align-items-center">
@@ -597,7 +600,25 @@
                 </div>
               </div>
               @endif
-            @endforeach
+            @endforeach -->
+            @foreach($menu->children as $index => $child)
+    @if($child->mtitle == 'Other')
+    <div class="col-md-3">
+        <div class="icheck-primary d-flex align-items-center">
+            <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}" {{ $index === 0 ? 'checked' : '' }}>
+            <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
+            <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">
+        </div>
+    </div>
+    @else
+    <div class="col-md-3">
+        <div class="icheck-primary">
+            <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}" {{ $index === 0 ? 'checked' : '' }}>
+            <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
+        </div>
+    </div>
+    @endif
+@endforeach
           </div>
           @endif
         </div>
@@ -685,6 +706,17 @@
     });
   </script>
   <script>
+    $(document).ready(function () {
+    // Initialize Select2 inside the modal
+    $('#editbusiness_companyaddress').on('shown.bs.modal', function () {
+        $('#country, #state').select2({
+            dropdownParent: $('#editbusiness_companyaddress'),
+            placeholder: "Select an option",
+            allowClear: true
+        });
+    });
+});
+
     $(document).ready(function () {
     $('#editBusinessForm').on('submit', function (event) {
       event.preventDefault();
@@ -1551,7 +1583,11 @@
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
       formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
 
-
+      $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
       $.ajax({
       url: "{{ route('business.invoices.store') }}",
       method: 'POST',

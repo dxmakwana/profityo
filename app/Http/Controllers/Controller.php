@@ -662,8 +662,29 @@ if (!Schema::hasTable($storeId . 'py_employee_details')) {
         $table->string('emp_work_location')->nullable();
         $table->string('emp_wage_type')->nullable();
         $table->integer('emp_wage_amount')->nullable()->default(0);
+        $table->string('emp_work_hours')->nullable();
+        $table->integer('emp_direct_deposit')->nullable();
+        $table->integer('emp_vacation_policy')->nullable();
+        $table->integer('emp_vacation_accural_rate')->nullable();
         $table->tinyInteger('emp_status')->default(0)->nullable();
         $table->timestamps();
+    });
+}
+else{
+    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
+        if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_direct_deposit')) {
+            $table->integer('emp_direct_deposit')->nullable();
+        }
+    });
+    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
+        if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_vacation_policy')) {
+            $table->integer('emp_vacation_policy')->nullable();
+        }
+    });
+    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
+        if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_vacation_accural_rate')) {
+            $table->integer('emp_vacation_accural_rate')->nullable();
+        }
     });
 }
 // py_employee_comperisation

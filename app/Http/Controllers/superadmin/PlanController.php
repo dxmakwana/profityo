@@ -132,7 +132,7 @@ class PlanController extends Controller
         $plan = Plan::where('sp_id', $sp_id)->firstOrFail();
         $permissions = AdminMenu::where('pmenu', 0)
             ->where('is_deleted', 0)
-            ->whereIn('mid', range(1, 20))
+            ->where('mid', '!=', 21)
             ->get();
         $reports = AdminMenu::where('pmenu', 21)
             ->where('is_deleted', 0)

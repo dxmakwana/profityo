@@ -553,7 +553,7 @@
           <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
           @if($menu->children->count() > 0)
           <div class="row align-items-center justify-content-between">
-            @foreach($menu->children as $child)
+            <!-- @foreach($menu->children as $child)
               @if($child->mtitle == 'Other')
               <div class="col-md-3">
                 <div class="icheck-primary d-flex align-items-center">
@@ -570,7 +570,25 @@
                 </div>
               </div>
               @endif
-            @endforeach
+            @endforeach -->
+            @foreach($menu->children as $index => $child)
+    @if($child->mtitle == 'Other')
+    <div class="col-md-3">
+        <div class="icheck-primary d-flex align-items-center">
+            <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}" {{ $index === 0 ? 'checked' : '' }}>
+            <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
+            <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">
+        </div>
+    </div>
+    @else
+    <div class="col-md-3">
+        <div class="icheck-primary">
+            <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}" {{ $index === 0 ? 'checked' : '' }}>
+            <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
+        </div>
+    </div>
+    @endif
+@endforeach
           </div>
           @endif
         </div>

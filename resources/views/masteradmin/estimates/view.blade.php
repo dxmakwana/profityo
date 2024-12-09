@@ -1320,7 +1320,7 @@
 
                 <p class="company_details_text">Are You Sure You Want to convert This invoice?</p>
 
-                <a type="button" class="delete_btn px-15" data-dismiss="modal">Cancel</a>
+                <a type="button" class="add_btn_br" data-dismiss="modal">Cancel</a>
 
                 <a href="{{ route('business.estimates.viewInvoice', $estimates->sale_estim_id) }}" type="submit" class="add_btn px-15">Yes</a>
 

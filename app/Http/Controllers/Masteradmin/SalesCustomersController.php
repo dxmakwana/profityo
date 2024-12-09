@@ -311,7 +311,7 @@ public function show($sale_cus_id, Request $request): View
     $sentLogs = $activityLogsQuery->get();
 
     // Existing logic for invoices
-    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
+    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Overdue'])
         ->where('sale_cus_id', $sale_cus_id)
         ->with('customer')
         ->orderBy('created_at', 'desc')
@@ -336,7 +336,8 @@ public function show($sale_cus_id, Request $request): View
     }
 
     $filteredInvoices = $query->get();
-    $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue','Paid','Over Paid']);
+    $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue','Paid','Over Paid','Draft']);
+    // dd($allInvoices);
     $invoicesItems = InvoicesItems::where('sale_inv_id', $sale_cus_id)->with('invoices_product', 'item_tax')->get();
     // Handle AJAX request for activities
     if ($request->ajax()) {

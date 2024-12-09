@@ -9,19 +9,19 @@
       <li class="nav-item dropdown">
         <a class="nav-link" href="#" data-toggle="dropdown"><i class="fas fa-plus"></i></a>
         <div class="dropdown-menu">
-          <a href="transactions-list.html" class="dropdown-item">Transaction</a>
-          <a href="new-estimate.html" class="dropdown-item">Estimate</a>
-          <a href="new-invoice.html" class="dropdown-item">Invoice</a>
-          <a href="new-recurringinvoice.html" class="dropdown-item">Recurring Invoice</a>
-          <a href="new-bill.html" class="dropdown-item">Bill</a>
-          <a href="new-customer.html" class="dropdown-item">Customer</a>
-          <a href="new-vendor.html" class="dropdown-item">Vendor</a>
-          <a href="new-product-services.html" class="dropdown-item">Product Or Services</a>
+          <a href="#" class="dropdown-item">Transaction</a>
+          <a href="{{ route('business.estimates.index') }}" class="dropdown-item">Estimate</a>
+          <a href="{{ route('business.invoices.index') }}" class="dropdown-item">Invoice</a>
+          <a href="{{ route('business.recurring_invoices.index') }}" class="dropdown-item">Recurring Invoice</a>
+          <a href="{{ route('business.bill.index') }}" class="dropdown-item">Bill</a>
+          <a href="{{ route('business.salescustomers.index') }}" class="dropdown-item">Customer</a>
+          <a href="{{ route('business.purchasproduct.index') }}" class="dropdown-item">Vendor</a>
+          <a href="{{ route('business.salesproduct.index') }}" class="dropdown-item">Product Or Services</a>
         </div>
       </li>
     </ul>
 
-    <!-- Right navbar links -->
+    <!-- Right navbar links --> 
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
         <a class="nav-link user_nav" data-toggle="dropdown" href="#">

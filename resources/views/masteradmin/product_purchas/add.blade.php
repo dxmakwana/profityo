@@ -57,7 +57,7 @@
                   <label>Price</label>
                   <div class="d-flex">
                     <input type="number" class="form-control form-controltext" name="purchases_product_price"
-                      aria-describedby="inputGroupPrepend" placeholder="0.00" value="{{ old('purchases_product_price') }}">
+                      aria-describedby="inputGroupPrepend" min="0" placeholder="0.00" value="{{ old('purchases_product_price') }}">
                     <select class="form-select form-selectcurrency" name="purchases_product_currency_id"
                       id="purchases_product_currency_id">
                       <!-- <option value="">Select</option> -->

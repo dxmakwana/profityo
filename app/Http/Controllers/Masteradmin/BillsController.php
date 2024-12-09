@@ -656,7 +656,7 @@ public function paymentstore(Request $request, $id)
         'payment_date' => 'required|date',
         'payment_amount' => 'required|numeric',
         'payment_method' => 'required|string',
-        'payment_account' => 'required|string',
+        // 'payment_account' => 'required|string',
         'notes' => 'required|string',
     ]);
 

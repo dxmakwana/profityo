@@ -39,61 +39,125 @@ use Illuminate\Validation\Rule;
 class EstimatesController extends Controller
 {
     //
-    public function index(Request $request)
-    {
+    // public function index(Request $request)
+    // {
 
 
-        $user = Auth::guard('masteradmins')->user();
-        $user_id = $user->user_id;
-        $currencys = Countries::get();
-        $startDate = $request->input('start_date'); 
-        $endDate = $request->input('end_date');   
-        //\DB::enableQueryLog();
+    //     $user = Auth::guard('masteradmins')->user();
+    //     $user_id = $user->users_id;
+    //     $currencys = Countries::get();
+    //     $startDate = $request->input('start_date'); 
+    //     $endDate = $request->input('end_date');   
+    //     //\DB::enableQueryLog();
        
-        $query = Estimates::with(['customer', 'currency'])->orderBy('created_at', 'desc');
+    //     // $query = Estimates::with(['customer', 'currency'])->orderBy('created_at', 'desc');
+    //     $query = Estimates::with(['customer', 'currency'])
+    //     ->where('id', $user_id) // Filter by user ID
+    //     ->orderBy('created_at', 'desc');
+    
+    //     // if ($request->has('start_date') && $request->start_date) {
+    //     //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
+    //     // }
 
-        // if ($request->has('start_date') && $request->start_date) {
-        //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
-        // }
+    //     // if ($request->has('end_date') && $request->end_date) {
+    //     //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
+    //     // }
 
-        // if ($request->has('end_date') && $request->end_date) {
-        //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
-        // }
+    //     // Check for start date and end date
+    //     if ($startDate && !$endDate) {
+    //         $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+    //     } elseif ($startDate && $endDate) {
+    //         $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+    //             ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+    //     }
 
-        // Check for start date and end date
-        if ($startDate && !$endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
-        } elseif ($startDate && $endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
-                ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
-        }
+    //     if ($request->has('sale_estim_number') && $request->sale_estim_number) {
+    //         $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
+    //     }
 
-        if ($request->has('sale_estim_number') && $request->sale_estim_number) {
-            $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
-        }
+    //     if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+    //         $query->where('sale_cus_id', $request->sale_cus_id);
+    //     }
+      
+    //     if ($request->has('sale_status') && $request->sale_status) {
+    //         $query->where('sale_status', $request->sale_status);
+    //     }
 
-        if ($request->has('sale_cus_id') && $request->sale_cus_id) {
-            $query->where('sale_cus_id', $request->sale_cus_id);
-        }
+    //     $filteredEstimates = $query->get();
 
-        if ($request->has('sale_status') && $request->sale_status) {
-            $query->where('sale_status', $request->sale_status);
-        }
-
-        $filteredEstimates = $query->get();
-
-        $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
-        $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
-        $allEstimates = $filteredEstimates;
-        $salecustomer = SalesCustomers::get();
-        $currencys = Countries::get();
-        if ($request->ajax()) {
+    //     $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
+    //     $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
+    //     $allEstimates = $filteredEstimates;
+    //     $salecustomer = SalesCustomers::get();
+    //     $currencys = Countries::get();
+    //     if ($request->ajax()) {
           
-            return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
-        }
+    //         return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
+    //     }
 
-        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer','currencys'));
+    //     return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer','currencys'));
+    // }
+
+    public function index(Request $request)
+{
+    $user = Auth::guard('masteradmins')->user();
+    $user_id = $user->users_id;
+    $role_id = $user->role_id;
+
+    $currencys = Countries::get();
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    // Initialize query based on role
+    if ($role_id == 0) { // Admin Role
+        $query = Estimates::with(['customer', 'currency'])
+            ->orderBy('created_at', 'desc');
+    } else { // Non-admin Role
+        $query = Estimates::with(['customer', 'currency'])
+            ->where(function ($query) use ($user_id) {
+                $query->where('id', $user_id); // Example for additional condition
+            })
+            ->orderBy('created_at', 'desc');
     }
+
+    // Apply date filters
+    if ($startDate && !$endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+    } elseif ($startDate && $endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+            ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+    }
+
+    // Additional filters
+    if ($request->has('sale_estim_number') && $request->sale_estim_number) {
+        $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
+    }
+
+    if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+        $query->where('sale_cus_id', $request->sale_cus_id);
+    }
+
+    if ($request->has('sale_status') && $request->sale_status) {
+        $query->where('sale_status', $request->sale_status);
+    }
+
+    // Fetch filtered data
+    $filteredEstimates = $query->get();
+
+    // Categorize estimates
+    $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
+    $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
+    $allEstimates = $filteredEstimates;
+
+    $salecustomer = SalesCustomers::get();
+
+    if ($request->ajax()) {
+        return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
+    }
+
+    return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer', 'currencys'));
+}
+
 
     public function create(): View
     {
@@ -178,8 +242,9 @@ class EstimatesController extends Controller
 
     public function store(Request $request)
     {
-        // $sessionData = session('form_data');
-      
+       
+        // dd($request->input('items'));
+        // dd($request->all());
         $user = Auth::guard('masteradmins')->user();
        
         $dynamicId = $user->user_id; // This should be set dynamically based on your application logic
@@ -212,7 +277,7 @@ class EstimatesController extends Controller
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
-            'items.*.sale_estim_item_tax' => 'required|integer',
+            // 'items.*.sale_estim_item_tax' => 'required|string',
         ], [
             'sale_estim_title.max' => 'The title may not exceed 255 characters.',
             'sale_cus_id.required' => 'Please select a customer.',
@@ -231,7 +296,7 @@ class EstimatesController extends Controller
             'sale_status.required' => 'Please set the status of the estimate.',
             'sale_estim_status.required' => 'Please set the estimate status.',
             'sale_total_days.required' => 'Please set valid date range.',
-            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
             'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
             'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
             'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
@@ -254,26 +319,54 @@ class EstimatesController extends Controller
         $estimate->sale_total_days = $request->sale_total_days;
         $estimate->id = $user->id;
         $estimate->sale_status = 'Draft';
-    
+
         $estimate->save();
         
-
+      
+        
         foreach ($request->input('items') as $item) {
             $estimateItem = new EstimatesItems();
+            $taxValues = [];
+          
+            if (!empty($item['sale_estim_item_tax'])) {
+                $taxValues[] = $item['sale_estim_item_tax'];
+            }
+            if (!empty($item['sale_estim_item_tax2'])) {
+                $taxValues[] = $item['sale_estim_item_tax2'];
+            }
+          
+            if (!empty($item['sale_estim_item_tax_new']) && is_array($item['sale_estim_item_tax_new'])) {
+                foreach ($item['sale_estim_item_tax_new'] as $additionalTax) {
+                    if (!empty($additionalTax)) {
+                        $taxValues[] = $additionalTax;
+                    }
+                }
+            }
+        
+        
+        //   dd($taxValues);
+            $estimateItem->sale_estim_item_tax = implode(',', $taxValues);
+        
             
+            unset($item['sale_estim_item_tax'], $item['sale_estim_item_tax2'], $item['sale_estim_item_tax_new']);
+        
+          
             $estimateItem->fill($item);
-
+        
+           
             $estimateItem->id = $user->id;
-            $estimateItem->sale_estim_id = $estimate->id; 
+            $estimateItem->sale_estim_id = $estimate->id;
             $estimateItem->sale_estim_item_status = 1;
+        
 
             $estimateItem->save();
         }
-
-        // Retrieve session data
+        
+        
+       
         $sessionData = session('form_data') ?? [];
 
-        // Iterate through each item in session data
+      
         foreach ($sessionData as $key => $value) {
             // Ignore _token and _method
             if (in_array($key, ['_token', '_method'])) {
@@ -286,11 +379,10 @@ class EstimatesController extends Controller
                 $menu = CustomizeMenu::where('mname', $mname)->first();
 
                 if ($menu) {
-                    // Check if the _other counterpart exists in the session
                     $otherKey = $key . '_other';
                     $otherValue = $sessionData[$otherKey] ?? null;
 
-                    // Determine the mtitle value
+                
                     if ($otherValue) {
                         // If there's an _other value, concatenate it with the main key value
                         $mtitle = $value;
@@ -458,10 +550,37 @@ class EstimatesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
+            'items.*.sale_product_id' => 'required|integer',
+            'items.*.sale_estim_item_desc' => 'required|string',
+            'items.*.sale_estim_item_qty' => 'required|integer|min:1',
+            'items.*.sale_estim_item_price' => 'required|numeric|min:0',
+            'items.*.sale_estim_item_tax' => 'required|integer',
         
         ],[
+            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+            'sale_cus_id.required' => 'Please select a customer.',
+            'sale_cus_id.integer' => 'Please select a customer.',
             'sale_estim_number.required' => 'The estimate number is required.',
             'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
+            'sale_estim_date.required' => 'Please select the estimate date.',
+            'sale_estim_valid_date.required' => 'Please select the valid until date.',
+            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+            'sale_estim_final_amount.required' => 'Please enter the final amount.',
+            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+            'sale_status.required' => 'Please set the status of the estimate.',
+            'sale_estim_status.required' => 'Please set the estimate status.',
+            'sale_total_days.required' => 'Please set valid date range.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
         ]);
 
         // if()
@@ -554,7 +673,7 @@ class EstimatesController extends Controller
 
         // Validate incoming request data
         $rules = [
-            'sale_cus_business_name' => 'required|string|max:255',
+            // 'sale_cus_business_name' => 'required|string|max:255',
             'sale_cus_first_name' => 'nullable|string|max:255',
             'sale_cus_last_name' => 'nullable|string|max:255',
             'sale_cus_email' => 'nullable|email|max:255',
@@ -582,7 +701,7 @@ class EstimatesController extends Controller
         ];
 
         $messages = [
-           'sale_cus_business_name.required' => 'The business name is required.',
+        //    'sale_cus_business_name.required' => 'The business name is required.',
         'sale_cus_business_name.string' => 'The business name must be a valid string.',
         'sale_cus_first_name.string' => 'The first name must be a valid string.',
         'sale_cus_last_name.string' => 'The last name must be a valid string.',
@@ -656,7 +775,7 @@ class EstimatesController extends Controller
 
         EstimateCustomizeMenu::where('sale_estim_id', $id)->delete();
 
-        \MasterLogActivity::addToLog('Estimates details Deleted.');
+        \MasterLogActivity::addToLog('Estimates details Deleted.'); 
 
        
         return response()->json(['success' => true, 'message' => 'Estimate deleted successfully.']);
@@ -1412,5 +1531,21 @@ class EstimatesController extends Controller
 
     }
 
-    
+    public function getTaxNames(Request $request)
+{
+    $request->validate([
+        'tax_id' => 'required|integer|exists:taxes,id',  // Assuming you have a 'taxes' table
+    ]);
+
+    $taxId = $request->input('tax_id');
+    $tax = SalesTax::find($taxId); // Assuming you have a Tax model
+
+    // Prepare the response with tax names (you can modify this logic to get more data)
+    $taxNames = $tax ? $tax->name : ''; // Assuming 'name' is the tax name column
+
+    // Return the response as JSON
+    return response()->json([
+        'tax_names' => $taxNames
+    ]);
+}
 }

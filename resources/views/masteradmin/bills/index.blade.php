@@ -214,7 +214,7 @@
             </button>
             </div>
             <div class="modal-body">
-            <form method="POST"
+            <form method="POST" id="rcordForm"
             action="{{ route('business.bill.paymentsbillstore', $value->sale_bill_id) }}">
             @csrf
             <input type="hidden" name="invoice_id" value="{{ $value->sale_bill_id }}">
@@ -292,7 +292,7 @@
               </div>
               <div class="col-md-6">
               <label>Account <span class="text-danger">*</span></label>
-              <select class="form-control form-select" name="payment_account"
+              <select class="form-control form-select" id="payment_account" name="payment_account"
               placeholder="Enter your text here">
               <option>Select a Payment Account...</option>
               @foreach($accounts as $account)
@@ -302,6 +302,7 @@
               </select>
               <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
               </p>
+              <span id="payment_accountError" class="text-danger mt-2" style="display:none;">Please enter Account name.</span>
               </div>
 
               <div class="col-md-12">
@@ -704,7 +705,35 @@
     document.getElementById('from-calendar-iconp').addEventListener('click', function () {
     fromdatepickerp.open();
     });
+    
   </script>
+<script>
+$(document).ready(function() {
+    // Form submit event
+    $('#rcordForm').on('submit', function(e) {
+        var companyField = $('#payment_account');
+        var errorField = $('#payment_accountError');
 
+        // Check if the company name field is empty
+        if (companyField.val().trim() === "") {
+            errorField.show(); // Show the error message
+            companyField.addClass("is-invalid"); // Add invalid class to highlight the field
+            e.preventDefault(); // Prevent form submission
+        } else {
+            errorField.hide(); // Hide the error message if input is valid
+            companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
+        }
+    });
+
+    // Hide error message when the user starts typing
+    $('#payment_account').on('input', function() {
+        var errorField = $('#payment_accountError');
+        if ($(this).val().trim() !== "") {
+            errorField.hide(); // Hide the error message if the field is no longer empty
+            $(this).removeClass("is-invalid"); // Remove the invalid class
+        }
+    });
+});
+</script>
   @endsection
 @endif
