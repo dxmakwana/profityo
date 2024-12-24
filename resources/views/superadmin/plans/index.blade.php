@@ -93,15 +93,15 @@
                             <a href="{{ route('plans.planrole',$value->sp_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
                             <a href="{{ route('plans.edit',$value->sp_id) }}"><i
                             class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
-                            <a data-toggle="modal" data-target="#deletesubscription-plans"><i
+                            <a data-toggle="modal" data-target="#deletesubscription-plans_{{$value->sp_id}}"><i
                             class="fas fa-solid fa-trash delete_icon_grid"></i></a>
                             </td>
-                          </tr>
-                          <div class="modal fade" id="deletesubscription-plans" tabindex="-1" role="dialog"
+                            <div class="modal fade" id="deletesubscription-plans_{{$value->sp_id}}" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                             <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                               <div class="modal-content">
                                 <form id="delete-plan-form" action="{{ route('plans.destroy', ['plan' => $value->sp_id]) }}" method="POST">
+                                  <!-- <input type="text" value={{$value->sp_id}}> -->
                                   @csrf
                                   @method('DELETE')
                                   <div class="modal-body pad-1 text-center">
@@ -117,6 +117,8 @@
                               </div>
                             </div>
                           </div>
+                          </tr>
+                          
                         @endforeach
                       @else
                    

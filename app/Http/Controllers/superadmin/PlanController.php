@@ -116,11 +116,12 @@ class PlanController extends Controller
     public function destroy($sp_id): RedirectResponse
     {
         //
+        // dd($sp_id);
         $plan = Plan::where('sp_id', $sp_id)->firstOrFail();
 
         // Delete the plan
         $plan->where('sp_id', $sp_id)->delete();
-
+    //    dd( $plan);
         \LogActivity::addToLog('Admin Plan Deleted.');
          
         return redirect()->route('plans.index')

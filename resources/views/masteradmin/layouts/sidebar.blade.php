@@ -257,7 +257,8 @@
 
           <li class="nav-item {{  request()->is($busadminRoutes.'/employee*') || 
                              request()->is($busadminRoutes.'/employeecreate*') || 
-                             request()->is($busadminRoutes.'/employeeedit/*')    
+                             request()->is($busadminRoutes.'/employeeedit/*')||
+                             request()->is($busadminRoutes.'/timesheet*')    
                     ? 'menu-open' : '' }} ">
             
             <a href="#" class="nav-link" >
@@ -286,14 +287,15 @@
               <!-- </li> -->
               </li>
               @endif
-              @if(isset($access['timesheets']) && $access['timesheets']) 
+            
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('business.timesheet.index') }}" class="nav-link {{ request()->is($busadminRoutes.'/timesheet*')  
+                              ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>TimeSheets</p>
                 </a>
               </li>
-              @endif
+            
             </ul>
           </li>
           @endif

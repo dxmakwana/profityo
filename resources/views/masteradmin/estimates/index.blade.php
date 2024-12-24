@@ -125,18 +125,31 @@
       <!-- Main row -->
       <div id="filter_data">
       <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
-        <ul class="nav nav-pills p-2 tab_box">
-          <li class="nav-item"><a class="nav-link active" href="#activeestimate" data-toggle="tab">Active <span
-                class="badge badge-toes">{{ count($activeEstimates) }}</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="#draftestimate" data-toggle="tab">Draft <span
-                class="badge badge-toes">{{ count($draftEstimates) }}</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="#allestimate" data-toggle="tab">All</a></li>
-        </ul>
+      @php
+    $activeTab = session('activeTab', 'activeestimate'); // Default to 'activeestimate'
+     @endphp
+      <ul class="nav nav-pills p-2 tab_box">
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'activeestimate' ? 'active' : '' }}" href="#activeestimate" data-toggle="tab" onclick="setActiveTab('activeestimate')">
+            Active <span class="badge badge-toes">{{ count($activeEstimates) }}</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'draftestimate' ? 'active' : '' }}" href="#draftestimate" data-toggle="tab" onclick="setActiveTab('draftestimate')">
+            Draft <span class="badge badge-toes">{{ count($draftEstimates) }}</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'allestimate' ? 'active' : '' }}" href="#allestimate" data-toggle="tab" onclick="setActiveTab('allestimate')">
+            All
+        </a>
+    </li>
+</ul>
       </div><!-- /.card-header -->
       <div class="card px-20">
         <div class="card-body1">
           <div class="tab-content">
-            <div class="tab-pane active" id="activeestimate">
+            <div class="tab-pane fade {{ $activeTab == 'activeestimate' ? 'show active' : '' }}" id="activeestimate">
               <div class="col-md-12 pad_table">
                 <table id="example1" class="table table-hover text-nowrap">
                   <thead>
@@ -252,7 +265,7 @@
               </div>
             </div>
 
-            <div class="tab-pane" id="draftestimate">
+            <div class="tab-pane fade {{ $activeTab == 'draftestimate' ? 'show active' : '' }}" id="draftestimate">
               <div class="col-md-12 pad_table">
                 <table id="example5" class="table table-hover text-nowrap">
                   <thead>
@@ -369,7 +382,7 @@
               </div>
             </div>
 
-            <div class="tab-pane" id="allestimate">
+            <div class="tab-pane fade {{ $activeTab == 'allestimate' ? 'show active' : '' }}" id="allestimate">
               <div class="col-md-12 pad_table">
                 <table id="example4" class="table table-hover text-nowrap">
                   <thead>
@@ -509,6 +522,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+<script>
+    function setActiveTab(tab) {
+        // Use AJAX to set the active tab in session
+        fetch('{{ route('setActiveTab') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ activeTab: tab })
+        });
+    }
+</script>
 <script>
   function updateStatus(estimateId, nextStatus) {
     $.ajax({

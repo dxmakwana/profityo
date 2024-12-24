@@ -150,7 +150,9 @@ class EstimatesController extends Controller
     $allEstimates = $filteredEstimates;
 
     $salecustomer = SalesCustomers::get();
-
+    // session()->flash('activeTab', 'activeestimate');
+    // session()->flash('activeTab', 'draftestimate');
+    // session()->flash('activeTab', 'allestimate');
     if ($request->ajax()) {
         return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
     }
@@ -1548,4 +1550,11 @@ class EstimatesController extends Controller
         'tax_names' => $taxNames
     ]);
 }
+public function setActiveTab(Request $request)
+{
+    $request->validate(['activeTab' => 'required|string']);
+    session(['activeTab' => $request->activeTab]);
+    return response()->json(['success' => true]);
+}
+
 }

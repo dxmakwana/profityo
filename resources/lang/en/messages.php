@@ -97,7 +97,8 @@ return [
             'edit_success' => 'Employee updated successfully.',
             'delete_success' => 'Employee deleted successfully.',
             'leave_success'  => 'Place On Leave created successfully!',
-            
+            'benefit_delete_success' => 'Benefit or Deduction deleted successfully.',
+            'file_delete_success' => 'File deleted successfully.',
         ],
 
     ]
