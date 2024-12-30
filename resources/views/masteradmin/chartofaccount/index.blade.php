@@ -149,7 +149,9 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editDescription">Description</label>
-                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $account->sale_acc_desc }}</textarea>
+                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="">{{ $account->sale_acc_desc }}</textarea>
+
+                                                  <!-- <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $account->sale_acc_desc }}</textarea> -->
                                                 </div>
                                               </div>
                                               <div class="col-md-12">
@@ -370,7 +372,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editDescription">Description</label>
-                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $liabilities->sale_acc_desc }}</textarea>
+                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="">{{ $liabilities->sale_acc_desc }}</textarea>
                                                 </div>
                                               </div>
                                               <div class="col-md-12">
@@ -589,7 +591,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editDescription">Description</label>
-                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $incm->sale_acc_desc }}</textarea>
+                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="">{{ $incm->sale_acc_desc }}</textarea>
                                                 </div>
                                               </div>
                                               <div class="col-md-12">
@@ -799,7 +801,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editDescription">Description</label>
-                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $exp->sale_acc_desc }}</textarea>
+                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="">{{ $exp->sale_acc_desc }}</textarea>
                                                 </div>
                                               </div>
                                               <div class="col-md-12">
@@ -1006,7 +1008,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editDescription">Description</label>
-                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="Cash you haven’t deposited in the bank. Add your bank and credit card accounts to accurately categorize transactions that aren't cash">{{ $eq->sale_acc_desc }}</textarea>
+                                                  <textarea id="editDescription" class="form-control" name="sale_acc_desc" rows="3" placeholder="">{{ $eq->sale_acc_desc }}</textarea>
                                                 </div>
                                               </div>
                                               <div class="col-md-12">

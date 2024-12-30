@@ -100,6 +100,12 @@ return [
             'benefit_delete_success' => 'Benefit or Deduction deleted successfully.',
             'file_delete_success' => 'File deleted successfully.',
         ],
+        'transaction' => [
+            'send_success' => 'Income created successfully.',
+            'add_income_success' => 'Income created successfully',
+            'add_expens_success' => 'Expense created successfully',
+            // 'delete_sales_success' => 'sales deleted successfully',
+        ],
 
     ]
     

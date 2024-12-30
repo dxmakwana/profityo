@@ -458,19 +458,21 @@
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="country" :value="__('Country')" />
+          <span class="text-danger">*</span>
           <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
             <option default>Select a Country...</option>
             @foreach($countries as $country)
         <option value="{{ $country->id }}" {{ old('country_id', $businessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
       @endforeach
           </select>
-          <x-input-error class="mt-2" :messages="$errors->get('Country')" />
+          <span id="countryNameError" class="text-danger mt-2" style="display:none;">Please enter country name.</span>
+          <x-input-error class="mt-2" :messages="$errors->get('bus_country_name')" />
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="state" :value="__('Province/State')" />
-          <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
+          <select class="form-control select2" style="width: 100%;" id="state" name="state_id">
             <option default>Select a State...</option>
             @foreach($states as $state)
         <option value="{{ $state->id }}" {{ $state->id == old('state_id', $businessDetails->state_id) ? 'selected' : '' }}>
@@ -1743,11 +1745,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
     </script>
 <script>
+// $(document).ready(function() {
+//     // Form submit event
+//     $('#editBusinessForm').on('submit', function(e) {
+//         var companyField = $('#bus_company_name');
+//         var errorField = $('#companyNameError');
+//         var countryField = $('#country');
+//         var countryerrorField = $('#countryNameError');
+
+//         // Check if the company name field is empty
+//         if (companyField.val().trim() === "") {
+//             errorField.show(); // Show the error message
+//             companyField.addClass("is-invalid"); // Add invalid class to highlight the field
+//             e.preventDefault(); // Prevent form submission
+//         } else {
+//             errorField.hide(); // Hide the error message if input is valid
+//             companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
+//         }
+
+//         if (countryField.val().trim() === "") {
+//           countryerrorField.show(); // Show the error message
+//           countryField.addClass("is-invalid"); // Add invalid class to highlight the field
+//             e.preventDefault(); // Prevent form submission
+//         } else {
+//           countryerrorField.hide(); // Hide the error message if input is valid
+//           countryField.removeClass("is-invalid"); // Remove invalid class if input is valid
+//         }
+//     });
+
+//     // Hide error message when the user starts typing
+//     $('#bus_company_name').on('input', function() {
+//         var errorField = $('#companyNameError');
+//         if ($(this).val().trim() !== "") {
+//             errorField.hide(); // Hide the error message if the field is no longer empty
+//             $(this).removeClass("is-invalid"); // Remove the invalid class
+//         }
+//     });
+//     $('#country').on('input', function() {
+//     var errorField = $('#countryNameError');
+//         if ($(this).val().trim() !== "") {
+//             errorField.hide(); // Hide the error message if the field is no longer empty
+//             $(this).removeClass("is-invalid"); // Remove the invalid class
+//         }
+//     });
+// });
 $(document).ready(function() {
     // Form submit event
     $('#editBusinessForm').on('submit', function(e) {
         var companyField = $('#bus_company_name');
         var errorField = $('#companyNameError');
+        var countryField = $('#country');
+        var countryErrorField = $('#countryNameError');
 
         // Check if the company name field is empty
         if (companyField.val().trim() === "") {
@@ -1758,9 +1806,19 @@ $(document).ready(function() {
             errorField.hide(); // Hide the error message if input is valid
             companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
         }
+
+        // Check if a valid country is selected
+        if (countryField.val() === "" || countryField.val() === "Select a Country...") {
+            countryErrorField.show(); // Show the error message
+            countryField.addClass("is-invalid"); // Add invalid class to highlight the field
+            e.preventDefault(); // Prevent form submission
+        } else {
+            countryErrorField.hide(); // Hide the error message if input is valid
+            countryField.removeClass("is-invalid"); // Remove invalid class if input is valid
+        }
     });
 
-    // Hide error message when the user starts typing
+    // Hide error message when the user starts typing/selecting
     $('#bus_company_name').on('input', function() {
         var errorField = $('#companyNameError');
         if ($(this).val().trim() !== "") {
@@ -1768,7 +1826,16 @@ $(document).ready(function() {
             $(this).removeClass("is-invalid"); // Remove the invalid class
         }
     });
+
+    $('#country').on('change', function() {
+        var errorField = $('#countryNameError');
+        if ($(this).val() !== "" && $(this).val() !== "Select a Country...") {
+            errorField.hide(); // Hide the error message if a valid option is selected
+            $(this).removeClass("is-invalid"); // Remove the invalid class
+        }
+    });
 });
+
 </script>
   <!-- ./wrapper -->
 

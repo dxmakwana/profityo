@@ -18,10 +18,17 @@ class RecordPayment extends Model
         'payment_date',
         'payment_amount',
         'notes',
+        'type',
+        'category',
+        'recipt',
+        'mark_as_review',
+        'description',
         'status',
        
        
 ];
+protected $primaryKey = 'record_payment_id'; // Ensure this matches your table's primary key
+
 
     public function __construct(array $attributes = [])
     {
