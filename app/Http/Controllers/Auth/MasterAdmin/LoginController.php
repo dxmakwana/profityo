@@ -35,6 +35,9 @@ class LoginController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $user = Auth::guard('masteradmins')->user();
+// dd($user);
+        $this->createTable($user->id);
 
         return redirect()->intended(RouteServiceProvider::MASTER_HOME);
     }

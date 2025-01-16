@@ -31,8 +31,10 @@ class UserRoleController extends Controller
         $user = Auth::guard('masteradmins')->user();
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
+            'description' => 'nullable|string', // Changed 'text' to 'string'
         ], [
             'role_name.required' => 'Please enter role name.',
+            // 'description.required' => 'Please enter a description.', // Added a custom message for 'description' if needed
         ]);
 
         $validatedData['id'] = $user->id;
@@ -60,6 +62,7 @@ class UserRoleController extends Controller
         // Validate incoming request data
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
+            'description' => 'required|string', // Changed 'text' to 'string'
         ], [
             'role_name.required' => 'Please enter role name.',
         ]);
@@ -69,7 +72,7 @@ class UserRoleController extends Controller
         \MasterLogActivity::addToLog('Master Admin User Role is Edited.');
 
         // Redirect back to the edit form with a success message
-        return redirect()->route('business.role.edit', ['role' => $roles->role_id])
+        return redirect()->route('business.role.index', ['role' => $roles->role_id])
                         ->with('role-edit', __('messages.masteradmin.user-role.edit_role_success'));
 
     }

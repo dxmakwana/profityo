@@ -114,7 +114,7 @@ class SalesTaxController extends Controller
         // \LogActivity::addToLog('Admin SalesTax Edited.');
         \MasterLogActivity::addToLog('SalesTax is Edited.');
         // Redirect back to the edit form with a success message
-        return redirect()->route('business.salestax.edit', ['SalesTax' => $SalesTaxu->tax_id])
+        return redirect()->route('business.salestax.index', ['SalesTax' => $SalesTaxu->tax_id])
             ->with('salestax-edit', __('messages.masteradmin.sales-tax.edit_sales_success'));
     }
 

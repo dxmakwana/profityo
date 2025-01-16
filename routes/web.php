@@ -240,7 +240,7 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
             Route::get('/employee', [EmployeesController::class, 'index'])->name('business.employee.index');
             Route::get('/employeecreate', [EmployeesController::class, 'create'])->name('business.employee.create');
             Route::post('/employeestore', [EmployeesController::class, 'store'])->name('business.employee.store');
-            // Route::get('/employeeedit', [EmployeesController::class, 'edit'])->name('business.employee.edit');
+            // Route::get('/employeeedit/{emp_id}', [EmployeesController::class, 'editnew'])->name('employees.updateVacationBalance');
             Route::get('/employeeedit/{employee}', [EmployeesController::class, 'edit'])->name('business.employee.edit');
             Route::Patch('employees/{emp_id}', [EmployeesController::class, 'update'])->name('business.employee.update');
             Route::Patch('/employees/{id}/compensation', [EmployeesController::class, 'storeCompensation'])->name('employees.storeCompensation');
@@ -252,6 +252,7 @@ Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 
     ->name('employee.offboarding.store');
 // routes/web.php
 Route::post('/employee/file/store', [EmployeesController::class, 'storeFile'])->name('employee.file.store');
+Route::patch('employee/{emp_id}/storeVacation', [EmployeesController::class, 'storeVacationBalance'])->name('employees.storeVacationbalance');
 
 // routes/web.php
 Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 'storeLeaveData'])

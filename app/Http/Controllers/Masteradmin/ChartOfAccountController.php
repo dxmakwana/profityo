@@ -144,19 +144,19 @@ class ChartOfAccountController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request->all());
         $user = Auth::guard('masteradmins')->user(); // Get the authenticated user
         $validatedData = $request->validate([
             // 'type_id' => 'required|integer',
             'acc_type_id' => 'nullable|integer',
-            'chart_acc_name' => 'required|string|max:255',
+            'chart_acc_name' => 'nullable|string|max:255',
             'currency_id' => 'nullable|integer',
             'chart_account_id' => 'nullable|string|max:255',
             'sale_acc_desc' => 'nullable|string|max:255',
             // 'sale_product_status' => 'required|boolean',
         ], [
             'acc_type_id.required' => 'The account type field is required.',
-            'chart_acc_name.required' => 'The account name field is required.',
+            'chart_acc_name.nullable' => 'The account name field is required.',
             'currency_id.required' => 'The currency field is required.',
         ]);
         $validatedData['id'] = $user->id; 

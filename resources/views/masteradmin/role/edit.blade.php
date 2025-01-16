@@ -63,7 +63,20 @@
                     @enderror
                 </div>
               </div>
-            </div>
+              <div class="col-md-12">
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea 
+            class="form-control @error('description') is-invalid @enderror" 
+            id="description" 
+            name="description" 
+            placeholder="Enter Description">{{ old('description', $role->description) }}</textarea>
+        @error('description')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+<!-- </div> -->
+
             <div class="row py-20 px-10">
               <div class="col-md-12 text-center">
                 <a href="{{route('business.role.index')}}"  class="add_btn_br px-10">Cancel</a>

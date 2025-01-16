@@ -38,7 +38,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="customertitle">Customer <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control @error('sale_cus_business_name') is-invalid @enderror" name="sale_cus_business_name" id="customertitle" placeholder="Business Or Person" value="{{ old('sale_cus_business_name') }}">
+                  <input type="text" class="form-control @error('sale_cus_business_name') is-invalid @enderror" name="sale_cus_business_name" id="customertitle" placeholder="Name of a Business or Person" value="{{ old('sale_cus_business_name') }}">
                   @error('sale_cus_business_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                  @enderror

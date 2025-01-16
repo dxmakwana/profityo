@@ -53,6 +53,17 @@
                     @enderror
                 </div>
               </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea type="text" class="form-control @error('description') is-invalid @enderror"
+                        id="description" name="description" placeholder="Enter Description"
+                        value="{{ old('description') }}"></textarea>
+                    @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+              </div>
             </div>
             <div class="row py-20 px-10">
               <div class="col-md-12 text-center">

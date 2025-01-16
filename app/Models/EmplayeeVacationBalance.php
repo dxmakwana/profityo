@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class EmployeeComperisation extends Model
+class EmplayeeVacationBalance extends Model
 {
     use HasFactory;
-    protected $fillable = ['emp_id','id','emp_comp_salary_amount','emp_comp_salary_type','emp_comp_effective_date','emp_comp_status','average_hours_per_week'];
-    protected $primaryKey = 'emp_comp_id';
+    protected $fillable = ['emp_id','id','balance','emp_vb_status'];
+    protected $primaryKey = 'vb_id';
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -20,7 +20,6 @@ class EmployeeComperisation extends Model
         Auth::guard('masteradmins')->setUser($userDetails);
         $user = Auth::guard('masteradmins')->user();
         $uniq_id = $user->user_id;
-        $this->setTable($uniq_id . 'py_employee_comperisation');
+        $this->setTable($uniq_id . 'py_employee_vacation_balance');
     }
-
 }

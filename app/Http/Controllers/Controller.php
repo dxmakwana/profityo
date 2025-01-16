@@ -64,6 +64,7 @@ class Controller extends BaseController
                     $table->increments('role_id');
                     $table->integer('id');
                     $table->string('role_name');
+                    $table->text('description')->nullable();
                     $table->tinyInteger('role_status')->default(0);
                     $table->timestamps();
                 });
@@ -72,6 +73,11 @@ class Controller extends BaseController
                 Schema::table($storeId.'_py_users_role', function (Blueprint $table) use ($storeId) {
                     if (!Schema::hasColumn($storeId.'_py_users_role', 'id')) {
                         $table->integer('id');
+                    }
+                });
+                Schema::table($storeId.'_py_users_role', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_users_role', 'description')) {
+                        $table->text('description');
                     }
                 });
             }
@@ -666,6 +672,8 @@ class Controller extends BaseController
                         $table->integer('emp_direct_deposit')->nullable();
                         $table->integer('emp_vacation_policy')->nullable();
                         $table->integer('emp_vacation_accural_rate')->nullable();
+                        $table->integer('emp_total_hours_year')->nullable();
+
                         $table->tinyInteger('emp_status')->default(0)->nullable();
                         $table->timestamps();
                     });
@@ -689,6 +697,11 @@ class Controller extends BaseController
                     Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
                         if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_work_hours')) {
                             $table->integer('emp_work_hours')->nullable();
+                        }
+                    });
+                    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
+                        if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_total_hours_year')) {
+                            $table->integer('emp_total_hours_year')->nullable();
                         }
                     });
                 }
@@ -765,8 +778,30 @@ class Controller extends BaseController
                 $table->integer('ct_id')->nullable()->default(0);
                 $table->string('emp_lev_start_date')->nullable();
                 $table->string('emp_lev_end_date')->nullable();
+                $table->string('emp_lev_date_range')->nullable();
                 $table->string('emp_lev_desc')->nullable();
                 $table->tinyInteger('emp_lev_status')->default(0)->nullable();
+                $table->timestamps();
+            });
+        }else{
+            Schema::table($storeId.'py_employee_place_leave', function (Blueprint $table) use ($storeId) {
+                if (!Schema::hasColumn($storeId.'py_employee_place_leave', 'emp_lev_date_range')) {
+                    $table->string('emp_lev_date_range')->nullable();
+                }
+            });
+       
+        }
+
+          // py_employee_vacation_balance
+          if (!Schema::hasTable($storeId . 'py_employee_vacation_balance')) {
+            Schema::create($storeId . 'py_employee_vacation_balance', function (Blueprint $table) {
+                $table->increments('vb_id');
+                $table->integer('emp_id')->nullable()->default(0);
+                $table->integer('id')->nullable()->default(0);
+                $table->integer('users_id')->nullable()->default(0);
+                $table->float('balance')->nullable()->default(0.0);
+                $table->string('emp_wage_type')->nullable();
+                $table->tinyInteger('emp_vb_status')->default(0)->nullable();
                 $table->timestamps();
             });
         }

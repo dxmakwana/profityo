@@ -1366,7 +1366,7 @@ $(document).ready(function() {
 });
 
 </script>
-<script>
+<!-- <script>
 $(document).ready(function() {
     // Generic form validation function
     function validateForm(formId, fieldConfig) {
@@ -1438,7 +1438,7 @@ $(document).ready(function() {
         });
     });
 });
-</script>
+</script> -->
 
 @endsection
 @endif

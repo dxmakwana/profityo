@@ -140,67 +140,69 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="employeeTable">
-                @foreach($hourlyEmployees as $employee)
+                                                        @foreach($hourlyEmployees as $employee)
 
-                    <input type="hidden" name="emp_id" id="emp_id" value="{{ $employee->emp_id }}">
+                                                            <input type="hidden" name="emp_id" id="emp_id" value="{{ $employee->emp_id }}">
 
-                    <tr class="employee-row" id="employee_{{ $employee->emp_id }}">
-                        <td>
-                            <span class="toggle">▲</span> {{ $employee->emp_first_name }}, {{ $employee->emp_last_name }}
-                        </td>
-                        @foreach(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] as $day)
-                            <td>
-                                <input 
-                                    type="number" 
-                                    name="hours[{{ $employee->emp_id }}][{{ $day }}]" 
-                                    value="{{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->where('emp_day', $day)->first()->emp_hours ?? '0.00' : '0.00' }}" 
-                                    min="0"
-                                    class="hour-input"
-                                    data-employee-id="{{ $employee->emp_id }}" 
-                                    data-day="{{ $day }}"
-                                    style="width: 70px;">
-                            </td>
-                        @endforeach
+                                                            <tr class="employee-row" id="employee_{{ $employee->emp_id }}">
+                                                                <td>
+                                                                    <span class="toggle">▲</span> {{ $employee->emp_first_name }}, {{ $employee->emp_last_name }}
+                                                                </td>
+                                                                @foreach(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] as $day)
+                                                                    <td>
+                                                                        <input 
+                                                                            type="number" 
+                                                                            name="hours[{{ $employee->emp_id }}][{{ $day }}]" 
+                                                                            value="{{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->where('emp_day', $day)->first()->emp_hours ?? '0.00' : '0.00' }}" 
+                                                                            min="0"
+                                                                            max="24"
+                                                                            class="hour-input"
+                                                                            data-employee-id="{{ $employee->emp_id }}" 
+                                                                            data-day="{{ $day }}"
+                                                                            style="width: 70px;">
+                                                                    </td>
+                                                                                    @endforeach
 
-                        <td class="total" id="total_{{ $employee->emp_id }}">
-                        {{ 
-            isset($groupedTimesheets[$employee->emp_id]) 
-            ? $groupedTimesheets[$employee->emp_id]
-                ->whereNotIn('type', ['overtime', 'doubletime', 'vacation', 'sicktime'])
-                ->sum('emp_hours') 
-            : '0.00' 
-        }}
+                                                                                    <td class="total" id="total_{{ $employee->emp_id }}">
+                                                                                    {{ 
+                                                                        isset($groupedTimesheets[$employee->emp_id]) 
+                                                                        ? $groupedTimesheets[$employee->emp_id]
+                                                                            ->whereNotIn('type', ['overtime', 'doubletime', 'vacation', 'sicktime'])
+                                                                            ->sum('emp_hours') 
+                                                                        : '0.00' 
+                                                                    }}
 
-        </td>
+                                                                    </td>
 
-                    </tr>
+                                                                </tr>
 
-                <!-- Nested Rows for Overtime, Double Time, Vacation, Sick Time -->
-                @foreach(['overtime' => 'Rate x 1.5', 'doubletime' => 'Rate x 2.0', 'vacation' => 'Balance: 0.0', 'sicktime' => 'Balance: 0.0'] as $type => $label)
-            <tr class="nested-row" id="nested-row-{{ $employee->emp_id }}-{{ $type }}">
-                <td>{{ ucfirst($type) }} <br><small>{{ $label }}</small></td>
-                @foreach(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] as $day)
-                    <td>
-                        <input 
-                            type="number" 
-                            name="{{ $type }}[{{ $employee->emp_id }}][{{ $day }}]" 
-                            value="{{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->where('emp_day', $day)->first()->{"emp_$type"} ?? '0.00' : '0.00' }}" 
-                            min="0"
-                            class="nested-input"
-                            data-employee-id="{{ $employee->emp_id }}"
-                            data-type="{{ $type }}"
-                            data-day="{{ $day }}"
-                            style="width: 70px;">
-                    </td>
-                @endforeach
-                <td class="nested-total" id="nested-total-{{ $employee->emp_id }}-{{ $type }}">
-                    {{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->sum("emp_$type") ?? '0.00' : '0.00' }}
-                </td>
-            </tr>
-        @endforeach
+                                                                    <!-- Nested Rows for Overtime, Double Time, Vacation, Sick Time -->
+                                                                    @foreach(['overtime' => 'Rate x 1.5', 'doubletime' => 'Rate x 2.0', 'vacation' => 'Balance: 0.0', 'sicktime' => 'Balance: 0.0'] as $type => $label)
+                                                                <tr class="nested-row" id="nested-row-{{ $employee->emp_id }}-{{ $type }}">
+                                                                    <td>{{ ucfirst($type) }} <br><small>{{ $label }}</small></td>
+                                                                    @foreach(['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] as $day)
+                                                                        <td>
+                                                                            <input 
+                                                                                type="number" 
+                                                                                name="{{ $type }}[{{ $employee->emp_id }}][{{ $day }}]" 
+                                                                                value="{{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->where('emp_day', $day)->first()->{"emp_$type"} ?? '0.00' : '0.00' }}" 
+                                                                                min="0"
+                                                                                max="24"
+                                                                                class="nested-input"
+                                                                                data-employee-id="{{ $employee->emp_id }}"
+                                                                                data-type="{{ $type }}"
+                                                                                data-day="{{ $day }}"
+                                                                                style="width: 70px;">
+                                                                        </td>
+                                                                    @endforeach
+                                                                    <td class="nested-total" id="nested-total-{{ $employee->emp_id }}-{{ $type }}">
+                                                                        {{ isset($groupedTimesheets[$employee->emp_id]) ? $groupedTimesheets[$employee->emp_id]->sum("emp_$type") ?? '0.00' : '0.00' }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
 
-            @endforeach
-</tbody>
+                                                                @endforeach
+                                                    </tbody>
 
                                                 </table>
                                             </div>
@@ -274,6 +276,7 @@
                                                                         name="{{ $type }}[{{ $employee2->emp_id }}][{{ $day }}]" 
                                                                         value="{{ isset($groupedSalariedTimesheets[$employee2->emp_id]) ? $groupedSalariedTimesheets[$employee2->emp_id]->where('emp_day', $day)->first()->{"emp_$type"} ?? '0.00' : '0.00' }}" 
                                                                         min="0"
+                                                                        max="24"
                                                                         class="nested-input"
                                                                         data-employee-id="{{ $employee2->emp_id }}"
                                                                         data-type="{{ $type }}"

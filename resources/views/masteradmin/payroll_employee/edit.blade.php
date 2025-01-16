@@ -203,91 +203,7 @@
       @enderror
             </div>
           </div>
-
-          <!-- Wage Type -->
-          <div class="col-md-4">
-            <div class="form-group">
-            <label for="emp_wage_type">Wage Type</label>
-            <select id="emp_wage_type" name="emp_wage_type" class="form-control">
-              <option value="Hourly" {{ old('emp_wage_type', $employee->emp_wage_type) == 'Hourly' ? 'selected' : '' }}>Hourly</option>
-              <option value="Annual" {{ old('emp_wage_type', $employee->emp_wage_type) == 'Annual' ? 'selected' : '' }}>Annual</option>
-            </select>
-            </div>
-
-            <!-- Work Hours (Visible only when Wage Type is Annual) -->
-            <div id="work-hours-container" class="form-group"
-            style="display: {{ old('emp_wage_type', $employee->emp_wage_type) == 'Annual' ? 'block' : 'none' }}">
-            <label for="emp_work_hours">Work Hours Per Week</label>
-            <input type="number" id="emp_work_hours" name="emp_work_hours" class="form-control"
-              value="{{ old('emp_work_hours', $employee->emp_work_hours ?? '') }}">
-            </div>
-          </div>
-
-          <!-- Wage Amount -->
-          <div class="col-md-4">
-            <div class="form-group">
-            <label for="emp_wage_amount">Wages Amount <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="emp_wage_amount" name="emp_wage_amount"
-              value="{{ old('emp_wage_amount', $employee->emp_wage_amount) }}" placeholder="Enter Wage Amount">
-            @error('emp_wage_amount')
-        <div class="invalid-feedback">{{ $message }}</div>
-      @enderror
-            </div>
-          </div>
-          </div>
-
-          <!-- Vacation Policy -->
-          <div class="row pad-5">
-          <div class="col-md-4">
-            <div class="form-group">
-            <label>Vacation Policy <span class="text-danger">*</span></label>
-            <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
-              @foreach($vacation as $policy)
-          <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy', $employee->emp_vacation_policy) == $policy->v_id ? 'selected' : '' }}>
-          {{ $policy->name }}
-          </option>
-        @endforeach
-            </select>
-            @error('emp_vacation_policy')
-        <div class="invalid-feedback">{{ $message }}</div>
-      @enderror
-            </div>
-          </div>
-
-          <!-- Vacation Accrual Rate (Visible only when Vacation Policy requires it) -->
-          <div class="col-md-4" id="accrual_rate_container"
-            style="display: {{ old('emp_vacation_policy', $employee->emp_vacation_policy) == '2' ? 'block' : 'none' }}">
-            <div class="form-group">
-            <label>Vacation Accrual Rate</label>
-            <input type="number" class="form-control" name="emp_vacation_accural_rate"
-              id="emp_vacation_accural_rate"
-              value="{{ old('emp_vacation_accural_rate', $employee->emp_vacation_accural_rate) }}">
-            </div>
-            e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.
-          </div>
-          </div>
-
-          <!-- Direct Deposit -->
-          <div class="row pad-5">
-          <div class="col-md-4">
-            <div class="form-group">
-            <label>Direct Deposit <span class="text-danger">*</span></label>
-            <div>
-              <label class="radio-inline">
-              <input type="radio" name="emp_direct_deposit" id="radioYes" value="1" {{ old('emp_direct_deposit', $employee->emp_direct_deposit) == '1' ? 'checked' : '' }}> Yes
-              </label>
-              <small id="message1" class="text-muted d-block">This requires employee bank information.</small>
-              <label class="radio-inline">
-              <input type="radio" name="emp_direct_deposit" id="radioNo" value="0" {{ old('emp_direct_deposit', $employee->emp_direct_deposit) == '0' ? 'checked' : '' }}> No
-              </label>
-              <small id="message2" class="text-muted d-block">You can change this setting at any time.</small>
-            </div>
-            @error('emp_direct_deposit')
-        <div class="invalid-feedback">{{ $message }}</div>
-      @enderror
-            </div>
-          </div>
-          </div>
+          </div> 
 
 
           <!-- Save and Cancel Buttons -->
@@ -363,7 +279,7 @@
         @enderror
               </div>
             </div>
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <div class="form-group @error('emp_comp_effective_date') is-invalid @enderror">
               <label for="emp_comp_effective_date">Effective Date </label>
 
@@ -373,8 +289,8 @@
                 value="{{ $EmployeeVacation->emp_comp_effective_date ?? ''}}" />
 
                 @php
-          $saleEstimDate = \Carbon\Carbon::parse($EmployeeVacation->emp_comp_effective_date ?? '')->format('m/d/Y');
-          @endphp
+                  $saleEstimDate = \Carbon\Carbon::parse($EmployeeVacation->emp_comp_effective_date ?? '')->format('m/d/Y');
+                  @endphp
 
                 <x-flatpickr id="effective-datepicker" name="emp_comp_effective_date"
                 placeholder="Select a date" :value="$saleEstimDate" />
@@ -389,7 +305,31 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
               </div>
+            </div> -->
+            <div class="form-group">
+    <label for="emp_comp_effective_date">Effective Date</label>
+    <div class="input-group date" id="estimatedate" data-target-input="nearest">
+        <input type="hidden" id="effective-datepicker-hidden"
+               value="{{ $EmployeeVacation->emp_comp_effective_date ?? '' }}" />
+
+        @php
+            $saleEstimDate = $EmployeeVacation 
+                ? \Carbon\Carbon::parse($EmployeeVacation->emp_comp_effective_date)->format('m/d/Y') 
+                : '';
+        @endphp
+
+        <x-flatpickr id="effective-datepicker" name="emp_comp_effective_date"
+                     placeholder="Select a date" :value="$saleEstimDate" />
+        <div class="input-group-append">
+            <div class="input-group-text" id="effective-calendar-icon">
+                <i class="fa fa-calendar-alt"></i>
             </div>
+        </div>
+    </div>
+    @error('emp_comp_effective_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
 
             <div class="col-md-4" id="hours_per_week" style="display: none;">
@@ -397,7 +337,7 @@
               <label for="average_hours_per_week">Average Hours Per Week</label>
               <input type="number" class="form-control @error('average_hours_per_week') is-invalid @enderror"
                 id="average_hours_per_week" name="average_hours_per_week"
-                value="{{ old('average_hours_per_week', $EmployeeVacation->average_hours_per_week ?? '') }}"
+                value="{{ old('average_hours_per_week', $EmployeeComperisation->average_hours_per_week ?? '') }}"
                 placeholder="0.00">
               @error('average_hours_per_week')
           <div class="invalid-feedback">{{ $message }}</div>
@@ -446,6 +386,8 @@
             </td>
           </tr>
         @endforeach
+      
+
 
                 </tbody>
               </table>
@@ -466,12 +408,68 @@
         </div>
         <div class="card-body">
           <div class="row align-items-center justify-content-between">
-          <div class="col-auto d-flex">
-            <p id="Salary" class="font_18 mb-0">
+          <div class="d-flex align-items-center">
+          <p class="font-weight-bold mb-0 me-2">
+              Vacation balance: {{ number_format($Employeevacationbalance->balance ?? 0.0, 2) }}
+          </p>
+                <!-- Edit Button to Trigger Modal -->
+                <a data-toggle="modal" data-target="#editVacationBalanceModal">
+                <!-- <a href="#" class="text-primary" data-bs-toggle="modal"  data-bs-target="#editVacationBalanceModal"> -->
+                <i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                <!-- Vacation Balance Modal -->
+                <div class="modal fade" id="editVacationBalanceModal" tabindex="-1" aria-labelledby="editVacationBalanceModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editVacationBalanceModalLabel">Edit Vacation Balance</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                               </button>
+                            </div>
+                            
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Ensure that you're meeting the minimum vacation time requirements in your jurisdiction when editing the balance.
+                                </div>
 
-            </p>
-            <button id="toggleBtn" onclick="toggleSalary()" class="hide_show_btn">Vacation balance: 22.0 </button>
-          </div>
+                                <!-- Form Start -->
+                                <form action="{{ route('employees.storeVacationbalance', $employee->emp_id) }}" method="POST">
+                                  @csrf
+                                  @method('PATCH')
+                                  
+                                  <!-- Vacation Balance Input -->
+                                  <div class="row px-3">
+                                      <div class="col-md-6">
+                                          <div class="form-group">
+                                              <label for="vacationBalance">Vacation Balance:</label>
+                                              <div class="input-group">
+                                                  <input type="text" class="form-control" id="vacationBalance" name="balance" value=" {{ number_format($Employeevacationbalance->balance ?? 0.0, 2) }}" required>
+                                                  <span class="input-group-text">hrs</span>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Info Text -->
+                                  <p class="text-muted">The balance will be effective as soon as you save changes.</p>
+
+                                  <!-- Modal Footer -->
+                                  <div class="modal-footer">
+                                      <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+                                      <button type="submit" class="add_btn">Save</button>
+                                  </div>
+                              </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+      <!-- end vacation -->
+            </div>
           <div class="col-auto">
             <button id="vacation_policy" class="reminder_btn" onclick="toggleVacationForm()">Change Vacation
             Policy</button>
@@ -524,7 +522,7 @@
               </div>
             </div>
 
-            <div class="col-md-4" id="accrual_rate2_container"
+            <!-- <div class="col-md-4" id="accrual_rate2_container"
               style="display: {{ old('emp_vacation_policy', $EmployeeVacation->emp_vacation_policy) == '2' ? 'block' : 'none' }};">
               <div class="form-group">
               <label>Vacation Accrual Rate</label>
@@ -536,8 +534,22 @@
               </small>
               </div>
             </div>
-            </div>
-
+            </div> -->
+            <div class="col-md-4" id="accrual_rate_container">
+              <div class="form-group">
+                  <label>Vacation Accrual Rate</label>
+                  <div class="input-group">
+                  <input type="number" min="0" class="form-control" name="emp_vacation_accural_rate"
+                id="emp_vacation_accural_rate"
+                value="{{ old('emp_vacation_accural_rate', $EmployeeVacation->emp_vacation_accural_rate) }}">
+                      <div class="input-group-append">
+                          <div class="input-group-text"><i class="fa fa-percent"></i></div>
+                      </div>
+                  </div>
+                  <small id="accrual_message" class="form-text text-muted">e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
+              </div>
+          </div>
+          </div>
             <!-- Buttons below fields -->
             <div class="row mt-4">
             <div class="col-md-12 text-center">
@@ -557,7 +569,7 @@
             <!-- Active Employees Tab -->
             <div class="tab-pane active" id="activeemployee">
             <div class="col-md-12 table-responsive pad_table">
-              <table id="example1" class="table table-hover text-nowrap">
+              <!-- <table id="example1" class="table table-hover text-nowrap">
               <thead>
                 <tr>
                 <th>Policy</th>
@@ -588,7 +600,73 @@
           </tr>
         @endforeach
               </tbody>
-              </table>
+              </table> -->
+              <table id="example1" class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Policy</th>
+                            <th>Effective Date</th>
+                            <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @php
+                        // Sort the vacation records by effective date in descending order
+                        $sortedVacations = $EmployeeVacationIST->sortByDesc(function($vacation) {
+                            return \Carbon\Carbon::parse($vacation->emp_comp_effective_date);
+                        });
+
+                        // Check if there are any records for today
+                        $hasTodayRecord = $EmployeeVacationIST->contains(function($vacation) {
+                            return \Carbon\Carbon::parse($vacation->emp_comp_effective_date)->isToday();
+                        });
+
+                        // Get the most recent past date record
+                        $mostRecentPastRecord = $sortedVacations->firstWhere(function($vacation) {
+                            return \Carbon\Carbon::parse($vacation->emp_comp_effective_date)->isPast();
+                        });
+                    @endphp
+
+                    @foreach($sortedVacations as $index => $vacation)
+                        <tr>
+                            <td>
+                                @if($vacation->emp_vacation_accural_rate)
+                                    {{ $vacation->emp_vacation_accural_rate }}% of hours are accrued each pay period
+
+                                    {{-- Check if there's a record for today --}}
+                                    @if($hasTodayRecord)
+                                        {{-- Check if it's today's date, and set status accordingly --}}
+                                        @if(\Carbon\Carbon::parse($vacation->emp_comp_effective_date)->isToday())
+                                            <button class="btn btn-success btn-sm">Active</button>
+                                        @else
+                                        
+                                        @endif
+                                    @else
+                                        {{-- No records for today, mark the most recent past date as active --}}
+                                        @if(\Carbon\Carbon::parse($vacation->emp_comp_effective_date)->isPast())
+                                            @if($vacation == $mostRecentPastRecord && $vacation->status == 1)
+                                                <button class="btn btn-success btn-sm">Active</button>
+                                            @else
+                                              
+                                            @endif
+                                        @endif
+                                    @endif
+                                @else
+                                    Not given vacation hours
+                                @endif
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($vacation->emp_comp_effective_date)->format('m/d/Y') }}</td>
+                            <td class="text-right">
+                                <a href="{{ route('business.employee.edit', $vacation->emp_id) }}">
+                                    <i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+
+                </table>
+
             </div>
             </div>
 
@@ -599,7 +677,6 @@
       </div>
 
 
-      <!-- end vacation -->
 
 
       <!-- Tax Details Tab -->
@@ -1010,7 +1087,7 @@
           <!-- Active Section -->
           <h5 class="mt-3">Active</h5>
           <div class="table-responsive pad_table">
-          <table id="example1" class="table table-hover text-nowrap">
+          <!-- <table id="example1" class="table table-hover text-nowrap">
             <thead>
             <tr>
               <th>Benefits & Deductions</th>
@@ -1032,7 +1109,7 @@
                     N/A
                 @endif
             </small>      
-                <!-- <small class="text-muted">{{ $data->category->p_menu_title}}</small> -->
+                <!-- <small class="text-muted">{{ $data->category->p_menu_title}}</small> --
                 </td>
                 <td>(${{ $data->amount }})</td>
                 <td>{{ $data->occures->name }}</td>
@@ -1062,7 +1139,113 @@
           
         @endforeach
             </tbody>
-          </table>
+          </table> -->
+          <table id="example1" class="table table-hover text-nowrap">
+    <thead>
+        <tr>
+            <th>Benefits & Deductions</th>
+            <th>Amount</th>
+            <th>Frequency</th>
+            <th class="text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Active Section -->
+        <tr>
+            <th colspan="4">Active</th>
+        </tr>
+        @foreach ($employeeBenefits as $data)
+            @if ($data->created_at->toDateString() >= now()->toDateString())
+                <tr>
+                    <td>{{ $data->pay_stub_label }}<br>
+                        <small class="text-muted">
+                            @if ($data->type == 1)
+                                {{ $data->category->p_menu_title ?? 'N/A' }}
+                            @elseif ($data->type == 2)
+                                {{ $data->deductcategory->de_menu_title ?? 'N/A' }}
+                            @else
+                                N/A
+                            @endif
+                        </small>
+                    </td>
+                    <td>(${{ $data->amount }})</td>
+                    <td>{{ $data->occures->name }}</td>
+                    <td class="text-right">
+                        <!-- Delete Button -->
+                        <a data-toggle="modal" data-target="#delete-role-modal-{{ $data->emp_benefit_id }}">
+                            <i class="fas fa-solid fa-trash delete_icon_grid"></i>
+                        </a>
+                    </td>
+                </tr>
+            @endif
+        @endforeach
+
+        <!-- Expired Section -->
+        <tr>
+            <th colspan="4">Expired</th>
+        </tr>
+        @php
+            $expiredBenefits = $employeeBenefits->filter(function ($data) {
+                return $data->created_at->toDateString() < now()->toDateString();
+            });
+        @endphp
+
+        @if ($expiredBenefits->isEmpty())
+            <tr>
+                <td colspan="4">
+                    <p>There are no expired benefits or deductions for this employee</p>
+                </td>
+            </tr>
+        @else
+            @foreach ($expiredBenefits as $data)
+                <tr>
+                    <td>{{ $data->pay_stub_label }}<br>
+                        <small class="text-muted">
+                            @if ($data->type == 1)
+                                {{ $data->category->p_menu_title ?? 'N/A' }}
+                            @elseif ($data->type == 2)
+                                {{ $data->deductcategory->de_menu_title ?? 'N/A' }}
+                            @else
+                                N/A
+                            @endif
+                        </small>
+                    </td>
+                    <td>(${{ $data->amount }})</td>
+                    <td>{{ $data->occures->name }}</td>
+                    <td class="text-right">
+                        <!-- Delete Button -->
+                        <a data-toggle="modal" data-target="#delete-role-modal-{{ $data->emp_benefit_id }}">
+                            <i class="fas fa-solid fa-trash delete_icon_grid"></i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+        @endif
+    </tbody>
+</table>
+
+<!-- Delete Confirmation Modals -->
+@foreach ($employeeBenefits as $data)
+<div class="modal fade" id="delete-role-modal-{{ $data->emp_benefit_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{{ route('business.employee.benefitdestroy', ['emp_benefit_id' => $data->emp_benefit_id]) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-body pad-1 text-center">
+                    <i class="fas fa-solid fa-trash delete_icon"></i>
+                    <p class="company_business_name px-10"><b>This action cannot be reverted</b></p>
+                    <p class="company_details_text px-10">You are permanently removing this deduction.</p>
+                    <!-- Cancel and Delete Buttons -->
+                    <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="delete_btn px-15">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
           </div>
 
           <!-- Expired Section -->
@@ -1420,7 +1603,7 @@
     </div>
     </div>
  
-    <!-- Updated modal form -->
+    <!-- Updated modal form --> 
     <div class="modal fade" id="placeonleave" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -1435,6 +1618,8 @@
         <!-- Form to submit data -->
         <form action="{{ route('employee.offboarding.leave', ['emp_id' => $employee->emp_id]) }}" method="POST">
         @csrf
+        <input type="hidden" name="start_date_range" id="startDateRange">
+           <input type="hidden" name="end_date_range" id="endDateRange">
         <div class="row pxy-15 px-10">
           <div class="col-md-6">
           <div class="form-group">
@@ -1443,7 +1628,7 @@
 
             <div class="input-group date" id="emp_lev_start_date" data-target-input="nearest">
 
-            <x-flatpickr id="d-datepicker" name="emp_lev_start_date" placeholder="Select a date" />
+            <x-flatpickr id="d-datepicker" class="startdate" name="emp_lev_start_date" placeholder="Select a date" />
             <div class="input-group-append">
               <div class="input-group-text" id="d-calendar-icon">
               <i class="fa fa-calendar-alt"></i>
@@ -1481,7 +1666,22 @@
           </div>
           </div>
         </div>
-
+<!-- Section: See your schedule -->
+<div class="card mb-4">
+            <div class="card-body">
+              <h6 class="font-weight-bold mb-3">See your schedule</h6>
+              <div class="d-flex justify-content-between align-items-center p-3 border rounded bg-light">
+                <div>
+                  <p class="mb-1 font-weight-bold">Final Pay Period</p>
+                  <small class="text-muted">You’ll need to complete Timesheets up to this period.</small>
+                </div>
+                <p id="dateRange" class="mb-0 font-weight-bold text-right"></p>
+              </div>
+              <!-- <p id="dateRange" class="mt-3 text-muted text-center">
+                Select a date to see the week range.
+              </p> -->
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
@@ -1491,6 +1691,7 @@
       </div>
     </div>
     </div>
+
 
 
 
@@ -1601,53 +1802,42 @@
   </script>
 
   <script>
- function toggleSalary(employeeId, wageAmount, wageType) {
-    // Get the salary elements for the specific employee
-    const salaryElement = document.getElementById('Salary-' + employeeId); // <p> tag
-    const salaryTdElement = document.getElementById('SalaryTd-' + employeeId); // <td> tag
-    const toggleBtn = document.getElementById('toggleBtn-' + employeeId); // The button
-    
-    // Check if salary is currently hidden by checking if the paragraph has '••••••' text
-    if (salaryElement.innerText === "$••••••••/" + wageType) {
-        // If hidden, show both the <p> and <td> elements with the original values
-        salaryElement.innerText = "$" + wageAmount + "/" + wageType;
-        salaryTdElement.innerText = "$" + salaryTdElement.getAttribute('data-hidden'); // Using the original salary value
-        toggleBtn.innerText = "Hide"; // Change button text to 'Hide'
-    } else {
-        // If visible, hide both the <p> and <td> elements
-        salaryElement.innerText = "$••••••••/" + wageType;
-        salaryTdElement.innerText = "$••••••••"; // Hide the salary with the dollar sign
-        toggleBtn.innerText = "Show"; // Change button text to 'Show'
+    function toggleSalary(employeeId, wageAmount, wageType) {
+        // Get the salary elements for the specific employee
+        const salaryElement = document.getElementById('Salary-' + employeeId); // <p> tag
+        const salaryTdElement = document.getElementById('SalaryTd-' + employeeId); // <td> tag
+        const toggleBtn = document.getElementById('toggleBtn-' + employeeId); // The button
+        
+        // Check if salary is currently hidden by checking if the paragraph has '••••••' text
+        if (salaryElement.innerText === "$••••••••/" + wageType) {
+            // If hidden, show both the <p> and <td> elements with the original values
+            salaryElement.innerText = "$" + wageAmount + "/" + wageType;
+            salaryTdElement.innerText = "$" + salaryTdElement.getAttribute('data-hidden'); // Using the original salary value
+            toggleBtn.innerText = "Hide"; // Change button text to 'Hide'
+        } else {
+            // If visible, hide both the <p> and <td> elements
+            salaryElement.innerText = "$••••••••/" + wageType;
+            salaryTdElement.innerText = "$••••••••"; // Hide the salary with the dollar sign
+            toggleBtn.innerText = "Show"; // Change button text to 'Show'
+        }
     }
-}
 
 
+        document.addEventListener('DOMContentLoaded', function () {
 
+        var fromdatepicker = flatpickr("#d-datepicker", {
+          locale: 'en',
+          altInput: true,
+          dateFormat: "m/d/Y",
+          altFormat: "d/m/Y",
+          allowInput: true,
+        });
 
+        document.getElementById('d-calendar-icon').addEventListener('click', function () {
+          fromdatepicker.open();
+        });
 
-
-    document.addEventListener('DOMContentLoaded', function () {
-
-    var fromdatepicker = flatpickr("#d-datepicker", {
-      locale: 'en',
-      altInput: true,
-      dateFormat: "m/d/Y",
-      altFormat: "d/m/Y",
-      allowInput: true,
-    });
-
-
-
-    document.getElementById('d-calendar-icon').addEventListener('click', function () {
-      fromdatepicker.open();
-    });
-
-
-
-
-
-
-    });
+        });
   </script>
 
   <style>
@@ -1736,18 +1926,37 @@
     form.style.display = isHidden ? 'block' : 'none';
     }
   </script>
+ 
   <script>
-    document.getElementById('emp_comp_salary_type').addEventListener('change', function () {
-    var salaryType = this.value;
+  document.addEventListener('DOMContentLoaded', function () {
+    var salaryTypeField = document.getElementById('emp_comp_salary_type');
     var hoursField = document.getElementById('hours_per_week');
+    var hoursInput = document.getElementById('average_hours_per_week'); // Input field inside hours_per_week
 
-    if (salaryType === 'Annual') {
-      hoursField.style.display = 'block';  // Show the hours per week field
+    // Check salary type on page load
+    if (salaryTypeField.value === 'Annual') {
+      hoursField.style.display = 'block'; // Show the hours per week field
     } else {
-      hoursField.style.display = 'none';   // Hide the hours per week field
+      hoursField.style.display = 'none'; // Hide the hours per week field
+      if (hoursInput) {
+        hoursInput.value = ''; // Clear the field value
+      }
     }
+
+    // Handle salary type change
+    salaryTypeField.addEventListener('change', function () {
+      if (this.value === 'Annual') {
+        hoursField.style.display = 'block'; // Show the hours per week field
+      } else {
+        hoursField.style.display = 'none'; // Hide the hours per week field
+        if (hoursInput) {
+          hoursInput.value = ''; // Clear the field value
+        }
+      }
     });
-  </script>
+  });
+</script>
+
 
 <!-- emp file -->
 <script>
@@ -1794,34 +2003,32 @@
     <!-- vacation policy 2 rate  -->
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Get references to the elements
+        var vacationPolicySelect = document.getElementById('emp_vacation_policy2');
+        var accrualRateContainer = document.getElementById('accrual_rate_container');
+        var accrualRateInput = document.getElementById('emp_vacation_accural_rate'); // Target the input field inside the container
 
-      // Get references to the elements
+        function toggleAccrualRateField() {
+            if (vacationPolicySelect.value === '2' || vacationPolicySelect.value === '3') {
+                // Show the accrual rate field for policy 2 or 3
+                accrualRateContainer.style.display = 'block';
+            } else {
+                // Hide the accrual rate field
+                accrualRateContainer.style.display = 'none';
+                if (accrualRateInput) {
+                    accrualRateInput.value = ''; // Clear the field value
+                }
+            }
+        }
 
-      var vacationPolicySelect = document.getElementById('emp_vacation_policy2');
-      var accrualRateContainer = document.getElementById('accrual_rate2_container');
+        // Initialize visibility on page load
+        toggleAccrualRateField();
 
-
-      function toggleAccrualRateField() {
-      if (vacationPolicySelect.value === '2') {  // Change condition as needed
-        accrualRateContainer.style.display = 'block';  // Show the accrual rate field
-      }  else if (vacationPolicySelect.value === '3') {  // Change condition as needed
-        accrualRateContainer.style.display = 'block';  // Show the accrual rate field
-      }
-       else {
-        accrualRateContainer.style.display = 'none';  // Hide the accrual rate field
-      }
-      }
-
-      // Initialize visibility on page load
-      toggleAccrualRateField();
-
-      // Listen for changes in wage type
-
-      // Listen for changes in vacation policy
-      vacationPolicySelect.addEventListener('change', toggleAccrualRateField);
+        // Listen for changes in vacation policy
+        vacationPolicySelect.addEventListener('change', toggleAccrualRateField);
     });
+</script>
 
-    </script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -1846,7 +2053,10 @@
       if (vacationPolicySelect.value === '2') {  // Change condition as needed
         accrualRateContainer.style.display = 'block';  // Show the accrual rate field
       } else {
-        accrualRateContainer.style.display = 'none';  // Hide the accrual rate field
+        accrualRateContainer.style.display = 'none'; 
+        if (accrualRateContainer) {
+          accrualRateContainer.value = ''; // Clear the field value
+        } // Hide the accrual rate field
       }
       }
 
@@ -1862,6 +2072,105 @@
     });
 
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const accrualRateInput = document.getElementById("emp_vacation_accural_rate");
+    const accrualMessage = document.getElementById("accrual_message");
+    const totalHoursInput = document.getElementById("emp_total_hours_year");
+    const accrualRates = []; // Array to store multiple accrual rates for summing
 
+    const defaultHoursPerWeek = 40; // Assuming 40 hours per week by default
+    const weeksPerYear = 52;
+
+    // Function to calculate accrual hours based on the rate
+    function calculateAccrualHours(rate) {
+        return (rate / 100) * defaultHoursPerWeek * weeksPerYear;
+    }
+
+    // Function to update the accrual message and hidden field
+    function updateAccrualMessageAndHiddenField() {
+        const rate = parseFloat(accrualRateInput.value);
+
+        if (isNaN(rate) || rate < 0 || rate > 100) {
+            accrualMessage.textContent = "e.g. 4% of regular hours on a 40-hour/week payroll period translates to 80 hours/year.";
+            accrualMessage.style.color = "red";
+            totalHoursInput.value = ""; // Clear the hidden field value
+            return;
+        }
+
+        const annualHours = calculateAccrualHours(rate);
+        accrualMessage.textContent = `e.g. ${rate}% of regular hours on a 40-hour/week payroll period translates to approximately ${annualHours.toFixed(3)} hours/year.`;
+        accrualMessage.style.color = "green";
+        totalHoursInput.value = annualHours.toFixed(3); // Update hidden field value
+
+        // Push the accrual rate to the array for summing
+        accrualRates.push(rate);
+        displayTotalAccrual();
+    }
+
+    // Function to display the total accrual hours for all entered rates
+    function displayTotalAccrual() {
+        const totalAccrualRate = accrualRates.reduce((sum, rate) => sum + rate, 0);
+        const totalAccrualMessage = `Total Accrual Rate: ${totalAccrualRate.toFixed(2)}%`;
+        const totalAnnualHours = calculateAccrualHours(totalAccrualRate);
+        
+        document.getElementById("total_accrual_message").textContent = 
+            `${totalAccrualMessage} (Approx. ${totalAnnualHours.toFixed(3)} hours/year)`;
+    }
+
+    // Event listener for the input change on the accrual rate
+    accrualRateInput.addEventListener("input", updateAccrualMessageAndHiddenField);
+
+    // Trigger initial calculation
+    updateAccrualMessageAndHiddenField();
+});
+</script>
+<script>
+  // document.addEventListener('DOMContentLoaded', function () {
+  //   flatpickr('.startdate', {
+  //     onChange: function (selectedDates, dateStr, instance) {
+  //       const selectedDate = selectedDates[0];
+  //       if (selectedDate) {
+  //         const dayOfWeek = selectedDate.getDay();
+  //         const monday = new Date(selectedDate);
+  //         monday.setDate(selectedDate.getDate() - ((dayOfWeek + 6) % 7));
+  //         const sunday = new Date(monday);
+  //         sunday.setDate(monday.getDate() + 6);
+
+  //         const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+  //         const mondayStr = monday.toLocaleDateString('en-US', options).replace(',', '');
+  //         const sundayStr = sunday.toLocaleDateString('en-US', options).replace(',', '');
+
+  //         document.getElementById('dateRange').textContent = `${mondayStr} – ${sundayStr}`;
+  //       }
+  //     }
+  //   });
+  // });
+  document.addEventListener('DOMContentLoaded', function () {
+  flatpickr('.startdate', {
+    onChange: function (selectedDates, dateStr, instance) {
+      const selectedDate = selectedDates[0];
+      if (selectedDate) {
+        const dayOfWeek = selectedDate.getDay();
+        const monday = new Date(selectedDate);
+        monday.setDate(selectedDate.getDate() - ((dayOfWeek + 6) % 7));
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+
+        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+        const mondayStr = monday.toLocaleDateString('en-US', options).replace(',', '');
+        const sundayStr = sunday.toLocaleDateString('en-US', options).replace(',', '');
+
+        document.getElementById('dateRange').textContent = `${mondayStr} – ${sundayStr}`;
+
+        // Store the date range in hidden input fields to send to the backend
+        document.getElementById('startDateRange').value = mondayStr;
+        document.getElementById('endDateRange').value = sundayStr;
+      }
+    }
+  });
+});
+
+</script>
     @endsection
   @endif

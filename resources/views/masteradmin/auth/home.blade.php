@@ -132,7 +132,7 @@
               <div class="card-header">
                 <h3 class="card-title"><img src="{{url('public/dist/img/dot.png')}}" class="dot_img"> Account Balance</h3>
               </div>
-              <!-- /.card-header -->
+              <!-- /.card-header --> 
               <div class="card-body table-responsive p-0">
                 <div class="col-md-12 table-responsive pad_table">
                   <table class="table table-hover text-nowrap dashboard_table">
@@ -147,7 +147,9 @@
                       @foreach ($accounts as $payment)
                           <tr>
                           <td>{{ $payment->chart_acc_name ?? 'N/A' }}</td> 
-                              <td>{{ $payment->id }}</td>
+                              <!-- <td>{{ $payment->id }}</td> -->
+                              <td>{{ $payment->holder->user_first_name ?? 'N/A' }} {{ $payment->holder->user_last_name ?? '' }}</td>
+
                               <td class="text-right">{{ number_format($payment->amount, 2) }}</td>
                           </tr>
                       @endforeach
