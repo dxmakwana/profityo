@@ -28,8 +28,8 @@
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <a href="#"><button class="add_btn_br">Cancel</button></a>
-                                <a href="#"><button class="add_btn">Save</button></a>
+                                <a href="{{ route('plans.index') }}"><button class="add_btn_br">Cancel</button></a>
+                                <button type="submit" form="plan-form" class="add_btn">Save</button>
                             </ol>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
@@ -44,7 +44,7 @@
                         <div class="card-header">
                             <h3 class="card-title">Add Subscription Plans</h3>
                         </div>
-                        <form method="POST" action="{{ route('plans.store') }}">
+                        <form method="POST" action="{{ route('plans.store') }}" id="plan-form">
                             @csrf
                             <div class="card-body2">
                                 <div class="row pad-5">

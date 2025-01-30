@@ -6,11 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class EmployeeStartOffboarding extends Model
+
+class AcountTransactionDetails extends Model
 {
     use HasFactory;
-    protected $fillable = ['emp_id','id','ct_id','emp_off_ending','emp_off_last_work_date','emp_off_notice_date','emp_off_status','emp_date_range','amount'];
-   
+       protected $fillable = [
+        'id',
+        'emp_id',
+        'tax_id',
+        'trans_tax_amount',
+        'acc_trans_status',
+    ];
+    protected $primaryKey = 'acc_trans_id '; // Adjust if the primary key is different
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -19,7 +27,8 @@ class EmployeeStartOffboarding extends Model
         $userDetails = session('user_details');
         Auth::guard('masteradmins')->setUser($userDetails);
         $user = Auth::guard('masteradmins')->user();
+        // dd($user);
         $uniq_id = $user->user_id;
-        $this->setTable($uniq_id . 'py_employee_start_offboarding');
+        $this->setTable($uniq_id . 'py_acc_transaction_details');
     }
 }

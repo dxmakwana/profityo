@@ -183,7 +183,7 @@
           
              )
 
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-balance-scale"></i>
               <p>
@@ -218,7 +218,61 @@
               </li>
               @endif
             </ul>
-          </li>
+          </li> -->
+          <li class="nav-item {{ 
+    request()->is($busadminRoutes.'/transection*') || 
+    request()->is($busadminRoutes.'/edit-transactions/*')||
+
+    request()->is($busadminRoutes.'/reconciliation*') || 
+    request()->is($busadminRoutes.'/chartofaccount*') 
+    ? 'menu-open' : '' }}">
+  
+  <a href="#" class="nav-link {{ 
+      request()->is($busadminRoutes.'/transection*') || 
+      request()->is($busadminRoutes.'/edit-transactions/*')||
+      request()->is($busadminRoutes.'/reconciliation*') || 
+      request()->is($busadminRoutes.'/chartofaccount*') 
+      ? 'active' : '' }}">
+    <i class="nav-icon fas fa-balance-scale"></i>
+    <p>
+      Accounting
+      <i class="fas fa-angle-right right"></i>
+    </p>
+  </a>
+
+  <ul class="nav nav-treeview">
+    @if(isset($access['transections']) && $access['transections'])
+    <li class="nav-item">
+      <a href="{{ route('business.transection.index') }}" class="nav-link {{ 
+          request()->is($busadminRoutes.'/transection*') || request()->is($busadminRoutes.'/edit-transactions/*') ? 'active' : '' }}">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Transactions</p>
+      </a>
+    </li>
+    @endif
+
+    @if(isset($access['reconciliation']) && $access['reconciliation']) 
+    <li class="nav-item">
+      <a href="#" class="nav-link {{ 
+          request()->is($busadminRoutes.'/reconciliation*') ? 'active' : '' }}">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Reconciliation</p>
+      </a>
+    </li>
+    @endif
+
+    @if(isset($access['chart_of_accounts']) && $access['chart_of_accounts']) 
+    <li class="nav-item">
+      <a href="{{ route('business.chartofaccount.index') }}" class="nav-link {{ 
+          request()->is($busadminRoutes.'/chartofaccount*') ? 'active' : '' }}">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Chart of Accounts</p>
+      </a>
+    </li>
+    @endif
+  </ul>
+</li>
+
           @endif
 
           @if(

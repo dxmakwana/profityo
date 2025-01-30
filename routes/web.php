@@ -290,6 +290,7 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
 
         Route::get('/timesheet', [TimeSheetController::class, 'index'])->name('business.timesheet.index');
         Route::post('/timesheet', [TimeSheetController::class, 'store'])->name('timesheet.store');
+        Route::get('/employee/view/{id}', [TimeSheetController::class, 'view'])->name('business.timesheet.view');
 
         // chart of account..
         Route::get('/chartofaccount', [ChartOfAccountController::class, 'index'])->name('business.chartofaccount.index');
@@ -336,6 +337,9 @@ Route::post( '/transactions/expens/store', [TransectionController::class, 'store
 Route::POST('/transaction/update/{record_payment_id}', [TransectionController::class, 'updateTransactiondata'])->name('business.transaction.update');
 // Route::post('/update-transaction/{id}', [TransectionController::class, 'updateTransaction']);
 Route::POST('/update-transaction/{paymentId}', [TransectionController::class, 'updateTransaction'])->name('transactions.updateTransection');
+Route::post('/remove-receipt/{id}', [TransectionController::class, 'removeReceipt'])->name('remove-receipt');
+Route::post('/update-vat', [TransectionController::class, 'vatupdate'])->name('vat.update');
+Route::post('/store-vat-session', [TransectionController::class, 'storeVATSession'])->name('store.vat.session');
 
 });
 

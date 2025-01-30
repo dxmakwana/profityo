@@ -336,6 +336,11 @@ class Controller extends BaseController
                         $table->integer('archive_account')->nullable()->default(0);
                     }
                 });
+                Schema::table($storeId.'_py_chart_account', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_chart_account', 'amount')) {
+                        $table->integer('amount')->nullable()->default(0);
+                    }
+                });
             }
 
             // Purchases....product module..
@@ -672,9 +677,6 @@ class Controller extends BaseController
                         $table->integer('emp_direct_deposit')->nullable();
                         $table->integer('emp_vacation_policy')->nullable();
                         $table->integer('emp_vacation_accural_rate')->nullable();
-                        $table->integer('emp_total_hours_year')->nullable();
-                        $table->string('before_sales_tax')->nullable();
-                        $table->string('sales_tax_amount')->nullable();
                         $table->tinyInteger('emp_status')->default(0)->nullable();
                         $table->timestamps();
                     });
@@ -700,51 +702,7 @@ class Controller extends BaseController
                             $table->integer('emp_work_hours')->nullable();
                         }
                     });
-                    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
-                        if (!Schema::hasColumn($storeId.'py_employee_details', 'emp_total_hours_year')) {
-                            $table->integer('emp_total_hours_year')->nullable();
-                        }
-                    });
-                    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
-                        if (!Schema::hasColumn($storeId.'py_employee_details', 'before_sales_tax')) {
-                            $table->integer('before_sales_tax')->nullable();
-                        }
-                    });
-                    Schema::table($storeId.'py_employee_details', function (Blueprint $table) use ($storeId) {
-                        if (!Schema::hasColumn($storeId.'py_employee_details', 'sales_tax_amount')) {
-                            $table->integer('sales_tax_amount')->nullable();
-                        }
-                    });
                 }
-
-                 // py_employee_tax_details
-        if (!Schema::hasTable($storeId . 'py_acc_transaction_details')) {
-            Schema::create($storeId . 'py_acc_transaction_details', function (Blueprint $table) {
-                $table->increments('acc_trans_id');
-                $table->integer('emp_id')->nullable()->default(0);
-                $table->integer('id')->nullable()->default(0);
-                $table->integer('trans_id')->nullable()->default(0);
-                $table->integer('users_id')->nullable()->default(0);
-                $table->integer('tax_id')->nullable()->default(0);
-                $table->string('trans_tax_amount')->nullable();
-                $table->tinyInteger('acc_trans_status')->default(0)->nullable();
-                $table->timestamps();
-            });
-        }
-        else{
-            Schema::table($storeId.'py_acc_transaction_details', function (Blueprint $table) use ($storeId) {
-                if (!Schema::hasColumn($storeId.'py_acc_transaction_details', 'trans_id')) {
-                    $table->integer('trans_id')->nullable();
-                }
-            });
-    }
-
-
-
-
-
-
-
             // py_employee_comperisation
             if (!Schema::hasTable($storeId . 'py_employee_comperisation')) {
                 Schema::create($storeId . 'py_employee_comperisation', function (Blueprint $table) {
@@ -793,7 +751,8 @@ class Controller extends BaseController
 
 
         // py_employee_start_offboarding
-        if (!Schema::hasTable($storeId . 'py_employee_start_offboarding')) {
+         // py_employee_start_offboarding
+         if (!Schema::hasTable($storeId . 'py_employee_start_offboarding')) {
             Schema::create($storeId . 'py_employee_start_offboarding', function (Blueprint $table) {
                 $table->increments('emp_off_id');
                 $table->integer('emp_id')->nullable()->default(0);
@@ -847,22 +806,27 @@ class Controller extends BaseController
        
         }
 
-          // py_employee_vacation_balance
-          if (!Schema::hasTable($storeId . 'py_employee_vacation_balance')) {
-            Schema::create($storeId . 'py_employee_vacation_balance', function (Blueprint $table) {
-                $table->increments('vb_id');
-                $table->integer('emp_id')->nullable()->default(0);
-                $table->integer('id')->nullable()->default(0);
-                $table->integer('users_id')->nullable()->default(0);
-                $table->float('balance')->nullable()->default(0.0);
-                $table->string('emp_wage_type')->nullable();
-                $table->tinyInteger('emp_vb_status')->default(0)->nullable();
-                $table->timestamps();
-            });
-        }
 
         // 
-if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
+// if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
+//     Schema::create($storeId . '_py_record_a_payment', function (Blueprint $table) {
+//         $table->increments('record_payment_id');
+//         $table->integer('id')->nullable()->default(0);
+//         $table->integer('invoice_id')->nullable()->default(0);
+//         $table->string('payment_method')->nullable()->default(0);
+//         $table->string('payment_account')->nullable();
+//         $table->string('payment_date')->nullable();
+//         $table->string('payment_amount')->nullable();
+//         $table->string('notes')->nullable();
+//         $table->string('description')->nullable();
+//         $table->tinyInteger('status')->default(0)->nullable();
+//         $table->timestamps();
+//     });
+// }
+		// vacation policy history..
+
+   // 
+   if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
     Schema::create($storeId . '_py_record_a_payment', function (Blueprint $table) {
         $table->increments('record_payment_id');
         $table->integer('id')->nullable()->default(0);
@@ -907,9 +871,6 @@ if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
         }
     });
 }
-		// vacation policy history..
-
-
 
         if (!Schema::hasTable($storeId . '_py_vacation_history')) {
             Schema::create($storeId . '_py_vacation_history', function (Blueprint $table) {
@@ -960,6 +921,11 @@ if (!Schema::hasTable($storeId . 'py_employee_timesheet')) {
         $table->integer('emp_id')->nullable()->default(0);
         $table->integer('id')->nullable()->default(0);
         $table->integer('users_id')->nullable()->default(0);
+        $table->integer('ct_id')->nullable()->default(0);
+        $table->string('emp_lev_start_date')->nullable();
+        $table->string('emp_lev_end_date')->nullable();
+        $table->string('emp_lev_desc')->nullable();
+        $table->tinyInteger('emp_lev_status')->default(0)->nullable();
         $table->integer('type')->nullable()->default(0);
         $table->string('emp_day')->nullable();
         $table->string('emp_hours')->nullable();
@@ -992,6 +958,7 @@ if (!Schema::hasTable($storeId . 'py_employee_timesheet')) {
     });
 }
 
+
 // py employee files..
 if (!Schema::hasTable($storeId . 'py_employee_files')) {
     Schema::create($storeId . 'py_employee_files', function (Blueprint $table) {
@@ -1005,7 +972,19 @@ if (!Schema::hasTable($storeId . 'py_employee_files')) {
         $table->timestamps();
     });
 }
-
+    // py_employee_vacation_balance
+    if (!Schema::hasTable($storeId . 'py_employee_vacation_balance')) {
+        Schema::create($storeId . 'py_employee_vacation_balance', function (Blueprint $table) {
+            $table->increments('vb_id');
+            $table->integer('emp_id')->nullable()->default(0);
+            $table->integer('id')->nullable()->default(0);
+            $table->integer('users_id')->nullable()->default(0);
+            $table->float('balance')->nullable()->default(0.0);
+            $table->string('emp_wage_type')->nullable();
+            $table->tinyInteger('emp_vb_status')->default(0)->nullable();
+            $table->timestamps();
+        });
+    }
 
 
             //customer contact
